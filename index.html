@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Animationen für den Unterricht</title>
+<style>
+  :root{ --bg:#f3f5fa; --karte:#ffffff; --linie:#d9dfeb; --text:#1d2840; --leise:#5d6884; --akzent:#0f766e; }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--text); font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  main{max-width:760px; margin:0 auto; padding:20px 16px 32px}
+  h1{font-size:22px; margin:0 0 4px}
+  h2{font-size:17px; margin:22px 0 8px}
+  p{margin:0 0 10px}
+  .leise{color:var(--leise); font-size:14px}
+  ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px}
+  a.karte{display:block; background:var(--karte); border:1px solid var(--linie); border-radius:12px; padding:12px 14px; color:var(--text); text-decoration:none}
+  a.karte:hover, a.karte:focus-visible{border-color:var(--akzent); outline:none}
+  a.karte b{display:block; color:var(--akzent)}
+  footer{margin-top:28px; font-size:13px; color:var(--leise); border-top:1px solid var(--linie); padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Animationen für den Unterricht</h1>
+  <p class="leise">Berufsschule, Anlagenmechaniker/in SHK. Die Animationen laufen direkt im Browser, auch auf dem Handy, ohne Anmeldung.</p>
+
+  <h2>LF7.1 Heizlast</h2>
+  <ul>
+    <li><a class="karte" href="animation-waerme-daemmung.html"><b>3.2.2 Wärme wandert durch die Wand – ohne und mit Dämmung</b>Teilchen geben ihre Bewegung weiter, mit Zeitlupe für die Impulsweitergabe.</a></li>
+    <li><a class="karte" href="animation-taupunkt-kreise.html"><b>3.7.1 Taupunkt im Kreis-Modell</b>Wann wird aus Wasserdampf Wasser? Lufttemperatur und relative Feuchte einstellen.</a></li>
+    <li><a class="karte" href="animation-taupunkt.html"><b>3.7.2 Wo wird die Wand nass?</b>Taupunkt in der Wand: ohne Dämmung, Dämmung außen, Dämmung innen mit und ohne Dampfsperre.</a></li>
+  </ul>
+
+  <footer>Diese Seite setzt keine Cookies und lädt nichts von anderen Servern. Beim Aufruf verarbeitet der Anbieter GitHub technisch die IP-Adresse des Geräts.</footer>
+</main>
+</body>
+</html>

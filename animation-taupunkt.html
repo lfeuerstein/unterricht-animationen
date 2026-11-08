@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taupunkt: Wo wird die Wand nass?</title>
+<style>
+  :root{
+    --bg:#f3f5fa; --karte:#ffffff; --linie:#d9dfeb; --text:#1d2840; --leise:#5d6884;
+    --warm:#d93a2b; --kalt:#1f6fd1; --akzent:#0f766e; --tau:#0e8fa8; --gefahr:#b3261e; --gut:#1f7a4d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--text); font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  header{background:var(--karte); border-bottom:1px solid var(--linie); padding:14px 16px}
+  header h1{margin:0 auto; max-width:1008px; font-size:21px}
+  header p{margin:4px auto 0; max-width:1008px; color:var(--leise); font-size:15px}
+  main{max-width:1040px; margin:0 auto; padding:14px 16px 28px; display:flex; flex-direction:column; gap:12px}
+  .karte{background:var(--karte); border:1px solid var(--linie); border-radius:14px; box-shadow:0 2px 10px rgba(30,45,80,.06)}
+  .steuerung{padding:12px 14px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)) auto; gap:12px 20px; align-items:end}
+  .regler label{display:flex; justify-content:space-between; gap:8px; font-size:14px; color:var(--leise)}
+  .regler label b{color:var(--text)}
+  .regler input{width:100%; margin:6px 0 0}
+  #innen{accent-color:var(--warm)} #aussen{accent-color:var(--kalt)} #feuchte{accent-color:var(--tau)}
+  .knoepfe{display:flex; gap:8px}
+  button{cursor:pointer; border:1px solid transparent; border-radius:10px; padding:9px 14px; font:inherit; font-weight:700; background:var(--akzent); color:#fff; white-space:nowrap}
+  button.zweit{background:#fff; color:var(--text); border-color:var(--linie)}
+  button:focus-visible, input:focus-visible{outline:3px solid #f2b400; outline-offset:2px}
+  .wahl{grid-column:1/-1; display:flex; flex-wrap:wrap; gap:10px 24px; align-items:center}
+  .gruppe{display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:14px; color:var(--leise)}
+  .seg{display:inline-flex; border:1px solid var(--linie); border-radius:10px; overflow:hidden; background:#fff}
+  .seg button{border:0; border-radius:0; background:#fff; color:var(--text); font-weight:600; padding:7px 12px}
+  .seg button + button{border-left:1px solid var(--linie)}
+  .seg button[aria-pressed="true"]{background:var(--akzent); color:#fff}
+  .wand{padding:10px}
+  canvas{display:block; width:100%; border-radius:10px}
+  .lage{padding:12px 16px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px 18px}
+  .lage > div{font-size:14px; color:var(--leise)}
+  .lage b{display:block; font-size:16px; color:var(--text)}
+  .lage .warnung b{color:var(--gefahr)} .lage .ok b{color:var(--gut)}
+  .lage .darum{grid-column:1/-1; font-size:15px; color:var(--text); border-top:1px solid var(--linie); padding-top:8px}
+  .hinweis{margin:0; font-size:14px; color:var(--leise); padding:0 4px}
+  .hinweis .p{display:inline-block; width:11px; height:11px; border-radius:50%; vertical-align:-1px; margin:0 5px 0 0}
+  .hinweis .d{display:inline-block; width:10px; height:10px; border:2px solid #1aa3c4; background:#e6f7fb; border-radius:50%; vertical-align:-1px; margin:0 5px 0 0}
+  .hinweis .tr{display:inline-block; width:10px; height:10px; background:#1f6fd1; border-radius:0 50% 50% 50%; transform:rotate(45deg); vertical-align:0; margin:0 6px 0 2px}
+  .hinweis .l{display:inline-block; width:16px; border-top:2px dashed var(--tau); vertical-align:4px; margin:0 5px 0 0}
+  .info{padding:12px 16px}
+  .info h2{margin:0 0 4px; font-size:18px}
+  .info .raster{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px 26px}
+  .info h3{margin:12px 0 4px; font-size:16px}
+  .info p, .info li{font-size:15px; margin:0 0 6px}
+  .info ul{margin:0; padding-left:20px}
+  .info .klein{font-size:13px; color:var(--leise); margin-top:10px}
+  [hidden]{display:none !important}
+  @media (max-width:760px){ .steuerung{grid-template-columns:1fr} .lage{grid-template-columns:1fr} .info .raster{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<header>
+  <h1>Taupunkt: Wo wird die Wand nass?</h1>
+  <p>Stell die Temperaturen innen und außen ein. Die gestrichelte Linie zeigt, wo die Wand genau so kalt ist wie der Taupunkt der Raumluft. Dahinter kann Wasserdampf zu Wasser werden.</p>
+</header>
+<main>
+  <section class="karte steuerung" aria-label="Einstellungen">
+    <div class="regler"><label for="innen">Innentemperatur <b id="innenWert"></b></label><input id="innen" type="range" min="10" max="26" step="1" value="20"></div>
+    <div class="regler"><label for="aussen">Außentemperatur <b id="aussenWert"></b></label><input id="aussen" type="range" min="-20" max="15" step="1" value="-10"></div>
+    <div class="regler"><label for="feuchte">Luftfeuchte innen <b id="feuchteWert"></b></label><input id="feuchte" type="range" min="30" max="80" step="5" value="50"></div>
+    <div class="knoepfe"><button id="pause" type="button">❚❚ Pause</button><button id="zurueck" type="button" class="zweit">Zurücksetzen</button></div>
+    <div class="wahl">
+      <div class="gruppe">Wand:
+        <span class="seg" id="artWahl">
+          <button type="button" data-art="ohne" aria-pressed="true">ohne Dämmung</button><button type="button" data-art="aussen" aria-pressed="false">Dämmung außen</button><button type="button" data-art="innen" aria-pressed="false">Dämmung innen</button>
+        </span>
+      </div>
+      <div class="gruppe" id="sperreGruppe" hidden>Dampfsperre:
+        <span class="seg" id="sperreWahl">
+          <button type="button" data-sperre="keine" aria-pressed="true">keine</button><button type="button" data-sperre="dicht" aria-pressed="false">dicht</button><button type="button" data-sperre="loch" aria-pressed="false">mit Loch</button>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="karte wand">
+    <canvas id="leinwand" role="img" aria-label="Schnitt durch die Wand mit Teilchen, Wasserdampf, Taupunkt und Temperaturverlauf"></canvas>
+  </section>
+
+  <section class="karte lage" aria-live="polite">
+    <div>Taupunkt der Raumluft<b id="tpWert"></b></div>
+    <div>Taupunkt in der Wand<b id="tpLage"></b></div>
+    <div id="twKasten">Tauwasser<b id="twWert"></b></div>
+    <div class="darum" id="darum"></div>
+  </section>
+
+  <p class="hinweis"><span class="p" style="background:#d93a2b"></span>schnelle Bewegung = warm &nbsp;·&nbsp; <span class="p" style="background:#1f6fd1"></span>langsame Bewegung = kalt &nbsp;·&nbsp; <span class="d"></span>Wasserdampf &nbsp;·&nbsp; <span class="tr"></span>Tauwasser (Wasser) &nbsp;·&nbsp; <span class="l"></span>Taupunkt: Hier ist die Wand genau so kalt wie der Taupunkt der Raumluft.</p>
+
+  <section class="karte info">
+    <h2>Das solltest du wissen</h2>
+    <div class="raster">
+      <div>
+        <h3>Was ist der Taupunkt?</h3>
+        <p>Luft kann nur eine bestimmte Menge Wasserdampf aufnehmen, warme Luft mehr als kalte. Kühlt feuchte Luft ab, ist sie irgendwann gesättigt: Der Wasserdampf wird zu Wasser (Tauwasser). Diese Temperatur heißt Taupunkt. Raumluft mit 20 °C und 50 % Luftfeuchte hat ihren Taupunkt bei etwa 9,3 °C.</p>
+        <h3>Wo soll der Taupunkt liegen?</h3>
+        <p>Möglichst weit außen: in der Dämmung, die außen auf der Wand sitzt. Dann bleibt die tragende Wand warm und trocken. Die Schichten sollen von innen nach außen immer durchlässiger für Wasserdampf werden („innen dicht, außen offen“). So kann Feuchte nach außen austrocknen.</p>
+        <h3>Was ist die Gefahr?</h3>
+        <p>Kommt Wasserdampf an eine Stelle, die kälter ist als der Taupunkt, wird er zu Wasser. Die Wand wird nass: Schimmel, Frostschäden, die Dämmung wirkt schlechter (nasse Dämmung leitet Wärme besser), Holz fault, Metall rostet. Ist schon die Innenseite der Wand kälter als der Taupunkt, schimmelt die Wand sichtbar, vor allem in Ecken und hinter Schränken.</p>
+      </div>
+      <div>
+        <h3>Warum eine Dampfsperre?</h3>
+        <p>Bei einer Dämmung innen ist die Wand dahinter kalt. Die Dampfsperre ist eine Folie auf der warmen Seite, also innen vor der Dämmung. Sie hält den Wasserdampf aus der Raumluft zurück, bevor er die kalte Stelle erreicht. Dasselbe gilt zum Beispiel für ein ausgebautes Dach.</p>
+        <h3>Warum muss die Dampfsperre dicht sein?</h3>
+        <p>Durch jedes Loch und jede offene Fuge strömt warme, feuchte Raumluft hinter die Dämmung. Diese Strömung bringt ein Vielfaches mehr Wasser mit, als durch die ganze Folie hindurch wandert. Hinter dem Loch wird es auf kleinem Raum nass. Deshalb: Bahnen überlappen und verkleben, Anschlüsse an Wände, Fenster und Decken abdichten, Rohre, Kabel und Steckdosen mit Manschetten abdichten. Ob die Hülle dicht ist, prüft der Blower-Door-Test (Video in 3.6).</p>
+        <h3>Welche Lösungen gibt es noch?</h3>
+        <ul>
+          <li><strong>Dämmung außen statt innen:</strong> Der Taupunkt wandert nach außen, die Wand bleibt warm. Das ist die beste Lösung.</li>
+          <li><strong>Feuchtevariable Dampfbremse:</strong> im Winter dicht, im Sommer durchlässig. So kann die Wand zurücktrocknen.</li>
+          <li><strong>Kapillaraktive Innendämmung</strong> (zum Beispiel Kalziumsilikat, Holzfaser): nimmt Feuchte auf, verteilt sie und gibt sie wieder an den Raum ab, ohne Dampfsperre.</li>
+          <li><strong>Hinterlüftete Fassade:</strong> Eine Luftschicht außen führt Feuchte ab.</li>
+          <li><strong>Luftfeuchte innen senken:</strong> richtig lüften (Stoßlüften), Lüftungsanlage mit Wärmerückgewinnung, Räume nicht auskühlen lassen.</li>
+          <li><strong>Wärmebrücken vermeiden:</strong> Ecken, Fensteranschlüsse und Rollladenkästen sind kalte Stellen.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="klein">Vereinfachtes Modell: Mauerwerk 24 cm (λ = 0,6 W/(m·K)), Dämmung 10 cm Mineralwolle (λ = 0,035 W/(m·K)), ohne Putz; Außenluft mit 80 % Luftfeuchte. Die Zeit läuft im Zeitraffer, in Wirklichkeit dauert das Tage und Wochen.</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  // ===== Bauphysik-Modell =====
+  // MODELL-ANFANG
+  const RSI = 0.13, RSE = 0.04;              // Wärmeübergangswiderstände innen/außen in m²·K/W
+  const PHI_AUSSEN = 0.8;                    // Luftfeuchte außen
+  const SCHICHTEN = {
+    mauer: { dicke: 0.24, lambda: 0.6, mu: 10, zellen: 24 },
+    daemm: { dicke: 0.10, lambda: 0.035, mu: 1, zellen: 10 },
+    sperre: { dicke: 0.0002, lambda: 0.2, sd: 1500, zellen: 1 }
+  };
+  const K_SPEICHER = 30;                     // Dampfspeicher je Meter (bestimmt nur das Tempo)
+  const LUFTSTROM = 2.0;                     // Luftstrom durch das Loch in der Dampfsperre
+  // Sättigungsdampfdruck in Pa (Magnus-Formel, unter 0 °C über Eis)
+  function psat(t) { return t >= 0 ? 611.2 * Math.exp(17.62 * t / (243.12 + t)) : 611.2 * Math.exp(22.46 * t / (272.62 + t)); }
+  // Taupunkttemperatur der Luft mit Temperatur t und relativer Feuchte phi (0..1)
+  function taupunkt(t, phi) { const g = Math.log(phi) + 17.62 * t / (243.12 + t); return 243.12 * g / (17.62 - g); }
+  // Wand als Zellen von innen nach außen: { schicht, d, R (Wärmedurchlasswiderstand), Z (Dampf-Widerstand sd) }
+  function aufbau(art, sperre) {
+    const folge = art === 'ohne' ? ['mauer'] : art === 'aussen' ? ['mauer', 'daemm'] : (sperre && sperre !== 'keine' ? ['sperre', 'daemm', 'mauer'] : ['daemm', 'mauer']);
+    const zellen = [];
+    for (const k of folge) {
+      const s = SCHICHTEN[k], d = s.dicke / s.zellen;
+      for (let i = 0; i < s.zellen; i++) zellen.push({ schicht: k, d, R: d / s.lambda, Z: s.sd !== undefined ? s.sd / s.zellen : s.mu * d });
+    }
+    return zellen;
+  }
+  // Temperaturen im Beharrungszustand: Zellmitten, Innen- und Außenoberfläche
+  function temperaturen(zellen, ti, ta) {
+    const Rges = RSI + RSE + zellen.reduce((s, z) => s + z.R, 0), q = (ti - ta) / Rges;
+    let r = RSI; const t = [];
+    for (const z of zellen) { t.push(ti - q * (r + z.R / 2)); r += z.R; }
+    return { t, tsi: ti - q * RSI, tse: ta + q * RSE };
+  }
+  const widerstand = (zellen, loch) => zellen.map(z => (loch && z.schicht === 'sperre') ? 0.001 : z.Z);
+  // Startzustand: gerade Linie des Dampfdrucks nach dem Dampf-Widerstand, höchstens Sättigung, noch kein Tauwasser
+  function dampfStart(zellen, temp, pIn, pOut, loch) {
+    const Z = widerstand(zellen, loch), ges = 0.04 + Z.reduce((s, z) => s + z, 0);
+    let r = 0.02; const p = [];
+    for (let i = 0; i < Z.length; i++) { p.push(Math.min(psat(temp[i]), pIn - (pIn - pOut) * (r + Z[i] / 2) / ges)); r += Z[i]; }
+    return { p, w: p.map(() => 0) };
+  }
+  // Ein Zeitschritt: Diffusion (implizit), beim Loch zusätzlich Luftströmung durch die Dämmung; über der Sättigung entsteht Tauwasser
+  function dampfSchritt(m, zellen, temp, pIn, pOut, dt, loch) {
+    const n = zellen.length, Z = widerstand(zellen, loch), C = zellen.map(z => K_SPEICHER * z.d);
+    const g = []; for (let i = 0; i < n - 1; i++) g.push(1 / (Z[i] / 2 + Z[i + 1] / 2));
+    const gL = 1 / (0.02 + Z[0] / 2), gR = 1 / (Z[n - 1] / 2 + 0.02), F = loch ? LUFTSTROM : 0;
+    const a = new Array(n).fill(0), b = new Array(n).fill(1), c = new Array(n).fill(0), d = m.p.slice();
+    for (let i = 0; i < n; i++) {
+      const k = dt / C[i];
+      if (i > 0) { a[i] -= g[i - 1] * k; b[i] += g[i - 1] * k; } else { b[i] += gL * k; d[i] += gL * k * pIn; }
+      if (i < n - 1) { c[i] -= g[i] * k; b[i] += g[i] * k; } else { b[i] += gR * k; d[i] += gR * k * pOut; }
+      if (F && zellen[i].schicht === 'daemm') {            // Raumluft strömt durch das Loch in die Dämmung
+        b[i] += F * k;
+        if (i > 0 && zellen[i - 1].schicht !== 'mauer') a[i] -= F * k; else d[i] += F * k * pIn;
+      }
+    }
+    for (let i = 1; i < n; i++) { const f = a[i] / b[i - 1]; b[i] -= f * c[i - 1]; d[i] -= f * d[i - 1]; }
+    const p = new Array(n); p[n - 1] = d[n - 1] / b[n - 1];
+    for (let i = n - 2; i >= 0; i--) p[i] = (d[i] - c[i] * p[i + 1]) / b[i];
+    for (let i = 0; i < n; i++) {
+      const s = psat(temp[i]);
+      if (p[i] > s) { m.w[i] += (p[i] - s) * C[i]; p[i] = s; }
+      else if (m.w[i] > 0) { const e = Math.min(m.w[i], (s - p[i]) * C[i]); m.w[i] -= e; p[i] += e / C[i]; }
+    }
+    m.p = p;
+  }
+  // MODELL-ENDE
+
+  // ===== Bild =====
+  const H = 460, OBEN = 52, ZEILEN = 10, ZH = 24, UNTEN = OBEN + ZEILEN * ZH;
+  const D_OBEN = 316, D_UNTEN = 452;
+  const RAND = 16, PX_CM = 12, SPERRE_PX = 6, W_MIN = 700, W_MAX = 1000;
+  const MAX_WAND = SPERRE_PX + 10 * PX_CM + 24 * PX_CM;
+  const LOCH = 5, LOCH_ZEILEN = [4, 5, 6];
+  const R_TEIL = 5, R_GAS = 5, R_LUFT = 2.8, R_DAMPF = 2.4;
+  const N_LUFT = 10, P_PUNKT = 160, P_RAUM = 55, W_TROPFEN = 1600, MAX_TROPFEN = 14, TEMPO = 1;
+  const SCHRIFT = '600 14px system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+  const KLEIN = '600 12px system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+  const NAMEN = { mauer: 'Mauerwerk', daemm: 'Dämmung', sperre: 'Dampfsperre' };
+  const VORGABE = { ti: 20, ta: -10, phi: 50, art: 'ohne', sperre: 'keine' };
+
+  const $ = id => document.getElementById(id);
+  const klemm = (x, a, b) => Math.max(a, Math.min(b, x));
+  const zufall = (a, b) => a + Math.random() * (b - a);
+  const tau = t => klemm((t + 20) / 45, 0, 1);
+  const vGas = e => 22 + 168 * klemm(e, 0, 1.3);
+  const ampl = e => 0.5 + 3.5 * klemm(e, 0, 1);
+  const freq = e => 0.8 + 3.2 * klemm(e, 0, 1);
+  const zahl = (x, n = 1) => x.toFixed(n).replace('.', ',').replace('-', '−');
+  const grad = x => zahl(x, 1) + ' °C';
+
+  function farbe(t, alpha) {
+    t = klemm(t, 0, 1);
+    const S = [[0, [31, 111, 209]], [0.5, [142, 68, 173]], [1, [217, 58, 43]]];
+    const i = t < 0.5 ? 0 : 1, a = S[i], b = S[i + 1], f = (t - a[0]) / (b[0] - a[0]);
+    const c = a[1].map((v, k) => Math.round(v + (b[1][k] - v) * f)).join(',');
+    return alpha === undefined ? 'rgb(' + c + ')' : 'rgba(' + c + ',' + alpha + ')';
+  }
+  function rund(c, x, y, w, h, r) {
+    c.beginPath(); c.moveTo(x + r, y);
+    c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
+  }
+
+  // ===== Zustand =====
+  const E = { ti: VORGABE.ti, ta: VORGABE.ta, phi: VORGABE.phi / 100, art: VORGABE.art, sperre: VORGABE.sperre, pause: false };
+  const anz = { ti: E.ti, ta: E.ta, phi: E.phi };          // gleiten zu den eingestellten Werten
+  let W = 1000, skala = 1, dpr = 1, xWand = 293, zeit = 0;
+  let zellen, off, breite, xEnde, tp, haupt, leck, slots, gitter, kammern, raumLuft, aussenLuft, raumDampf, aussenDampf, strom;
+  const lochAn = () => E.art === 'innen' && E.sperre === 'loch';
+
+  function gasNeu() { return { u: Math.random(), v: Math.random(), a: zufall(0, 2 * Math.PI), f: zufall(0.75, 1.25) }; }
+  function pInnen() { return anz.phi * psat(anz.ti); }
+  function pAussen() { return PHI_AUSSEN * psat(anz.ta); }
+
+  function neueWand() {
+    zellen = aufbau(E.art, E.art === 'innen' ? E.sperre : 'keine');
+    breite = zellen.map(z => z.schicht === 'sperre' ? SPERRE_PX : z.d * 100 * PX_CM);
+    off = []; let x = 0; for (const b of breite) { off.push(x); x += b; }
+    xEnde = xWand + x;
+    tp = temperaturen(zellen, anz.ti, anz.ta);
+    profilNeu();
+    haupt = dampfStart(zellen, tp.t, pInnen(), pAussen(), false);
+    leck = lochAn() ? dampfStart(zellen, tp.t, pInnen(), pAussen(), false) : null;
+    slots = zellen.map(() => Array.from({ length: 24 }, () => ({ fx: Math.random(), fy: Math.random(), ph: zufall(0, 6.3), fr: zufall(1.5, 3) })));
+    const iM = zellen.findIndex(z => z.schicht === 'mauer'), iD = zellen.findIndex(z => z.schicht === 'daemm');
+    gitter = [];
+    for (let r = 0; r < ZEILEN; r++) for (let k = 0; k < 12; k++) gitter.push({ r, k, p1: zufall(0, 6.3), p2: zufall(0, 6.3), m1: zufall(0.8, 1.2), m2: zufall(0.65, 1.05) });
+    kammern = [];
+    if (iD >= 0) for (let r = 0; r < ZEILEN; r++) for (let k = 0; k < 5; k++) kammern.push({ r, k, u: Math.random(), v: Math.random(), a: zufall(0, 6.3) });
+    strom = Array.from({ length: 7 }, (_, i) => ({ s: i / 7, dy: zufall(-6, 6) }));
+    neueLage.iM = iM; neueLage.iD = iD;
+  }
+  const neueLage = { iM: 0, iD: -1 };
+  function luftNeu() {
+    raumLuft = Array.from({ length: N_LUFT }, gasNeu);
+    aussenLuft = Array.from({ length: N_LUFT }, gasNeu);
+    raumDampf = Array.from({ length: 50 }, gasNeu);
+    aussenDampf = Array.from({ length: 50 }, gasNeu);
+  }
+  const xMauer = () => xWand + off[neueLage.iM];
+  const xDaemm = () => neueLage.iD >= 0 ? xWand + off[neueLage.iD] : null;
+  const raum = () => ({ x0: RAND, x1: xWand - 4 });
+  const draussen = () => ({ x0: xEnde + 4, x1: W - RAND });
+
+  // Temperaturprofil (Pixel, °C): Innenoberfläche, Zellmitten, Außenoberfläche
+  let profil = [];
+  function profilNeu() {
+    profil = [[xWand, tp.tsi]];
+    zellen.forEach((z, i) => profil.push([xWand + off[i] + breite[i] / 2, tp.t[i]]));
+    profil.push([xEnde, tp.tse]);
+  }
+  // Temperatur an einer Stelle x (Pixel) in der Wand
+  function tempBei(x) {
+    if (x <= xWand) return tp.tsi;
+    if (x >= xEnde) return tp.tse;
+    for (let i = 0; i < profil.length - 1; i++) if (x <= profil[i + 1][0]) {
+      const [x0, t0] = profil[i], [x1, t1] = profil[i + 1];
+      return t0 + (t1 - t0) * (x - x0) / Math.max(1e-6, x1 - x0);
+    }
+    return tp.tse;
+  }
+  // Lage des Taupunkts: 'oberflaeche' (Innenseite schon zu kalt), 'wand' (x in Pixeln) oder 'keiner' (Wand überall wärmer)
+  function taupunktLage(ts) {
+    if (tp.tsi <= ts) return { art: 'oberflaeche', x: xWand, cm: 0, schicht: zellen[0].schicht };
+    if (tp.tse >= ts) return { art: 'keiner' };
+    const pts = [[xWand, tp.tsi, 0]];
+    let m = 0;
+    zellen.forEach((z, i) => { pts.push([xWand + off[i] + breite[i] / 2, tp.t[i], m + z.d / 2]); m += z.d; });
+    pts.push([xEnde, tp.tse, m]);
+    for (let i = 0; i < pts.length - 1; i++) {
+      const [x0, t0, m0] = pts[i], [x1, t1, m1] = pts[i + 1];
+      if (t0 >= ts && t1 < ts) {
+        const f = (t0 - ts) / (t0 - t1), x = x0 + f * (x1 - x0), tiefe = m0 + f * (m1 - m0);
+        const j = zellen.findIndex((z, k) => x < xWand + off[k] + breite[k]);
+        const schicht = zellen[j < 0 ? zellen.length - 1 : j].schicht;
+        const start = zellen.slice(0, zellen.findIndex(z => z.schicht === schicht)).reduce((s, z) => s + z.d, 0);
+        return { art: 'wand', x, cm: tiefe * 100, cmSchicht: Math.max(0, tiefe - start) * 100, schicht };
+      }
+    }
+    return { art: 'keiner' };
+  }
+
+  // ===== Bewegung =====
+  function gasBewegen(liste, b, e, dt, langsam) {
+    const bw = b.x1 - b.x0 - 2 * R_GAS, bh = UNTEN - OBEN - 2 * R_GAS;
+    for (const p of liste) {
+      if (Math.random() < dt * 1.2) p.a += zufall(-0.8, 0.8);
+      const v = (langsam ? 0.35 : 1) * vGas(e) * p.f;
+      p.u += Math.cos(p.a) * v * dt / bw; p.v += Math.sin(p.a) * v * dt / bh;
+      if (p.u < 0) { p.u = -p.u; p.a = Math.PI - p.a; } else if (p.u > 1) { p.u = 2 - p.u; p.a = Math.PI - p.a; }
+      if (p.v < 0) { p.v = -p.v; p.a = -p.a; } else if (p.v > 1) { p.v = 2 - p.v; p.a = -p.a; }
+      p.u = klemm(p.u, 0, 1); p.v = klemm(p.v, 0, 1);
+    }
+  }
+  function schritt(dt) {
+    zeit += dt;
+    const g = 1 - Math.exp(-dt / 0.35);
+    anz.ti += (E.ti - anz.ti) * g; anz.ta += (E.ta - anz.ta) * g; anz.phi += (E.phi - anz.phi) * g;
+    tp = temperaturen(zellen, anz.ti, anz.ta);
+    profilNeu();
+    let rest = dt * TEMPO;
+    while (rest > 1e-9) {
+      const h = Math.min(rest, 0.05);
+      dampfSchritt(haupt, zellen, tp.t, pInnen(), pAussen(), h, false);
+      if (leck) dampfSchritt(leck, zellen, tp.t, pInnen(), pAussen(), h, true);
+      rest -= h;
+    }
+    gasBewegen(raumLuft, raum(), tau(anz.ti), dt, false);
+    gasBewegen(aussenLuft, draussen(), tau(anz.ta), dt, false);
+    gasBewegen(raumDampf, raum(), tau(anz.ti), dt, true);
+    gasBewegen(aussenDampf, draussen(), tau(anz.ta), dt, true);
+    for (const t of gitter) { const w = 2 * Math.PI * freq(tau(tempBei(xMauer() + 12 + t.k * 24))) * dt; t.p1 += w * t.m1; t.p2 += w * t.m2; }
+    const xD = xDaemm();
+    if (xD !== null) for (const q of kammern) {
+      const v = 0.4 * vGas(tau(tempBei(xD + 12 + q.k * 24)));
+      if (Math.random() < dt) q.a += zufall(-0.8, 0.8);
+      q.u += Math.cos(q.a) * v * dt / 12; q.v += Math.sin(q.a) * v * dt / 12;
+      if (q.u < 0) { q.u = -q.u; q.a = Math.PI - q.a; } else if (q.u > 1) { q.u = 2 - q.u; q.a = Math.PI - q.a; }
+      if (q.v < 0) { q.v = -q.v; q.a = -q.a; } else if (q.v > 1) { q.v = 2 - q.v; q.a = -q.a; }
+      q.u = klemm(q.u, 0, 1); q.v = klemm(q.v, 0, 1);
+    }
+    for (const s of strom) s.s = (s.s + dt * 0.45) % 1;
+  }
+
+  // ===== Zeichnen =====
+  function kugel(c, x, y, r, t) {
+    const g = c.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.15, x, y, r * 1.1);
+    g.addColorStop(0, 'rgba(255,255,255,0.95)'); g.addColorStop(0.4, farbe(t)); g.addColorStop(1, farbe(t));
+    c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, 2 * Math.PI); c.fill();
+    c.strokeStyle = 'rgba(0,0,0,0.25)'; c.lineWidth = 1; c.stroke();
+  }
+  function dampf(c, x, y) {
+    c.fillStyle = 'rgba(230,247,251,0.95)'; c.strokeStyle = '#1aa3c4'; c.lineWidth = 1.4;
+    c.beginPath(); c.arc(x, y, R_DAMPF, 0, 2 * Math.PI); c.fill(); c.stroke();
+  }
+  function tropfen(c, x, y) {
+    const s = 3.9;
+    c.fillStyle = '#29a8e0'; c.strokeStyle = '#0b4f8a'; c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(x, y - s * 1.7);
+    c.bezierCurveTo(x + s * 0.9, y - s * 0.5, x + s, y + s * 0.2, x, y + s);
+    c.bezierCurveTo(x - s, y + s * 0.2, x - s * 0.9, y - s * 0.5, x, y - s * 1.7); c.fill(); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,0.9)'; c.beginPath(); c.arc(x - s * 0.35, y - s * 0.1, s * 0.28, 0, 2 * Math.PI); c.fill();
+  }
+  // Lage eines Platzes (Dampfpunkt oder Tropfen) in Zelle i, nur in den Zeilen der Gruppe
+  function platz(i, s, reihen, wackeln) {
+    const n = reihen.length, f = s.fy * n, r = reihen[Math.min(n - 1, Math.floor(f))];
+    const x = xWand + off[i] + 1.5 + s.fx * Math.max(1, breite[i] - 3) + (wackeln ? Math.sin(zeit * s.fr + s.ph) * 1.2 : 0);
+    const y = OBEN + r * ZH + 3 + (f % 1) * (ZH - 6) + (wackeln ? Math.cos(zeit * s.fr * 0.8 + s.ph) * 1.2 : 0);
+    return [x, y];
+  }
+  const ALLE = Array.from({ length: ZEILEN }, (_, i) => i);
+  const OHNE_LOCH = ALLE.filter(r => !LOCH_ZEILEN.includes(r));
+
+  function zeichnen() {
+    const c = ctx;
+    c.setTransform(dpr * skala, 0, 0, dpr * skala, 0, 0);
+    c.fillStyle = '#ffffff'; c.fillRect(0, 0, W, H);
+    const ts = taupunkt(anz.ti, anz.phi), lage = taupunktLage(ts);
+    const r = raum(), d = draussen();
+
+    // Raum, außen, Schichten
+    c.fillStyle = farbe(tau(anz.ti), 0.10); rund(c, r.x0, OBEN, xWand - r.x0 + 10, UNTEN - OBEN, 10); c.fill();
+    c.fillStyle = farbe(tau(anz.ta), 0.10); rund(c, xEnde - 10, OBEN, d.x1 - xEnde + 10, UNTEN - OBEN, 10); c.fill();
+    const bereiche = [];
+    zellen.forEach((z, i) => {
+      const x = xWand + off[i];
+      const letzter = bereiche[bereiche.length - 1];
+      if (letzter && letzter.schicht === z.schicht) letzter.x1 = x + breite[i]; else bereiche.push({ schicht: z.schicht, x0: x, x1: x + breite[i] });
+    });
+    for (const b of bereiche) {
+      if (b.schicht === 'mauer') {
+        c.fillStyle = '#efe7de'; c.fillRect(b.x0, OBEN, b.x1 - b.x0, UNTEN - OBEN);
+        c.save(); c.beginPath(); c.rect(b.x0, OBEN, b.x1 - b.x0, UNTEN - OBEN); c.clip();
+        c.strokeStyle = 'rgba(120,95,70,0.13)'; c.lineWidth = 1;
+        for (let x = b.x0 - (UNTEN - OBEN); x < b.x1; x += 10) { c.beginPath(); c.moveTo(x, UNTEN); c.lineTo(x + (UNTEN - OBEN), OBEN); c.stroke(); }
+        c.restore();
+      } else if (b.schicht === 'daemm') { c.fillStyle = '#fff4c7'; c.fillRect(b.x0, OBEN, b.x1 - b.x0, UNTEN - OBEN); }
+    }
+    // kälter als der Taupunkt
+    if (lage.art !== 'keiner') {
+      c.fillStyle = 'rgba(31,111,209,0.09)'; c.fillRect(lage.x, OBEN, xEnde - lage.x, UNTEN - OBEN);
+    }
+
+    // Beschriftung oben
+    c.textAlign = 'center'; c.textBaseline = 'alphabetic'; c.font = SCHRIFT;
+    const text = (t, x, f, y = 18) => { c.fillStyle = f; c.fillText(t, x, y); };
+    text('innen ' + grad(anz.ti).replace(',0', ''), (r.x0 + xWand) / 2, '#a8321f');
+    text('außen ' + grad(anz.ta).replace(',0', ''), (xEnde + d.x1) / 2, '#1b5bb0');
+    for (const b of bereiche) {
+      if (b.schicht === 'sperre') continue;
+      text(NAMEN[b.schicht] + (b.schicht === 'mauer' ? ' 24 cm' : ' 10 cm'), (b.x0 + b.x1) / 2, b.schicht === 'mauer' ? '#6b5848' : '#8a6700');
+    }
+
+    // Mauerwerk: Teilchen mit Bindungen
+    const xM = xMauer(), pos = [];
+    for (const t of gitter) {
+      const x0 = xM + 12 + t.k * 24, e = tau(tempBei(x0)), a = ampl(e);
+      pos.push([x0 + a * Math.sin(t.p1), OBEN + 12 + t.r * ZH + 0.8 * a * Math.sin(t.p2), e]);
+    }
+    c.strokeStyle = 'rgba(80,70,60,0.33)'; c.lineWidth = 1.1; c.beginPath();
+    gitter.forEach((t, i) => {
+      if (t.k < 11) { c.moveTo(pos[i][0], pos[i][1]); c.lineTo(pos[i + 1][0], pos[i + 1][1]); }
+      if (t.r < ZEILEN - 1) { c.moveTo(pos[i][0], pos[i][1]); c.lineTo(pos[i + 12][0], pos[i + 12][1]); }
+    });
+    c.stroke();
+    // Dämmung: Luftkammern
+    const xD = xDaemm();
+    if (xD !== null) for (const q of kammern) {
+      const x0 = xD + 3 + q.k * 24, y0 = OBEN + 3 + q.r * ZH;
+      c.fillStyle = 'rgba(255,255,255,0.6)'; c.strokeStyle = 'rgba(190,140,20,0.55)'; c.lineWidth = 1.1;
+      rund(c, x0, y0, 18, 18, 6); c.fill(); c.stroke();
+      kugel(c, x0 + R_LUFT + q.u * (18 - 2 * R_LUFT), y0 + R_LUFT + q.v * (18 - 2 * R_LUFT), R_LUFT, tau(tempBei(x0 + 9)));
+    }
+    for (const [x, y, e] of pos) kugel(c, x, y, R_TEIL, e);
+
+    // Dampfsperre
+    const iS = zellen.findIndex(z => z.schicht === 'sperre');
+    if (iS >= 0) {
+      const xs = xWand + off[iS];
+      c.fillStyle = '#4b4f6b'; c.fillRect(xs, OBEN, SPERRE_PX, UNTEN - OBEN);
+      if (lochAn()) {
+        const yl = OBEN + LOCH * ZH + 4;
+        c.fillStyle = '#ffffff'; c.fillRect(xs - 1, yl, SPERRE_PX + 2, ZH - 8);
+        c.strokeStyle = '#b3261e'; c.lineWidth = 2; c.strokeRect(xs - 3, yl - 2, SPERRE_PX + 6, ZH - 4);
+        c.font = KLEIN; c.fillStyle = '#b3261e'; c.textAlign = 'right'; c.fillText('Loch', xs - 6, yl + 12);
+      }
+      c.font = KLEIN; c.fillStyle = '#4b4f6b'; c.textAlign = 'right'; c.fillText('Dampfsperre →', xs - 6, UNTEN - 8);
+    }
+
+    // Wasserdampf und Tauwasser in der Wand
+    const gruppen = leck ? [[haupt, OHNE_LOCH], [leck, LOCH_ZEILEN]] : [[haupt, ALLE]];
+    for (const [m, reihen] of gruppen) {
+      const anteil = reihen.length / ZEILEN;
+      zellen.forEach((z, i) => {
+        const n = Math.min(24, Math.round(m.p[i] / P_PUNKT * anteil));
+        for (let k = 0; k < n; k++) { const [x, y] = platz(i, slots[i][k], reihen, true); dampf(c, x, y); }
+      });
+    }
+    for (const [m, reihen] of gruppen) {
+      zellen.forEach((z, i) => {
+        const n = Math.min(MAX_TROPFEN, Math.floor(m.w[i] / W_TROPFEN));
+        for (let k = 0; k < n; k++) { const s = slots[i][23 - k]; const [x, y] = platz(i, s, reihen, false); tropfen(c, x, y); }
+      });
+    }
+    // Luftstrom durch das Loch
+    if (lochAn() && iS >= 0) {
+      const xs = xWand + off[iS], ziel = Math.max(xs + 30, xMauer() - 4), start = xs - 70;
+      for (const s of strom) dampf(c, start + s.s * (ziel - start), OBEN + LOCH * ZH + ZH / 2 + s.dy);
+    }
+    // Luft und Wasserdampf im Raum und außen
+    const gasXY = (p, b) => [b.x0 + R_GAS + p.u * (b.x1 - b.x0 - 2 * R_GAS), OBEN + R_GAS + p.v * (UNTEN - OBEN - 2 * R_GAS)];
+    for (const p of raumLuft) { const [x, y] = gasXY(p, r); kugel(c, x, y, R_GAS, tau(anz.ti)); }
+    for (const p of aussenLuft) { const [x, y] = gasXY(p, d); kugel(c, x, y, R_GAS, tau(anz.ta)); }
+    const nRaum = Math.min(50, Math.round(pInnen() / P_RAUM)), nAussen = Math.min(50, Math.round(pAussen() / P_RAUM));
+    for (let i = 0; i < nRaum; i++) { const [x, y] = gasXY(raumDampf[i], r); dampf(c, x, y); }
+    for (let i = 0; i < nAussen; i++) { const [x, y] = gasXY(aussenDampf[i], d); dampf(c, x, y); }
+
+    // Taupunkt-Linie in der Wand
+    if (lage.art !== 'keiner') {
+      c.strokeStyle = '#0e8fa8'; c.lineWidth = 2.5; c.setLineDash([7, 5]);
+      c.beginPath(); c.moveTo(lage.x, OBEN - 2); c.lineTo(lage.x, UNTEN + 2); c.stroke(); c.setLineDash([]);
+      c.font = '700 13px system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+      const t = 'Taupunkt ' + grad(ts), w = c.measureText(t).width + 14;
+      const xl = klemm(lage.x - w / 2, 4, W - w - 4);
+      c.fillStyle = 'rgba(14,143,168,0.12)'; rund(c, xl, 26, w, 19, 9); c.fill();
+      c.fillStyle = '#0b6f83'; c.textAlign = 'left'; c.fillText(t, xl + 7, 40);
+      c.font = KLEIN; c.fillStyle = '#1b5bb0'; c.textAlign = 'center';
+      if (xEnde - lage.x > 110) c.fillText('kälter als der Taupunkt', (lage.x + xEnde) / 2, UNTEN + 15);
+    } else {
+      c.font = KLEIN; c.fillStyle = '#1f7a4d'; c.textAlign = 'center';
+      c.fillText('Die ganze Wand ist wärmer als der Taupunkt (' + grad(ts) + ').', (xWand + xEnde) / 2, UNTEN + 15);
+    }
+
+    diagramm(c, ts, lage);
+  }
+
+  // Temperaturverlauf unter der Wand
+  function diagramm(c, ts, lage) {
+    const r = raum(), d = draussen();
+    const tmin = Math.min(anz.ta, ts) - 4, tmax = Math.max(anz.ti, ts) + 4;
+    const yo = D_OBEN + 22, yu = D_UNTEN - 8;
+    const y = t => yu - (t - tmin) / (tmax - tmin) * (yu - yo);
+    c.fillStyle = '#f7f9fc'; rund(c, RAND - 6, D_OBEN, W - 2 * RAND + 12, D_UNTEN - D_OBEN, 8); c.fill();
+    c.font = SCHRIFT; c.fillStyle = '#1d2840'; c.textAlign = 'left'; c.fillText('Temperaturverlauf', RAND + 4, D_OBEN + 16);
+    // Wand-Bereich und Schichtgrenzen
+    c.fillStyle = 'rgba(120,95,70,0.07)'; c.fillRect(xWand, yo - 6, xEnde - xWand, yu - yo + 10);
+    if (lage.art !== 'keiner') { c.fillStyle = 'rgba(31,111,209,0.10)'; c.fillRect(lage.x, yo - 6, xEnde - lage.x, yu - yo + 10); }
+    c.strokeStyle = 'rgba(29,40,64,0.25)'; c.lineWidth = 1; c.setLineDash([3, 3]);
+    let vor = null;
+    zellen.forEach((z, i) => { if (z.schicht !== vor) { const x = xWand + off[i]; c.beginPath(); c.moveTo(x, yo - 6); c.lineTo(x, yu + 4); c.stroke(); vor = z.schicht; } });
+    c.beginPath(); c.moveTo(xEnde, yo - 6); c.lineTo(xEnde, yu + 4); c.stroke();
+    c.setLineDash([]);
+    // 0 °C
+    if (tmin < 0 && tmax > 0) {
+      c.strokeStyle = 'rgba(29,40,64,0.18)'; c.beginPath(); c.moveTo(RAND, y(0)); c.lineTo(W - RAND, y(0)); c.stroke();
+      c.font = KLEIN; c.fillStyle = '#7b849c'; c.textAlign = 'left'; c.fillText('0 °C', RAND + 2, y(0) - 3);
+    }
+    // Taupunkt
+    c.strokeStyle = '#0e8fa8'; c.lineWidth = 2; c.setLineDash([7, 5]);
+    c.beginPath(); c.moveTo(RAND, y(ts)); c.lineTo(W - RAND, y(ts)); c.stroke(); c.setLineDash([]);
+    c.font = KLEIN; c.fillStyle = '#0b6f83'; c.textAlign = 'right'; c.fillText('Taupunkt ' + grad(ts), W - RAND - 4, y(ts) - 5);
+    // Temperaturlinie
+    const pts = [[r.x0 + 6, anz.ti], [xWand - 34, anz.ti], [xWand, tp.tsi]];
+    zellen.forEach((z, i) => pts.push([xWand + off[i] + breite[i] / 2, tp.t[i]]));
+    pts.push([xEnde, tp.tse], [xEnde + 34, anz.ta], [d.x1 - 6, anz.ta]);
+    for (let i = 0; i < pts.length - 1; i++) {
+      c.strokeStyle = farbe(tau((pts[i][1] + pts[i + 1][1]) / 2)); c.lineWidth = 3; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(pts[i][0], y(pts[i][1])); c.lineTo(pts[i + 1][0], y(pts[i + 1][1])); c.stroke();
+    }
+    c.lineCap = 'butt';
+    const kurz = t => (Math.abs(t - Math.round(t)) < 0.05 ? zahl(Math.round(t), 0) : zahl(t, 1)) + ' °C';
+    c.font = SCHRIFT; c.textAlign = 'center';
+    c.fillStyle = '#a8321f'; c.fillText(kurz(anz.ti), (r.x0 + xWand - 34) / 2 + 40, y(anz.ti) - 7);
+    c.fillStyle = '#1b5bb0'; c.fillText(kurz(anz.ta), (xEnde + 34 + d.x1) / 2, y(anz.ta) + 18);
+    if (lage.art !== 'keiner') {
+      c.fillStyle = '#0e8fa8'; c.beginPath(); c.arc(lage.x, y(ts), 5, 0, 2 * Math.PI); c.fill();
+      c.strokeStyle = '#ffffff'; c.lineWidth = 1.5; c.stroke();
+    }
+  }
+
+  // ===== Text unter dem Bild =====
+  function summe(m) { return m ? m.w.reduce((s, x) => s + x, 0) : 0; }
+  function textAktualisieren() {
+    const ts = taupunkt(anz.ti, anz.phi), lage = taupunktLage(ts);
+    $('tpWert').textContent = grad(ts) + ' (bei ' + zahl(anz.ti, 0) + ' °C und ' + Math.round(anz.phi * 100) + ' %)';
+    let lt;
+    if (lage.art === 'keiner') lt = 'keiner – die ganze Wand ist wärmer';
+    else if (lage.art === 'oberflaeche') lt = 'schon an der Innenseite der Wand!';
+    else lt = (lage.schicht === 'daemm' ? 'in der Dämmung' : lage.schicht === 'sperre' ? 'an der Dampfsperre' : 'im Mauerwerk') + ', ' + zahl(lage.cmSchicht, lage.cmSchicht < 1 ? 1 : 0) + ' cm tief';
+    $('tpLage').textContent = lt;
+    const wH = summe(haupt), wL = summe(leck), tropfenZahl = Math.floor((wH + wL) / W_TROPFEN);
+    let ort = '';
+    if (tropfenZahl > 0) {
+      const m = wL > wH ? leck : haupt;
+      const i = m.w.indexOf(Math.max(...m.w)), z = zellen[i];
+      if (m === leck) ort = 'hinter dem Loch in der Dampfsperre';
+      else if (i === 0) ort = 'an der Innenseite der Wand';
+      else if (E.art === 'innen' && (z.schicht === 'mauer' || zellen[i + 1] && zellen[i + 1].schicht === 'mauer')) ort = 'hinter der Dämmung, an der kalten Wand';
+      else ort = z.schicht === 'daemm' ? 'in der Dämmung' : 'im Mauerwerk';
+    }
+    const kasten = $('twKasten');
+    kasten.className = tropfenZahl > 0 ? 'warnung' : 'ok';
+    $('twWert').textContent = tropfenZahl === 0 ? 'keins, die Wand bleibt trocken' : (tropfenZahl > 15 ? 'viel, ' : 'etwas, ') + ort;
+    let darum;
+    if (lage.art === 'oberflaeche') darum = 'Die Innenseite der Wand ist kälter als der Taupunkt. Die feuchte Raumluft kühlt an der Wand ab, Wasser schlägt sich nieder: Schimmelgefahr! Lüften und gleichmäßig heizen hilft, dauerhaft hilft eine Dämmung.';
+    else if (E.art === 'ohne') darum = tropfenZahl > 0 ? 'Der Wasserdampf kommt bis in die kalte Zone des Mauerwerks und wird dort zu Wasser.' : 'Der Taupunkt liegt im Mauerwerk. Das Mauerwerk bremst den Wasserdampf, bis zur kalten Zone kommt nur wenig an. Die Wand bleibt trocken, aber sie ist innen kühl: Bei hoher Luftfeuchte wird es an der Innenseite gefährlich.';
+    else if (E.art === 'aussen') darum = 'So soll es sein: Die Dämmung liegt außen, das Mauerwerk bleibt warm. Der Taupunkt liegt in der Dämmung, und die Schichten werden nach außen durchlässiger. Feuchte kann nach außen austrocknen.';
+    else if (E.sperre === 'keine') darum = 'Gefahr: Die Dämmung lässt den Wasserdampf fast ungebremst durch. Dahinter ist die Wand kalt, der Dampf wird zu Wasser. Die Wand wird nass, hinter der Dämmung wächst Schimmel, und man sieht es nicht.';
+    else if (E.sperre === 'dicht') darum = 'Die Dampfsperre auf der warmen Seite hält den Wasserdampf zurück. Hinter der Dämmung kommt kaum Dampf an, die Wand bleibt trocken.';
+    else darum = 'Durch das Loch strömt warme, feuchte Raumluft hinter die Dämmung. Sie bringt viel mehr Wasser mit als die Diffusion durch die Folie. Hinter dem Loch wird die Wand nass. Deshalb muss die Dampfsperre lückenlos dicht sein.';
+    $('darum').textContent = darum;
+  }
+
+  // ===== Bedienung =====
+  function werteZeigen() {
+    $('innenWert').textContent = $('innen').value + ' °C';
+    $('aussenWert').textContent = String($('aussen').value).replace('-', '−') + ' °C';
+    $('feuchteWert').textContent = $('feuchte').value + ' %';
+  }
+  function wahlZeigen() {
+    document.querySelectorAll('#artWahl button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.art === E.art)));
+    document.querySelectorAll('#sperreWahl button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sperre === E.sperre)));
+    $('sperreGruppe').hidden = E.art !== 'innen';
+  }
+  $('innen').addEventListener('input', () => { E.ti = +$('innen').value; werteZeigen(); });
+  $('aussen').addEventListener('input', () => { E.ta = +$('aussen').value; werteZeigen(); });
+  $('feuchte').addEventListener('input', () => { E.phi = +$('feuchte').value / 100; werteZeigen(); });
+  document.querySelectorAll('#artWahl button').forEach(b => b.addEventListener('click', () => { E.art = b.dataset.art; wahlZeigen(); neueWand(); textAktualisieren(); }));
+  document.querySelectorAll('#sperreWahl button').forEach(b => b.addEventListener('click', () => { E.sperre = b.dataset.sperre; wahlZeigen(); neueWand(); textAktualisieren(); }));
+  $('pause').addEventListener('click', () => { E.pause = !E.pause; $('pause').textContent = E.pause ? '▶ Weiter' : '❚❚ Pause'; });
+  $('zurueck').addEventListener('click', () => {
+    $('innen').value = VORGABE.ti; $('aussen').value = VORGABE.ta; $('feuchte').value = VORGABE.phi;
+    Object.assign(E, { ti: VORGABE.ti, ta: VORGABE.ta, phi: VORGABE.phi / 100, art: VORGABE.art, sperre: VORGABE.sperre, pause: false });
+    Object.assign(anz, { ti: E.ti, ta: E.ta, phi: E.phi });
+    $('pause').textContent = '❚❚ Pause';
+    werteZeigen(); wahlZeigen(); neueWand(); textAktualisieren();
+  });
+
+  // ===== Start =====
+  const cv = $('leinwand'), ctx = cv.getContext('2d');
+  function groesse() {
+    const css = cv.clientWidth || 900;
+    W = Math.round(klemm(css, W_MIN, W_MAX)); skala = css / W; dpr = Math.max(1, window.devicePixelRatio || 1);
+    const alt = xWand;
+    xWand = Math.round((W - MAX_WAND) / 2);
+    if (zellen) { xEnde += xWand - alt; profilNeu(); }
+    cv.style.height = Math.round(H * skala) + 'px';
+    cv.width = Math.round(css * dpr); cv.height = Math.round(H * skala * dpr);
+  }
+  let letzte = performance.now(), textUhr = 0;
+  function bild(jetzt) {
+    const dt = Math.min(0.05, Math.max(0, (jetzt - letzte) / 1000)); letzte = jetzt;
+    if (!E.pause) schritt(dt);
+    zeichnen();
+    textUhr += dt;
+    if (textUhr > 0.25) { textUhr = 0; textAktualisieren(); }
+    requestAnimationFrame(bild);
+  }
+  groesse(); werteZeigen(); wahlZeigen(); luftNeu(); neueWand(); textAktualisieren();
+  window.addEventListener('resize', groesse);
+  requestAnimationFrame(bild);
+  window.__taupunkt = { E, anz, zustand: () => ({ haupt, leck, zellen, tp, W, xWand, xEnde }), summe: () => [summe(haupt), summe(leck)] };
+})();
+</script>
+</body>
+</html>

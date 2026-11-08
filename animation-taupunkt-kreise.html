@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taupunkt: Wann wird aus Wasserdampf Wasser?</title>
+<style>
+  :root{
+    --bg:#f3f5fa; --karte:#ffffff; --linie:#d9dfeb; --text:#1d2840; --leise:#5d6884;
+    --warm:#d93a2b; --kalt:#1f6fd1; --akzent:#0f766e; --tau:#0e8fa8; --gefahr:#b3261e; --gut:#1f7a4d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--text); font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  header{background:var(--karte); border-bottom:1px solid var(--linie); padding:14px 16px}
+  header h1{margin:0 auto; max-width:1008px; font-size:21px}
+  header p{margin:4px auto 0; max-width:1008px; color:var(--leise); font-size:15px}
+  main{max-width:1040px; margin:0 auto; padding:14px 16px 28px; display:flex; flex-direction:column; gap:12px}
+  .karte{background:var(--karte); border:1px solid var(--linie); border-radius:14px; box-shadow:0 2px 10px rgba(30,45,80,.06)}
+  .steuerung{padding:12px 14px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)) auto; gap:12px 20px; align-items:end}
+  .regler label{display:flex; justify-content:space-between; gap:8px; font-size:14px; color:var(--leise)}
+  .regler label b{color:var(--text)}
+  .regler input{width:100%; margin:6px 0 0}
+  #temp{accent-color:var(--warm)} #feuchte{accent-color:var(--tau)}
+  .knoepfe{display:flex; gap:8px}
+  button{cursor:pointer; border:1px solid transparent; border-radius:10px; padding:9px 14px; font:inherit; font-weight:700; background:var(--akzent); color:#fff; white-space:nowrap}
+  button.zweit{background:#fff; color:var(--text); border-color:var(--linie)}
+  button:focus-visible, input:focus-visible{outline:3px solid #f2b400; outline-offset:2px}
+  .bild{padding:10px}
+  canvas{display:block; width:100%; border-radius:10px}
+  .lage{padding:12px 16px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px 18px}
+  .lage > div{font-size:14px; color:var(--leise)}
+  .lage b{display:block; font-size:17px; color:var(--text)}
+  .lage .warnung b{color:var(--gefahr)} .lage .ok b{color:var(--gut)} .lage .grenze b{color:var(--tau)}
+  .lage .darum{grid-column:1/-1; font-size:15px; color:var(--text); border-top:1px solid var(--linie); padding-top:8px}
+  .hinweis{margin:0; font-size:14px; color:var(--leise); padding:0 4px}
+  .hinweis .k{display:inline-block; width:12px; height:12px; border:2px solid #7d5fb0; border-radius:50%; vertical-align:-1px; margin:0 5px 0 0}
+  .hinweis .f{display:inline-block; width:12px; height:12px; background:#9ccdf3; border-radius:50%; vertical-align:-1px; margin:0 5px 0 0}
+  .hinweis .tr{display:inline-block; width:10px; height:10px; background:#1f6fd1; border-radius:0 50% 50% 50%; transform:rotate(45deg); vertical-align:0; margin:0 6px 0 2px}
+  .hinweis .l{display:inline-block; width:16px; border-top:2px dashed var(--tau); vertical-align:4px; margin:0 5px 0 0}
+  .info{padding:12px 16px}
+  .info h2{margin:0 0 4px; font-size:18px}
+  .info .raster{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px 26px}
+  .info h3{margin:12px 0 4px; font-size:16px}
+  .info p, .info li{font-size:15px; margin:0 0 6px}
+  .info ul{margin:0; padding-left:20px}
+  .info .klein{font-size:13px; color:var(--leise); margin-top:10px}
+  @media (max-width:760px){ .steuerung{grid-template-columns:1fr} .lage{grid-template-columns:1fr 1fr} .info .raster{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<header>
+  <h1>Taupunkt: Wann wird aus Wasserdampf Wasser?</h1>
+  <p>Jeder Kreis zeigt, wie viel Wasserdampf die Luft höchstens aufnehmen kann: Warme Luft hat große Kreise, kalte Luft kleine. Das Blau im Kreis ist der Wasserdampf, der wirklich drin ist – wie voll der Kreis ist, das ist die relative Feuchte. Tauwasser läuft ab wie in einem Luftentfeuchter.</p>
+</header>
+<main>
+  <section class="karte steuerung" aria-label="Einstellungen">
+    <div class="regler"><label for="temp">Lufttemperatur <b id="tempWert"></b></label><input id="temp" type="range" min="-10" max="30" step="0.5" value="20"></div>
+    <div class="regler"><label for="feuchte">Relative Feuchte (wie voll die Kreise sind) <b id="feuchteWert"></b></label><input id="feuchte" type="range" min="5" max="100" step="1" value="50"></div>
+    <div class="knoepfe"><button id="ablauf" type="button">▶ Ablauf zeigen</button><button id="zurueck" type="button" class="zweit">Zurücksetzen</button></div>
+  </section>
+
+  <section class="karte bild">
+    <canvas id="leinwand" role="img" aria-label="Luft als Kreise: Die Kreisgröße zeigt, wie viel Wasserdampf die Luft aufnehmen kann, die blaue Füllung die relative Feuchte. Rechts ein Thermometer mit Lufttemperatur und Taupunkt. Unter dem Taupunkt fallen Tropfen aus und laufen ab."></canvas>
+  </section>
+
+  <section class="karte lage" aria-label="Werte">
+    <div>Lufttemperatur<b id="aT"></b></div>
+    <div>Relative Feuchte<b id="aPhi"></b></div>
+    <div>Taupunkt<b id="aTau"></b></div>
+    <div id="aZustandBox">Zustand<b id="aZustand"></b></div>
+    <div class="darum" id="aText"></div>
+  </section>
+
+  <p class="hinweis"><span class="k"></span>Kreis = so viel Wasserdampf passt höchstens hinein &nbsp; <span class="f"></span>Füllung = Wasserdampf in der Luft (eigentlich unsichtbar) &nbsp; <span class="tr"></span>Tropfen = Tauwasser, läuft ab &nbsp; <span class="l"></span>Taupunkt</p>
+
+  <section class="karte info">
+    <h2>Das solltest du wissen</h2>
+    <div class="raster">
+      <div>
+        <h3>Wie viel Wasserdampf passt in die Luft?</h3>
+        <p>Warme Luft kann viel mehr Wasserdampf aufnehmen als kalte. Je 10 °C wärmer passt etwa doppelt so viel hinein: 1 kg Luft fasst bei 0 °C höchstens etwa 3,8 g, bei 10 °C 7,6 g, bei 20 °C 14,7 g und bei 30 °C 27,1 g.</p>
+        <h3>Relative Feuchte</h3>
+        <p>Sie sagt, wie voll der Kreis ist: 50 % heißt halb voll, 100 % heißt randvoll. Mehr Wasserdampf geht dann nicht.</p>
+        <h3>Abkühlen</h3>
+        <p>Die Wassermenge in der Luft bleibt gleich, aber die Kreise werden kleiner. Darum steigt die relative Feuchte, obwohl kein Wasser dazukommt.</p>
+        <h3>Taupunkt</h3>
+        <p>Das ist die Temperatur, bei der die Kreise genau voll sind (100 %). Kühlt die Luft weiter ab, wird der Rest zu Wasser: Es bildet sich Tauwasser, unter 0 °C Reif. Der Taupunkt hängt nur davon ab, wie viel Wasser in der Luft ist: Mehr Wasser bedeutet einen höheren Taupunkt.</p>
+      </div>
+      <div>
+        <h3>Wieder erwärmen</h3>
+        <p>Die Kreise wachsen, die relative Feuchte sinkt. Das Tauwasser ist abgelaufen und kommt nicht zurück: Die Luft ist jetzt trockener als vorher, ihr Taupunkt ist gesunken. So arbeitet ein Luftentfeuchter: Luft abkühlen, Tauwasser ablaufen lassen, Luft wieder erwärmen.</p>
+        <h3>Wieder feuchter</h3>
+        <p>Wasser kommt nur dazu, wenn Feuchte in die Luft gelangt: Duschen, Kochen, Wäsche, Menschen, Pflanzen oder ein Befeuchter. In der Animation macht das der Regler „Relative Feuchte“.</p>
+        <h3>Im Haus</h3>
+        <ul>
+          <li>Raumluft kühlt an kalten Flächen ab: Fensterscheibe, Außenwandecke, Wärmebrücke. Ist die Fläche kälter als der Taupunkt, wird sie nass – Gefahr von Schimmel.</li>
+          <li>Lüften im Winter: Kalte Außenluft enthält wenig Wasser. Im Raum erwärmt, sinkt ihre relative Feuchte stark – sie nimmt Feuchte aus dem Raum auf.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="klein">Vereinfachtes Modell: Wie viel Wasserdampf höchstens möglich ist, hängt nur von der Temperatur ab – die Luft hält das Wasser nicht fest wie ein Schwamm. Werte nach der Magnus-Formel bei 1013 hPa Luftdruck, unter 0 °C über Eis. In der Animation läuft das Tauwasser sofort ab und verdunstet nicht wieder.</p>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  // MODELL-ANFANG
+  const P_LUFT = 101325;          // Luftdruck in Pa
+  const T_MIN = -10, T_MAX = 30;  // Bereich des Temperatur-Reglers in °C
+  // Sättigungsdampfdruck in Pa (Magnus-Formel, unter 0 °C über Eis) – wie in animation-taupunkt.html
+  function psat(t) { return t >= 0 ? 611.2 * Math.exp(17.62 * t / (243.12 + t)) : 611.2 * Math.exp(22.46 * t / (272.62 + t)); }
+  // Wassergehalt in g je kg trockener Luft zu einem Dampfdruck p
+  function gehalt(p) { return 622 * p / (P_LUFT - p); }
+  // Taupunkt: Temperatur, bei der psat genau p ist (Umkehrung derselben Formel, damit Tropfen genau dort beginnen)
+  function taupunkt(p) { let lo = -80, hi = 80; for (let i = 0; i < 70; i++) { const m = (lo + hi) / 2; if (psat(m) < p) lo = m; else hi = m; } return (lo + hi) / 2; }
+  // Wasserdampf in der Luft als Dampfdruck w (Pa). Abkühlen und Erwärmen ändern w nicht – nur das Ausfallen und der Regler.
+  function wasserAus(t, phi) { return phi * psat(t); }
+  // Abkühlen mit Ablauf (Luftentfeuchter): Was nicht mehr in die Kreise passt, fällt aus und läuft ab.
+  function ablaufen(w, t) { const ps = psat(t); return w > ps ? { w: ps, ab: gehalt(w) - gehalt(ps) } : { w, ab: 0 }; }
+  function zustandBei(t, w) {
+    const ps = psat(t), dampf = Math.min(w, ps);
+    return {
+      t, phi: dampf / ps, tau: taupunkt(dampf),
+      kap: gehalt(ps),                                  // höchstens möglich (g/kg) = Kreisgröße
+      dampfG: gehalt(dampf),                            // Wasserdampf in der Luft (g/kg) = Füllung
+      tauwasser: Math.max(0, gehalt(w) - gehalt(dampf)) // fällt bei t aus (g/kg), nur für das Standbild
+    };
+  }
+  // Füllhöhe (Anteil des Durchmessers), bei der das Wasser den Flächenanteil f des Kreises bedeckt
+  function fuellHoehe(f) {
+    if (f <= 0) return 0; if (f >= 1) return 1;
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 40; i++) { const u = (lo + hi) / 2, th = 2 * Math.acos(1 - 2 * u), a = (th - Math.sin(th)) / (2 * Math.PI); if (a < f) lo = u; else hi = u; }
+    return (lo + hi) / 2;
+  }
+  // Kreisradius: Die FLÄCHE wächst mit der höchstmöglichen Dampfmenge
+  function radius(t, rmax) { return rmax * Math.sqrt(psat(t) / psat(T_MAX)); }
+  // MODELL-ENDE
+
+  const $ = id => document.getElementById(id);
+  const cv = $('leinwand'), ctx = cv.getContext('2d');
+  const LW = 1000, LH = 460;
+  const BOX = { x: 16, y: 16, w: 716, h: 428 };
+  const BODEN = BOX.y + BOX.h - 12;
+  const ABFLUSS = BOX.x + BOX.w - 46;   // Mitte des Ablaufs im Boden
+  const RMAX = 43;
+  const KREISE = [];
+  for (let j = 0; j < 3; j++) for (let i = 0; i < 6; i++) KREISE.push({ x: 96 + i * 112, y: 130 + j * 98, ph: (i * 7 + j * 13) % 10 * 0.63 });
+  const TH = { x: 748, y: 16, w: 236, h: 428, rx: 812 };
+  const yTemp = t => 404 - (t - T_MIN) * 8;
+  const DAMPF = '#9ccdf3', WASSER = '#1f6fd1', TAU = '#0e8fa8';
+
+  let tAnz = 20, tZiel = 20, w = wasserAus(20, 0.5);
+  let abgelaufen = 0, tauVorher = taupunkt(w), letzterAusfall = -9, still = false;
+  let tropfen = [], spritzer = [], guthaben = 0, rinne = 0, rinneEis = false;
+  let zeit = 0, ablauf = null, feuchteZiehen = false;
+  let skala = 1, dpr = 1;
+
+  const zahl = (x, n) => (Math.abs(x) < 0.5 * Math.pow(10, -n) ? 0 : x).toFixed(n).replace('.', ',').replace('-', '−');
+  const grad = (x) => zahl(x, 1) + ' °C';
+  const faelltAus = () => zeit - letzterAusfall < 0.25;
+
+  function mischen(a, b, f) {
+    const h = s => [1, 3, 5].map(i => parseInt(s.slice(i, i + 2), 16));
+    const A = h(a), B = h(b);
+    return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * f)).join(',') + ')';
+  }
+  const anteil = t => Math.max(0, Math.min(1, (t - T_MIN) / (T_MAX - T_MIN)));
+  const farbe = t => mischen('#1f6fd1', '#d93a2b', anteil(t));
+  const hintergrund = t => mischen('#e8f1fd', '#fdeee8', anteil(t));
+
+  // ===== Ablauf wie im Luftentfeuchter: 20 °C / 50 % → Taupunkt → 2 °C → wieder 20 °C =====
+  const SCHRITTE = [
+    { start: () => setze(20, 50), dauer: 2.2 },
+    { start: () => { tZiel = taupunkt(w); }, warten: 1.8 },
+    { start: () => { tZiel = 2; }, warten: 2.2 },
+    { start: () => { tZiel = 20; }, warten: 4 },
+  ];
+  function ablaufSchritt(dt) {
+    const s = SCHRITTE[ablauf.i];
+    if (!ablauf.gestartet) { s.start(); ablauf.gestartet = true; ablauf.zeit = 0; ablauf.da = null; }
+    ablauf.zeit += dt;
+    let weiter = false;
+    if (s.dauer != null) weiter = ablauf.zeit >= s.dauer;
+    else if (tAnz === tZiel) { if (ablauf.da == null) ablauf.da = ablauf.zeit; weiter = ablauf.zeit - ablauf.da >= s.warten; }
+    if (weiter) { ablauf.i++; ablauf.gestartet = false; if (ablauf.i >= SCHRITTE.length) ablaufStopp(); }
+  }
+  function ablaufText(z) {
+    if (!ablauf) return '';
+    const p = Math.round(z.phi * 100);
+    switch (ablauf.i) {
+      case 0: return 'Warme Luft: Die Kreise sind halb voll – 50 % relative Feuchte.';
+      case 1: return z.phi > 0.995 ? 'Taupunkt erreicht: Die Kreise sind randvoll – 100 %.' : 'Abkühlen: Die Kreise schrumpfen, das Wasser bleibt – die Füllung steigt.';
+      case 2: return faelltAus() ? 'Unter dem Taupunkt: Das Wasser passt nicht mehr hinein – es tropft aus und läuft ab.' : (abgelaufen > 0.05 ? 'Das Tauwasser ist abgelaufen – es fehlt jetzt in der Luft.' : 'Taupunkt erreicht: Die Kreise sind randvoll – 100 %.');
+      default: return tAnz < tZiel ? 'Wieder erwärmen: Die Kreise wachsen, das Wasser fehlt – die Füllung sinkt.' : 'Wieder 20 °C, aber nur noch ' + p + ' %: Die Luft ist entfeuchtet. Mehr Feuchte nur mit dem Regler.';
+    }
+  }
+  function ablaufStopp() { ablauf = null; $('ablauf').textContent = '▶ Ablauf zeigen'; }
+
+  function neueLuft() { abgelaufen = 0; tauVorher = taupunkt(w); guthaben = 0; letzterAusfall = -9; }
+  function setze(t, rh) {
+    tAnz = tZiel = t; w = wasserAus(t, rh / 100); neueLuft();
+    tropfen = []; spritzer = []; rinne = 0;
+    $('temp').value = String(t); $('feuchte').value = String(rh);
+  }
+
+  // ===== Tropfen fallen aus und laufen über den Boden zum Ablauf =====
+  const kreisLage = (k) => ({ x: k.x + 2.5 * Math.sin(zeit * 0.8 + k.ph), y: k.y + 2.5 * Math.cos(zeit * 0.65 + k.ph * 1.3) });
+  function neuerTropfen() {
+    const k = KREISE[Math.floor(Math.random() * KREISE.length)], r = radius(tAnz, RMAX);
+    tropfen.push({ k, dx: (Math.random() - 0.5) * r * 0.9, r: 0.5, v: 0, alter: 0, haengen: 0.3 + Math.random() * 0.35, faellt: false, eis: tAnz < 0 });
+  }
+
+  function schritt(dt) {
+    zeit += dt;
+    if (ablauf) ablaufSchritt(dt);
+    const rate = ablauf ? 3 : 12, d = tZiel - tAnz;
+    tAnz = Math.abs(d) <= rate * dt ? tZiel : tAnz + Math.sign(d) * rate * dt;
+    const a = ablaufen(w, tAnz);
+    if (a.ab > 0) {
+      w = a.w; abgelaufen += a.ab;
+      if (!still) { guthaben += a.ab * 8; letzterAusfall = zeit; }
+    }
+    still = false;
+    while (guthaben >= 1) { guthaben -= 1; if (tropfen.length < 90) neuerTropfen(); }
+    tropfen = tropfen.filter(tr => {
+      tr.alter += dt;
+      if (!tr.faellt) {
+        tr.r = 0.5 + 3.3 * Math.min(1, tr.alter / tr.haengen);
+        const l = kreisLage(tr.k); tr.x = l.x + tr.dx; tr.y = l.y + radius(tAnz, RMAX) * 0.92;
+        if (tr.alter >= tr.haengen) tr.faellt = true;
+        return true;
+      }
+      tr.v += 900 * dt; tr.y += tr.v * dt;
+      if (tr.y >= BODEN - 2) {
+        rinne = Math.min(1, rinne + 0.07); rinneEis = tr.eis;
+        if (!tr.eis) spritzer.push({ x: tr.x, y: BODEN - 2, alter: 0 });
+        return false;
+      }
+      return true;
+    });
+    rinne *= Math.exp(-dt / 0.9);
+    spritzer = spritzer.filter(s => (s.alter += dt) < 0.35);
+    return zustandBei(tAnz, w);
+  }
+
+  // ===== Zeichnen =====
+  function tropfenForm(c, x, y, r, eis) {
+    if (eis) {
+      c.strokeStyle = '#6fb3dc'; c.lineWidth = 1.4; c.beginPath();
+      for (let i = 0; i < 3; i++) { const a = i * Math.PI / 3; c.moveTo(x - Math.cos(a) * r * 1.3, y - Math.sin(a) * r * 1.3); c.lineTo(x + Math.cos(a) * r * 1.3, y + Math.sin(a) * r * 1.3); }
+      c.stroke(); return;
+    }
+    c.fillStyle = WASSER; c.beginPath(); c.arc(x, y, r, 0, Math.PI, false); c.lineTo(x, y - 2.3 * r); c.closePath(); c.fill();
+  }
+
+  // extra (nur Standbild): { abgelaufen, tauVorher } – Luft wurde vorher abgekühlt, das Tauwasser ist abgelaufen
+  function zeichnen(c, z, statisch, extra) {
+    const t = z.t, eis = t < 0;
+    c.fillStyle = '#ffffff'; c.fillRect(0, 0, LW, LH);
+
+    // Raum mit Luft
+    c.fillStyle = hintergrund(t); c.strokeStyle = '#d9dfeb'; c.lineWidth = 1.5;
+    c.beginPath(); c.roundRect(BOX.x, BOX.y, BOX.w, BOX.h, 12); c.fill(); c.stroke();
+    c.fillStyle = '#1d2840'; c.font = 'bold 15px system-ui, Segoe UI, Arial, sans-serif'; c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+    c.fillText('Luft: ' + grad(t) + ' · ' + Math.round(z.phi * 100) + ' % relative Feuchte', BOX.x + 16, BOX.y + 26);
+    const txt = statisch ? '' : ablaufText(z);
+    if (txt) {
+      let fs = 14; c.font = 'bold ' + fs + 'px system-ui, Segoe UI, Arial, sans-serif';
+      while (c.measureText(txt).width > BOX.w - 52 && fs > 10) { fs -= 0.5; c.font = 'bold ' + fs + 'px system-ui, Segoe UI, Arial, sans-serif'; }
+      const tw = c.measureText(txt).width;
+      c.fillStyle = 'rgba(15,118,110,0.12)'; c.beginPath(); c.roundRect(BOX.x + 10, BOX.y + 36, tw + 20, 25, 12); c.fill();
+      c.fillStyle = '#0f766e'; c.fillText(txt, BOX.x + 20, BOX.y + 53);
+    }
+
+    // Boden mit Gefälle zum Ablauf
+    const x0 = BOX.x + 10;
+    c.strokeStyle = '#b8c2d6'; c.lineWidth = 2; c.beginPath(); c.moveTo(x0, BODEN); c.lineTo(ABFLUSS - 14, BODEN); c.moveTo(ABFLUSS + 14, BODEN); c.lineTo(BOX.x + BOX.w - 10, BODEN); c.stroke();
+    c.fillStyle = '#7b8599'; c.fillRect(ABFLUSS - 14, BODEN - 1, 28, 9);
+    c.strokeStyle = '#ffffff'; c.lineWidth = 1.5; c.beginPath();
+    for (let i = -10; i <= 10; i += 5) { c.moveTo(ABFLUSS + i, BODEN); c.lineTo(ABFLUSS + i, BODEN + 7); }
+    c.stroke();
+    // Wasserfilm, der zum Ablauf fließt
+    const film = statisch ? (z.tauwasser > 0.05 && !extra ? 0.7 : 0) : rinne;
+    const filmEis = statisch ? eis : rinneEis;
+    if (film > 0.02) {
+      const h = 1.5 + 6 * film;
+      c.fillStyle = filmEis ? 'rgba(170,210,235,0.9)' : 'rgba(31,111,209,' + (0.35 + 0.45 * film) + ')';
+      c.fillRect(x0, BODEN - h, ABFLUSS - x0, h);
+      if (!filmEis) {
+        c.strokeStyle = 'rgba(255,255,255,0.8)'; c.lineWidth = 1.2; c.beginPath();
+        for (let i = 0; i < 16; i++) { const x = x0 + ((zeit * 90 + i * 43) % (ABFLUSS - x0 - 16)); c.moveTo(x, BODEN - h / 2); c.lineTo(x + 9, BODEN - h / 2); }
+        c.stroke();
+      }
+    }
+    c.fillStyle = '#5d6884'; c.font = '12px system-ui, Segoe UI, Arial, sans-serif'; c.textAlign = 'center';
+    c.fillText('Ablauf ↓', ABFLUSS, BODEN - 12); c.textAlign = 'left';
+    const menge = statisch ? (extra ? extra.abgelaufen : z.tauwasser) : abgelaufen;
+    if (menge > 0.05) {
+      c.fillStyle = '#123c73'; c.font = 'bold 13px system-ui, Segoe UI, Arial, sans-serif'; c.textAlign = 'right';
+      c.fillText((statisch && !extra ? 'Tauwasser: ' : 'Wasser abgelaufen: ') + zahl(menge, 1) + ' g je kg Luft', ABFLUSS - 30, BODEN - 14); c.textAlign = 'left';
+    }
+
+    // Kreise: Größe = höchstmöglicher Wasserdampf, Füllung = relative Feuchte
+    const r = radius(t, RMAX), u = fuellHoehe(z.phi), voll = z.phi > 0.995;
+    for (const k of KREISE) {
+      const l = statisch ? { x: k.x, y: k.y } : kreisLage(k);
+      c.save(); c.beginPath(); c.arc(l.x, l.y, r, 0, 2 * Math.PI); c.fillStyle = 'rgba(255,255,255,0.95)'; c.fill(); c.clip();
+      if (u > 0) {
+        const oben = l.y + r - 2 * r * u;
+        c.beginPath(); c.moveTo(l.x - r - 2, l.y + r + 2); c.lineTo(l.x - r - 2, oben);
+        for (let x = -r; x <= r + 0.1; x += 2.5) c.lineTo(l.x + x, oben + (voll || statisch ? 0 : 1.3 * Math.sin(x * 0.2 + zeit * 3 + k.ph)));
+        c.lineTo(l.x + r + 2, l.y + r + 2); c.closePath(); c.fillStyle = DAMPF; c.fill();
+      }
+      c.restore();
+      c.beginPath(); c.arc(l.x, l.y, r, 0, 2 * Math.PI);
+      c.lineWidth = voll ? 3.2 : 2.2; c.strokeStyle = voll ? TAU : farbe(t); c.stroke();
+      if (statisch && z.tauwasser > 0.05) tropfenForm(c, l.x, l.y + r + 6, 3.6, eis);
+    }
+
+    // Tropfen und Spritzer
+    if (!statisch) {
+      for (const tr of tropfen) tropfenForm(c, tr.x, tr.y, tr.r, tr.eis);
+      for (const s of spritzer) { c.strokeStyle = 'rgba(31,111,209,' + (1 - s.alter / 0.35) + ')'; c.lineWidth = 1.5; c.beginPath(); c.ellipse(s.x, s.y, 3 + s.alter * 30, 1 + s.alter * 6, 0, 0, 2 * Math.PI); c.stroke(); }
+    }
+
+    // Thermometer mit Taupunkt
+    c.fillStyle = '#ffffff'; c.strokeStyle = '#d9dfeb'; c.lineWidth = 1.5;
+    c.beginPath(); c.roundRect(TH.x, TH.y, TH.w, TH.h, 12); c.fill(); c.stroke();
+    c.fillStyle = '#1d2840'; c.font = 'bold 15px system-ui, Segoe UI, Arial, sans-serif'; c.fillText('Thermometer', TH.x + 14, TH.y + 26);
+    const begrenzt = tt => Math.min(yTemp(T_MIN), Math.max(yTemp(T_MAX), yTemp(tt)));
+    const yTau = begrenzt(z.tau);
+    const zx0 = TH.rx + 16, zx1 = TH.x + TH.w - 10;
+    c.fillStyle = 'rgba(31,122,77,0.07)'; c.fillRect(zx0, yTemp(T_MAX), zx1 - zx0, yTau - yTemp(T_MAX));
+    c.fillStyle = 'rgba(14,143,168,0.13)'; c.fillRect(zx0, yTau, zx1 - zx0, yTemp(T_MIN) - yTau);
+    c.font = '12px system-ui, Segoe UI, Arial, sans-serif'; c.textAlign = 'right';
+    if (yTau - yTemp(T_MAX) > 22) { c.fillStyle = '#1f7a4d'; c.fillText('trocken', zx1 - 6, yTemp(T_MAX) + 14); }
+    if (yTemp(T_MIN) - yTau > 22) { c.fillStyle = '#0b6f83'; c.fillText('Tauwasser', zx1 - 6, yTemp(T_MIN) - 6); }
+    c.fillStyle = '#5d6884';
+    for (let g = T_MIN; g <= T_MAX; g += 5) {
+      const y = yTemp(g); c.fillText(zahl(g, 0) + ' °C', TH.rx - 16, y + 4);
+      c.strokeStyle = '#c3cbdb'; c.lineWidth = 1; c.beginPath(); c.moveTo(TH.rx - 12, y); c.lineTo(TH.rx - 8, y); c.stroke();
+    }
+    c.textAlign = 'left';
+    c.fillStyle = '#eef1f7'; c.strokeStyle = '#b8c2d6'; c.lineWidth = 1.5;
+    c.beginPath(); c.roundRect(TH.rx - 7, yTemp(T_MAX) - 10, 14, yTemp(T_MIN) - yTemp(T_MAX) + 22, 7); c.fill(); c.stroke();
+    c.beginPath(); c.arc(TH.rx, 424, 13, 0, 2 * Math.PI); c.fillStyle = farbe(t); c.fill();
+    c.fillRect(TH.rx - 4, yTemp(t), 8, 424 - yTemp(t));
+    // Taupunkt vorher (blass), solange die Luft durch Abkühlen trockener geworden ist
+    const tauV = statisch ? (extra ? extra.tauVorher : z.tau) : tauVorher;
+    if (tauV - z.tau > 0.3) {
+      const yV = begrenzt(tauV);
+      c.strokeStyle = 'rgba(14,143,168,0.45)'; c.lineWidth = 1.5; c.setLineDash([2, 4]); c.beginPath(); c.moveTo(zx0, yV); c.lineTo(zx1, yV); c.stroke(); c.setLineDash([]);
+      c.fillStyle = 'rgba(11,111,131,0.75)'; c.font = '11px system-ui, Segoe UI, Arial, sans-serif'; c.textAlign = 'right';
+      c.fillText('vorher ' + grad(tauV), zx1 - 4, yV - 4); c.textAlign = 'left';
+    }
+    // aktuelle Taupunkt-Linie
+    c.strokeStyle = TAU; c.lineWidth = 2; c.setLineDash([6, 4]); c.beginPath(); c.moveTo(TH.rx - 10, yTau); c.lineTo(zx1, yTau); c.stroke(); c.setLineDash([]);
+    // Luft-Marke
+    const yL = yTemp(t);
+    c.fillStyle = farbe(t); c.beginPath(); c.moveTo(TH.rx + 9, yL); c.lineTo(TH.rx + 19, yL - 6); c.lineTo(TH.rx + 19, yL + 6); c.closePath(); c.fill();
+    const luftOben = yL <= yTau;
+    c.font = 'bold 13px system-ui, Segoe UI, Arial, sans-serif';
+    c.fillStyle = farbe(t); c.fillText('Luft ' + grad(t), TH.rx + 24, luftOben ? yL - 8 : yL + 18);
+    let tauTxt = 'Taupunkt ' + grad(z.tau);
+    if (z.tau < T_MIN) tauTxt += ' ↓'; else if (z.tau > T_MAX) tauTxt += ' ↑';
+    c.fillStyle = '#0b6f83'; c.fillText(tauTxt, TH.rx + 24, luftOben ? yTau + 17 : yTau - 7);
+  }
+
+  // ===== Werte unter dem Bild =====
+  const alt = {};
+  function setzeText(id, s) { if (alt[id] !== s) { $(id).textContent = s; alt[id] = s; } }
+  function anzeigen(z) {
+    const p = Math.round(z.phi * 100), aus = faelltAus(), grenze = !aus && z.phi > 0.995;
+    setzeText('tempWert', grad(tZiel)); setzeText('feuchteWert', p + ' %');
+    if (!feuchteZiehen) { const v = String(Math.max(5, p)); if ($('feuchte').value !== v) $('feuchte').value = v; }
+    if (ablauf) { const v = String(Math.round(tAnz * 2) / 2); if ($('temp').value !== v) $('temp').value = v; setzeText('tempWert', grad(tAnz)); }
+    setzeText('aT', grad(z.t)); setzeText('aPhi', p + ' %'); setzeText('aTau', grad(z.tau));
+    const klasse = aus ? 'warnung' : grenze ? 'grenze' : 'ok';
+    if (alt.klasse !== klasse) { $('aZustandBox').className = klasse; alt.klasse = klasse; }
+    setzeText('aZustand', aus ? (z.t < 0 ? 'Reif fällt aus' : 'Tauwasser fällt aus') : grenze ? 'genau am Taupunkt' : 'trocken – über dem Taupunkt');
+    const ab = abgelaufen > 0.05 ? zahl(abgelaufen, 1) : null;
+    let s;
+    if (aus) s = 'Die Luft wird kälter als ihr Taupunkt. Bei ' + grad(z.t) + ' passen nur noch ' + zahl(z.kap, 1) + ' g Wasserdampf in 1 kg Luft – der Rest fällt als ' + (z.t < 0 ? 'Reif' : 'Tauwasser') + ' aus und läuft ab (bisher ' + zahl(abgelaufen, 1) + ' g je kg Luft). Dabei sinkt der Taupunkt mit.';
+    else if (grenze) s = 'Bei ' + grad(z.t) + ' sind die Kreise randvoll: 1 kg Luft enthält ' + zahl(z.dampfG, 1) + ' g Wasserdampf, mehr geht nicht (100 %). Noch etwas kälter, dann bilden sich Tropfen.' + (ab ? ' Bisher sind ' + ab + ' g Wasser je kg Luft abgelaufen.' : '');
+    else {
+      s = 'Ein Kreis zeigt, wie viel Wasserdampf 1 kg Luft bei ' + grad(z.t) + ' höchstens aufnehmen kann: ' + zahl(z.kap, 1) + ' g. Darin sind ' + zahl(z.dampfG, 1) + ' g – der Kreis ist zu ' + p + ' % gefüllt.';
+      s += ab ? ' Beim Abkühlen sind ' + ab + ' g Wasser je kg Luft abgelaufen: Der Taupunkt ist von ' + grad(tauVorher) + ' auf ' + grad(z.tau) + ' gesunken – die Luft ist entfeuchtet. Mehr Feuchte bringt nur der Regler „Relative Feuchte“.'
+              : ' Kühlt die Luft unter ' + grad(z.tau) + ' ab, wird es nass.';
+    }
+    setzeText('aText', s);
+  }
+
+  // ===== Bedienung =====
+  $('temp').addEventListener('input', () => { if (ablauf) ablaufStopp(); tZiel = parseFloat($('temp').value); });
+  $('feuchte').addEventListener('pointerdown', () => { feuchteZiehen = true; });
+  window.addEventListener('pointerup', () => { feuchteZiehen = false; });
+  $('feuchte').addEventListener('input', () => {
+    if (ablauf) ablaufStopp();
+    w = wasserAus(tAnz, parseFloat($('feuchte').value) / 100); still = true; neueLuft();
+  });
+  $('feuchte').addEventListener('change', () => { feuchteZiehen = false; });
+  $('ablauf').addEventListener('click', () => {
+    if (ablauf) { ablaufStopp(); return; }
+    ablauf = { i: 0, gestartet: false }; $('ablauf').textContent = '■ Ablauf stoppen';
+  });
+  $('zurueck').addEventListener('click', () => { ablaufStopp(); setze(20, 50); });
+
+  function groesse() {
+    const css = cv.clientWidth || LW; skala = css / LW; dpr = window.devicePixelRatio || 1;
+    cv.style.height = Math.round(LH * skala) + 'px';
+    cv.width = Math.round(css * dpr); cv.height = Math.round(LH * skala * dpr);
+  }
+  let letzte = null;
+  function bild(jetzt) {
+    const dt = letzte == null ? 0 : Math.min(0.05, (jetzt - letzte) / 1000); letzte = jetzt;
+    const z = schritt(dt); anzeigen(z);
+    ctx.setTransform(skala * dpr, 0, 0, skala * dpr, 0, 0); zeichnen(ctx, z, false);
+    requestAnimationFrame(bild);
+  }
+
+  // ===== Standbild für das Arbeitsblatt (2000 Pixel breit): Luft mit tStart/rh auf t abgekühlt oder erwärmt =====
+  // Wird über den Taupunkt hinaus abgekühlt, zeigt das Bild die Tropfen, die gerade ausfallen.
+  // Mit tMin: Die Luft war vorher auf tMin abgekühlt, das Tauwasser ist abgelaufen (Luftentfeuchter).
+  function standbild(tStart, rh, t, tMin) {
+    const aus = document.createElement('canvas'); aus.width = LW * 2; aus.height = LH * 2;
+    const c = aus.getContext('2d'); c.setTransform(2, 0, 0, 2, 0, 0);
+    const w0 = wasserAus(tStart, rh / 100);
+    if (tMin == null) zeichnen(c, zustandBei(t, w0), true);
+    else { const a = ablaufen(w0, tMin); zeichnen(c, zustandBei(t, a.w), true, { abgelaufen: a.ab, tauVorher: taupunkt(w0) }); }
+    return aus.toDataURL('image/png');
+  }
+
+  setze(20, 50); groesse();
+  window.addEventListener('resize', groesse);
+  requestAnimationFrame(bild);
+  window.__kreise = { zustand: () => zustandBei(tAnz, w), setze, standbild, abgelaufen: () => abgelaufen, tauVorher: () => tauVorher, tropfen: () => tropfen.length, ablauf: () => ablauf && ablauf.i };
+})();
+</script>
+</body>
+</html>
