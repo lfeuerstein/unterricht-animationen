@@ -381,12 +381,28 @@ function erzeugeSim(o) {
     if (schritte % 120 === 0) { const k = schritte / 120; verlauf.length = k; verlauf[k] = sim.speichern(); }
   }
   function anhalten() { laeuft = false; el('start').textContent = '▶ Start'; }
-  function springe(ziel) {
+  // Nach vorne springen heißt vorausrechnen (bis 30 min = 216 000 Schritte, mehrere Sekunden). Damit die Seite dabei nicht hängt
+  // (Video 10.11.2026: Bild stand 7–10 s), wird in Portionen von ~30 ms gerechnet und dazwischen gezeichnet – man sieht einen schnellen
+  // Vorlauf. Gleiche Schritte wie ohne Portionen, also gleiches Ergebnis. sofort = in einem Zug (für Standbilder).
+  let sprungZiel = null;
+  function springe(ziel, sofort) {
     ziel = Math.max(0, Math.min(MAXT, Math.round(ziel)));
     const letzter = verlauf.length - 1;
-    if (ziel <= letzter) { sim.laden(verlauf[ziel]); schritte = ziel * 120; }
-    else { sim.laden(verlauf[letzter]); schritte = letzter * 120; while (schritte < ziel * 120) schritt1(); }
+    if (ziel <= letzter) { sprungZiel = null; sim.laden(verlauf[ziel]); schritte = ziel * 120; }
+    else {
+      if (sprungZiel === null) { sim.laden(verlauf[letzter]); schritte = letzter * 120; }
+      if (sofort) { sprungZiel = null; while (schritte < ziel * 120) schritt1(); }
+      else { const neuStart = sprungZiel === null; sprungZiel = ziel; if (neuStart) requestAnimationFrame(sprungTakt); }
+    }
     rest = 0; zeichne(); anzeigen(); zeichneKurve(true);
+  }
+  function sprungTakt() {
+    if (sprungZiel === null) return;
+    const t0 = performance.now();
+    while (schritte < sprungZiel * 120 && performance.now() - t0 < 30) for (let i = 0; i < 60 && schritte < sprungZiel * 120; i++) schritt1();
+    if (schritte >= sprungZiel * 120) sprungZiel = null;
+    rest = 0; zeichne(); anzeigen(); zeichneKurve(true);
+    if (sprungZiel !== null) requestAnimationFrame(sprungTakt);
   }
   function zukunftVerwerfen() { if (sim) verlauf.length = Math.floor(schritte / 120) + 1; }
 
@@ -472,7 +488,7 @@ function erzeugeSim(o) {
   function neu() {
     sim = erzeugeSim(Object.assign({}, L, { heiz: eAus(Number(heiz.value)), aussen: eAus(Number(aussen.value)), raumStart: eAus(20),
       heizung: heizung.checked, daemmung: wandWahl() }));
-    verlauf = [sim.speichern()]; schritte = 0; rest = 0;
+    verlauf = [sim.speichern()]; schritte = 0; rest = 0; sprungZiel = null;
     zeichne(); anzeigen(); zeichneKurve(true);
   }
 
@@ -581,12 +597,13 @@ function erzeugeSim(o) {
     for (const [id, E] of [['aHeiz', m.heiz], ['aRaum', m.raum], ['aWandI', m.wandI], ['aWandA', m.wandA], ['aAussen', sim.Eaussen]]) {
       const d = el(id); d.style.width = Math.round(E * 100) + '%'; d.style.background = farbe(E);
     }
-    zeit.value = String(Math.floor(sim.t + 1e-6));
-    el('zeitWert').textContent = mmss(sim.t + 1e-6) + (raffer.checked ? ' (Zeitraffer ' + RAFFER + '×)' : '') + (schritte >= MAXT * 120 ? ' – Ende' : '');
+    if (sprungZiel === null) zeit.value = String(Math.floor(sim.t + 1e-6)); // beim Vorlauf bleibt der Schieber am Ziel
+    el('zeitWert').textContent = (sprungZiel !== null ? '⏩ ' : '') + mmss(sim.t + 1e-6) + (raffer.checked ? ' (Zeitraffer ' + RAFFER + '×)' : '') + (schritte >= MAXT * 120 ? ' – Ende' : '');
   }
 
   function takt(jetzt) {
     if (!laeuft) return;
+    if (sprungZiel !== null) { letzte = jetzt; requestAnimationFrame(takt); return; } // erst den Vorlauf zu Ende rechnen, dann weiter
     const dtEcht = Math.min(0.05, (jetzt - letzte) / 1000); letzte = jetzt;
     rest += dtEcht * (raffer.checked ? RAFFER : 1);
     while (rest >= DT) { if (schritte >= MAXT * 120) { anhalten(); break; } schritt1(); rest -= DT; }
@@ -631,9 +648,10 @@ function erzeugeSim(o) {
       if (e.aussen != null) aussen.value = String(e.aussen);
       if (e.heizung != null) { heizung.checked = !!e.heizung; el('schalterHeizung').classList.toggle('an', heizung.checked); }
       anhalten(); regler(); neu();
-      if (e.sekunden) springe(e.sekunden);
+      if (e.sekunden) springe(e.sekunden, true);
       return { raum: temp(sim.mittel().raum), wand: [0, 1, 2, 3, 4, 5].map((c) => temp(sim.spalteE(c))), t: sim.t };
     },
+    springt() { return sprungZiel !== null; }, // läuft gerade ein Vorlauf (Zeitleiste nach vorne)? Fürs Erklärvideo
     standbild() { // Bild + Kurve, darunter rechts die Farbskala (auf Papier sonst nicht ablesbar)
       const sk = el('skala'), zeile = sk.height + 8 * dpr;
       const c = document.createElement('canvas'); c.width = bild.width; c.height = bild.height + kurve.height + zeile;
