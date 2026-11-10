@@ -7,633 +7,645 @@
 <style>
   :root{
     --bg:#f3f5fa; --karte:#ffffff; --linie:#d9dfeb; --text:#1d2840; --leise:#5d6884;
-    --warm:#d93a2b; --kalt:#1f6fd1; --akzent:#0f766e; --lupe:#e86a00;
+    --warm:#d93a2b; --kalt:#1f6fd1; --akzent:#0f766e; --raffer:#6d28d9; --heiz:#c2410c; --daemm:#a16207;
   }
   *{box-sizing:border-box}
   body{margin:0; background:var(--bg); color:var(--text); font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
   header{background:var(--karte); border-bottom:1px solid var(--linie); padding:14px 16px}
   header h1{margin:0 auto; max-width:1008px; font-size:21px}
+  header .unter{margin:2px auto 0; max-width:1008px; font-size:15px; font-weight:600; color:var(--leise)}
   header p{margin:4px auto 0; max-width:1008px; color:var(--leise); font-size:15px}
   main{max-width:1040px; margin:0 auto; padding:14px 16px 28px; display:flex; flex-direction:column; gap:12px}
   .karte{background:var(--karte); border:1px solid var(--linie); border-radius:14px; box-shadow:0 2px 10px rgba(30,45,80,.06)}
-  .steuerung{padding:12px 14px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)) auto; gap:12px 20px; align-items:end}
+  .steuerung{padding:12px 14px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)) auto; gap:12px 20px; align-items:end}
   .regler label{display:flex; justify-content:space-between; gap:8px; font-size:14px; color:var(--leise)}
   .regler label b{color:var(--text)}
   .regler input{width:100%; margin:6px 0 0}
-  #innen{accent-color:var(--warm)} #aussen{accent-color:var(--kalt)} #dauer{accent-color:var(--akzent)}
+  #heiz{accent-color:var(--warm)} #aussen{accent-color:var(--kalt)}
   .knoepfe{display:flex; gap:8px}
   button{cursor:pointer; border:1px solid transparent; border-radius:10px; padding:9px 14px; font:inherit; font-weight:700; background:var(--akzent); color:#fff; white-space:nowrap}
   button.zweit{background:#fff; color:var(--text); border-color:var(--linie)}
   button:focus-visible, input:focus-visible{outline:3px solid #f2b400; outline-offset:2px}
-  .ablauf{grid-column:1/-1; display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; font-size:13px; color:var(--leise)}
-  .schalter{display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:var(--text); cursor:pointer; padding:5px 12px; border:1px solid var(--linie); border-radius:999px; background:#fff; user-select:none}
-  .schalter input{width:18px; height:18px; margin:0; accent-color:var(--lupe); cursor:pointer}
-  .schalter.an{border-color:var(--lupe); background:#fff3e6; color:#9a4500}
-  .zeit{flex:1; min-width:220px; display:flex; align-items:center; gap:10px}
-  .balken{flex:1; height:7px; border-radius:6px; background:#e6eaf2; overflow:hidden}
-  .balken>div{height:100%; width:0; background:var(--akzent)}
-  .wand{padding:10px}
-  .wand h2{margin:2px 4px 8px; font-size:17px; display:flex; flex-wrap:wrap; align-items:center; gap:8px}
-  .buchst{display:inline-grid; place-items:center; width:26px; height:26px; border-radius:8px; background:#eef1f7; font-size:14px}
-  .befund{margin-left:auto; font-size:14px; font-weight:600; padding:3px 12px; border-radius:999px; background:#eef1f7}
-  canvas{display:block; width:100%; border-radius:10px}
-  .hinweis{margin:0; font-size:14px; color:var(--leise); padding:0 4px}
+  .ablauf{grid-column:1/-1; display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; font-size:14px; color:var(--leise)}
+  .schalter{display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:var(--text); cursor:pointer; padding:5px 12px; border:1px solid var(--linie); border-radius:999px; background:#fff}
+  .schalter input{width:18px; height:18px; margin:0; cursor:pointer}
+  #heizung{accent-color:var(--heiz)} #raffer{accent-color:var(--raffer)} .wahl input{accent-color:var(--daemm)}
+  .schalter.an.h{border-color:var(--heiz); background:#fff1ea; color:#8a2d07}
+  .schalter.an.r{border-color:var(--raffer); background:#f3edff; color:#4c1d95}
+  .schalter.an.w{border-color:var(--daemm); background:#fff8db; color:#713f12}
+  .wahl{display:inline-flex; flex-wrap:wrap; align-items:center; gap:8px}
+  .wahl > span{font-weight:600; color:var(--text)}
+  .farbskala{display:inline-flex; align-items:center; gap:6px; margin-left:auto; font-weight:600; color:var(--text)}
+  .farbskala canvas{width:252px; height:30px; border-radius:0; background:transparent}
+  .zeitleiste{grid-column:1/-1}
+  .zeitleiste label{display:flex; justify-content:space-between; gap:8px; font-size:14px; color:var(--leise)}
+  .zeitleiste label b{color:var(--text); font-variant-numeric:tabular-nums}
+  .zeitleiste input{width:100%; margin:6px 0 2px; accent-color:var(--akzent)}
+  .skala{display:flex; justify-content:space-between; font-size:12px; color:var(--leise)}
+  .bild{padding:10px}
+  canvas{display:block; width:100%; height:auto; border-radius:10px; background:#fff}
+  .anzeigen{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:10px 4px 6px}
+  .anz{font-size:13px; color:var(--leise)}
+  .anz b{display:block; color:var(--text); font-size:14px}
+  .stab{height:9px; border-radius:6px; background:#e6eaf2; overflow:hidden; margin-top:4px}
+  .stab>div{height:100%; width:0; border-radius:6px}
+  .kurvekopf{margin:12px 4px 6px; font-size:16px}
+  .kurvekopf span{font-weight:400; font-size:14px; color:var(--leise)}
+  .hinweis{margin:4px 4px 0; font-size:14px; color:var(--leise)}
   .hinweis .p{display:inline-block; width:11px; height:11px; border-radius:50%; vertical-align:-1px; margin:0 5px 0 0}
-  .hinweis .pf{color:var(--lupe); font-weight:700}
   .merke{padding:12px 16px; border-color:#9fd4c3; background:#effaf6}
   .merke h2{margin:0 0 6px; font-size:17px}
   .merke p{margin:0 0 6px} .merke p:last-child{margin:0}
-  [hidden]{display:none !important}
-  @media (max-width:720px){ .steuerung{grid-template-columns:1fr} }
+  .modell{color:var(--leise); font-size:14px}
+  @media (max-width:720px){ .steuerung{grid-template-columns:1fr} .anzeigen{grid-template-columns:repeat(3,minmax(0,1fr))} }
 </style>
 </head>
 <body>
 <header>
   <h1>Wärme wandert durch die Wand – ohne und mit Dämmung</h1>
-  <p>Stell ein, wie schnell sich die Teilchen innen und außen bewegen. Drück dann auf Start: Die Heizung geht aus, und du siehst, wohin die Wärme wandert.</p>
+  <p class="unter">Vom Heizkörper über die Raumluft durch die Wand nach außen – Wärme als Schwingung</p>
+  <p>Jedes Teilchen schwingt in sich: schnelle Schwingung = warm (rot), langsame Schwingung = kalt (blau). Der Heizkörper gibt seine Schwingung an die Raumluft ab, die Raumluft an die Wand, die Wand an die Außenluft. Schalte die Dämmung aus (Wand A) oder ein (Wand B), drück auf Start und beobachte den Weg der Wärme. Die Kurve darunter zeigt den Temperaturverlauf.</p>
 </header>
 <main>
   <section class="karte steuerung" aria-label="Einstellungen">
-    <div class="regler"><label for="innen">Bewegung innen <b id="innenWert"></b></label><input id="innen" type="range" min="1" max="10" step="1" value="9"></div>
-    <div class="regler"><label for="aussen">Bewegung außen <b id="aussenWert"></b></label><input id="aussen" type="range" min="1" max="10" step="1" value="1"></div>
-    <div class="regler"><label for="dauer">Ablaufzeit <b id="dauerWert"></b></label><input id="dauer" type="range" min="10" max="120" step="5" value="40"></div>
+    <div class="regler"><label for="heiz">Schwingung Heizkörper <b id="heizWert"></b></label><input id="heiz" type="range" min="25" max="70" step="5" value="50"></div>
+    <div class="regler"><label for="aussen">Schwingung Außenluft <b id="aussenWert"></b></label><input id="aussen" type="range" min="-15" max="35" step="1" value="-12"></div>
     <div class="knoepfe"><button id="start" type="button">▶ Start</button><button id="zurueck" type="button" class="zweit">Zurücksetzen</button></div>
     <div class="ablauf">
-      <label class="schalter" id="schalterLupe" title="Wird langsam, sobald ein Stoß in die Wand läuft, und wieder normal, wenn er durch ist."><input id="zeitlupe" type="checkbox"> Impulsweitergabe in Zeitlupe</label>
-      <div class="zeit"><span>Zeitraffer</span><div class="balken"><div id="balken"></div></div><span id="prozent">0 %</span></div>
+      <div class="wahl" role="radiogroup" aria-label="Dämmung"><span>Dämmung:</span>
+        <label class="schalter w an" id="wahlA" title="Wand A: Mauerwerk ohne Dämmung. Beim Umschalten beginnt der Ablauf von vorn."><input type="radio" name="wand" value="A" checked> ohne</label>
+        <label class="schalter w" id="wahlB" title="Wand B: Mauerwerk mit Kerndämmung (eingeschlossene Luft in kleinen Kammern). Beim Umschalten beginnt der Ablauf von vorn."><input type="radio" name="wand" value="B"> mit</label>
+      </div>
+      <label class="schalter h an" id="schalterHeizung" title="An: Der Heizkörper hat sofort die eingestellte Temperatur und gibt Schwingung an die Raumluft ab. Aus: Der Heizkörper hat sofort die Temperatur der Raumluft und gibt keine Wärme mehr ab."><input id="heizung" type="checkbox" checked> Heizung an</label>
+      <label class="schalter r" id="schalterRaffer" title="Die Zeit läuft 20-mal schneller: 1 Sekunde hier sind 20 Sekunden im Modell."><input id="raffer" type="checkbox"> Zeitraffer (20-fach)</label>
+      <div class="farbskala"><span>Farbe:</span><canvas id="skala" width="252" height="30" role="img" aria-label="Farbskala der Temperatur: dunkelblau −15 °C, blau −10 °C, grün um 0 bis 5 °C, gelb um 12 °C, orange um 18 °C, rot ab 24 °C, dunkelrot bis 70 °C."></canvas></div>
+    </div>
+    <div class="zeitleiste">
+      <label for="zeit">Zeitleiste – nach rechts schieben überspringt Zeit, nach links geht es zurück <b id="zeitWert">0 min 00 s</b></label>
+      <input id="zeit" type="range" min="0" max="1800" step="1" value="0">
+      <div class="skala" aria-hidden="true"><span>0</span><span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30 min</span></div>
     </div>
   </section>
 
-  <section class="karte wand">
-    <h2><span class="buchst">A</span>Wand ohne Dämmung<span class="befund" id="befundA" hidden></span></h2>
-    <canvas id="leinwandA" role="img" aria-label="Wand ohne Dämmung: Die Teilchen geben ihre Bewegung Reihe für Reihe durch die ganze Wand weiter."></canvas>
-  </section>
-  <section class="karte wand">
-    <h2><span class="buchst">B</span>Wand mit Dämmung<span class="befund" id="befundB" hidden></span></h2>
-    <canvas id="leinwandB" role="img" aria-label="Wand mit Dämmung: Die Stöße prallen an der Dämmung zurück."></canvas>
+  <section class="karte bild" aria-label="Animation">
+    <canvas id="bild" width="960" height="460" role="img" aria-label="Heizkörper links, Raumluft, Wand in der Mitte (bei Wand B mit gelber Dämmung aus Luftkammern), Außenluft rechts. Die Teilchen schwingen je nach Wärme schnell oder langsam."></canvas>
+    <h2 class="kurvekopf">Temperaturverlauf <span>– Heizkörper, Raum, durch die Wand, außen (läuft mit)</span></h2>
+    <canvas id="kurve" width="960" height="230" role="img" aria-label="Temperaturverlauf: Heizkörper links, dann Raumluft, Temperatur in der Wand von innen nach außen, Außentemperatur rechts."></canvas>
+    <div class="anzeigen" aria-label="Wie stark schwingen die Teilchen im Mittel?">
+      <div class="anz"><b>Heizkörper</b><div class="stab"><div id="aHeiz"></div></div></div>
+      <div class="anz"><b>Raumluft</b><div class="stab"><div id="aRaum"></div></div></div>
+      <div class="anz"><b>Wand innen</b><div class="stab"><div id="aWandI"></div></div></div>
+      <div class="anz"><b>Wand außen</b><div class="stab"><div id="aWandA"></div></div></div>
+      <div class="anz"><b>Außenluft</b><div class="stab"><div id="aAussen"></div></div></div>
+    </div>
+    <p class="hinweis"><span class="p" style="background:#b91c1c"></span>schnelle Eigenschwingung = warm &nbsp; <span class="p" style="background:#1f6fd1"></span>langsame Eigenschwingung = kalt &nbsp; <span class="p" style="background:none;border:2px solid #e86a00"></span>Stoß mit Übergabe: Ring und Wellenpaket zeigen, wohin die Schwingung geht (am Heizkörper, an der Wand, in den Luftkammern der Dämmung); kleine Wellenpakete im Mauerwerk: Weitergabe von Teilchen zu Teilchen. Achte auf die Raumluft: Am Heizkörper steigt sie auf, an der Wand sinkt sie ab.</p>
   </section>
 
-  <p class="hinweis"><span class="p" style="background:#d93a2b"></span>schnelle Bewegung = warm &nbsp;·&nbsp; <span class="p" style="background:#1f6fd1"></span>langsame Bewegung = kalt &nbsp;·&nbsp; <span class="p" style="background:#ffbf1f"></span>gelber Ring: Ein Teilchen stößt seinen Nachbarn an und gibt Bewegung weiter. &nbsp;·&nbsp; <span class="pf">→</span> In der Zeitlupe zeigt ein oranger Pfeil, wohin der Stoß gerade läuft.</p>
-
-  <section class="karte merke" id="merke" hidden>
+  <section class="karte merke">
     <h2>Merke</h2>
-    <p></p><p></p><p></p>
+    <p>Schnelle Eigenschwingung heißt warm, langsame Eigenschwingung heißt kalt. Wärme wandert immer von warm nach kalt.</p>
+    <p>Auch der Heizkörper besteht aus Teilchen. Solange die Heizung an ist, hält das heiße Heizungswasser sie in schneller Schwingung, zum Beispiel bei 50 °C. Bei −12 °C draußen stellt sich der Raum mit Wand A dann auf etwa 22 °C ein. Stößt ein Luftteilchen an den Heizkörper, übernimmt es einen Teil dieser Schwingung: Es wird wärmer (röter) und schwingt schneller. Warme Luft ist leichter als kalte: Die erwärmten Teilchen steigen nach oben. Schaltest du die Heizung aus, hat der Heizkörper sofort die Temperatur der Raumluft und gibt keine Wärme mehr ab; schaltest du sie an, hat er sofort die eingestellte Temperatur (im Modell ohne Aufheiz- und Abkühlzeit).</p>
+    <p>Trifft das Luftteilchen danach auf die Wand, gibt es einen Teil seiner Schwingung an die Wand ab: Es wird kälter (blauer) und schwingt langsamer. Das Wandteilchen an dieser Stelle schwingt dafür schneller. Die abgekühlte Luft sinkt an der Wand nach unten und strömt am Boden zurück zum Heizkörper: Im Raum entsteht eine Luftwalze (Konvektion), die die Wärme vom Heizkörper zur Wand trägt. Die Teilchen im Mauerwerk geben die Schwingung an ihre Nachbarn weiter (kleine Wellenpakete von Teilchen zu Teilchen). So wandert sie langsam durch die Wand nach außen. Außen gibt die Wand die Schwingung an die kalte Außenluft ab. Diese Wärme ist für den Raum verloren.</p>
+    <p><b>Wand B mit Dämmung:</b> In der Dämmung ist Luft in vielen kleinen Kammern eingesperrt. Anders als die Luft im Raum oder draußen kann sie nicht strömen und die Wärme nicht mitnehmen. Ihre Teilchen geben die Schwingung nur durch seltene Stöße an die dünnen Kammerwände (Schaum) weiter, von Kammer zu Kammer. Darum kommt die Schwingung durch die Dämmung kaum weiter: Fast das ganze Temperaturgefälle liegt in der Dämmung, die Innenseite der Wand bleibt warm. Bei gleicher Heizkörpertemperatur wird der Raum wärmer – für 22 °C reicht im Modell ein Heizkörper mit gut 30 °C statt 50 °C. Die Heizung muss weniger nachliefern: Die Heizlast ist kleiner. Mit Dämmung dauert es länger, bis sich alles eingependelt hat.</p>
+    <p>Wärme fließt nur dorthin, wo es kälter ist. Darum ist der Heizkörper wärmer als die Raumluft, die Innenoberfläche der Wand etwas kälter als die Raumluft und die Außenoberfläche etwas wärmer als die Außenluft. Innen ist dieser Sprung größer als außen: Draußen weht Wind, die Außenluftteilchen fliegen schneller und stoßen öfter an die Wand (Wärmeübergangswiderstand innen R<sub>si</sub> = 0,13, außen R<sub>se</sub> = 0,04 m²·K/W). Mit Dämmung fließt weniger Wärme, darum werden beide Sprünge kleiner.</p>
+    <p>Die Raumtemperatur stellt sich von selbst ein. Sie liegt zwischen Heizkörper und Außenluft: Der Raum bleibt so warm, dass der Heizkörper genau so viel Wärme nachliefert, wie durch die Wand verloren geht. Die Außenluft ist im Vergleich zum Raum praktisch unbegrenzt groß, darum ändert sich die Außentemperatur nicht. Im Sommer (außen wärmer als innen, Heizung aus) wandert die Wärme von außen herein – die Dämmung bremst auch in diese Richtung.</p>
+    <p>Am Anfang ist die Wand kalt: Sie nimmt dem Raum zuerst viel Wärme weg. Solange die Wärme noch nicht durch die Wand gewandert ist, hat die Außenseite der Wand nichts abzugeben. Nach etwa 20 bis 30 Minuten hat sich ein gleichmäßiges Gefälle eingestellt. Mit der Zeitleiste kannst du vor- und zurückspringen, mit dem Zeitraffer läuft alles 20-mal schneller.</p>
+    <p class="modell">Zum Modell: Schwingung wird nur übergeben, wenn ein Teilchen anstößt; jeder solche Stoß zeigt einen Ring und ein kleines Wellenpaket, das in die Richtung läuft, in die die Wärme fließt. Bei der Luft steckt die Wärme vor allem in der Bewegung der Teilchen, darum werden die Luftteilchen am Heizkörper auch etwas schneller und an der Wand etwas langsamer. Das Aufsteigen und Absinken der Luft ist vereinfacht: Alle Teilchen im Raum werden von einer gleichmäßigen Luftwalze mitgenommen (am Heizkörper hoch, an der Wand hinunter, in der Mitte fast ruhig) und bewegen sich dabei zusätzlich ungeordnet. Je wärmer der Heizkörper gegenüber der Wand ist, desto kräftiger läuft die Walze. Wand A verhält sich etwa wie eine ungedämmte Altbauwand (U ≈ 1,1 W/(m²·K)), Wand B wie eine Wand mit Kerndämmung (U ≈ 0,35 W/(m²·K)). Bei einer sehr gut gedämmten Wand (zum Beispiel U = 0,28 W/(m²·K)) wären die Sprünge an den Oberflächen noch kleiner, innen nur gut 1 K.</p>
   </section>
 </main>
 
 <script>
+/* SIM-START – Rechenteil ohne Zeichnen (wird auch im Test benutzt) */
+function erzeugeSim(o) {
+  // Energie E je Teilchen von 0 (−20 °C, sehr langsame Schwingung) bis 1 (70 °C, sehr schnelle Schwingung).
+  // Jede Übertragung läuft nur vom wärmeren zum kälteren Teilchen (geprüft: falscheRichtung bleibt 0).
+  const z = o.zufall || Math.random;
+  const R = 8, RK = 3.5;
+  // Schwingung wird nur übergeben, wenn ein Teilchen anstößt – am Heizkörper, an der Innen- und an der Außenwand, in den Luftkammern
+  // der Dämmung (Wunsch des Lehrers 10.11.2026). Außen weht Wind: Die Außenluftteilchen fliegen schneller und stoßen öfter an – darum
+  // ist der Sprung außen kleiner (wie R_si : R_se). Außenluft kühlt nach einem Stoß rasch wieder ab (abklingen 1 s), damit jedes
+  // anstoßende Außenluftteilchen Schwingung aufnimmt.
+  // Kalibrierung (Vorgabe des Lehrers 10.11.2026): Wand A, Heizkörper 50 °C, außen −12 °C → Raum 22 °C eingeschwungen. 🔴 Ein einzelner
+  // Lauf streut um mehrere Kelvin → immer als Mittel über mehrere Zufallsfolgen messen (kalibrierung.js); Stand siehe „Konvektion“ unten.
+  // Wand B (Kerndämmung, Wunsch des Lehrers 10.11.2026): zwei Mauerwerkspalten werden zu Luftkammern; das eingeschlossene Luftteilchen
+  // bewegt sich kaum (kammerTempo) und gibt Schwingung nur beim seltenen Stoß an eine Kammerwand weiter (kKammer).
+  const P = Object.assign({ kHeizStoss: 0.145, kHeizInnen: 0.5, kWandStoss: 0.4, kAussenStoss: 0.5, wind: 60, kWand: 0.05,
+    abklingen: 1, schwelle: 0.003, paket: 0.016, paketDauer: 0.8, kKammer: 0.035, kammerTempo0: 8, kammerTempoE: 14,
+    walze: 110, eigen: 0.45, walzeDE: 0.1, walzeZeit: 5 }, o.physik || {});
+  // Dämmung (Lehrer 10.11.2026, dritte Fassung): In JEDER Kammer steckt ein Luftteilchen. Die eingesperrte Luft kann nicht strömen –
+  // sie gibt die Schwingung nur durch seltene Stöße an die Kammerwände weiter (langsam, kKammer klein). Keine senkrechte Weitergabe in
+  // der Dämmung („Die vertikalen Pfeile in der Dämmung kann man weglassen.“).
+  // Konvektion im Raum (Lehrer 10.11.2026, zweite Fassung): Die Teilchen sollen „tendenziell um den Kreis gehen“, ohne Pfeile. Darum
+  // nimmt eine Luftwalze alle Raumluftteilchen mit (Stromfunktion ψ = A·sin(π·ξ)·sin(π·η) über den Raum: am Heizkörper nach oben, oben
+  // zur Wand, an der Wand nach unten, am Boden zurück; in der Mitte ruhig). walze = Tempo an den Seiten in px/s. Dazu bewegt sich jedes
+  // Teilchen ungeordnet (eigen × normales Tempo), langsamer als die Walze, damit kaum eines gegen den Strom läuft. Die Walze ist so stark,
+  // wie der Heizkörper wärmer ist als die Innenseite der Wand (voll ab walzeDE, ändert sich mit walzeZeit s; Heizung aus → schwächer,
+  // Sommer → läuft andersherum). Erste Fassung (Auftrieb nach dem Stoß, auftrieb …) siehe alt\…_v4.html.
+  // Kalibrierung 10.11.2026 ~15 Uhr (Skripte\tests\heizkoerper\kalibrierung.js, Heizkörper 90…370): Wand A 50/−12 → Raum 22,2 °C (8 Läufe,
+  // einzelne 21,0…23,9), Stufe innen 5,1 K, außen 3,2 K; Wand B 30 / 35 °C → 21,3 / 25,4 °C (6 Läufe); gegen den Strom 0,6 %; falsch 0.
+  const s = { t: 0, heizung: o.heizung, Eheiz: o.heiz, Eaussen: o.aussen, daemmung: !!o.daemmung, luft: [], wand: [], heiz: [],
+    kammer: [], trenn: [], leer: [], blitze: [], pakete: [], fluss: new Array(o.zeilen * (o.spalten - 1)).fill(0),
+    falscheRichtung: 0, anUmgebung: 0, vonHeizung: 0, ausHeizkoerper: 0, indieWand: 0, ausDerWand: 0, o, P };
+  // Wand: am Anfang „kalt“ = die kältere der beiden Temperaturen (Raum beim Start, außen)
+  const Ewand0 = Math.min(o.raumStart, o.aussen);
+  const dxW = (o.wandRechts - o.wandLinks) / o.spalten, dyW = o.H / o.zeilen;
+  s.dxW = dxW; s.dyW = dyW;
+  const massiv = (c) => !(s.daemmung && c >= o.dVon && c <= o.dBis);
+  s.massiv = massiv;
+  for (let r = 0; r < o.zeilen; r++) for (let c = 0; c < o.spalten; c++)
+    s.wand.push({ c, r, x: o.wandLinks + dxW * (c + 0.5), y: dyW * (r + 0.5), E: Ewand0, ph: z() * 6.283, w: z() * Math.PI, blitz: 0 });
+  const W = (c, r) => s.wand[r * o.spalten + c];
+  s.W = W;
+  // Dämmung: je Zeile so viele Luftkammern wie Dämmspalten, in gefüllten Zeilen darin je ein eingeschlossenes Luftteilchen; zwischen
+  // zwei gefüllten Kammern eine dünne Kammerwand (Schaum), die die Schwingung ebenfalls nur beim Stoß übernimmt oder abgibt.
+  const nK = o.dBis - o.dVon + 1, trennNr = new Array(o.zeilen * (nK - 1)).fill(-1);
+  s.kammerGrenzen = (r, k) => ({ x0: o.wandLinks + dxW * (o.dVon + k), x1: o.wandLinks + dxW * (o.dVon + k + 1), y0: dyW * r, y1: dyW * (r + 1) });
+  // Alle Kammern gefüllt (dritte Fassung 10.11.2026; vorher 7 von 15 Zeilen, siehe alt\…_v3.html). 1 = beide Kammern gefüllt.
+  const ZEILEN_VOLL = '1'.repeat(o.zeilen);
+  for (let r = 0; r < o.zeilen; r++) for (let k = 0; k < nK; k++) s.leer.push(ZEILEN_VOLL[r % ZEILEN_VOLL.length] !== '1');
+  s.istLeer = (r, k) => s.leer[r * nK + k];
+  if (s.daemmung) for (let r = 0; r < o.zeilen; r++) {
+    for (let k = 0; k < nK; k++) {
+      if (s.istLeer(r, k)) continue;
+      // Flugrichtung eher waagerecht (höchstens ~34° schräg), damit jedes eingeschlossene Teilchen regelmäßig an beide Seitenwände stößt
+      // (fast senkrecht fliegende Teilchen bekamen kaum Schwingung und hingen farblich hinterher – Hinweis des Lehrers 10.11.2026).
+      const g = s.kammerGrenzen(r, k), a = (z() - 0.5) * 1.2 + (z() < 0.5 ? 0 : Math.PI), v = P.kammerTempo0 + P.kammerTempoE * Ewand0;
+      s.kammer.push({ r, k, x: g.x0 + RK + 2 + z() * (g.x1 - g.x0 - 2 * RK - 4), y: g.y0 + RK + 2 + z() * (g.y1 - g.y0 - 2 * RK - 4),
+        vx: Math.cos(a) * v, vy: Math.sin(a) * v, E: Ewand0, ph: z() * 6.283, dreh: z() * 6.283, om: (z() - 0.5) * 1.2, blitz: 0 });
+    }
+    // Kammerwand zwischen zwei gefüllten Kammern; in leeren Zeilen gibt es nichts zu übergeben, dort bleibt nur der Kammerrahmen
+    if (!s.istLeer(r, 0)) for (let k = 1; k < nK; k++) {
+      trennNr[r * (nK - 1) + (k - 1)] = s.trenn.length;
+      s.trenn.push({ r, k, x: o.wandLinks + dxW * (o.dVon + k), y: dyW * (r + 0.5), E: Ewand0, blitz: 0 });
+    }
+  }
+  const TR = (r, k) => s.trenn[trennNr[r * (nK - 1) + (k - 1)]];
+  s.TR = TR;
+  // Heizkörper: Teilchen im Gitter wie die Wand (Wunsch des Lehrers 10.11.2026)
+  const hs = o.heizSpalten, hz = o.heizZeilen, dxH = (o.heizRechts - o.heizLinks) / hs, dyH = (o.heizUnten - o.heizOben) / hz;
+  for (let r = 0; r < hz; r++) for (let c = 0; c < hs; c++)
+    s.heiz.push({ c, r, x: o.heizLinks + dxH * (c + 0.5), y: o.heizOben + dyH * (r + 0.5), E: o.heizung ? o.heiz : o.raumStart, ph: z() * 6.283, w: z() * Math.PI, blitz: 0 });
+  const HK = (c, r) => s.heiz[r * hs + c];
+  s.HK = HK;
+  const heizZeile = (y) => { const r = Math.floor((y - o.heizOben) / dyH); return r >= 0 && r < hz ? r : -1; };
+  const tempo = (E) => 35 + 130 * E;
+  // innen: ungeordnete Eigenbewegung (die Walze kommt beim Bewegen dazu), außen: Wind
+  const tempoVon = (p) => (p.kammer ? P.kammerTempo0 + P.kammerTempoE * p.E : p.innen ? P.eigen * tempo(p.E) : tempo(p.E) + P.wind);
+  // Luftwalze im Raum über den Bereich, in dem sich die Raumluftteilchen bewegen (am Rand läuft sie entlang, nie hinein)
+  const fx0 = o.links + R, fy0 = R, fLx = o.wandLinks - R - fx0, fLy = o.H - 2 * R;
+  s.walze = 1; // Stärke −1…1 (+1: am Heizkörper hoch, an der Wand runter)
+  s.stroemung = function (x, y) {
+    const xi = Math.max(0, Math.min(1, (x - fx0) / fLx)), eta = Math.max(0, Math.min(1, (y - fy0) / fLy)), a = s.walze * P.walze;
+    return [a * (fLx / fLy) * Math.sin(Math.PI * xi) * Math.cos(Math.PI * eta), -a * Math.cos(Math.PI * xi) * Math.sin(Math.PI * eta)];
+  };
+  s.frequenz = (E) => 0.8 + 8 * E;
+  function neu(innen) {
+    const x0 = innen ? o.links + R : o.wandRechts + R, x1 = innen ? o.wandLinks - R : o.W - R;
+    const E = innen ? o.raumStart : o.aussen, a = z() * 6.283, v = innen ? P.eigen * tempo(E) : tempo(E) + P.wind;
+    return { innen, x: x0 + z() * (x1 - x0), y: R + z() * (o.H - 2 * R), vx: Math.cos(a) * v, vy: Math.sin(a) * v, E, ph: z() * 6.283, dreh: z() * 6.283, om: (z() - 0.5) * 2.4 };
+  }
+  for (let i = 0; i < o.anzahl; i++) { s.luft.push(neu(true)); s.luft.push(neu(false)); }
+  s.kammer.forEach((q) => { q.kammer = true; });
+  const begrenzen = (x) => Math.max(0, Math.min(1, x));
+  function tausch(a, b, k) { // zwei gleich große Teilchen gleichen sich an (k ≤ 0,5, kein Überschießen)
+    const vorher = a.E - b.E, d = k * vorher;
+    a.E = begrenzen(a.E - d); b.E = begrenzen(b.E + d);
+    const nachher = a.E - b.E;
+    if (vorher * nachher < -1e-12) s.falscheRichtung++;
+    return d; // > 0: Energie von a nach b
+  }
+  function ausReservoir(p, Er, k) { // Heizungswasser bzw. Umgebung: feste Temperatur, Teilchen gleicht sich an
+    const vorher = Er - p.E, d = k * vorher;
+    p.E = begrenzen(p.E + d);
+    if (vorher * (Er - p.E) < -1e-12) s.falscheRichtung++;
+    return d; // > 0: Energie vom Reservoir ins Teilchen
+  }
+  function tempoAnpassen(p) { const v = Math.hypot(p.vx, p.vy) || 1, n = tempoVon(p); p.vx *= n / v; p.vy *= n / v; }
+  // Sichtbar machen, dass Schwingung übergeben wird (Wunsch des Lehrers 10.11.2026): Ring an der Stoßstelle und ein kleines
+  // Wellenpaket, das in Richtung des Wärmeflusses über die Grenze läuft. richtung +1 = nach rechts (Heizkörper → Raum → Wand → außen).
+  function zeigeUebergabe(zelle, x, y, d, klein) {
+    if (Math.abs(d) <= P.schwelle) return;
+    zelle.blitz = 0.45; s.blitze.push({ x, y, t: 0, richtung: d >= 0 ? 1 : -1, klein: !!klein });
+  }
+  function zeile(y) { return Math.min(o.zeilen - 1, Math.max(0, Math.floor(y / dyW))); }
+  s.innenL = s.luft.filter((p) => p.innen); s.aussenL = s.luft.filter((p) => !p.innen);
+  s.wandInnen = s.wand.filter((w) => w.c === 0);
+  // Antrieb der Luftwalze: Heizkörper wärmer als die Innenseite der Wand → warme Luft steigt am Heizkörper, kalte sinkt an der Wand
+  const mittelE = (a) => a.reduce((x, y) => x + y.E, 0) / a.length;
+  const walzeZiel = () => Math.max(-1, Math.min(1, (mittelE(s.heiz) - mittelE(s.wandInnen)) / P.walzeDE));
+  s.walze = walzeZiel();
+  s.schritt = function (dt) {
+    s.t += dt;
+    s.walze += (walzeZiel() - s.walze) * (1 - Math.exp(-dt / P.walzeZeit));
+    for (const p of s.luft) {
+      tempoAnpassen(p);
+      if (p.innen) { const [u, v] = s.stroemung(p.x, p.y); p.x += (p.vx + u) * dt; p.y += (p.vy + v) * dt; }
+      else { p.x += p.vx * dt; p.y += p.vy * dt; }
+      p.ph += 2 * Math.PI * s.frequenz(p.E) * dt; p.dreh += p.om * dt;
+      if (p.y < R) { p.y = R; p.vy = Math.abs(p.vy); } else if (p.y > o.H - R) { p.y = o.H - R; p.vy = -Math.abs(p.vy); }
+      if (p.innen) {
+        if (p.x < o.links + R) {
+          p.x = o.links + R; p.vx = Math.abs(p.vx);
+          const r = heizZeile(p.y);
+          if (r >= 0 && s.heizung) { // Stoß an den Heizkörper (nur wenn er an ist): Das Luftteilchen übernimmt Schwingung vom Heizkörper
+            const h = HK(hs - 1, r), d = tausch(h, p, P.kHeizStoss);
+            s.ausHeizkoerper += d; tempoAnpassen(p);
+            zeigeUebergabe(h, o.links, p.y, d);
+          }
+        } else if (p.x > o.wandLinks - R) {
+          p.x = o.wandLinks - R; p.vx = -Math.abs(p.vx);
+          const w = W(0, zeile(p.y)), d = tausch(p, w, P.kWandStoss);
+          s.indieWand += d; tempoAnpassen(p);
+          zeigeUebergabe(w, o.wandLinks, p.y, d);
+        }
+      } else {
+        // Außenluft: gibt ihre Schwingung mit der Zeit an die große Umgebungsluft ab und kehrt so zur Außentemperatur zurück.
+        s.anUmgebung -= ausReservoir(p, s.Eaussen, 1 - Math.exp(-dt / P.abklingen)); tempoAnpassen(p);
+        if (p.x > o.W - R) {
+          p.x = o.W - R; p.vx = -Math.abs(p.vx);
+        } else if (p.x < o.wandRechts + R) {
+          p.x = o.wandRechts + R; p.vx = Math.abs(p.vx);
+          const w = W(o.spalten - 1, zeile(p.y)), d = tausch(w, p, P.kAussenStoss);
+          s.ausDerWand += d; tempoAnpassen(p);
+          zeigeUebergabe(w, o.wandRechts, p.y, d);
+        }
+      }
+    }
+    // Dämmung: eingeschlossene Luftteilchen bewegen sich langsam in ihrer Kammer; nur beim Stoß an eine Kammerwand wird Schwingung
+    // übergeben (links: Mauerwerk bzw. Kammerwand, rechts: Kammerwand bzw. Mauerwerk).
+    for (const q of s.kammer) {
+      tempoAnpassen(q);
+      const g = s.kammerGrenzen(q.r, q.k);
+      q.x += q.vx * dt; q.y += q.vy * dt; q.ph += 2 * Math.PI * s.frequenz(q.E) * dt; q.dreh += q.om * dt;
+      if (q.y < g.y0 + RK + 2) { q.y = g.y0 + RK + 2; q.vy = Math.abs(q.vy); } else if (q.y > g.y1 - RK - 2) { q.y = g.y1 - RK - 2; q.vy = -Math.abs(q.vy); }
+      if (q.x < g.x0 + RK + 2) {
+        q.x = g.x0 + RK + 2; q.vx = Math.abs(q.vx);
+        const links = q.k === 0 ? W(o.dVon - 1, q.r) : TR(q.r, q.k), d = tausch(links, q, P.kKammer);
+        tempoAnpassen(q); zeigeUebergabe(links, g.x0, q.y, d, true);
+      } else if (q.x > g.x1 - RK - 2) {
+        q.x = g.x1 - RK - 2; q.vx = -Math.abs(q.vx);
+        const rechts = q.k === nK - 1 ? W(o.dBis + 1, q.r) : TR(q.r, q.k + 1), d = tausch(q, rechts, P.kKammer);
+        tempoAnpassen(q); zeigeUebergabe(rechts, g.x1, q.y, d, true);
+      }
+    }
+    // Heizkörper: Solange die Heizung an ist, hält das heiße Heizungswasser seine Teilchen genau auf der eingestellten Schwingung
+    // (Wunsch des Lehrers 10.11.2026: sofort, ohne Zeitverzögerung fürs Aufheizen).
+    // Heizung aus: Der Heizkörper hat immer genau die Temperatur der Raumluft und tauscht keine Schwingung mehr aus.
+    if (s.heizung) for (const h of s.heiz) s.vonHeizung += ausReservoir(h, s.Eheiz, 1);
+    else { const Er = s.innenL.reduce((x, p) => x + p.E, 0) / s.innenL.length; for (const h of s.heiz) h.E = Er; }
+    const kh = P.kHeizInnen * dt; // Metall leitet gut: Weitergabe innerhalb des Heizkörpers
+    for (let r = 0; r < hz; r++) for (let c = 0; c < hs; c++) {
+      if (c + 1 < hs) tausch(HK(c, r), HK(c + 1, r), kh);
+      if (r + 1 < hz) tausch(HK(c, r), HK(c, r + 1), kh);
+    }
+    // Innen- und Außenoberfläche tauschen nur über die sichtbaren Stöße (oben) – kein unsichtbarer Übergang (Wunsch des Lehrers 10.11.2026).
+    const k = P.kWand * dt; // Weitergabe der Schwingung an die Nachbarn im Mauerwerk (langsam: Durchwärmen dauert einige Minuten)
+    for (let r = 0; r < o.zeilen; r++) for (let c = 0; c < o.spalten; c++) {
+      if (!massiv(c)) continue;
+      if (c + 1 < o.spalten && massiv(c + 1)) {
+        const d = tausch(W(c, r), W(c + 1, r), k), i = r * (o.spalten - 1) + c; // d > 0: von innen nach außen
+        s.fluss[i] += d;
+        if (Math.abs(s.fluss[i]) >= P.paket) { s.pakete.push({ c, r, t: 0, richtung: s.fluss[i] > 0 ? 1 : -1 }); s.fluss[i] = 0; }
+      }
+      if (r + 1 < o.zeilen) tausch(W(c, r), W(c, r + 1), k);
+    }
+    for (const w of s.wand) { w.ph += 2 * Math.PI * s.frequenz(w.E) * dt; if (w.blitz > 0) w.blitz -= dt; }
+    for (const h of s.heiz) { h.ph += 2 * Math.PI * s.frequenz(h.E) * dt; if (h.blitz > 0) h.blitz -= dt; }
+    for (const q of s.trenn) if (q.blitz > 0) q.blitz -= dt;
+    for (const b of s.blitze) b.t += dt;
+    s.blitze = s.blitze.filter((b) => b.t < 0.45);
+    for (const q of s.pakete) q.t += dt;
+    s.pakete = s.pakete.filter((q) => q.t < P.paketDauer);
+  };
+  // Heizung an/aus oder Regler verstellt: Der Heizkörper hat sofort die eingestellte Schwingung (an) bzw. sofort die Schwingung der
+  // Raumluft (aus) – ohne Aufheiz- oder Abkühlzeit (Wunsch des Lehrers 10.11.2026). Danach gilt wieder die normale Übertragung.
+  s.heizungSetzen = function (an) {
+    s.heizung = an;
+    const E = an ? s.Eheiz : s.innenL.reduce((x, p) => x + p.E, 0) / s.innenL.length;
+    for (const h of s.heiz) h.E = E;
+  };
+  // Mittlere Schwingung einer Wandspalte (Mauerwerk: Teilchen, Dämmung: eingeschlossene Luftteilchen)
+  s.spalteE = function (c) {
+    const a = massiv(c) ? s.wand.filter((w) => w.c === c) : s.kammer.filter((q) => q.k === c - o.dVon);
+    return a.reduce((x, y) => x + y.E, 0) / (a.length || 1);
+  };
+  s.mittel = function () {
+    const m = (a) => a.reduce((x, y) => x + y.E, 0) / (a.length || 1);
+    return { heiz: m(s.heiz), raum: m(s.innenL), aussen: m(s.aussenL), wandI: s.spalteE(0), wandA: s.spalteE(o.spalten - 1) };
+  };
+  // Zwischenstand speichern/laden (für die Zeitleiste: vor- und zurückschieben)
+  const lage = (p) => [p.x, p.y, p.vx, p.vy, p.E, p.ph, p.dreh];
+  const setzeLage = (p, a) => { p.x = a[0]; p.y = a[1]; p.vx = a[2]; p.vy = a[3]; p.E = a[4]; p.ph = a[5]; p.dreh = a[6]; };
+  s.speichern = function () {
+    return { t: s.t, luft: s.luft.map(lage), kammer: s.kammer.map(lage), trenn: s.trenn.map((q) => q.E), wand: s.wand.map((w) => [w.E, w.ph]),
+      heiz: s.heiz.map((h) => [h.E, h.ph]), z: [s.anUmgebung, s.vonHeizung, s.ausHeizkoerper, s.indieWand, s.ausDerWand, s.walze] };
+  };
+  s.laden = function (st) {
+    s.t = st.t;
+    st.luft.forEach((a, i) => setzeLage(s.luft[i], a));
+    st.kammer.forEach((a, i) => { setzeLage(s.kammer[i], a); s.kammer[i].blitz = 0; });
+    st.trenn.forEach((E, i) => { s.trenn[i].E = E; s.trenn[i].blitz = 0; });
+    st.wand.forEach((a, i) => { s.wand[i].E = a[0]; s.wand[i].ph = a[1]; s.wand[i].blitz = 0; });
+    st.heiz.forEach((a, i) => { s.heiz[i].E = a[0]; s.heiz[i].ph = a[1]; s.heiz[i].blitz = 0; });
+    [s.anUmgebung, s.vonHeizung, s.ausHeizkoerper, s.indieWand, s.ausDerWand, s.walze] = st.z; s.blitze = []; s.pakete = []; s.fluss.fill(0);
+  };
+  return s;
+}
+/* SIM-ENDE */
+
 (function () {
-  'use strict';
-
-  // ===== Wärme-Modell: Raum → Teilchenreihen der Wand → außen =====
-  // MODELL-ANFANG
-  const K = 0.24;          // Kopplung zwischen zwei Teilchenreihen im Mauerwerk
-  const KI = K / 75;       // Kopplung durch die Dämmung (eingeschlossene Luft)
-  const CR = 1;            // Wärmespeicher des Raums
-  const CM = 0.04;         // Wärmespeicher einer Teilchenreihe
-  const MODELLZEIT = 40;   // Modellsekunden für einen ganzen Ablauf
-  function modellNeu(innen, aussen, daemmung, ti, ta) {
-    const n = innen + aussen, g = [];
-    for (let i = 0; i <= n; i++) g.push(daemmung && i === innen ? KI : K);
-    const R = g.reduce((s, x) => s + 1 / x, 0), T = [ti];
-    let s = 0;
-    for (let j = 1; j <= n; j++) { s += 1 / g[j - 1]; T.push(ti - (ti - ta) * s / R); }
-    T.push(ta);
-    return { n, g, T };
+  // Heizkörper groß in halber Höhe, nicht auf dem Boden (Wunsch des Lehrers 10.11.2026: „so, wie der Heizkörper vorher war … etwas größer
+  // und in der Mitte“, „von der Höhe her ruhig so wie bei der ersten Darstellung“, „nicht direkt auf dem Boden“). Die Luftwalze führt die
+  // abgesunkenen kalten Teilchen am Boden zurück und am Heizkörper hoch (Falle der Fassung mit Auftrieb: Raum 4 °C, siehe alt\…_v4.html).
+  const L = { W: 960, H: 460, heizLinks: 6, heizRechts: 50, heizOben: 90, heizUnten: 370, heizSpalten: 2, heizZeilen: 10,
+    links: 56, wandLinks: 400, wandRechts: 580, spalten: 6, zeilen: 15, anzahl: 26, dVon: 3, dBis: 4 };
+  const bild = document.getElementById('bild'), g = bild.getContext('2d');
+  const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+  bild.width = L.W * dpr; bild.height = L.H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const el = (id) => document.getElementById(id);
+  const heiz = el('heiz'), aussen = el('aussen'), heizung = el('heizung'), raffer = el('raffer');
+  const wandWahl = () => (document.querySelector('input[name="wand"]:checked') || {}).value === 'B';
+  // Modell-Schwingung E (0…1) ↔ Temperatur: 0 = −20 °C, 1 = 70 °C
+  const TMIN = -20, TMAX = 70, RAFFER = 20;
+  const temp = (E) => TMIN + (TMAX - TMIN) * E;
+  const eAus = (T) => (T - TMIN) / (TMAX - TMIN);
+  const wort = (E) => (E >= 0.8 ? 'sehr schnell' : E >= 0.6 ? 'schnell' : E >= 0.4 ? 'mittel' : E >= 0.2 ? 'langsam' : 'sehr langsam');
+  const grad = (T) => (Math.round(T * 10) / 10).toFixed(1).replace('.', ',').replace('-', '−') + ' °C';
+  let sim, laeuft = false, letzte = 0;
+  // Zeitleiste: feste Rechenschritte, je Sekunde ein Zwischenstand (zum Zurückschieben); nach vorne wird vorausgerechnet.
+  const DT = 1 / 120, MAXT = 1800, zeit = el('zeit');
+  let verlauf = [], schritte = 0, rest = 0;
+  const mmss = (t) => Math.floor(t / 60) + ' min ' + String(Math.floor(t % 60)).padStart(2, '0') + ' s';
+  function schritt1() {
+    sim.schritt(DT); schritte++;
+    if (schritte % 120 === 0) { const k = schritte / 120; verlauf.length = k; verlauf[k] = sim.speichern(); }
   }
-  function modellSchritt(m, dt) {
-    const { n, g, T } = m, q = [];
-    for (let i = 0; i <= n; i++) q.push(g[i] * (T[i] - T[i + 1]));
-    T[0] -= q[0] * dt / CR;
-    for (let j = 1; j <= n; j++) T[j] += (q[j - 1] - q[j]) * dt / CM;
+  function anhalten() { laeuft = false; el('start').textContent = '▶ Start'; }
+  function springe(ziel) {
+    ziel = Math.max(0, Math.min(MAXT, Math.round(ziel)));
+    const letzter = verlauf.length - 1;
+    if (ziel <= letzter) { sim.laden(verlauf[ziel]); schritte = ziel * 120; }
+    else { sim.laden(verlauf[letzter]); schritte = letzter * 120; while (schritte < ziel * 120) schritt1(); }
+    rest = 0; zeichne(); anzeigen(); zeichneKurve(true);
   }
-  // MODELL-ENDE
+  function zukunftVerwerfen() { if (sim) verlauf.length = Math.floor(schritte / 120) + 1; }
 
-  // ===== Bild =====
-  const H = 284, OBEN = 50, ZEILEN = 7, G = 30, UNTEN = OBEN + ZEILEN * G;
-  const RAND = 46, DAEMM = 84, W_MIN = 660, W_MAX = 1000;
-  const R_GITTER = 6.5, R_GAS = 5.5, R_LUFT = 3.4;
-  const N_GAS = 14, SCHRITT = 0.11, P_LECK = 0.05, MAX_STOESSE = 16;
-  const LUPE = 0.2, LUPE_RUHE = 2.5;   // Tempo in der Zeitlupe; normale Zeit zwischen zwei Zeitlupen (Sekunden)
-  const ORANGE = '#e86a00';
-  const SCHRIFT = '600 14px system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
-  const KLEIN = '500 12px system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
-  const FETT = '700 15px system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
-  const SZENEN = [
-    { id: 'A', innen: 6, aussen: 0, daemmung: false },
-    { id: 'B', innen: 4, aussen: 2, daemmung: true }
-  ];
-  const WORTE = ['', 'sehr langsam', 'sehr langsam', 'langsam', 'langsam', 'mittel', 'mittel', 'schnell', 'schnell', 'sehr schnell', 'sehr schnell'];
-
-  const $ = id => document.getElementById(id);
-  const klemm = (x, a, b) => Math.max(a, Math.min(b, x));
-  const zufall = (a, b) => a + Math.random() * (b - a);
-  const zeileY = r => OBEN + G / 2 + r * G;
-  const vGas = e => 22 + 168 * klemm(e, 0, 1.3);
-  const ampl = t => 0.6 + 4.4 * klemm(t, 0, 1);
-  const freq = t => 0.8 + 3.2 * klemm(t, 0, 1);
-
-  function farbe(t, alpha) {
-    t = klemm(t, 0, 1);
-    const S = [[0, [31, 111, 209]], [0.5, [142, 68, 173]], [1, [217, 58, 43]]];
-    const i = t < 0.5 ? 0 : 1, a = S[i], b = S[i + 1], f = (t - a[0]) / (b[0] - a[0]);
-    const c = a[1].map((v, k) => Math.round(v + (b[1][k] - v) * f)).join(',');
-    return alpha === undefined ? 'rgb(' + c + ')' : 'rgba(' + c + ',' + alpha + ')';
+  // Farbe nach Temperatur: bis 26 °C je Grad gleich viel Farbwechsel (schon wenige Grad geben einen anderen Farbton), unter 0 °C
+  // zusätzlich dunkler; über 26 °C (Heizkörper) weiter zu Karminrot und dunkler.
+  function farbe(E, a) {
+    const T = temp(E); let h, l;
+    if (T <= 26) { const e = Math.max(0, (T + 14) / 40); h = 215 - 210 * e; l = 48 + 4 * Math.abs(e - 0.5) + 0.9 * Math.min(0, T); }
+    else { const u = Math.min(1, (T - 26) / 44); h = 365 - 25 * u; l = 50 - 18 * u; }
+    return 'hsla(' + (h % 360) + ',78%,' + l + '%,' + (a == null ? 1 : a) + ')';
   }
-  function rund(c, x, y, w, h, r) {
-    c.beginPath();
-    c.moveTo(x + r, y);
-    c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
-    c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r);
-    c.closePath();
-  }
+  // Kleine Farbskala neben dem Zeitraffer (Wunsch des Lehrers 10.11.2026): welche Farbe welcher Temperatur entspricht, −15 … 70 °C
+  (function zeichneSkala() {
+    const c = el('skala'), x = c.getContext('2d'), B = 252, H = 30, T0 = -15, T1 = 70, x0 = 6, x1 = B - 6;
+    c.width = B * dpr; c.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const xt = (T) => x0 + ((T - T0) / (T1 - T0)) * (x1 - x0);
+    for (let px = x0; px < x1; px++) { x.fillStyle = farbe(eAus(T0 + ((px - x0 + 0.5) / (x1 - x0)) * (T1 - T0))); x.fillRect(px, 2, 1.2, 11); }
+    x.strokeStyle = 'rgba(0,0,0,.25)'; x.lineWidth = 1; x.strokeRect(x0 - 0.5, 1.5, x1 - x0 + 1, 12);
+    x.font = '11px system-ui, sans-serif'; x.fillStyle = '#3d4660'; x.textBaseline = 'alphabetic';
+    for (let T = -10; T <= 70; T += 10) {
+      x.fillStyle = '#3d4660'; x.fillRect(xt(T) - 0.5, 13, 1, 3);
+      if (T === 40 || T === 60) continue;
+      const t = (T < 0 ? '−' + -T : String(T)) + (T === 70 ? ' °C' : ''), w = x.measureText(t).width;
+      x.fillText(t, Math.min(B - w, Math.max(0, xt(T) - w / 2)), 27);
+    }
+  })();
+  const dxW = (L.wandRechts - L.wandLinks) / L.spalten;
+  const xDaemmL = L.wandLinks + dxW * L.dVon, xDaemmR = L.wandLinks + dxW * (L.dBis + 1);
 
-  function geo(sz, W) {
-    const xWand = Math.round((W - (6 * G + DAEMM)) / 2);
-    const breit = sz.innen * G + (sz.daemmung ? DAEMM + sz.aussen * G : 0);
-    const xD = xWand + sz.innen * G;
-    return {
-      W, xWand, xD, xS: xD + DAEMM, xEnde: xWand + breit,
-      raum: { x0: RAND, x1: xWand - 4 },
-      aussen: { x0: xWand + breit + 4, x1: W - RAND }
+  // Temperaturverlaufskurve unter dem Bild (gleiche Breite und gleiche x-Lage wie das Bild)
+  const kurve = el('kurve'), k = kurve.getContext('2d'), KH = 230, OBEN = 22, UNTEN = 30;
+  kurve.width = L.W * dpr; kurve.height = KH * dpr; k.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const ty = (T) => OBEN + (TMAX - Math.max(TMIN, Math.min(TMAX, T))) / (TMAX - TMIN) * (KH - OBEN - UNTEN);
+  let glatt = null;
+  function zeichneKurve(sofort) {
+    const sp = [];
+    for (let c = 0; c < L.spalten; c++) sp.push(sim.spalteE(c));
+    const m = sim.mittel(), roh = { heiz: m.heiz, raum: m.raum, sp };
+    if (!glatt || sofort) glatt = { heiz: roh.heiz, raum: roh.raum, sp: sp.slice() };
+    else { const a = 0.06; glatt.heiz = roh.heiz; glatt.raum += a * (roh.raum - glatt.raum); glatt.sp = glatt.sp.map((v, i) => v + a * (sp[i] - v)); }
+    k.clearRect(0, 0, L.W, KH);
+    k.fillStyle = '#fde6dc'; k.fillRect(0, 0, L.links, KH);
+    k.fillStyle = '#fff6f2'; k.fillRect(L.links, 0, L.wandLinks - L.links, KH);
+    k.fillStyle = '#ece8e2'; k.fillRect(L.wandLinks, 0, L.wandRechts - L.wandLinks, KH);
+    if (sim.daemmung) { k.fillStyle = '#fff4c7'; k.fillRect(xDaemmL, 0, xDaemmR - xDaemmL, KH); }
+    k.fillStyle = '#eef5ff'; k.fillRect(L.wandRechts, 0, L.W - L.wandRechts, KH);
+    k.font = '12px system-ui, sans-serif';
+    for (let T = -20; T <= 70; T += 10) {
+      const y = ty(T);
+      k.strokeStyle = T === 0 ? '#8a93a8' : '#d5dae5'; k.lineWidth = T === 0 ? 1.5 : 1;
+      k.beginPath(); k.moveTo(0, y); k.lineTo(L.W, y); k.stroke();
+      if (T > -20) { k.fillStyle = '#5d6884'; k.fillText((T < 0 ? '−' + (-T) : T) + ' °C', L.W - 44, y - 3); }
+    }
+    k.font = '600 13px system-ui, sans-serif'; k.fillStyle = '#5d6884';
+    k.fillText('Heizk.', 4, KH - 9); k.fillText('Raum', L.links + 14, KH - 9);
+    if (sim.daemmung) { k.fillText('Mauerwerk', L.wandLinks + 4, KH - 9); k.fillStyle = '#8a6700'; k.fillText('Dämmung', xDaemmL + 2, KH - 9); k.fillStyle = '#5d6884'; }
+    else k.fillText('Wand', (L.wandLinks + L.wandRechts) / 2 - 17, KH - 9);
+    k.fillText('Außen', L.W - 50, KH - 9);
+    const Th = temp(glatt.heiz), Ti = temp(glatt.raum), Ta = temp(sim.Eaussen); // außen: eingestellte Außentemperatur, bleibt fest
+    const xs = glatt.sp.map((_, c) => L.wandLinks + dxW * (c + 0.5));
+    const pkt = [[L.heizLinks, ty(Th)], [L.heizRechts, ty(Th)], [L.links + 24, ty(Ti)], [L.wandLinks, ty(Ti)]];
+    glatt.sp.forEach((E, c) => pkt.push([xs[c], ty(temp(E))]));
+    pkt.push([L.wandRechts, ty(Ta)], [L.W - 10, ty(Ta)]);
+    k.strokeStyle = '#1d2840'; k.lineWidth = 3; k.lineJoin = 'round';
+    k.beginPath(); pkt.forEach(([x, y], i) => (i ? k.lineTo(x, y) : k.moveTo(x, y))); k.stroke();
+    glatt.sp.forEach((E, c) => { k.beginPath(); k.arc(xs[c], ty(temp(E)), 6, 0, 6.283); k.fillStyle = farbe(E); k.fill(); k.lineWidth = 1.5; k.strokeStyle = sim.massiv(c) ? '#fff' : '#a16207'; k.stroke(); });
+    k.beginPath(); k.arc((L.heizLinks + L.heizRechts) / 2, ty(Th), 6, 0, 6.283); k.fillStyle = farbe(glatt.heiz); k.fill(); k.lineWidth = 1.5; k.strokeStyle = '#fff'; k.stroke();
+    const schild = (text, x, y, f) => {
+      k.font = '700 13px system-ui, sans-serif'; const b = k.measureText(text).width + 12;
+      const xx = Math.max(2, Math.min(L.W - b - 2, x - b / 2)), yy = Math.max(2, Math.min(KH - 44, y - 30));
+      k.fillStyle = 'rgba(255,255,255,.92)'; k.fillRect(xx, yy, b, 20); k.strokeStyle = f; k.lineWidth = 1.5; k.strokeRect(xx, yy, b, 20);
+      k.fillStyle = f; k.fillText(text, xx + 6, yy + 14);
     };
-  }
-  function spalteX(z, j) {
-    const sz = z.sz, g = z.geo;
-    return j < sz.innen ? g.xWand + G / 2 + j * G : g.xS + G / 2 + (j - sz.innen) * G;
-  }
-  function gasXY(p, b) {
-    return [b.x0 + R_GAS + p.u * (b.x1 - b.x0 - 2 * R_GAS), OBEN + R_GAS + p.v * (UNTEN - OBEN - 2 * R_GAS)];
-  }
-  // Luftkammer k (0 = innen, 1 = außen) der Zeile r in der Dämmung und Lage ihres Luftteilchens
-  function kammer(z, r, k) { return { x0: z.geo.xD + 5 + k * DAEMM / 2, y0: OBEN + r * G + 4, w: DAEMM / 2 - 10, h: G - 8 }; }
-  function luftXY(z, r, k) {
-    const q = kammer(z, r, k), l = z.luft[r][k];
-    return [q.x0 + R_LUFT + l.u * (q.w - 2 * R_LUFT), q.y0 + R_LUFT + l.v * (q.h - 2 * R_LUFT)];
-  }
-  function gasNeu(e) {
-    return { u: Math.random(), v: Math.random(), a: zufall(0, 2 * Math.PI), e, f: zufall(0.75, 1.25), blitz: 0 };
-  }
-  const einstellung = () => ({ ti: +$('innen').value / 10, ta: +$('aussen').value / 10 });
-
-  function zustandNeu(z) {
-    const { ti, ta } = einstellung(), sz = z.sz;
-    const m = modellNeu(sz.innen, sz.aussen, sz.daemmung, ti, ta);
-    const gitter = [], luft = [];
-    for (let r = 0; r < ZEILEN; r++) {
-      const zeile = [];
-      for (let j = 0; j < m.n; j++) zeile.push({ p1: zufall(0, 6.3), p2: zufall(0, 6.3), m1: zufall(0.8, 1.2), m2: zufall(0.65, 1.05), st: 99, sa: 0, sd: 1 });
-      gitter.push(zeile);
-      if (sz.daemmung) luft.push([0, 1].map(() => ({ u: Math.random(), v: Math.random(), a: zufall(0, 2 * Math.PI), blitz: 0 })));
-    }
-    Object.assign(z, {
-      m, n: m.n, ti, ta, gitter, luft, stoesse: [], blitze: [],
-      raum: Array.from({ length: N_GAS }, () => gasNeu(ti * zufall(0.92, 1.08))),
-      aussen: Array.from({ length: N_GAS }, () => gasNeu(ta * zufall(0.92, 1.08)))
-    });
+    schild('Heizkörper ' + grad(Th), L.heizRechts + 40, ty(Th), '#9f1239');
+    schild('Raum ' + grad(Ti), (L.links + L.wandLinks) / 2 + 30, ty(Ti), '#b42318');
+    schild('außen ' + grad(Ta), (L.wandRechts + L.W) / 2, ty(Ta), '#1b4f9c');
+    k.font = '12px system-ui, sans-serif'; k.fillStyle = '#3d4660';
+    const ti0 = temp(glatt.sp[0]), ta0 = temp(glatt.sp[L.spalten - 1]);
+    k.fillText(grad(ti0), xs[0] - 22, ty(ti0) + 20 > KH - 34 ? ty(ti0) - 12 : ty(ti0) + 20);
+    k.fillText(grad(ta0), xs[L.spalten - 1] - 22, ty(ta0) + 20 > KH - 34 ? ty(ta0) - 12 : ty(ta0) + 20);
   }
 
-  // ===== Ablauf =====
-  // zustand: 'bereit' (Teilchen bewegen sich, Heizung noch an), 'laeuft', 'pause', 'fertig'
-  let zustand = 'bereit', modellZeit = 0, letzte = performance.now();
-  // Zeitlupe: tempo 1 = normal; verfolgt = Stöße, denen die Zeitlupe gerade folgt (einer je Wand)
-  let tempo = 1, ruhe = 0, verfolgt = [];
-  const lupeAn = () => $('zeitlupe').checked;
-
-  function neuerStoss(z, zeile, vonInnen, staerke) {
-    const s = { zeile, spalte: vonInnen ? -1 : z.n, richtung: vonInnen ? 1 : -1, staerke, takt: 0, art: 'normal', zelle: 0, verfolgt: false };
-    z.stoesse.push(s);
-    return s;
-  }
-  // Ein Teilchen trifft auf die Wand und stößt die erste Teilchenreihe an.
-  // Wärme wandert nur von warm nach kalt: Stöße starten nur auf der wärmeren Seite,
-  // und zwar umso öfter, je größer der Unterschied zwischen innen und außen ist.
-  function anDieWand(z, p, vonInnen) {
-    if (zustand !== 'laeuft' || z.stoesse.length >= MAX_STOESSE) return;
-    const unterschied = vonInnen ? z.m.T[0] - z.ta : z.ta - z.m.T[0];
-    if (unterschied < 0.05 || Math.random() > Math.min(0.85, unterschied)) return;
-    const y = gasXY(p, vonInnen ? z.geo.raum : z.geo.aussen)[1];
-    const zeile = klemm(Math.floor((y - OBEN) / G), 0, ZEILEN - 1);
-    const s = neuerStoss(z, zeile, vonInnen, 0.55 + 0.45 * klemm(p.e, 0, 1));
-    p.e *= 0.6; p.blitz = 1;
-    // Zeitlupe: diesem Stoß folgen und denselben Stoß in der anderen Wand starten, damit man A und B vergleichen kann.
-    if (lupeAn() && !verfolgt.length && ruhe <= 0) {
-      s.verfolgt = true; verfolgt.push(s);
-      const o = ZS.find(x => x !== z);
-      const zw = neuerStoss(o, zeile, vonInnen, s.staerke);
-      zw.verfolgt = true; verfolgt.push(zw);
-      o.blitze.push({ x: vonInnen ? o.geo.xWand : o.geo.xEnde, y: zeileY(zeile), t: 0, art: 'punkt' });
-    }
+  function neu() {
+    sim = erzeugeSim(Object.assign({}, L, { heiz: eAus(Number(heiz.value)), aussen: eAus(Number(aussen.value)), raumStart: eAus(20),
+      heizung: heizung.checked, daemmung: wandWahl() }));
+    verlauf = [sim.speichern()]; schritte = 0; rest = 0;
+    zeichne(); anzeigen(); zeichneKurve(true);
   }
 
-  function gasBewegen(z, liste, b, ziel, tau, istRaum, dt) {
-    const bw = b.x1 - b.x0 - 2 * R_GAS, bh = UNTEN - OBEN - 2 * R_GAS, k = 1 - Math.exp(-dt / tau);
-    for (const p of liste) {
-      p.e += (ziel - p.e) * k;
-      p.blitz = Math.max(0, p.blitz - dt * 2.2);
-      if (Math.random() < dt * 1.2) p.a += zufall(-0.8, 0.8);
-      const v = vGas(p.e) * p.f;
-      p.u += Math.cos(p.a) * v * dt / bw;
-      p.v += Math.sin(p.a) * v * dt / bh;
-      if (p.v < 0) { p.v = -p.v; p.a = -p.a; } else if (p.v > 1) { p.v = 2 - p.v; p.a = -p.a; }
-      if (p.u < 0) { p.u = -p.u; p.a = Math.PI - p.a; if (!istRaum) anDieWand(z, p, false); }
-      else if (p.u > 1) { p.u = 2 - p.u; p.a = Math.PI - p.a; if (istRaum) anDieWand(z, p, true); }
-      p.u = klemm(p.u, 0, 1); p.v = klemm(p.v, 0, 1);
+  // Wellenpaket mit Pfeilspitze (Mitte mx, Höhe y, richtung ±1, Länge, Ausschlag, Deckkraft, Strichstärke)
+  function welle(mx, y, richtung, lang, amp, alpha, breite) {
+    g.beginPath();
+    for (let i = 0; i <= 22; i++) {
+      const q = i / 22, x = mx - richtung * lang / 2 + richtung * lang * q, yy = y + amp * Math.sin(q * 5 * Math.PI) * Math.sin(q * Math.PI);
+      i ? g.lineTo(x, yy) : g.moveTo(x, yy);
     }
+    g.strokeStyle = 'rgba(194,65,12,' + alpha + ')'; g.lineWidth = breite; g.stroke();
+    const sx = mx + richtung * lang / 2, sp = 3 + breite;
+    g.beginPath(); g.moveTo(sx, y); g.lineTo(sx - richtung * sp * 1.4, y - sp); g.lineTo(sx - richtung * sp * 1.4, y + sp); g.closePath();
+    g.fillStyle = 'rgba(194,65,12,' + alpha + ')'; g.fill();
+  }
+  function molekuel(p, abstand, ausschlag, rAtom) { // Luftteilchen: zwei Atome, die gegeneinander schwingen (Eigenschwingung)
+    const half = (abstand + ausschlag * Math.sin(p.ph)) / 2, cx = Math.cos(p.dreh) * half, cy = Math.sin(p.dreh) * half;
+    g.strokeStyle = farbe(p.E, 0.6); g.lineWidth = 2; g.beginPath(); g.moveTo(p.x - cx, p.y - cy); g.lineTo(p.x + cx, p.y + cy); g.stroke();
+    g.fillStyle = farbe(p.E);
+    g.beginPath(); g.arc(p.x - cx, p.y - cy, rAtom, 0, 6.283); g.fill();
+    g.beginPath(); g.arc(p.x + cx, p.y + cy, rAtom, 0, 6.283); g.fill();
   }
 
-  function anstossen(z, zeile, spalte, s) {
-    const t = z.gitter[zeile][spalte];
-    t.st = 0; t.sa = 1.5 + 4 * s.staerke; t.sd = s.richtung;
-  }
-  // Der Stoß kommt an der Wandoberfläche an und geht an ein Luftteilchen über.
-  function abgeben(z, nachInnen, y, menge) {
-    const b = nachInnen ? z.geo.raum : z.geo.aussen, liste = nachInnen ? z.raum : z.aussen;
-    const xw = nachInnen ? b.x1 : b.x0;
-    let best = null, bd = 1e9;
-    for (const p of liste) {
-      const [x, yy] = gasXY(p, b), d = Math.hypot(x - xw, yy - y);
-      if (d < bd) { bd = d; best = p; }
+  function zeichne() {
+    g.clearRect(0, 0, L.W, L.H);
+    // Raum und Außen
+    g.fillStyle = '#fff6f2'; g.fillRect(0, 0, L.wandLinks, L.H);
+    g.fillStyle = '#eef5ff'; g.fillRect(L.wandRechts, 0, L.W - L.wandRechts, L.H);
+    g.font = '600 14px system-ui, sans-serif'; g.fillStyle = '#8a2d07'; g.fillText('Raum (innen)', L.links + 14, 20);
+    // Luftwalze ohne Pfeile (Wunsch des Lehrers 10.11.2026: „den Luftstrompfeil nicht einzeichnen“) – sie zeigt sich nur an der Bewegung
+    // der Teilchen.
+    g.fillStyle = '#1b4f9c'; g.fillText('Außen (Wind)', L.W - 102, 20);
+    const pos = (w) => { const a = (0.6 + 5 * w.E) * Math.sin(w.ph); return [w.x + Math.cos(w.w) * a, w.y + Math.sin(w.w) * a]; };
+    // Heizkörper: Teilchen im Gitter wie in der Wand
+    const hy0 = L.heizOben - 12, hy1 = Math.min(L.H - 2, L.heizUnten + 12);
+    g.fillStyle = sim.heizung ? '#fde6dc' : '#eceef3'; g.fillRect(2, hy0, L.links - 4, hy1 - hy0);
+    g.strokeStyle = sim.heizung ? '#d6a58f' : '#c3c8d3'; g.lineWidth = 2; g.strokeRect(2, hy0, L.links - 4, hy1 - hy0);
+    g.font = '600 12px system-ui, sans-serif'; g.fillStyle = '#8a2d07'; g.fillText('Heizkörper', 2, hy0 - 6);
+    g.strokeStyle = '#d9b8a8'; g.lineWidth = 1.5;
+    for (const h of sim.heiz) {
+      const [x, y] = pos(h);
+      if (h.c + 1 < L.heizSpalten) { const [x2, y2] = pos(sim.HK(h.c + 1, h.r)); g.beginPath(); g.moveTo(x, y); g.lineTo(x2, y2); g.stroke(); }
+      if (h.r + 1 < L.heizZeilen) { const [x2, y2] = pos(sim.HK(h.c, h.r + 1)); g.beginPath(); g.moveTo(x, y); g.lineTo(x2, y2); g.stroke(); }
     }
-    z.blitze.push({ x: nachInnen ? z.geo.xWand : z.geo.xEnde, y, t: 0, art: 'punkt' });
-    if (best && bd < 110) { best.e = Math.min(1.3, best.e + menge); best.blitz = 1; }
-  }
-  // Ein Stoß wandert eine Teilchenreihe weiter. false = Stoß ist zu Ende.
-  function weiter(z, s) {
-    const sz = z.sz;
-    if (s.art === 'leck') {                       // selten: über die eingeschlossene Luft
-      s.zelle += s.richtung;
-      if (s.zelle >= 0 && s.zelle <= 1) { z.luft[s.zeile][s.zelle].blitz = 1; return true; }
-      s.art = 'normal'; s.spalte = s.richtung > 0 ? sz.innen : sz.innen - 1; s.staerke *= 0.5;
-      anstossen(z, s.zeile, s.spalte, s);
-      return true;
+    for (const h of sim.heiz) {
+      const [x, y] = pos(h);
+      if (h.blitz > 0) { g.beginPath(); g.arc(x, y, 12, 0, 6.283); g.strokeStyle = 'rgba(232,106,0,' + (h.blitz / 0.45) + ')'; g.lineWidth = 3; g.stroke(); }
+      g.beginPath(); g.arc(x, y, 8, 0, 6.283); g.fillStyle = farbe(h.E); g.fill();
+      g.lineWidth = 1; g.strokeStyle = 'rgba(0,0,0,.25)'; g.stroke();
     }
-    if (sz.daemmung && ((s.richtung > 0 && s.spalte === sz.innen - 1) || (s.richtung < 0 && s.spalte === sz.innen))) {
-      if (Math.random() < P_LECK) { s.art = 'leck'; s.zelle = s.richtung > 0 ? -1 : 2; return weiter(z, s); }
-      z.blitze.push({ x: s.richtung > 0 ? z.geo.xD : z.geo.xS, y: zeileY(s.zeile), t: 0, art: 'reflex', seite: -s.richtung });
-      s.richtung = -s.richtung;                   // prallt an der Dämmung zurück
-      anstossen(z, s.zeile, s.spalte, s);
-      return true;
-    }
-    const nc = s.spalte + s.richtung;
-    if (nc >= z.n) { abgeben(z, false, zeileY(s.zeile), 0.8 * s.staerke); return false; }
-    if (nc < 0) { abgeben(z, true, zeileY(s.zeile), 0.7 * s.staerke); return false; }
-    s.spalte = nc; s.staerke *= 0.97;
-    anstossen(z, s.zeile, nc, s);
-    return true;
-  }
-  function stoesseBewegen(z, dt) {
-    for (let i = z.stoesse.length - 1; i >= 0; i--) {
-      const s = z.stoesse[i];
-      s.takt -= dt;
-      let lebt = true;
-      while (lebt && s.takt <= 0) { lebt = weiter(z, s); s.takt += s.art === 'leck' ? SCHRITT * 2.5 : SCHRITT; }
-      if (!lebt) {
-        z.stoesse.splice(i, 1);
-        if (s.verfolgt) { verfolgt = verfolgt.filter(x => x !== s); if (!verfolgt.length) ruhe = LUPE_RUHE; }
+    // Wand (Mauerwerk), bei Wand B mit Dämmung aus Luftkammern
+    g.fillStyle = '#ece8e2'; g.fillRect(L.wandLinks, 0, L.wandRechts - L.wandLinks, L.H);
+    if (sim.daemmung) {
+      g.fillStyle = '#fff4c7'; g.fillRect(xDaemmL, 0, xDaemmR - xDaemmL, L.H);
+      g.strokeStyle = '#e8cf7a'; g.lineWidth = 1.2;
+      for (let r = 0; r < L.zeilen; r++) for (let kk = 0; kk <= L.dBis - L.dVon; kk++) {
+        const q = sim.kammerGrenzen(r, kk); g.strokeRect(q.x0 + 1.5, q.y0 + 1.5, q.x1 - q.x0 - 3, q.y1 - q.y0 - 3);
+      }
+      for (const t of sim.trenn) { // Kammerwand (Schaum) in der Farbe ihrer Schwingung
+        g.strokeStyle = farbe(t.E); g.lineWidth = 3; g.beginPath(); g.moveTo(t.x, t.y - sim.dyW / 2 + 3); g.lineTo(t.x, t.y + sim.dyW / 2 - 3); g.stroke();
+        if (t.blitz > 0) { g.beginPath(); g.arc(t.x, t.y, 9, 0, 6.283); g.strokeStyle = 'rgba(232,106,0,' + (t.blitz / 0.45) + ')'; g.lineWidth = 2; g.stroke(); }
       }
     }
+    g.strokeStyle = '#b9b2a7'; g.lineWidth = 2; g.strokeRect(L.wandLinks + 1, -2, L.wandRechts - L.wandLinks - 2, L.H + 4);
+    g.font = '600 14px system-ui, sans-serif'; g.fillStyle = '#6b6357';
+    if (sim.daemmung) g.fillText('Mauerwerk', L.wandLinks + 6, 20); else g.fillText('Wand', (L.wandLinks + L.wandRechts) / 2 - 18, 20);
+    g.strokeStyle = '#cfc8bd'; g.lineWidth = 1.5;
+    for (const w of sim.wand) {
+      if (!sim.massiv(w.c)) continue;
+      const [x, y] = pos(w);
+      if (w.c + 1 < L.spalten && sim.massiv(w.c + 1)) { const [x2, y2] = pos(sim.W(w.c + 1, w.r)); g.beginPath(); g.moveTo(x, y); g.lineTo(x2, y2); g.stroke(); }
+      if (w.r + 1 < L.zeilen) { const [x2, y2] = pos(sim.W(w.c, w.r + 1)); g.beginPath(); g.moveTo(x, y); g.lineTo(x2, y2); g.stroke(); }
+    }
+    for (const w of sim.wand) {
+      if (!sim.massiv(w.c)) continue;
+      const [x, y] = pos(w);
+      if (w.blitz > 0) { g.beginPath(); g.arc(x, y, 13, 0, 6.283); g.strokeStyle = 'rgba(232,106,0,' + (w.blitz / 0.45) + ')'; g.lineWidth = 3; g.stroke(); }
+      g.beginPath(); g.arc(x, y, 9, 0, 6.283); g.fillStyle = farbe(w.E); g.fill();
+      g.lineWidth = 1; g.strokeStyle = 'rgba(0,0,0,.25)'; g.stroke();
+    }
+    // Eingeschlossene Luftteilchen in den Kammern der Dämmung (klein, fast ruhend)
+    for (const q of sim.kammer) molekuel(q, 6, 1 + 2.5 * q.E, 2.9);
+    if (sim.daemmung) {
+      g.font = '700 12px system-ui, sans-serif'; const tx = 'Dämmung', b = g.measureText(tx).width + 10, x0 = (xDaemmL + xDaemmR) / 2 - b / 2;
+      g.fillStyle = 'rgba(255,255,255,.92)'; g.fillRect(x0, 6, b, 18); g.strokeStyle = '#a16207'; g.lineWidth = 1.2; g.strokeRect(x0, 6, b, 18);
+      g.fillStyle = '#713f12'; g.fillText(tx, x0 + 5, 19);
+    }
+    // Im Mauerwerk: Die Schwingung wandert von Teilchen zu Teilchen – Wellenpakete laufen entlang der Verbindungen in Flussrichtung
+    for (const q of sim.pakete) {
+      const a = sim.W(q.c, q.r), b = sim.W(q.c + 1, q.r), u = q.t / sim.P.paketDauer;
+      const x0 = q.richtung > 0 ? a.x : b.x, x1 = q.richtung > 0 ? b.x : a.x;
+      welle(x0 + (x1 - x0) * u, a.y, q.richtung, 16, 3.2, Math.min(1, 3 * (1 - u)), 1.8);
+    }
+    // Übergabestellen (Stöße): pulsierender Ring und ein Wellenpaket, das in Richtung des Wärmeflusses über die Grenze läuft
+    for (const b of sim.blitze) {
+      const u = b.t / 0.45, f = 1 - u, sk = b.klein ? 0.6 : 1;
+      g.beginPath(); g.arc(b.x, b.y, (5 + 12 * u) * sk, 0, 6.283); g.strokeStyle = 'rgba(232,106,0,' + f + ')'; g.lineWidth = 2.5 * sk; g.stroke();
+      welle(b.x + b.richtung * (-12 + 36 * u) * sk, b.y, b.richtung, 22 * sk, 4.5 * sk, Math.min(1, 1.6 * f), 2.2 * sk);
+    }
+    // Luftteilchen im Raum und außen
+    for (const p of sim.luft) molekuel(p, 9, 1 + 4 * p.E, 4.6);
   }
 
-  function wandBewegen(z, dt) {
-    const T = z.m.T, sz = z.sz;
-    for (let r = 0; r < ZEILEN; r++) for (let j = 0; j < z.n; j++) {
-      const gl = z.gitter[r][j], w = 2 * Math.PI * freq(T[j + 1]) * dt;
-      gl.p1 += w * gl.m1; gl.p2 += w * gl.m2; gl.st += dt;
+  function anzeigen() {
+    const m = sim.mittel();
+    for (const [id, E] of [['aHeiz', m.heiz], ['aRaum', m.raum], ['aWandI', m.wandI], ['aWandA', m.wandA], ['aAussen', sim.Eaussen]]) {
+      const d = el(id); d.style.width = Math.round(E * 100) + '%'; d.style.background = farbe(E);
     }
-    if (sz.daemmung) {
-      const ti = T[sz.innen], ta = T[sz.innen + 1];
-      const bw = DAEMM / 2 - 10 - 2 * R_LUFT, bh = G - 8 - 2 * R_LUFT;
-      z.luft.forEach(zeile => zeile.forEach((l, k) => {
-        const tc = k === 0 ? 0.75 * ti + 0.25 * ta : 0.25 * ti + 0.75 * ta, v = 0.5 * vGas(tc);
-        l.blitz = Math.max(0, l.blitz - dt * 2);
-        if (Math.random() < dt) l.a += zufall(-0.8, 0.8);
-        l.u += Math.cos(l.a) * v * dt / bw; l.v += Math.sin(l.a) * v * dt / bh;
-        if (l.u < 0) { l.u = -l.u; l.a = Math.PI - l.a; } else if (l.u > 1) { l.u = 2 - l.u; l.a = Math.PI - l.a; }
-        if (l.v < 0) { l.v = -l.v; l.a = -l.a; } else if (l.v > 1) { l.v = 2 - l.v; l.a = -l.a; }
-        l.u = klemm(l.u, 0, 1); l.v = klemm(l.v, 0, 1);
-      }));
-    }
-    for (const b of z.blitze) b.t += dt;
-    z.blitze = z.blitze.filter(b => b.t < 0.5);
+    zeit.value = String(Math.floor(sim.t + 1e-6));
+    el('zeitWert').textContent = mmss(sim.t + 1e-6) + (raffer.checked ? ' (Zeitraffer ' + RAFFER + '×)' : '') + (schritte >= MAXT * 120 ? ' – Ende' : '');
   }
 
-  // Ein Zeitschritt für beide Wände. dtReal = echte Sekunden; in der Zeitlupe läuft alles langsamer, auch der Zeitraffer.
-  function einSchritt(dtReal) {
-    if (!lupeAn() && verfolgt.length) { verfolgt.forEach(s => { s.verfolgt = false; }); verfolgt = []; }
-    const ziel = verfolgt.length ? LUPE : 1;
-    tempo += (ziel - tempo) * (1 - Math.exp(-dtReal / 0.25));
-    if (Math.abs(tempo - ziel) < 0.003) tempo = ziel;
-    if (!verfolgt.length && ruhe > 0) ruhe -= dtReal;
-    const dt = dtReal * tempo;
-    if (zustand === 'laeuft') {
-      const dm = dt * MODELLZEIT / +$('dauer').value;
-      for (const z of ZS) { let rest = dm; while (rest > 1e-9) { const h = Math.min(rest, 1 / 240); modellSchritt(z.m, h); rest -= h; } }
-      modellZeit += dm;
-      if (modellZeit >= MODELLZEIT) beenden();
-    }
-    for (const z of ZS) {
-      gasBewegen(z, z.raum, z.geo.raum, z.m.T[0], 1.2, true, dt);
-      gasBewegen(z, z.aussen, z.geo.aussen, z.ta, 2.0, false, dt);
-      wandBewegen(z, dt);
-      stoesseBewegen(z, dt);
-    }
+  function takt(jetzt) {
+    if (!laeuft) return;
+    const dtEcht = Math.min(0.05, (jetzt - letzte) / 1000); letzte = jetzt;
+    rest += dtEcht * (raffer.checked ? RAFFER : 1);
+    while (rest >= DT) { if (schritte >= MAXT * 120) { anhalten(); break; } schritt1(); rest -= DT; }
+    zeichne(); anzeigen(); zeichneKurve(false);
+    if (laeuft) requestAnimationFrame(takt);
   }
 
-  // ===== Zeichnen =====
-  function kugel(c, x, y, r, t) {
-    const g = c.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.15, x, y, r * 1.1);
-    g.addColorStop(0, 'rgba(255,255,255,0.95)'); g.addColorStop(0.4, farbe(t)); g.addColorStop(1, farbe(t));
-    c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, 2 * Math.PI); c.fill();
-    c.strokeStyle = 'rgba(0,0,0,0.25)'; c.lineWidth = 1; c.stroke();
-  }
-  function ring(c, x, y, r, a) {
-    c.fillStyle = 'rgba(255,184,0,' + (0.35 * a) + ')';
-    c.beginPath(); c.arc(x, y, r * 2.3, 0, 2 * Math.PI); c.fill();
-    c.strokeStyle = 'rgba(230,150,0,' + (0.9 * a) + ')'; c.lineWidth = 2;
-    c.beginPath(); c.arc(x, y, r + 3, 0, 2 * Math.PI); c.stroke();
-  }
-  function pfeil(c, x, y, richtung) {
-    const l = 11;
-    c.strokeStyle = ORANGE; c.fillStyle = ORANGE; c.lineWidth = 2.5; c.lineCap = 'round';
-    c.beginPath(); c.moveTo(x - richtung * l, y); c.lineTo(x + richtung * (l - 4), y); c.stroke();
-    c.beginPath(); c.moveTo(x + richtung * (l + 3), y); c.lineTo(x + richtung * (l - 5), y - 5); c.lineTo(x + richtung * (l - 5), y + 5); c.closePath(); c.fill();
-    c.lineCap = 'butt';
-  }
-  function thermometer(c, x, t) {
-    const y0 = OBEN + 4, ky = UNTEN - 11;
-    const form = (d, f) => {
-      c.fillStyle = f;
-      rund(c, x - 5 - d, y0 - d, 10 + 2 * d, ky - y0 + 2 * d, 5 + d); c.fill();
-      c.beginPath(); c.arc(x, ky, 9 + d, 0, 2 * Math.PI); c.fill();
-    };
-    form(1.5, '#8d97ab'); form(0, '#ffffff');
-    const oben = ky - (ky - y0 - 6) * (0.06 + 0.94 * klemm(t, 0, 1));
-    c.fillStyle = farbe(t);
-    rund(c, x - 2.5, oben, 5, ky - oben, 2.5); c.fill();
-    c.beginPath(); c.arc(x, ky, 6, 0, 2 * Math.PI); c.fill();
-  }
-
-  function zeichnen(z) {
-    const c = z.ctx, gg = z.geo, sz = z.sz, T = z.m.T, W = gg.W;
-    c.setTransform(z.dpr * z.skala, 0, 0, z.dpr * z.skala, 0, 0);
-    c.fillStyle = '#ffffff'; c.fillRect(0, 0, W, H);
-
-    // Raum und außen
-    c.fillStyle = farbe(T[0], 0.10); rund(c, RAND - 6, OBEN, gg.xWand - RAND + 16, UNTEN - OBEN, 10); c.fill();
-    c.fillStyle = farbe(z.ta, 0.10); rund(c, gg.xEnde - 10, OBEN, W - RAND + 16 - gg.xEnde, UNTEN - OBEN, 10); c.fill();
-
-    // Mauerwerk mit Schraffur, Dämmung gelb
-    const mauer = sz.daemmung ? [[gg.xWand, gg.xD], [gg.xS, gg.xEnde]] : [[gg.xWand, gg.xEnde]];
-    for (const [a, b] of mauer) {
-      c.fillStyle = '#efe7de'; c.fillRect(a, OBEN, b - a, UNTEN - OBEN);
-      c.save(); c.beginPath(); c.rect(a, OBEN, b - a, UNTEN - OBEN); c.clip();
-      c.strokeStyle = 'rgba(120,95,70,0.14)'; c.lineWidth = 1;
-      for (let x = a - (UNTEN - OBEN); x < b; x += 10) { c.beginPath(); c.moveTo(x, UNTEN); c.lineTo(x + (UNTEN - OBEN), OBEN); c.stroke(); }
-      c.restore();
-    }
-    if (sz.daemmung) { c.fillStyle = '#fff4c7'; c.fillRect(gg.xD, OBEN, DAEMM, UNTEN - OBEN); }
-
-    // Beschriftung
-    c.textAlign = 'center'; c.textBaseline = 'alphabetic'; c.font = SCHRIFT;
-    const text = (t, x, f) => { c.fillStyle = f; c.fillText(t, x, OBEN - 14); };
-    text('innen (Raum)', (RAND + gg.xWand) / 2, '#a8321f');
-    text('außen', (gg.xEnde + W - RAND) / 2, '#1b5bb0');
-    if (sz.daemmung) {
-      text('Wand', (gg.xWand + gg.xD) / 2, '#6b5848');
-      text('Dämmung', gg.xD + DAEMM / 2, '#8a6700');
-      text('Wand', (gg.xS + gg.xEnde) / 2, '#6b5848');
-      c.font = KLEIN; c.fillStyle = '#8a6700'; c.fillText('Luftkammern', gg.xD + DAEMM / 2, UNTEN + 16);
-    } else text('Wand', (gg.xWand + gg.xEnde) / 2, '#6b5848');
-    if (z.titel) { c.font = FETT; c.textAlign = 'left'; c.fillStyle = '#1d2840'; c.fillText(z.titel, 8, 20); }
-
-    thermometer(c, RAND / 2, T[0]);
-    thermometer(c, W - RAND / 2, z.ta);
-
-    // Teilchen der Wand: Lage mit Schwingung und Stoß
-    const pos = [];
-    for (let r = 0; r < ZEILEN; r++) {
-      const zeile = [];
-      for (let j = 0; j < z.n; j++) {
-        const gl = z.gitter[r][j], a = ampl(T[j + 1]);
-        let dx = a * Math.sin(gl.p1);
-        const dy = 0.8 * a * Math.sin(gl.p2);
-        if (gl.st < 0.16) dx += gl.sd * gl.sa * Math.sin(Math.PI * gl.st / 0.16);
-        zeile.push([spalteX(z, j) + dx, zeileY(r) + dy]);
-      }
-      pos.push(zeile);
-    }
-    // Bindungen (nicht über die Dämmung hinweg)
-    c.strokeStyle = 'rgba(80,70,60,0.35)'; c.lineWidth = 1.2;
-    c.beginPath();
-    for (let r = 0; r < ZEILEN; r++) for (let j = 0; j < z.n; j++) {
-      const [x, y] = pos[r][j];
-      if (j + 1 < z.n && !(sz.daemmung && j === sz.innen - 1)) { c.moveTo(x, y); c.lineTo(pos[r][j + 1][0], pos[r][j + 1][1]); }
-      if (r + 1 < ZEILEN) { c.moveTo(x, y); c.lineTo(pos[r + 1][j][0], pos[r + 1][j][1]); }
-    }
-    c.stroke();
-
-    // Luftkammern der Dämmung mit je einem eingeschlossenen Luftteilchen
-    if (sz.daemmung) {
-      const ti = T[sz.innen], ta = T[sz.innen + 1];
-      for (let r = 0; r < ZEILEN; r++) for (let k = 0; k < 2; k++) {
-        const q = kammer(z, r, k);
-        c.fillStyle = 'rgba(255,255,255,0.65)'; c.strokeStyle = 'rgba(190,140,20,0.6)'; c.lineWidth = 1.2;
-        rund(c, q.x0, q.y0, q.w, q.h, 7); c.fill(); c.stroke();
-        const l = z.luft[r][k], tc = k === 0 ? 0.75 * ti + 0.25 * ta : 0.25 * ti + 0.75 * ta;
-        const [x, y] = luftXY(z, r, k);
-        if (l.blitz > 0) ring(c, x, y, R_LUFT, l.blitz);
-        kugel(c, x, y, R_LUFT, tc);
-      }
-    }
-
-    for (let r = 0; r < ZEILEN; r++) for (let j = 0; j < z.n; j++) {
-      const gl = z.gitter[r][j], [x, y] = pos[r][j];
-      if (gl.st < 0.4) ring(c, x, y, R_GITTER, 1 - gl.st / 0.4);
-      kugel(c, x, y, R_GITTER, T[j + 1]);
-    }
-    for (const [liste, b] of [[z.raum, gg.raum], [z.aussen, gg.aussen]]) for (const p of liste) {
-      const [x, y] = gasXY(p, b);
-      if (p.blitz > 0) ring(c, x, y, R_GAS, p.blitz);
-      kugel(c, x, y, R_GAS, p.e);
-    }
-
-    // Rückprall an der Dämmung und Übergabe an die Luft
-    for (const b of z.blitze) {
-      const a = 1 - b.t / 0.5;
-      c.strokeStyle = 'rgba(230,150,0,' + (0.95 * a) + ')'; c.lineWidth = 3;
-      c.beginPath();
-      if (b.art === 'reflex') {
-        const rr = 6 + 14 * b.t / 0.5;
-        if (b.seite < 0) c.arc(b.x, b.y, rr, Math.PI * 0.62, Math.PI * 1.38);
-        else c.arc(b.x, b.y, rr, -Math.PI * 0.38, Math.PI * 0.38);
-      } else c.arc(b.x, b.y, 4 + 10 * b.t / 0.5, 0, 2 * Math.PI);
-      c.stroke();
-    }
-
-    // Zeitlupe: dem verfolgten Stoß folgen (oranger Kreis und Pfeil in Laufrichtung)
-    for (const s of z.stoesse) {
-      if (!s.verfolgt) continue;
-      let x, y;
-      if (s.art === 'leck' && s.zelle >= 0 && s.zelle <= 1) [x, y] = luftXY(z, s.zeile, s.zelle);
-      else if (s.spalte >= 0 && s.spalte < z.n) [x, y] = pos[s.zeile][s.spalte];
-      else continue;
-      c.strokeStyle = ORANGE; c.lineWidth = 3;
-      c.beginPath(); c.arc(x, y, R_GITTER + 6, 0, 2 * Math.PI); c.stroke();
-      pfeil(c, x, y - 18, s.richtung);
-    }
-    if (tempo < 0.97) {
-      c.font = '700 13px system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif'; c.textAlign = 'right';
-      const w = c.measureText('Zeitlupe').width + 18;
-      c.fillStyle = 'rgba(232,106,0,0.13)'; rund(c, W - 8 - w, 7, w, 22, 11); c.fill();
-      c.fillStyle = '#b85400'; c.fillText('Zeitlupe', W - 17, 23);
+  function regler() {
+    el('heizWert').textContent = wort(eAus(Number(heiz.value))) + ' · ' + grad(Number(heiz.value));
+    el('aussenWert').textContent = wort(eAus(Number(aussen.value))) + ' · ' + grad(Number(aussen.value));
+    if (sim) {
+      sim.Eheiz = eAus(Number(heiz.value)); sim.Eaussen = eAus(Number(aussen.value));
+      if (sim.heizung) sim.heizungSetzen(true); // Heizkörper sofort auf der neuen Schwingung
+      zukunftVerwerfen(); if (!laeuft) { zeichne(); anzeigen(); zeichneKurve(true); }
     }
   }
-
-  // ===== Ergebnis =====
-  function befund(z) {
-    const d0 = z.ti - z.ta;
-    if (Math.abs(d0) < 0.05) return 'Keine Wärme gewandert';
-    const anteil = (z.ti - z.m.T[0]) / d0;
-    const stufe = anteil > 0.4 ? 'viel' : anteil > 0.15 ? 'etwas' : 'kaum';
-    return d0 > 0 ? 'Raum: ' + stufe + ' Wärme verloren' : 'Raum: ' + stufe + ' Wärme von außen bekommen';
-  }
-  function merkeSetzen() {
-    const d = ZS[0].ti - ZS[0].ta;
-    let t;
-    if (Math.abs(d) < 0.05) t = [
-      'Innen und außen bewegen sich die Teilchen gleich schnell. Dann gibt es nichts weiterzugeben: Es wandert keine Wärme durch die Wand.',
-      'Wärme wandert nur, wenn es einen Unterschied gibt: immer von warm nach kalt.',
-      'Je größer der Unterschied zwischen innen und außen ist, desto mehr Wärme geht verloren. Deshalb rechnet man die Heizlast für einen sehr kalten Tag.'
-    ];
-    else if (d > 0) t = [
-      'Die Teilchen geben ihre Bewegung an ihre Nachbarn weiter, immer von den schnellen (warm) zu den langsamen (kalt). Ohne Dämmung geht das Reihe für Reihe durch die ganze Wand: Der Raum kühlt aus.',
-      'In der Dämmung steckt eingeschlossene Luft. Ihre Teilchen liegen weit auseinander und geben die Bewegung kaum weiter. Die Stöße prallen zurück, die Wärme bleibt im Raum.',
-      'Was im Winter durch die Wand nach draußen geht, muss die Heizung nachliefern. Das ist die Heizlast. Gute Dämmung macht sie kleiner.'
-    ];
-    else t = [
-      'Diesmal bewegen sich die Teilchen außen schneller. Ohne Dämmung wandert die Bewegung von außen Reihe für Reihe durch die Wand herein: Der Raum wird warm.',
-      'Die Dämmung bremst auch in diese Richtung. Die Stöße prallen zurück, der Raum bleibt kühl.',
-      'Wärme wandert immer von warm nach kalt. Dämmung hilft also im Winter gegen das Auskühlen und im Sommer gegen die Hitze.'
-    ];
-    $('merke').querySelectorAll('p').forEach((el, i) => { el.textContent = t[i]; });
-  }
-  function beenden() {
-    zustand = 'fertig'; modellZeit = MODELLZEIT;
-    for (const z of ZS) {
-      const el = $('befund' + z.sz.id);
-      el.textContent = befund(z); el.style.background = farbe(z.m.T[0], 0.16); el.hidden = false;
-    }
-    merkeSetzen(); $('merke').hidden = false;
-    knopf();
-  }
-
-  // ===== Bedienung =====
-  function knopf() {
-    $('start').textContent = { bereit: '▶ Start', laeuft: '❚❚ Pause', pause: '▶ Weiter', fertig: '↺ Nochmal' }[zustand];
-  }
-  function zuruecksetzen() {
-    zustand = 'bereit'; modellZeit = 0; tempo = 1; ruhe = 0; verfolgt = [];
-    ZS.forEach(zustandNeu);
-    ['befundA', 'befundB', 'merke'].forEach(id => { $(id).hidden = true; });
-    knopf();
-  }
-  function werteZeigen() {
-    $('innenWert').textContent = WORTE[+$('innen').value];
-    $('aussenWert').textContent = WORTE[+$('aussen').value];
-    $('dauerWert').textContent = $('dauer').value + ' s';
-  }
-  const lupeZeigen = () => $('schalterLupe').classList.toggle('an', lupeAn());
-  $('start').addEventListener('click', () => {
-    if (zustand === 'fertig') zuruecksetzen();
-    zustand = zustand === 'laeuft' ? 'pause' : 'laeuft';
-    knopf();
+  zeit.addEventListener('input', () => { if (laeuft) anhalten(); springe(Number(zeit.value)); });
+  heiz.addEventListener('input', regler); aussen.addEventListener('input', regler);
+  heizung.addEventListener('change', () => {
+    if (sim) { sim.heizungSetzen(heizung.checked); zukunftVerwerfen(); }
+    el('schalterHeizung').classList.toggle('an', heizung.checked);
+    if (!laeuft) { zeichne(); anzeigen(); zeichneKurve(true); }
   });
-  $('zurueck').addEventListener('click', zuruecksetzen);
-  ['innen', 'aussen'].forEach(id => $(id).addEventListener('input', () => {
-    const weiterLaufen = zustand === 'laeuft';
-    werteZeigen(); zuruecksetzen();
-    if (weiterLaufen) { zustand = 'laeuft'; knopf(); }
-  }));
-  $('dauer').addEventListener('input', werteZeigen);
-  $('zeitlupe').addEventListener('change', () => { lupeZeigen(); ruhe = 0; });
-  window.addEventListener('keydown', e => {
-    const tag = e.target && e.target.tagName;
-    if (tag === 'BUTTON' || tag === 'INPUT') return;
-    if (e.code === 'Space') { e.preventDefault(); $('start').click(); }
-    else if (e.key === 'r' || e.key === 'R') zuruecksetzen();
-    else if (e.key === 'z' || e.key === 'Z') $('zeitlupe').click();
+  raffer.addEventListener('change', () => { el('schalterRaffer').classList.toggle('an', raffer.checked); anzeigen(); });
+  for (const r of document.querySelectorAll('input[name="wand"]')) r.addEventListener('change', () => {
+    el('wahlA').classList.toggle('an', !wandWahl()); el('wahlB').classList.toggle('an', wandWahl());
+    anhalten(); neu(); // anderer Wandaufbau: Ablauf beginnt von vorn
   });
+  el('start').addEventListener('click', () => {
+    if (!laeuft && schritte >= MAXT * 120) return; // Ende der Zeitleiste: zurückschieben oder Zurücksetzen
+    laeuft = !laeuft; el('start').textContent = laeuft ? '⏸ Pause' : '▶ Start';
+    if (laeuft) { letzte = performance.now(); requestAnimationFrame(takt); }
+  });
+  el('zurueck').addEventListener('click', () => { laeuft = false; el('start').textContent = '▶ Start'; neu(); });
+  regler(); neu();
 
-  // ===== Hauptschleife =====
-  function bild(jetzt) {
-    const dt = Math.min(0.05, Math.max(0, (jetzt - letzte) / 1000)); letzte = jetzt;
-    if (zustand !== 'pause') einSchritt(dt);
-    for (const z of ZS) zeichnen(z);
-    const anteil = Math.min(1, modellZeit / MODELLZEIT);
-    $('balken').style.width = (100 * anteil).toFixed(1) + '%';
-    $('prozent').textContent = Math.round(100 * anteil) + ' %';
-    requestAnimationFrame(bild);
-  }
-
-  const ZS = SZENEN.map(sz => { const cv = $('leinwand' + sz.id); return { sz, cv, ctx: cv.getContext('2d'), geo: null, skala: 1, dpr: 1, titel: null }; });
-  function groesse() {
-    const css = ZS[0].cv.clientWidth || 900;
-    const W = Math.round(klemm(css, W_MIN, W_MAX)), dpr = Math.max(1, window.devicePixelRatio || 1);
-    for (const z of ZS) {
-      z.geo = geo(z.sz, W); z.skala = css / W; z.dpr = dpr;
-      z.cv.style.height = Math.round(H * z.skala) + 'px';
-      z.cv.width = Math.round(css * dpr); z.cv.height = Math.round(H * z.skala * dpr);
-    }
-  }
-
-  // ===== Standbilder für das Arbeitsblatt (A über B, 2000 Pixel breit) =====
-  function standbildMalen() {
-    const W = 1000, dpr = 2, luecke = 18;
-    const aus = document.createElement('canvas');
-    aus.width = W * dpr; aus.height = (2 * H + luecke) * dpr;
-    const ac = aus.getContext('2d');
-    ac.fillStyle = '#ffffff'; ac.fillRect(0, 0, aus.width, aus.height);
-    ZS.forEach((z, i) => {
-      z.geo = geo(z.sz, W); z.skala = 1; z.dpr = dpr;
-      z.cv.width = W * dpr; z.cv.height = H * dpr;
-      z.titel = i ? 'B  Wand mit Dämmung' : 'A  Wand ohne Dämmung';
-      zeichnen(z);
-      ac.drawImage(z.cv, 0, i * (H + luecke) * dpr);
-      z.titel = null;
-    });
-    groesse();
-    return aus.toDataURL('image/png');
-  }
-  // art 'stoss': kurz nach dem Start, ein Stoß läuft durch A und prallt in B an der Dämmung zurück. art 'ende': nach dem Ablauf.
-  function standbild(art) {
-    const merk = { innen: $('innen').value, aussen: $('aussen').value, dauer: $('dauer').value, lupe: lupeAn() };
-    $('innen').value = '9'; $('aussen').value = '1'; $('dauer').value = '40'; $('zeitlupe').checked = false;
-    zuruecksetzen();
-    const lauf = (sek, zst) => { zustand = zst; for (let t = 0; t < sek; t += 1 / 60) einSchritt(1 / 60); };
-    if (art === 'stoss') {
-      lauf(1.5, 'bereit');
-      const [A, B] = ZS, r = 3;
-      const spur = (z, liste) => liste.forEach(([j, st, sd]) => { const gl = z.gitter[r][j]; gl.st = st; gl.sd = sd; gl.sa = 5; });
-      spur(A, [[0, 0.3, 1], [1, 0.19, 1], [2, 0.08, 1]]);
-      A.stoesse = [{ zeile: r, spalte: 2, richtung: 1, staerke: 0.9, takt: 1, art: 'normal', zelle: 0, verfolgt: true }];
-      spur(B, [[1, 0.3, 1], [3, 0.19, -1], [2, 0.08, -1]]);
-      B.blitze = [{ x: B.geo.xD, y: zeileY(r), t: 0.12, art: 'reflex', seite: -1 }];
-      B.stoesse = [{ zeile: r, spalte: 2, richtung: -1, staerke: 0.9, takt: 1, art: 'normal', zelle: 0, verfolgt: true }];
-    } else {
-      lauf(MODELLZEIT + 0.5, 'laeuft');
-      lauf(1.5, 'fertig');
-    }
-    const bildDaten = standbildMalen();
-    $('innen').value = merk.innen; $('aussen').value = merk.aussen; $('dauer').value = merk.dauer; $('zeitlupe').checked = merk.lupe;
-    werteZeigen(); lupeZeigen(); zuruecksetzen();
-    return bildDaten;
-  }
-
-  werteZeigen(); lupeZeigen(); ZS.forEach(zustandNeu); groesse(); knopf();
-  window.addEventListener('resize', groesse);
-  requestAnimationFrame(bild);
-  window.__waerme = { ZS, zeit: () => modellZeit, zustand: () => zustand, tempo: () => tempo, standbild };
+  // Für Standbilder auf dem Arbeitsblatt (im Browser aufgerufen): Einstellung setzen, zu einer Zeit springen, Bild + Kurve als PNG
+  window.__waermeWand = {
+    setze(e) {
+      if (e.wand) { const r = document.querySelector('input[name="wand"][value="' + e.wand + '"]'); r.checked = true; el('wahlA').classList.toggle('an', e.wand === 'A'); el('wahlB').classList.toggle('an', e.wand === 'B'); }
+      if (e.heiz != null) heiz.value = String(e.heiz);
+      if (e.aussen != null) aussen.value = String(e.aussen);
+      if (e.heizung != null) { heizung.checked = !!e.heizung; el('schalterHeizung').classList.toggle('an', heizung.checked); }
+      anhalten(); regler(); neu();
+      if (e.sekunden) springe(e.sekunden);
+      return { raum: temp(sim.mittel().raum), wand: [0, 1, 2, 3, 4, 5].map((c) => temp(sim.spalteE(c))), t: sim.t };
+    },
+    standbild() { // Bild + Kurve, darunter rechts die Farbskala (auf Papier sonst nicht ablesbar)
+      const sk = el('skala'), zeile = sk.height + 8 * dpr;
+      const c = document.createElement('canvas'); c.width = bild.width; c.height = bild.height + kurve.height + zeile;
+      const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+      x.drawImage(bild, 0, 0); x.drawImage(kurve, 0, bild.height);
+      const y0 = bild.height + kurve.height + 4 * dpr, x0 = c.width - sk.width - 8 * dpr;
+      x.drawImage(sk, x0, y0);
+      x.font = '600 ' + 13 * dpr + 'px system-ui, sans-serif'; x.fillStyle = '#1d2840'; x.textAlign = 'right';
+      x.fillText('Farbe = Temperatur:', x0 - 8 * dpr, y0 + 12 * dpr);
+      return c.toDataURL('image/png');
+    },
+  };
 })();
 </script>
 </body>
