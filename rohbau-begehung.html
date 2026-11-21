@@ -653,8 +653,12 @@ function elGeraet(f,a,y,k,o){ // Fertiginstallation: Steckdose, Schalter, Herdan
   if(k==='schalter')wbox(M.white,f,a-.027,a+.027,y-.027,y+.027,o+.011,o+.017);
   else{wcyl(M.lightGray,f,a,y,o+.011,o+.013,.024,16);for(const s of[-1,1])wcyl(M.black,f,a+s*.0095,y,o+.013,o+.0135,.0035,8);}}
 function elKabel(f,list,yz,ends){ // Leitungen nur in den Installationszonen: oben waagerecht, zur Dose senkrecht
-  let lo=Infinity,hi=-Infinity;
-  for(const e of list){lo=Math.min(lo,e.a);hi=Math.max(hi,e.a);mcyl(M.nym,wp(f,e.a,yz,.008),wp(f,e.a,e.y+.036,.008),.0065,6);}
+  let lo=Infinity,hi=-Infinity;const fertig=new Set();
+  for(const e of list){lo=Math.min(lo,e.a);hi=Math.max(hi,e.a);if(fertig.has(e))continue;fertig.add(e);
+    mcyl(M.nym,wp(f,e.a,yz,.008),wp(f,e.a,e.y+.036,.008),.0065,6);
+    // Doppelsteckdose: nur EINE Leitung von oben, die zweite Dose daneben durchgeschleift
+    const p=list.find(o=>!fertig.has(o)&&o.y===e.y&&Math.abs(o.a-e.a)<=.13);
+    if(p){fertig.add(p);mcyl(M.nym,wp(f,Math.min(e.a,p.a)+.036,e.y,.008),wp(f,Math.max(e.a,p.a)-.036,e.y,.008),.0065,6);}}
   for(const a of ends){lo=Math.min(lo,a);hi=Math.max(hi,a);}mcyl(M.nym,wp(f,lo,yz,.008),wp(f,hi,yz,.008),.0065,6);}
 function abzweigdose(f,a,y,fertig){ // viereckige Unterputz-Abzweigdose am Abzweig der Leitungen
   if(fertig){wbox(M.white,f,a-.052,a+.052,y-.052,y+.052,.012,.017);return;}
