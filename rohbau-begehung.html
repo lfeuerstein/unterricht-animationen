@@ -656,6 +656,10 @@ function elKabel(f,list,yz,ends){ // Leitungen nur in den Installationszonen: ob
   let lo=Infinity,hi=-Infinity;
   for(const e of list){lo=Math.min(lo,e.a);hi=Math.max(hi,e.a);mcyl(M.nym,wp(f,e.a,yz,.008),wp(f,e.a,e.y+.036,.008),.0065,6);}
   for(const a of ends){lo=Math.min(lo,a);hi=Math.max(hi,a);}mcyl(M.nym,wp(f,lo,yz,.008),wp(f,hi,yz,.008),.0065,6);}
+function abzweigdose(f,a,y,fertig){ // viereckige Unterputz-Abzweigdose am Abzweig der Leitungen
+  if(fertig){wbox(M.white,f,a-.052,a+.052,y-.052,y+.052,.012,.017);return;}
+  wbox(M.doseBlue,f,a-.052,a+.052,y-.052,y+.052,-.012,.009);wbox(M.black,f,a-.042,a+.042,y-.042,y+.042,.009,.0095);
+  wbox(M.orange,f,a-.03,a-.006,y-.012,y+.012,.0095,.024);wbox(M.orange,f,a+.006,a+.03,y-.012,y+.012,.0095,.024);}
 function deckenauslass(x,z){mcyl(M.doseBlue,[x,EGT,z],[x,EGT-.006,z],.036,16);mpipe(M.nym,[[x,EGT-.006,z],[x,EGT-.2,z],[x+.04,EGT-.3,z+.03]],.0055,6);}
 // Küche (EG, Ostseite): Wände, Steckdosen und Schalter
 const KN=WF('x',2.64,1),KE=WF('z',XI1,-1),KS=WF('x',ZI1,-1),KW=WF('z',6.92,1);
@@ -737,6 +741,7 @@ inStage(ROH,()=>{
   LROOM='Gästebad';
   for(const e of GEL)elDose(e.f,e.a,e.y,e.k);
   elKabel(GW,GEL.filter(e=>e.f===GW),2.42,[.4]);elKabel(GE,GEL.filter(e=>e.f===GE),2.42,[.5]);
+  abzweigdose(GW,1.7,2.42);
   deckenauslass(3.56,1.6);
   // WC-Vorwandelement mit Spülkasten
   const vx0=3.33,vx1=3.83;
@@ -766,7 +771,7 @@ inStage(ROH,()=>{
   label('Dusche: Unterputz-Grundkörper',3.1,1.36,3.0,h);label('Bodenablauf bodengleiche Dusche',3.56,.22,2.8,h);
   label('Fallleitung DN 100',3.92,1.7,3.15,h);label('Handtuchheizkörper: Vor- und Rücklauf',4.0,.34,.8,h);
   label('Steckdose am Waschtisch',3.02,1.36,2.1,h);label('Auslass Spiegelleuchte',3.02,2.14,1.7,h);
-  label('Lichtschalter (1,05 m)',4.08,1.2,2.25,h);label('Deckenauslass',3.56,2.4,1.6,h);
+  label('Lichtschalter (1,05 m)',4.08,1.2,2.25,h);label('Deckenauslass',3.56,2.4,1.6,h);label('Abzweigdose',3.02,2.53,1.7,h);
 });
 // --- Gästebad: Fertiginstallation
 inStage(FERTIG,()=>{
@@ -795,6 +800,7 @@ inStage(FERTIG,()=>{
   for(let y=.26;y<1.3;y+=.1)mcyl(M.white,[4.17,y,.58],[4.17,y,1.02],.011,8);
   mcyl(M.lampShade,[3.56,EGT,1.6],[3.56,EGT-.04,1.6],.14,24);
   for(const e of GEL)elGeraet(e.f,e.a,e.y,e.k,.012);
+  abzweigdose(GW,1.7,2.42,true);
   block(2.9,0,ZI0,4.225,1.12,.577);block(3.40,0,.577,3.76,.43,1.18);block(2.9,0,1.425,3.36,.85,1.975);block(2.9,0,2.44,3.65,2.0,2.46);block(3.95,0,3.1,4.225,EGT,3.4);block(4.15,0,.56,4.225,1.3,1.04);
   const h=.055;
   label('WC wandhängend vor der Vorwand',3.58,.62,1.05,h);label('Waschtisch mit Spiegel',3.2,1.0,1.7,h);label('Dusche bodengleich',3.4,1.5,2.95,h);
