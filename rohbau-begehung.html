@@ -768,6 +768,7 @@ inStage(ROH,()=>{
   LROOM='Gästebad';
   for(const e of GEL)elDose(e.f,e.a,e.y,e.k);
   elKabel(GW,GEL.filter(e=>e.f===GW),2.42,[.4]);elKabel(GE,GEL.filter(e=>e.f===GE),2.42,[.5]);
+  mpipe(M.nym,[[2.908,2.42,.4],[2.908,2.42,ZI0+.008],[4.217,2.42,ZI0+.008],[4.217,2.42,.5]],.0065,6); // Verbindung über dem Fenster (Fenstersturz endet bei 2,375 m)
   for(const [f,ends,feeds] of GAB)for(const c of abzweigStellen(GEL.filter(e=>e.f===f),ends,feeds))abzweigdose(f,c,2.42);
   deckenauslass(3.56,1.6);deckenzug([[3.56,EGT-.008,1.6],[2.908,EGT-.008,1.6],[2.908,EGT-.008,1.7],[2.908,2.472,1.7]]);
   // WC-Vorwandelement mit Spülkasten
