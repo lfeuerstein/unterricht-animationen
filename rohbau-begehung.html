@@ -55,7 +55,7 @@
 <noscript><div style="position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:24px;background:#0e1014;color:#fff;font:18px/1.5 system-ui,sans-serif;text-align:center">Die Rohbau-Begehung braucht JavaScript.<br>Bitte die Datei in Safari, Chrome, Edge oder Firefox öffnen, nicht in einer Vorschau.</div></noscript>
 <canvas id="c"></canvas>
 <div id="hud">
-  <div id="keys">W A S D gehen · Maus umsehen · Umschalt rennen · Leertaste springen<br>E Bautür · F Taschenlampe · B Beschriftungen · M Grundriss · Esc Pause</div>
+  <div id="keys">W A S D gehen · Maus umsehen · Umschalt rennen · Leertaste springen<br>E Bautür · I Ausbau · F Taschenlampe · B Beschriftungen · M Grundriss · Esc Pause</div>
   <canvas id="map" width="156" height="132"></canvas>
   <div id="cross"></div>
   <div id="hint"></div>
@@ -65,19 +65,20 @@
   <div id="tz"></div>
   <div id="joy" class="idle"><div id="knob"></div><div class="lbl">ziehen = gehen</div></div>
   <div id="lookHint">wischen = umsehen</div>
-  <div class="tbar"><button id="bLamp" type="button">Lampe</button><button id="bLabels" type="button" class="on">Schilder</button><button id="bMap" type="button" class="on">Karte</button><button id="bPause" type="button">Pause</button></div>
+  <div class="tbar"><button id="bStage" type="button">Ausbau: Rohbau</button><button id="bLamp" type="button">Lampe</button><button id="bLabels" type="button" class="on">Schilder</button><button id="bMap" type="button" class="on">Karte</button><button id="bPause" type="button">Pause</button></div>
   <button id="bAct" type="button"></button>
   <button id="bJump" type="button">Springen</button>
 </div>
 <div id="start">
   <div class="box">
     <h1>Rohbau-Begehung</h1>
-    <p>Einfamilienhaus aus Poroton-Planziegeln. Das Dach ist gedeckt, die Fenster sind eingebaut, am Eingang hängt eine Bautür. Verputzt ist noch nichts. Im Keller liegt der Hausanschlussraum.</p>
+    <p>Einfamilienhaus aus Poroton-Planziegeln. Das Dach ist gedeckt, die Fenster sind eingebaut, am Eingang hängt eine Bautür. Verputzt ist noch nichts. Im Keller liegt der Hausanschlussraum. In Küche und Gästebad lässt sich umschalten: Rohbau, Rohinstallation (was muss wohin?) und fertiger Raum.</p>
     <table class="t-only">
       <tr><td>Linke Hälfte</td><td>Finger auflegen und ziehen = gehen, weit ziehen = rennen</td></tr>
       <tr><td>Rechte Hälfte</td><td>wischen = umsehen</td></tr>
       <tr><td>Springen</td><td>runder Knopf unten rechts</td></tr>
       <tr><td>Orange Knopf</td><td>erscheint an der Bautür (öffnen, schließen) und im Keller (Lampe)</td></tr>
+      <tr><td>Ausbau</td><td>Knopf oben rechts: Rohbau → Rohinstallation → fertig (in Küche und Gästebad auch der orange Knopf)</td></tr>
       <tr><td>Oben rechts</td><td>Lampe, Schilder, Karte, Pause</td></tr>
     </table>
     <table class="d-only">
@@ -86,6 +87,7 @@
       <tr><td>Umschalt</td><td>rennen</td></tr>
       <tr><td>Leertaste</td><td>springen</td></tr>
       <tr><td>E</td><td>Bautür öffnen und schließen</td></tr>
+      <tr><td>I</td><td>Ausbau umschalten: Rohbau → Rohinstallation → fertig (Küche und Gästebad)</td></tr>
       <tr><td>F</td><td>Taschenlampe (im Keller hilfreich)</td></tr>
       <tr><td>B · M</td><td>Beschriftungen · Grundriss ein und aus</td></tr>
       <tr><td>Esc</td><td>Pause, Maus wieder frei</td></tr>
@@ -263,11 +265,41 @@ const flat=(hex,o,ud)=>std(Object.assign({color:lin(hex)},o||{}),1,ud);
   M.glass=std({color:lin(0xdfeef5),roughness:.04,metalness:1,transparent:true,opacity:.24,depthWrite:false,side:T.DoubleSide,envMapIntensity:1.5},1,{noShadow:true,noReceive:true,order:5});
   M.grate=std({map:texGrid(128,[16,16],4,'104,110,116'),alphaTest:.4,side:T.DoubleSide,roughness:.5,metalness:.4},.2,{noShadow:true});
   M.fence=std({map:texGrid(256,[51.2,128],4,'188,193,198'),alphaTest:.22,side:T.DoubleSide,roughness:.5,metalness:.3},.5,{noShadow:true});
+  // Ausbau: Putz, Fliesen, Einrichtung, Installation
+  const tileTex=(W,nx,ny,base,grout,vr)=>{const c=mkCanvas(W,W),g=c.getContext('2d'),tw=W/nx,th=W/ny;g.fillStyle='rgb('+grout+')';g.fillRect(0,0,W,W);
+    for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const l=1+rr(-vr,vr);g.fillStyle='rgb('+base.map(v=>Math.min(255,v*l|0)).join(',')+')';g.fillRect(i*tw+2,j*th+2,tw-4,th-4);}
+    grit(g,W,W,W*W/40,.01,.035,2);return tex(c);};
+  {const pl=tex(texNoise(256,'241,239,234',250,'249,248,245','230,227,221')[0]);
+    M.plasterW=std({map:pl,roughness:.95},2);
+    M.ceilW=std({map:pl,roughness:.95,emissive:lin(0x7a7770)},2);} // Decke: gleicht das bräunliche Licht von unten aus
+  M.wallTile=std({map:tileTex(512,2,4,[242,242,239],'206,206,202',.015),roughness:.3},1.2);
+  M.floorTile=std({map:tileTex(512,2,2,[158,156,150],'112,110,106',.04),roughness:.55},1.2);
+  M.floorTile2=std({map:tileTex(512,2,2,[176,170,160],'128,124,118',.03),roughness:.5},1.2);
+  M.tileSmall=std({map:tileTex(512,6,6,[226,230,233],'190,192,194',.03),roughness:.3},.6);
+  M.ceram=flat(0xf8f8f6,{roughness:.12});
+  M.basin=flat(0xdfe4e8,{roughness:.15});
+  M.chrome=flat(0xe6eaee,{roughness:.1,metalness:1});
+  M.mirror=flat(0xe1e9ef,{roughness:.02,metalness:1});
+  M.front=flat(0xf1f0ec,{roughness:.32});
+  M.counter=std({map:texWood(),color:lin(0xc9a27a),roughness:.45},1);
+  M.plinth=flat(0x55585c,{roughness:.6});
+  M.darkSteel=flat(0x5d6267,{roughness:.3,metalness:.6});
+  M.cookRing=flat(0x3b3e42,{roughness:.35});
+  M.lampShade=flat(0xf3f1ea,{roughness:.6});
+  M.doseBlue=flat(0x2f62b5,{roughness:.6});
+  M.nym=flat(0xd9d9d4,{roughness:.6});
+  M.pwc=flat(0x2f73d8,{roughness:.6});
+  M.pwh=flat(0xd8392b,{roughness:.6});
 }
 
 // ---------------------------------------------------------------- Geometrie-Baukasten
-const groups=new Map(),colliders=[];
+const MAIN=new Map(),colliders=[],STAGEMAPS=[];let groups=MAIN,STAGE_MASK=0,PARENT=scene,LROOM='Hausanschlussraum';
+// Ausbaustufen: 0 Rohbau, 1 Rohinstallation, 2 Fertiginstallation. Teile mit Bitmaske erscheinen (und stehen im Weg) nur in ihren Stufen.
+let STAGE=0;const STAGE_NAMES=['Rohbau','Rohinstallation','Fertiginstallation'],STAGE_SHORT=['Rohbau','Rohinstallation','fertig'],NEXT_TXT=['Rohinstallation zeigen','Fertigen Raum zeigen','Rohbau zeigen'];
 const G=m=>{let g=groups.get(m);if(!g){g={pos:[],nor:[],uv:[],uv2:[],idx:[]};groups.set(m,g);}return g;};
+function inStage(mask,fn){const pg=groups,pm=STAGE_MASK,pp=PARENT;let e=STAGEMAPS.find(s=>s.mask===mask);
+  if(!e){e={mask,map:new Map(),group:new T.Group()};e.group.visible=false;STAGEMAPS.push(e);scene.add(e.group);}
+  groups=e.map;STAGE_MASK=mask;PARENT=e.group;try{fn();}finally{groups=pg;STAGE_MASK=pm;PARENT=pp;}}
 // Umgebungslicht-Faktor: innen dunkler als außen, Keller am dunkelsten
 function aoAt(x,y,z,nx,ny,nz){const px=x+nx*.08,py=y+ny*.08,pz=z+nz*.08;
   if(px<.2||px>HX-.2||pz<.2||pz>HZ-.2||py<Y_KG-.1)return 1;
@@ -295,8 +327,8 @@ function box(mat,xa,ya,za,xb,yb,zb,o){
   face(mat,[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0]],[0,0,-1]);
   return {x0,x1,y0,y1,z0,z1};
 }
-function block(x0,y0,z0,x1,y1,z1,nomap){const c={x0:Math.min(x0,x1),x1:Math.max(x0,x1),y0:Math.min(y0,y1),y1:Math.max(y0,y1),z0:Math.min(z0,z1),z1:Math.max(z0,z1),nomap:!!nomap};colliders.push(c);return c;}
-function solid(mat,x0,y0,z0,x1,y1,z1,o){colliders.push(box(mat,x0,y0,z0,x1,y1,z1,o));}
+function block(x0,y0,z0,x1,y1,z1,nomap){const c={x0:Math.min(x0,x1),x1:Math.max(x0,x1),y0:Math.min(y0,y1),y1:Math.max(y0,y1),z0:Math.min(z0,z1),z1:Math.max(z0,z1),nomap:!!nomap,mask:STAGE_MASK};colliders.push(c);return c;}
+function solid(mat,x0,y0,z0,x1,y1,z1,o){const c=box(mat,x0,y0,z0,x1,y1,z1,o);c.mask=STAGE_MASK;colliders.push(c);}
 // Prisma: Vieleck [u,y] entlang einer Achse gezogen (Achse x: u=z, Achse z: u=x)
 function prism(mat,poly,axis,a0,a1){
   const P=(a,p)=>axis==='x'?[a,p[1],p[0]]:[p[0],p[1],a],h=axis==='x'?[1,0,0]:[0,0,1];
@@ -315,13 +347,22 @@ function subtract(rects,h){const out=[];for(const r of rects){
 
 // Einzelteile (Rohre, Geräte): eigene Körper, bekommen den Umgebungslicht-Faktor ihres Standorts
 const _v=new T.Vector3();
-function addProp(o){scene.add(o);o.updateMatrixWorld(true);o.traverse(m=>{if(!m.isMesh)return;
+function addProp(o){PARENT.add(o);o.updateMatrixWorld(true);o.traverse(m=>{if(!m.isMesh)return;
   m.castShadow=!(m.userData.noShadow||m.material.userData.noShadow);m.receiveShadow=true;
   if(m.material.aoMap){m.getWorldPosition(_v);const ao=aoAt(_v.x,_v.y,_v.z,0,0,0),n=m.geometry.attributes.position.count,a=new Float32Array(n*2);for(let i=0;i<n;i++){a[2*i]=ao;a[2*i+1]=.5;}m.geometry.setAttribute('uv2',new T.BufferAttribute(a,2));}});return o;}
 const UP=new T.Vector3(0,1,0);
 function cyl(mat,p,q,r,seg){const a=new T.Vector3(p[0],p[1],p[2]),d=new T.Vector3(q[0]-p[0],q[1]-p[1],q[2]-p[2]),len=d.length();
   const m=new T.Mesh(new T.CylinderGeometry(r,r,len,seg||14),mat);m.position.copy(a).addScaledVector(d,.5);m.quaternion.setFromUnitVectors(UP,d.normalize());return addProp(m);}
 function pipe(mat,pts,r){for(let i=0;i<pts.length-1;i++)cyl(mat,pts[i],pts[i+1],r);for(let i=1;i<pts.length-1;i++){const s=new T.Mesh(new T.SphereGeometry(r*1.18,12,10),mat);s.position.set(pts[i][0],pts[i][1],pts[i][2]);addProp(s);}}
+// Zylinder und Rohrzüge direkt in die zusammengefasste Geometrie (wenige Zeichenaufrufe, auch auf dem iPad flüssig)
+function mcyl(mat,p,q,r,seg){seg=seg||12;const ax=new T.Vector3(q[0]-p[0],q[1]-p[1],q[2]-p[2]),len=ax.length();if(len<1e-5)return;ax.divideScalar(len);
+  const u=new T.Vector3().crossVectors(ax,Math.abs(ax.y)<.9?new T.Vector3(0,1,0):new T.Vector3(1,0,0)).normalize(),v=new T.Vector3().crossVectors(ax,u);
+  const ring=c=>{const o=[];for(let i=0;i<seg;i++){const a=i/seg*Math.PI*2,cs=Math.cos(a)*r,sn=Math.sin(a)*r;o.push([c[0]+u.x*cs+v.x*sn,c[1]+u.y*cs+v.y*sn,c[2]+u.z*cs+v.z*sn]);}return o;};
+  const A=ring(p),B=ring(q);
+  for(let i=0;i<seg;i++){const j=(i+1)%seg,m=(i+.5)/seg*Math.PI*2,c=Math.cos(m),s=Math.sin(m);face(mat,[A[i],A[j],B[j],B[i]],[u.x*c+v.x*s,u.y*c+v.y*s,u.z*c+v.z*s]);}
+  face(mat,A,[-ax.x,-ax.y,-ax.z]);face(mat,B,[ax.x,ax.y,ax.z]);}
+function mpipe(mat,pts,r,seg){for(let i=0;i<pts.length-1;i++){const p=pts[i],q=pts[i+1],d=[q[0]-p[0],q[1]-p[1],q[2]-p[2]],l=Math.hypot(d[0],d[1],d[2])||1,e=r*.95;
+  const a=i>0?[p[0]-d[0]/l*e,p[1]-d[1]/l*e,p[2]-d[2]/l*e]:p,b=i<pts.length-2?[q[0]+d[0]/l*e,q[1]+d[1]/l*e,q[2]+d[2]/l*e]:q;mcyl(mat,a,b,r,seg);}}
 
 // ---------------------------------------------------------------- Fenster
 function windowFix(axis,a,b,t0,t1,s,h){
@@ -483,7 +524,7 @@ function label(text,x,y,z,h){const c=mkCanvas(8,8);let g=c.getContext('2d');cons
   g.fillStyle='rgba(15,19,25,.86)';g.fillRect(0,0,w,46);g.fillStyle='#e2854a';g.fillRect(0,0,5,46);g.font=font;g.textBaseline='middle';g.fillStyle='#fff';g.fillText(text,17,24);
   const t=new T.CanvasTexture(c);t.encoding=T.sRGBEncoding;
   const s=new T.Sprite(new T.SpriteMaterial({map:t,transparent:true,depthWrite:false,depthTest:false,fog:false,toneMapped:false}));
-  const hh=h||.075;s.scale.set(hh*w/46,hh,1);s.position.set(x,y,z);s.renderOrder=10;scene.add(s);labels.push(s);}
+  const hh=h||.075;s.scale.set(hh*w/46,hh,1);s.position.set(x,y,z);s.renderOrder=10;s.userData.room=LROOM;s.userData.mask=STAGE_MASK;PARENT.add(s);labels.push(s);}
 {
   const f=Y_KG,zN=TW,zp=zN+.12;
   // --- Strom
@@ -587,18 +628,192 @@ neighbour(-22,-38,11,9,5.6);neighbour(-2,-39,10,8.5,5.4);neighbour(17,-38,12,9,5
   for(const p of spots){const s=rr(.85,1.35),a=new T.Mesh(trunk,mt);a.position.set(p[0],GY+1.2*s,p[1]);a.scale.setScalar(s);a.castShadow=true;scene.add(a);
     const b=new T.Mesh(crown,mc[(rnd()*3)|0]);b.position.set(p[0],GY+(2.4+1.1)*s,p[1]);b.scale.set(s,s*rr(1,1.3),s);b.castShadow=true;scene.add(b);}}
 
+// ================================================================ AUSBAU: Küche und Gästebad
+// Rohbau: nichts. Rohinstallation: Dosen, Leitungen, Anschlüsse. Fertiginstallation: fertiger Raum, Anschlüsse an denselben Stellen.
+const ROH=2,FERTIG=4,AB=ROH|FERTIG;
+const WF=(ax,c,n)=>({ax,c,n});                       // Wandfläche: Richtung der Wand, Lage der Oberfläche, Richtung in den Raum
+const wp=(f,a,y,d)=>f.ax==='x'?[a,y,f.c+f.n*d]:[f.c+f.n*d,y,a];
+function wbox(mat,f,a0,a1,y0,y1,d0,d1){const p=wp(f,a0,y0,d0),q=wp(f,a1,y1,d1);return box(mat,p[0],p[1],p[2],q[0],q[1],q[2]);}
+function wcyl(mat,f,a,y,d0,d1,r,seg){mcyl(mat,wp(f,a,y,d0),wp(f,a,y,d1),r,seg);}
+function skin(mat,f,a0,a1,y0,y1,ops,d){const t=f.c+f.n*(d||.012);wall(f.ax,a0,a1,Math.min(f.c,t),Math.max(f.c,t),y0,y1,ops,{mat,collide:false,lintel:false,fixtures:false});}
+function reveal(mat,axis,a,b,s,h,c0,c1,sillMat){const B=(a0,y0,t0,a1,y1,t1,m)=>axis==='x'?box(m||mat,a0,y0,t0,a1,y1,t1):box(m||mat,t0,y0,a0,t1,y1,a1);
+  B(a,s,c0,a+.012,h,c1);B(b-.012,s,c0,b,h,c1);B(a,h-.012,c0,b,h,c1);
+  if(sillMat){const o=c0>c1?.035:-.035;B(a-.02,s-.02,c1,b+.02,s+.012,c0+o,sillMat);}}
+function roomFinish(x0,x1,z0,z1,floorMat){face(floorMat,[[x0,.008,z0],[x1,.008,z0],[x1,.008,z1],[x0,.008,z1]],[0,1,0]);
+  face(M.ceilW,[[x0,EGT-.004,z0],[x1,EGT-.004,z0],[x1,EGT-.004,z1],[x0,EGT-.004,z1]],[0,-1,0]);}
+function elDose(f,a,y,k){ // Rohinstallation: Unterputzdose, Leitungsenden hängen heraus
+  if(k==='herd'){wbox(M.doseBlue,f,a-.05,a+.05,y-.05,y+.05,-.01,.006);wbox(M.black,f,a-.036,a+.036,y-.036,y+.036,.006,.007);}
+  else{wcyl(M.doseBlue,f,a,y,-.01,.005,.036,16);wcyl(M.black,f,a,y,.005,.006,.027,16);}
+  mpipe(M.nym,[wp(f,a-.008,y+.006,.005),wp(f,a-.01,y-.012,.05),wp(f,a-.022,y-.1,.06)],.0055,6);
+  mpipe(M.nym,[wp(f,a+.008,y+.006,.005),wp(f,a+.012,y-.02,.04),wp(f,a+.024,y-.075,.046)],.0055,6);}
+function elGeraet(f,a,y,k,o){ // Fertiginstallation: Steckdose, Schalter, Herdanschluss (reinweiß)
+  if(k==='auslass')return;o=o||.012;
+  if(k==='herd'){wbox(M.white,f,a-.05,a+.05,y-.05,y+.05,o,o+.016);return;}
+  wbox(M.white,f,a-.04,a+.04,y-.04,y+.04,o,o+.011);
+  if(k==='schalter')wbox(M.white,f,a-.027,a+.027,y-.027,y+.027,o+.011,o+.017);
+  else{wcyl(M.lightGray,f,a,y,o+.011,o+.013,.024,16);for(const s of[-1,1])wcyl(M.black,f,a+s*.0095,y,o+.013,o+.0135,.0035,8);}}
+function elKabel(f,list,yz,ends){ // Leitungen nur in den Installationszonen: oben waagerecht, zur Dose senkrecht
+  let lo=Infinity,hi=-Infinity;
+  for(const e of list){lo=Math.min(lo,e.a);hi=Math.max(hi,e.a);mcyl(M.nym,wp(f,e.a,yz,.008),wp(f,e.a,e.y+.036,.008),.0065,6);}
+  for(const a of ends){lo=Math.min(lo,a);hi=Math.max(hi,a);}mcyl(M.nym,wp(f,lo,yz,.008),wp(f,hi,yz,.008),.0065,6);}
+function deckenauslass(x,z){mcyl(M.doseBlue,[x,EGT,z],[x,EGT-.006,z],.036,16);mpipe(M.nym,[[x,EGT-.006,z],[x,EGT-.2,z],[x+.04,EGT-.3,z+.03]],.0055,6);}
+// Küche (EG, Ostseite): Wände, Steckdosen und Schalter
+const KN=WF('x',2.64,1),KE=WF('z',XI1,-1),KS=WF('x',ZI1,-1),KW=WF('z',6.92,1);
+const KEL=[{f:KN,a:7.22,y:.3,k:'dose'},{f:KN,a:7.9,y:.6,k:'herd'},{f:KN,a:7.9,y:2.25,k:'dose'},{f:KN,a:8.55,y:1.15,k:'dose'},{f:KN,a:8.65,y:1.15,k:'dose'},
+  {f:KE,a:3.55,y:1.15,k:'dose'},{f:KE,a:3.65,y:1.15,k:'dose'},{f:KE,a:5.75,y:.3,k:'dose'},{f:KE,a:6.05,y:1.15,k:'dose'},{f:KE,a:6.15,y:1.15,k:'dose'},{f:KW,a:4.1,y:1.05,k:'schalter'}];
+// Gästebad (EG, rechts hinter dem Eingang, über dem Hausanschlussraum)
+const GN=WF('x',ZI0,1),GS=WF('x',3.4,-1),GW=WF('z',2.9,1),GE=WF('z',4.225,-1);
+const GEL=[{f:GW,a:2.1,y:1.2,k:'dose'},{f:GW,a:1.7,y:2.0,k:'auslass'},{f:GE,a:2.25,y:1.05,k:'schalter'}];
+
+// --- Keller und Strang: ab der Rohinstallation vorhanden, bleibt im Keller sichtbar
+inStage(AB,()=>{
+  const zp=TW+.12,yc=-.3;
+  mpipe(M.pwc,[[4.08,Y_KG+1.66,zp],[4.08,yc,zp],[4.08,yc,3.05],[9.38,yc,3.05],[9.38,-.2,3.05]],.024);
+  mpipe(M.pwc,[[4.08,yc,zp],[4.08,-.2,zp]],.024);
+  mpipe(M.pwh,[[4.15,-.55,.62],[4.15,yc-.06,.62],[4.15,yc-.06,2.95],[9.45,yc-.06,2.95],[9.45,-.2,2.95]],.024);
+  mpipe(M.pwh,[[4.15,yc-.06,.62],[4.15,-.2,.62]],.024);mcyl(M.red,[4.15,-.55,.62],[4.15,-.585,.62],.028,12);
+  mpipe(M.ht,[[9.53,-.2,5.95],[9.53,Y_KG+.15,5.95]],.026,12);mcyl(M.kg,[9.53,Y_KG+.15,5.95],[9.53,Y_KG,5.95],.033,12);
+  mcyl(M.ht,[4.08,-.2,3.26],[4.08,7.3,3.26],.055,16);mcyl(M.black,[4.08,7.3,3.26],[4.08,7.42,3.26],.075,16);
+  LROOM='Hausanschlussraum';label('Kaltwasser weiter zu Gästebad und Küche',3.7,-.45,.85,.065);label('Warmwasser: Anschluss Warmwasserbereiter folgt',3.75,-.72,1.3,.065);
+  LROOM='Keller 2';label('Kalt- und Warmwasser zur Küche',8.4,-.5,3.0,.07);label('Abwasser der Küche zur Grundleitung',9.3,-1.5,5.95,.07);
+  LROOM='Dachraum – Ausbau folgt';label('Fallleitung: Lüftung über Dach',4.08,4.3,3.26,.08);
+});
+
+// --- Küche: Rohinstallation
+inStage(ROH,()=>{
+  LROOM='Küche';
+  for(const e of KEL)elDose(e.f,e.a,e.y,e.k);
+  elKabel(KN,KEL.filter(e=>e.f===KN),2.42,[6.95,XI1-.02]);elKabel(KE,KEL.filter(e=>e.f===KE),2.42,[2.66]);elKabel(KW,KEL.filter(e=>e.f===KW),2.42,[2.66]);
+  deckenauslass(8.3,5.0);
+  mpipe(M.pwh,[[9.45,-.05,2.95],[9.45,.03,2.95],[9.45,.03,4.8],[9.6,.03,4.8],[9.6,.5,4.8],[9.52,.5,4.8]],.022);
+  mpipe(M.pwc,[[9.38,-.05,3.05],[9.38,.03,3.05],[9.38,.03,5.0],[9.6,.03,5.0],[9.6,.5,5.0],[9.52,.5,5.0]],.022);
+  for(const [z,m] of [[4.8,M.red],[5.0,M.blueP]]){mcyl(M.brass,[XI1,.5,z],[9.6,.5,z],.03,12);mcyl(m,[9.52,.5,z],[9.49,.5,z],.026,12);}
+  mpipe(M.ht,[[9.47,.42,4.9],[9.53,.42,4.9],[9.53,.085,4.9],[9.53,.085,5.95],[9.53,-.2,5.95]],.025,12);mcyl(M.white,[9.47,.42,4.9],[9.445,.42,4.9],.027,12);
+  const h=.06;
+  label('Steckdose Kühlschrank',7.22,.48,2.8,h);label('Herdanschlussdose 400 V',7.9,.78,2.8,h);label('Steckdose Dunstabzugshaube',7.9,2.1,2.8,h);
+  label('Steckdosen über der Arbeitsplatte (1,15 m)',8.6,1.3,2.8,h);label('Steckdosen Arbeitsplatte',9.45,1.3,3.6,h);label('Steckdosen Arbeitsplatte',9.45,1.3,6.1,h);
+  label('Steckdose Geschirrspüler',9.45,.48,5.75,h);label('Lichtschalter (1,05 m)',7.08,1.2,4.1,h);label('Deckenauslass für die Leuchte',8.3,2.2,5.0,h);
+  label('Spüle: warm links, kalt rechts',9.4,.68,4.9,h);label('Abwasser DN 50',9.4,.28,5.15,h);label('Kalt- und Warmwasser aus dem Keller',9.3,.18,3.3,h);
+  label('Leitungen nur in den Installationszonen',8.95,2.5,2.8,h);
+});
+// --- Küche: Fertiginstallation
+inStage(FERTIG,()=>{
+  LROOM='Küche';
+  skin(M.plasterW,KN,6.92,XI1,0,EGT,[]);skin(M.plasterW,KE,2.64,ZI1,0,EGT,[{a:4.2,b:5.7,s:1.135,h:DH}]);
+  skin(M.plasterW,KS,6.92,XI1,0,EGT,[{a:7.6,b:8.86,s:1.0,h:DH}]);skin(M.plasterW,KW,2.64,ZI1,0,EGT,[{a:4.3,b:6.6,h:DH}]);
+  reveal(M.plasterW,'z',4.2,5.7,1.135,DH,XI1-.012,9.7775,M.ceram);reveal(M.plasterW,'x',7.6,8.86,1.0,DH,ZI1-.012,7.7775,M.ceram);
+  roomFinish(6.92,XI1,2.64,ZI1,M.floorTile);
+  skin(M.tileSmall,KN,7.52,XI1,.91,1.45,[],.024);skin(M.tileSmall,KE,2.66,6.42,.91,1.45,[{a:4.2,b:5.7,s:1.135,h:1.6}],.024);
+  // Unterschränke und Arbeitsplatte
+  box(M.plinth,9.1,0,2.652,XI1-.012,.1,6.4);box(M.plinth,7.52,0,2.652,9.1,.1,3.19);
+  box(M.front,9.05,.1,2.652,XI1-.012,.87,6.4);box(M.front,7.52,.1,2.652,9.05,.87,3.235);
+  for(const [a,b] of [[3.235,3.85],[3.85,4.55],[4.55,5.35],[5.35,5.95],[5.95,6.4]]){box(M.front,9.033,.105,a+.002,9.05,.865,b-.002);box(M.steel,9.024,.8,a+.06,9.033,.814,b-.06);}
+  for(const [a,b] of [[8.2,8.62],[8.62,9.033]]){box(M.front,a+.002,.105,3.235,b-.002,.865,3.252);box(M.steel,a+.06,.8,3.252,b-.06,.814,3.261);}
+  box(M.front,7.522,.105,3.235,7.6,.865,3.252);
+  box(M.counter,9.0,.87,2.652,XI1-.012,.91,6.42);box(M.counter,7.52,.87,2.652,9.0,.91,3.27);
+  // Backofen, Kochfeld, Dunstabzugshaube
+  box(M.darkGlass,7.62,.2,3.235,8.18,.8,3.255);box(M.steel,7.62,.8,3.235,8.18,.865,3.255);box(M.steel,7.66,.73,3.255,8.14,.745,3.285);box(M.front,7.62,.105,3.235,8.18,.19,3.252);
+  box(M.darkGlass,7.62,.91,2.72,8.18,.914,3.22);
+  for(const [x,z] of [[7.76,2.86],[8.04,2.86],[7.76,3.08],[8.04,3.08]])mcyl(M.cookRing,[x,.914,z],[x,.9155,z],.085,24);
+  box(M.steel,7.6,1.55,2.652,8.2,1.6,3.15);box(M.steel,7.78,1.6,2.652,8.02,EGT,2.9);
+  // Spüle mit Armatur
+  box(M.steel,9.1,.91,4.6,9.56,.916,5.3);box(M.darkSteel,9.14,.916,4.65,9.5,.917,5.05);
+  mpipe(M.chrome,[[9.55,.916,4.85],[9.55,1.22,4.85],[9.36,1.24,4.85],[9.36,1.19,4.85]],.013,12);box(M.chrome,9.53,1.12,4.86,9.57,1.14,4.95);
+  // Kühlschrank (Hochschrank) und Hängeschränke
+  box(M.front,6.932,0,2.652,7.52,2.15,3.25);box(M.black,6.94,1.45,3.25,7.51,1.455,3.256);box(M.steel,7.44,1.0,3.25,7.455,1.4,3.275);box(M.steel,7.44,1.5,3.25,7.455,1.8,3.275);
+  box(M.front,8.25,1.45,2.652,XI1-.012,2.15,2.99);for(const x of [8.6,8.95,9.3])box(M.black,x-.0015,1.46,2.99,x+.0015,2.14,2.993);
+  box(M.front,9.28,1.45,2.99,XI1-.012,2.15,4.15);box(M.front,9.28,1.45,5.75,XI1-.012,2.15,6.4);
+  // Leuchte, Steckdosen, Schalter
+  mcyl(M.white,[8.3,EGT,5.0],[8.3,2.2,5.0],.004,6);mcyl(M.lampShade,[8.3,2.2,5.0],[8.3,2.06,5.0],.19,24);
+  for(const e of KEL){const tiled=e.y>.91&&e.y<1.45&&((e.f===KN&&e.a>7.52)||(e.f===KE&&e.a<6.42));elGeraet(e.f,e.a,e.y,e.k,tiled?.024:.012);}
+  block(9.0,0,2.64,XI1,.91,6.42);block(7.52,0,2.64,9.0,.91,3.27);block(6.92,0,2.64,7.52,2.15,3.25);
+  const h=.06;
+  label('Kühlschrank',7.22,1.6,3.35,h);label('Kochfeld',7.9,1.02,3.0,h);label('Backofen',7.9,.5,3.4,h);label('Dunstabzugshaube',7.9,1.72,3.25,h);
+  label('Spüle',9.3,1.05,4.95,h);label('Geschirrspüler',8.95,.5,5.65,h);
+});
+
+// --- Gästebad: Rohinstallation
+inStage(ROH,()=>{
+  LROOM='Gästebad';
+  for(const e of GEL)elDose(e.f,e.a,e.y,e.k);
+  elKabel(GW,GEL.filter(e=>e.f===GW),2.42,[.4]);elKabel(GE,GEL.filter(e=>e.f===GE),2.42,[.5]);
+  deckenauslass(3.56,1.6);
+  // WC-Vorwandelement mit Spülkasten
+  const vx0=3.33,vx1=3.83;
+  box(M.galv,vx0,0,.40,vx0+.04,1.12,.44);box(M.galv,vx1-.04,0,.40,vx1,1.12,.44);box(M.galv,vx0,1.08,.40,vx1,1.12,.44);box(M.galv,vx0,.36,.40,vx1,.40,.44);
+  box(M.galv,vx0-.04,0,.38,vx0+.08,.01,.56);box(M.galv,vx1-.08,0,.38,vx1+.04,.01,.56);
+  box(M.blueP,3.40,.70,.39,3.76,1.06,.52);box(M.white,3.47,.90,.52,3.69,1.03,.528);
+  mcyl(M.ht,[3.58,.23,.42],[3.58,.23,.62],.045,16);mcyl(M.white,[3.58,.23,.62],[3.58,.23,.64],.047,16);
+  for(const x of [3.49,3.67])mcyl(M.steel,[x,.40,.44],[x,.40,.62],.006,8);
+  // Kalt- und Warmwasser (im Fußbodenaufbau, dann in der Wand hoch)
+  mpipe(M.pwc,[[4.08,-.05,.485],[4.08,.03,.485],[2.97,.03,.485],[2.97,.03,2.95],[2.94,.03,2.95],[2.94,.95,2.95]],.02);
+  mpipe(M.pwc,[[3.70,.03,.485],[3.70,.72,.485]],.016);
+  mpipe(M.pwc,[[2.97,.03,1.6],[2.935,.03,1.6],[2.935,.55,1.6],[3.02,.55,1.6]],.02);
+  mpipe(M.pwh,[[4.15,-.05,.62],[4.15,.03,.62],[3.04,.03,.62],[3.04,.03,3.05],[2.94,.03,3.05],[2.94,.95,3.05]],.02);
+  mpipe(M.pwh,[[3.04,.03,1.8],[2.935,.03,1.8],[2.935,.55,1.8],[3.02,.55,1.8]],.02);
+  for(const [z,m] of [[1.6,M.blueP],[1.8,M.red]]){mcyl(M.brass,[2.9,.55,z],[2.935,.55,z],.028,12);mcyl(m,[3.02,.55,z],[3.05,.55,z],.024,12);}
+  box(M.blueP,2.9,.92,2.88,2.98,1.28,3.12);box(M.white,2.98,1.04,2.94,2.985,1.16,3.06);
+  // Abwasser: WC, Waschtisch und Bodenablauf zur Fallleitung
+  mpipe(M.ht,[[3.58,.23,.44],[3.58,.10,.44],[3.58,.10,.75],[3.90,.10,.75],[3.90,.10,3.26],[4.03,.10,3.26]],.045,14);
+  mpipe(M.ht,[[3.02,.45,1.7],[2.935,.45,1.7],[2.935,.085,1.7],[3.90,.085,1.7]],.022,12);mcyl(M.white,[3.02,.45,1.7],[3.045,.45,1.7],.024,12);
+  box(M.grayP,3.42,0,2.81,3.70,.09,3.09);box(M.steel,3.46,.09,2.85,3.66,.094,3.05);mpipe(M.ht,[[3.66,.06,2.95],[3.88,.06,2.95]],.025,12);
+  // Handtuchheizkörper: Vor- und Rücklauf aus dem Fußboden
+  mcyl(M.pwh,[4.15,0,.75],[4.15,.18,.75],.016,10);mcyl(M.red,[4.15,.18,.75],[4.15,.21,.75],.019,10);
+  mcyl(M.pwc,[4.15,0,.85],[4.15,.18,.85],.016,10);mcyl(M.blueP,[4.15,.18,.85],[4.15,.21,.85],.019,10);
+  const h=.055;
+  label('WC-Vorwandelement mit Spülkasten',3.58,1.25,.66,h);label('Abwasser WC DN 90',3.58,.34,.8,h);
+  label('Waschtisch: warm links, kalt rechts',3.12,.72,1.7,h);label('Abwasser Waschtisch DN 40',3.12,.36,1.72,h);
+  label('Dusche: Unterputz-Grundkörper',3.1,1.36,3.0,h);label('Bodenablauf bodengleiche Dusche',3.56,.22,2.8,h);
+  label('Fallleitung DN 100',3.92,1.7,3.15,h);label('Handtuchheizkörper: Vor- und Rücklauf',4.0,.34,.8,h);
+  label('Steckdose am Waschtisch',3.02,1.36,2.1,h);label('Auslass Spiegelleuchte',3.02,2.14,1.7,h);
+  label('Lichtschalter (1,05 m)',4.08,1.2,2.25,h);label('Deckenauslass',3.56,2.4,1.6,h);
+});
+// --- Gästebad: Fertiginstallation
+inStage(FERTIG,()=>{
+  LROOM='Gästebad';
+  skin(M.wallTile,GN,2.9,4.225,0,EGT,[{a:3.2,b:3.96,s:1.4,h:DH}]);skin(M.wallTile,GS,2.9,4.225,0,EGT,[]);
+  skin(M.wallTile,GW,ZI0,3.4,0,EGT,[]);skin(M.wallTile,GE,ZI0,3.4,0,EGT,[{a:1.2,b:2.085,h:DH}]);
+  reveal(M.wallTile,'x',3.2,3.96,1.4,DH,ZI0+.012,.2225,M.ceram);
+  box(M.plasterW,4.213,0,1.2,4.4,DH,1.212);box(M.plasterW,4.213,0,2.073,4.4,DH,2.085);box(M.plasterW,4.213,DH-.012,1.2,4.4,DH,2.085);
+  roomFinish(2.9,4.225,ZI0,3.4,M.floorTile2);
+  // Vorwand mit wandhängendem WC
+  box(M.wallTile,2.912,0,ZI0+.012,4.213,1.12,.577);
+  box(M.white,3.46,.95,.577,3.70,1.10,.585);box(M.chrome,3.475,.965,.585,3.575,1.085,.589);box(M.chrome,3.585,.965,.585,3.685,1.085,.589);
+  box(M.ceram,3.40,.30,.577,3.76,.40,1.0);mcyl(M.ceram,[3.58,.30,1.0],[3.58,.40,1.0],.18,24);
+  box(M.white,3.405,.40,.60,3.755,.43,1.0);mcyl(M.white,[3.58,.40,1.0],[3.58,.43,1.0],.175,24);
+  // Waschtisch mit Armatur, Siphon, Spiegel und Leuchte
+  box(M.ceram,2.912,.72,1.425,3.36,.85,1.975);box(M.basin,2.98,.85,1.48,3.3,.852,1.92);
+  mpipe(M.chrome,[[2.965,.85,1.7],[2.965,1.0,1.7],[3.09,1.0,1.7]],.012,12);mpipe(M.chrome,[[3.12,.72,1.7],[3.12,.52,1.7],[2.912,.52,1.7]],.018,12);
+  box(M.mirror,2.912,1.05,1.45,2.922,1.85,1.95);box(M.white,2.912,1.95,1.5,2.97,2.02,1.9);
+  // Dusche bodengleich: Glaswand, Ablaufrost, Kopfbrause, Thermostat
+  box(M.glass,2.912,.01,2.445,3.65,2.0,2.455);box(M.chrome,2.912,1.99,2.44,3.65,2.005,2.46);box(M.steel,3.48,.009,2.87,3.64,.012,3.03);
+  mpipe(M.chrome,[[2.912,2.05,2.95],[3.2,2.05,2.95]],.01,10);mcyl(M.chrome,[3.2,2.06,2.95],[3.2,2.03,2.95],.1,24);
+  mcyl(M.chrome,[2.912,1.1,3.0],[2.925,1.1,3.0],.075,24);box(M.chrome,2.925,1.085,2.96,2.99,1.115,3.04);
+  box(M.wallTile,3.95,0,3.1,4.213,EGT,3.388);   // Verkleidung der Fallleitung
+  // Handtuchheizkörper
+  for(const z of [.58,1.02])mcyl(M.white,[4.17,.2,z],[4.17,1.3,z],.014,10);
+  for(let y=.26;y<1.3;y+=.1)mcyl(M.white,[4.17,y,.58],[4.17,y,1.02],.011,8);
+  mcyl(M.lampShade,[3.56,EGT,1.6],[3.56,EGT-.04,1.6],.14,24);
+  for(const e of GEL)elGeraet(e.f,e.a,e.y,e.k,.012);
+  block(2.9,0,ZI0,4.225,1.12,.577);block(3.40,0,.577,3.76,.43,1.18);block(2.9,0,1.425,3.36,.85,1.975);block(2.9,0,2.44,3.65,2.0,2.46);block(3.95,0,3.1,4.225,EGT,3.4);block(4.15,0,.56,4.225,1.3,1.04);
+  const h=.055;
+  label('WC wandhängend vor der Vorwand',3.58,.62,1.05,h);label('Waschtisch mit Spiegel',3.2,1.0,1.7,h);label('Dusche bodengleich',3.4,1.5,2.95,h);
+  label('Handtuchheizkörper',4.05,1.42,.8,h);label('Verkleidung der Fallleitung',3.95,2.0,3.2,h);
+});
+
 // ---------------------------------------------------------------- Netze erzeugen
-for(const [mat,g] of groups){const geo=new T.BufferGeometry();
+function buildMeshes(map,parent){for(const [mat,g] of map){const geo=new T.BufferGeometry();
   geo.setAttribute('position',new T.Float32BufferAttribute(g.pos,3));geo.setAttribute('normal',new T.Float32BufferAttribute(g.nor,3));
   geo.setAttribute('uv',new T.Float32BufferAttribute(g.uv,2));geo.setAttribute('uv2',new T.Float32BufferAttribute(g.uv2,2));geo.setIndex(g.idx);
-  const m=new T.Mesh(geo,mat);m.castShadow=!mat.userData.noShadow;m.receiveShadow=!mat.userData.noReceive;if(mat.userData.order)m.renderOrder=mat.userData.order;scene.add(m);}
+  const m=new T.Mesh(geo,mat);m.castShadow=!mat.userData.noShadow;m.receiveShadow=!mat.userData.noReceive;if(mat.userData.order)m.renderOrder=mat.userData.order;parent.add(m);}}
+buildMeshes(MAIN,scene);for(const s of STAGEMAPS)buildMeshes(s.map,s.group);
 
 // ---------------------------------------------------------------- Himmel und Licht
 const SUN=new T.Vector3(-.62,.7,.38).normalize(); // Nachmittagssonne aus Südwest (Garten = Süden, Straße = Norden)
 {const skyMat=new T.MeshBasicMaterial({map:texSky(),side:T.BackSide,fog:false,toneMapped:false,depthWrite:false});
   const sky=new T.Mesh(new T.SphereGeometry(380,32,16),skyMat);sky.renderOrder=-10;scene.add(sky);
   scene.fog=new T.Fog(lin(0xd3e0ea),60,330);
-  try{const pm=new T.PMREMGenerator(renderer),es=new T.Scene();es.add(new T.Mesh(new T.SphereGeometry(50,24,12),skyMat));M.glass.envMap=pm.fromScene(es,0,.1,100).texture;M.glass.needsUpdate=true;pm.dispose();}catch(e){}
+  try{const pm=new T.PMREMGenerator(renderer),es=new T.Scene();es.add(new T.Mesh(new T.SphereGeometry(50,24,12),skyMat));const env=pm.fromScene(es,0,.1,100).texture;for(const m of [M.glass,M.mirror,M.chrome]){m.envMap=env;m.needsUpdate=true;}pm.dispose();}catch(e){}
   const c=mkCanvas(128,128),g=c.getContext('2d'),gr=g.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(255,252,236,1)');gr.addColorStop(.14,'rgba(255,248,215,.95)');gr.addColorStop(.3,'rgba(255,240,190,.28)');gr.addColorStop(1,'rgba(255,240,190,0)');g.fillStyle=gr;g.fillRect(0,0,128,128);
   const sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),transparent:true,depthWrite:false,fog:false,toneMapped:false,blending:T.AdditiveBlending}));sp.scale.set(90,90,1);sp.position.copy(SUN).multiplyScalar(360);scene.add(sp);}
 const hemi=new T.HemisphereLight(lin(0xcfe1ff),lin(0x8d7b66),.95);scene.add(hemi);
@@ -619,10 +834,10 @@ const flash=new T.SpotLight(lin(0xfff2dc),0,22,.52,.55,1.1);flash.position.set(.
 // ---------------------------------------------------------------- Spieler
 const P={x:-3.5,z:-8.5,feet:GY,vy:0,yaw:-2.32,pitch:.06,ground:true,camY:GY+1.62,bob:0};
 const R=.25,HGT=1.75,EYE=1.62,STEP=.3;
-function hit(px,pz,feet){const lo=feet+STEP,hi=feet+HGT;for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.y1<=lo||b.y0>=hi)continue;
+function hit(px,pz,feet){const lo=feet+STEP,hi=feet+HGT,SB=1<<STAGE;for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.y1<=lo||b.y0>=hi||(b.mask&&!(b.mask&SB)))continue;
   const dx=px-Math.max(b.x0,Math.min(px,b.x1)),dz=pz-Math.max(b.z0,Math.min(pz,b.z1));if(dx*dx+dz*dz<R*R)return true;}return false;}
-function groundAt(px,pz,feet){let g=-60;const lim=feet+STEP+.001,r=.17;for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.y1>lim||b.y1<=g)continue;if(px+r<b.x0||px-r>b.x1||pz+r<b.z0||pz-r>b.z1)continue;g=b.y1;}return g;}
-function ceilAt(px,pz,feet){let c=99;const lim=feet+HGT-.25,r=.17;for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.y0<lim||b.y0>=c)continue;if(px+r<b.x0||px-r>b.x1||pz+r<b.z0||pz-r>b.z1)continue;c=b.y0;}return c;}
+function groundAt(px,pz,feet){let g=-60;const lim=feet+STEP+.001,r=.17,SB=1<<STAGE;for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.y1>lim||b.y1<=g||(b.mask&&!(b.mask&SB)))continue;if(px+r<b.x0||px-r>b.x1||pz+r<b.z0||pz-r>b.z1)continue;g=b.y1;}return g;}
+function ceilAt(px,pz,feet){let c=99;const lim=feet+HGT-.25,r=.17,SB=1<<STAGE;for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.y0<lim||b.y0>=c||(b.mask&&!(b.mask&SB)))continue;if(px+r<b.x0||px-r>b.x1||pz+r<b.z0||pz-r>b.z1)continue;c=b.y0;}return c;}
 const keys={};let running=false,dragLook=false,showLabels=true,showMap=true,flashOn=false,flashHintDone=false,wantJump=false;
 const JR=60,joy={id:null,cx:0,cy:0,dx:0,dy:0,run:false},look={id:null,x:0,y:0}; // Touch: Knüppel links, Umsehen rechts
 function move(dt){
@@ -646,7 +861,7 @@ function move(dt){
 }
 // ---------------------------------------------------------------- Räume, Anzeige, Bedienung
 const ROOMS=[['KG','Hausanschlussraum',XI0,4.225,ZI0,3.4],['KG','Kellerflur',4.4,6.745,ZI0,3.4],['KG','Keller 1',XI0,6.745,3.575,ZI1],['KG','Keller 2',6.92,XI1,2.64,ZI1],
-  ['EG','Arbeitszimmer',XI0,2.725,ZI0,3.4],['EG','Gäste-WC mit Dusche',2.9,4.225,ZI0,3.4],['EG','Diele',4.4,6.745,ZI0,3.4],['EG','Wohnen und Essen',XI0,6.745,3.575,ZI1],['EG','Küche',6.92,XI1,2.64,ZI1]];
+  ['EG','Arbeitszimmer',XI0,2.725,ZI0,3.4],['EG','Gästebad',2.9,4.225,ZI0,3.4],['EG','Diele',4.4,6.745,ZI0,3.4],['EG','Wohnen und Essen',XI0,6.745,3.575,ZI1],['EG','Küche',6.92,XI1,2.64,ZI1]];
 const FLOOR={KG:'Kellergeschoss',EG:'Erdgeschoss',DG:'Dachgeschoss'};
 function whereAmI(){if(!(P.x>0&&P.x<HX&&P.z>0&&P.z<HZ))return['','Baustelle – Außenbereich'];
   const fl=P.feet<-.7?'KG':P.feet<2.3?'EG':'DG';
@@ -657,24 +872,28 @@ function whereAmI(){if(!(P.x>0&&P.x<HX&&P.z>0&&P.z<HZ))return['','Baustelle – 
 const elRoom=$('room'),elHint=$('hint'),elMap=$('map'),mapCtx=elMap.getContext('2d'),elStart=$('start');
 let lastRoom='',hintKey='';
 function setHint(k,html){if(k===hintKey)return;hintKey=k;if(k){elHint.innerHTML=html;elHint.style.display='block';}else elHint.style.display='none';}
-function nearDoor(){const dx=P.x-5.57,dz=P.z-.2;return dx*dx+dz*dz<2.4*2.4&&P.feet>-.5&&P.feet<.5;}
+function nearDoor(){const dx=P.x-5.57,dz=P.z-.2;return dx*dx+dz*dz<2.4*2.4&&P.feet>-.5&&P.feet<.5&&(P.z<.1||P.x>4.4);} // nur Diele und davor, nicht im Gästebad
 function toggleDoor(){if(nearDoor())DOOR.target=DOOR.target?0:1;}
 function toggleFlash(){flashOn=!flashOn;flash.intensity=flashOn?2.4:0;flashHintDone=true;syncBtns();}
 let actKind='';const bAct=$('bAct');
-function syncBtns(){$('bLamp').classList.toggle('on',flashOn);$('bLabels').classList.toggle('on',showLabels);$('bMap').classList.toggle('on',showMap);elMap.style.display=showMap?'block':'none';}
+function syncBtns(){$('bLamp').classList.toggle('on',flashOn);$('bLabels').classList.toggle('on',showLabels);$('bMap').classList.toggle('on',showMap);elMap.style.display=showMap?'block':'none';
+  const bs=$('bStage');bs.textContent='Ausbau: '+STAGE_SHORT[STAGE];bs.classList.toggle('on',STAGE>0);}
+function setStage(n){STAGE=((n%3)+3)%3;for(const s of STAGEMAPS)s.group.visible=!!(s.mask&(1<<STAGE));renderer.shadowMap.needsUpdate=true;lastRoom='';actKind='-';syncBtns();hud();}
 function drawMap(){const g=mapCtx,s=12,ox=-1.5,oz=-1.5,ya=P.feet+.5,yb=P.feet+1.5;g.clearRect(0,0,156,132);
-  g.fillStyle='rgba(232,150,96,.95)';for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.nomap||b.y1<=ya||b.y0>=yb)continue;g.fillRect((b.x0-ox)*s,(b.z0-oz)*s,Math.max(1,(b.x1-b.x0)*s),Math.max(1,(b.z1-b.z0)*s));}
+  g.fillStyle='rgba(232,150,96,.95)';for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.nomap||b.y1<=ya||b.y0>=yb||(b.mask&&!(b.mask&(1<<STAGE))))continue;g.fillRect((b.x0-ox)*s,(b.z0-oz)*s,Math.max(1,(b.x1-b.x0)*s),Math.max(1,(b.z1-b.z0)*s));}
   const px=(P.x-ox)*s,pz=(P.z-oz)*s,fx=-Math.sin(P.yaw),fz=-Math.cos(P.yaw);
   g.fillStyle='#fff';g.beginPath();g.moveTo(px+fx*8,pz+fz*8);g.lineTo(px-fx*4-fz*4.5,pz-fz*4+fx*4.5);g.lineTo(px-fx*4+fz*4.5,pz-fz*4-fx*4.5);g.closePath();g.fill();}
-function hud(){const w=whereAmI(),key=w[0]+w[1];if(key!==lastRoom){lastRoom=key;elRoom.innerHTML=(w[0]?'<small>'+FLOOR[w[0]]+'</small>':'')+w[1];}
-  const act=nearDoor()?(DOOR.target?'door1':'door0'):(w[0]==='KG'&&!flashHintDone)?'flash':'';
+function hud(){const w=whereAmI(),key=w[0]+w[1]+STAGE;if(key!==lastRoom){lastRoom=key;elRoom.innerHTML='<small>'+(w[0]?FLOOR[w[0]]+' · ':'')+'Ausbau: '+STAGE_NAMES[STAGE]+'</small>'+w[1];}
+  const ausbau=w[1]==='Küche'||w[1]==='Gästebad';
+  const act=nearDoor()?(DOOR.target?'door1':'door0'):(w[0]==='KG'&&!flashHintDone)?'flash':ausbau?'stage'+STAGE:'';
   if(act==='flash')setHint('flash','<b>F</b>Taschenlampe einschalten');
-  else if(act)setHint(act,'<b>E</b>Bautür '+(DOOR.target?'schließen':'öffnen'));
+  else if(act==='door0'||act==='door1')setHint(act,'<b>E</b>Bautür '+(DOOR.target?'schließen':'öffnen'));
+  else if(act)setHint(act,'<b>I</b>'+NEXT_TXT[STAGE]);
   else setHint('','');
-  if(act!==actKind){actKind=act;bAct.textContent=act==='door0'?'Tür öffnen':act==='door1'?'Tür schließen':act==='flash'?'Lampe an':'';bAct.style.display=act?'block':'none';}
+  if(act!==actKind){actKind=act;bAct.textContent=act==='door0'?'Tür öffnen':act==='door1'?'Tür schließen':act==='flash'?'Lampe an':act?NEXT_TXT[STAGE]:'';bAct.style.display=act?'block':'none';}
   if(showMap)drawMap();
-  const inHAR=w[1]==='Hausanschlussraum';
-  for(const s of labels)s.visible=showLabels&&inHAR;}
+  const SB=1<<STAGE;
+  for(const s of labels)s.visible=showLabels&&s.userData.room===w[1]&&(!s.userData.mask||!!(s.userData.mask&SB));}
 // ---------------------------------------------------------------- Touch-Bedienung (iPad)
 let TOUCH=false,everStarted=false;
 const tz=$('tz'),joyEl=$('joy'),knob=$('knob'),lookHint=$('lookHint'),LOOK=.0052;
@@ -698,7 +917,8 @@ function endPtr(e){if(e.pointerId===joy.id){joy.id=null;joy.dx=joy.dy=0;joy.run=
 ['pointerup','pointercancel','lostpointercapture'].forEach(n=>tz.addEventListener(n,endPtr));
 function tbtn(id,fn){$(id).addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(running)fn();});}
 tbtn('bJump',()=>{wantJump=true;});
-tbtn('bAct',()=>{if(actKind==='flash')toggleFlash();else toggleDoor();hud();});
+tbtn('bAct',()=>{if(actKind==='flash')toggleFlash();else if(actKind.startsWith('stage'))setStage(STAGE+1);else toggleDoor();hud();});
+tbtn('bStage',()=>setStage(STAGE+1));
 tbtn('bLamp',()=>{toggleFlash();hud();});
 tbtn('bLabels',()=>{showLabels=!showLabels;syncBtns();hud();});
 tbtn('bMap',()=>{showMap=!showMap;syncBtns();});
@@ -723,7 +943,7 @@ window.addEventListener('mouseup',()=>{dragging=false;});
 document.addEventListener('mousemove',e=>{if(!running)return;const locked=document.pointerLockElement===canvas;if(!locked&&!dragging)return;
   const k=locked?.0022:-.004;P.yaw-=e.movementX*k;P.pitch=Math.max(-1.5,Math.min(1.5,P.pitch-e.movementY*k));});
 window.addEventListener('keydown',e=>{if(e.code==='Space'||e.code.startsWith('Arrow'))e.preventDefault();if(e.repeat)return;keys[e.code]=true;if(!running)return;
-  if(e.code==='KeyE')toggleDoor();else if(e.code==='KeyF')toggleFlash();else if(e.code==='KeyB'){showLabels=!showLabels;syncBtns();}
+  if(e.code==='KeyE')toggleDoor();else if(e.code==='KeyF')toggleFlash();else if(e.code==='KeyI')setStage(STAGE+1);else if(e.code==='KeyB'){showLabels=!showLabels;syncBtns();}
   else if(e.code==='KeyM'){showMap=!showMap;syncBtns();}
   else if(e.code==='Escape'&&(dragLook||TOUCH))pause();});
 window.addEventListener('keyup',e=>{keys[e.code]=false;});
@@ -756,7 +976,7 @@ function frame(now){requestAnimationFrame(frame);
   renderer.render(scene,camera);}
 hud();requestAnimationFrame(frame);
 // Für Prüfzwecke: Standort setzen
-window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,go:(x,y,z,yaw,pitch)=>{P.x=x;P.feet=y;P.z=z;P.camY=y+EYE;P.vy=0;P.ground=true;if(yaw!==undefined)P.yaw=yaw;if(pitch!==undefined)P.pitch=pitch;},flash:toggleFlash,info:()=>renderer.info.render};
+window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(n!==undefined)setStage(n);return STAGE;},go:(x,y,z,yaw,pitch)=>{P.x=x;P.feet=y;P.z=z;P.camY=y+EYE;P.vy=0;P.ground=true;if(yaw!==undefined)P.yaw=yaw;if(pitch!==undefined)P.pitch=pitch;},flash:toggleFlash,info:()=>renderer.info.render};
 })();
 </script>
 </body>
