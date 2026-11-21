@@ -660,25 +660,48 @@ function abzweigdose(f,a,y,fertig){ // viereckige Unterputz-Abzweigdose am Abzwe
   if(fertig){wbox(M.white,f,a-.052,a+.052,y-.052,y+.052,.012,.017);return;}
   wbox(M.doseBlue,f,a-.052,a+.052,y-.052,y+.052,-.012,.009);wbox(M.black,f,a-.042,a+.042,y-.042,y+.042,.009,.0095);
   wbox(M.orange,f,a-.03,a-.006,y-.012,y+.012,.0095,.024);wbox(M.orange,f,a+.006,a+.03,y-.012,y+.012,.0095,.024);}
+// Wo gehören Abzweigdosen hin? An jeden Abzweig der waagerechten Leitung; dicht beieinander liegende Abgänge teilen sich eine Dose.
+function abzweigStellen(list,ends,feeds){const drops=list.map(e=>e.a).concat(feeds||[]).sort((x,y)=>x-y),lo=Math.min(...drops,...ends),hi=Math.max(...drops,...ends),out=[];let cl=[];
+  const flush=()=>{if(!cl.length)return;const c=(cl[0]+cl[cl.length-1])/2;if(cl.length>=2||(c>lo+.06&&c<hi-.06))out.push(c);cl=[];};
+  for(const a of drops){if(cl.length&&a-cl[cl.length-1]>.13)flush();cl.push(a);}flush();return out;}
+function deckenzug(pts){ // Leitung sichtbar unter der Decke, mit Schellen alle 30 cm
+  mpipe(M.nym,pts,.0065,6);
+  for(let i=0;i<pts.length-1;i++){const p=pts[i],q=pts[i+1];if(Math.abs(p[1]-q[1])>.01)continue;const L=Math.hypot(q[0]-p[0],q[2]-p[2]),n=Math.floor(L/.3);
+    for(let k=1;k<=n;k++){const t=k/(n+1),x=p[0]+(q[0]-p[0])*t,z=p[2]+(q[2]-p[2])*t;box(M.lightGray,x-.012,p[1]-.012,z-.012,x+.012,EGT,z+.012);}}}
+// Rohrführung: jeder 90°-Richtungswechsel in der Waagerechten wird zu zwei 45°-Bögen
+function bend45(pts,s){const out=[pts[0]];
+  for(let i=1;i<pts.length-1;i++){const a=pts[i-1],p=pts[i],b=pts[i+1],d1=[p[0]-a[0],p[1]-a[1],p[2]-a[2]],d2=[b[0]-p[0],b[1]-p[1],b[2]-p[2]];
+    const l1=Math.hypot(d1[0],d1[1],d1[2]),l2=Math.hypot(d2[0],d2[1],d2[2]),horiz=Math.abs(d1[1])<1e-6&&Math.abs(d2[1])<1e-6;
+    if(horiz&&l1>1e-6&&l2>1e-6&&Math.abs((d1[0]*d2[0]+d1[2]*d2[2])/(l1*l2))<.05){const k=Math.min(s,l1*.45,l2*.45);
+      out.push([p[0]-d1[0]/l1*k,p[1],p[2]-d1[2]/l1*k],[p[0]+d2[0]/l2*k,p[1],p[2]+d2[2]/l2*k]);}
+    else out.push(p);}
+  out.push(pts[pts.length-1]);return out;}
+function rohr(mat,pts,r,seg,s){mpipe(mat,bend45(pts,s||r*2.2+.03),r,seg);}
+function loch(x,z,r,yf){mcyl(M.black,[x,yf+.001,z],[x,yf+.003,z],r+.014,16);} // Deckendurchbruch
 function deckenauslass(x,z){mcyl(M.doseBlue,[x,EGT,z],[x,EGT-.006,z],.036,16);mpipe(M.nym,[[x,EGT-.006,z],[x,EGT-.2,z],[x+.04,EGT-.3,z+.03]],.0055,6);}
 // Küche (EG, Ostseite): Wände, Steckdosen und Schalter
 const KN=WF('x',2.64,1),KE=WF('z',XI1,-1),KS=WF('x',ZI1,-1),KW=WF('z',6.92,1);
+const KAB=[[KN,[6.95,XI1-.02],[]],[KE,[2.66],[5.0]],[KW,[2.66],[]]]; // Wand, Leitungsenden, Zuleitung von der Decke
 const KEL=[{f:KN,a:7.22,y:.3,k:'dose'},{f:KN,a:7.9,y:.6,k:'herd'},{f:KN,a:7.9,y:2.25,k:'dose'},{f:KN,a:8.55,y:1.15,k:'dose'},{f:KN,a:8.65,y:1.15,k:'dose'},
   {f:KE,a:3.55,y:1.15,k:'dose'},{f:KE,a:3.65,y:1.15,k:'dose'},{f:KE,a:5.75,y:.3,k:'dose'},{f:KE,a:6.05,y:1.15,k:'dose'},{f:KE,a:6.15,y:1.15,k:'dose'},{f:KW,a:4.1,y:1.05,k:'schalter'}];
 // Gästebad (EG, rechts hinter dem Eingang, über dem Hausanschlussraum)
 const GN=WF('x',ZI0,1),GS=WF('x',3.4,-1),GW=WF('z',2.9,1),GE=WF('z',4.225,-1);
+const GAB=[[GW,[.4],[1.7]],[GE,[.5],[]]];
 const GEL=[{f:GW,a:2.1,y:1.2,k:'dose'},{f:GW,a:1.7,y:2.0,k:'auslass'},{f:GE,a:2.25,y:1.05,k:'schalter'}];
 
 // --- Keller und Strang: ab der Rohinstallation vorhanden, bleibt im Keller sichtbar
 inStage(AB,()=>{
-  const zp=TW+.12,yc=-.3;
-  mpipe(M.pwc,[[4.08,Y_KG+1.66,zp],[4.08,yc,zp],[4.08,yc,3.05],[9.38,yc,3.05],[9.38,-.2,3.05]],.024);
+  const zp=TW+.12,yc=-.3,yh=yc-.06;
+  // Steigleitungen zum Gästebad 15 cm vor der Wand (x 4,08); zur Küche durch den Kellerflur
+  rohr(M.pwc,[[4.08,Y_KG+1.66,zp],[4.08,yc,zp],[4.5,yc,zp],[4.5,yc,3.05],[9.38,yc,3.05],[9.38,-.2,3.05]],.024);
   mpipe(M.pwc,[[4.08,yc,zp],[4.08,-.2,zp]],.024);
-  mpipe(M.pwh,[[4.15,-.55,.62],[4.15,yc-.06,.62],[4.15,yc-.06,2.95],[9.45,yc-.06,2.95],[9.45,-.2,2.95]],.024);
-  mpipe(M.pwh,[[4.15,yc-.06,.62],[4.15,-.2,.62]],.024);mcyl(M.red,[4.15,-.55,.62],[4.15,-.585,.62],.028,12);
+  rohr(M.pwh,[[4.08,-.55,.62],[4.08,yh,.62],[4.6,yh,.62],[4.6,yh,2.95],[9.45,yh,2.95],[9.45,-.2,2.95]],.024);
+  mpipe(M.pwh,[[4.08,yh,.62],[4.08,-.2,.62]],.024);mcyl(M.red,[4.08,-.55,.62],[4.08,-.585,.62],.028,12);
+  for(const [z,m,c] of [[.75,M.pwh,M.red],[.85,M.pwc,M.blueP]]){mcyl(m,[4.15,-.2,z],[4.15,-.46,z],.017,10);mcyl(c,[4.15,-.46,z],[4.15,-.49,z],.02,10);}
   mpipe(M.ht,[[9.53,-.2,5.95],[9.53,Y_KG+.15,5.95]],.026,12);mcyl(M.kg,[9.53,Y_KG+.15,5.95],[9.53,Y_KG,5.95],.033,12);
-  mcyl(M.ht,[4.08,-.2,3.26],[4.08,7.3,3.26],.055,16);mcyl(M.black,[4.08,7.3,3.26],[4.08,7.42,3.26],.075,16);
+  mcyl(M.ht,[4.08,-.2,3.26],[4.08,7.3,3.26],.055,16);mcyl(M.black,[4.08,7.3,3.26],[4.08,7.42,3.26],.075,16);loch(4.08,3.26,.055,Y_DG);
   LROOM='Hausanschlussraum';label('Kaltwasser weiter zu Gästebad und Küche',3.7,-.45,.85,.065);label('Warmwasser: Anschluss Warmwasserbereiter folgt',3.75,-.72,1.3,.065);
+  label('Heizung zum Handtuchheizkörper (Wärmeerzeuger folgt)',4.0,-.58,1.05,.065);
   LROOM='Keller 2';label('Kalt- und Warmwasser zur Küche',8.4,-.5,3.0,.07);label('Abwasser der Küche zur Grundleitung',9.3,-1.5,5.95,.07);
   LROOM='Dachraum – Ausbau folgt';label('Fallleitung: Lüftung über Dach',4.08,4.3,3.26,.08);
 });
@@ -688,9 +711,12 @@ inStage(ROH,()=>{
   LROOM='Küche';
   for(const e of KEL)elDose(e.f,e.a,e.y,e.k);
   elKabel(KN,KEL.filter(e=>e.f===KN),2.42,[6.95,XI1-.02]);elKabel(KE,KEL.filter(e=>e.f===KE),2.42,[2.66]);elKabel(KW,KEL.filter(e=>e.f===KW),2.42,[2.66]);
-  deckenauslass(8.3,5.0);
-  mpipe(M.pwh,[[9.45,-.05,2.95],[9.45,.03,2.95],[9.45,.03,4.8],[9.6,.03,4.8],[9.6,.5,4.8],[9.52,.5,4.8]],.022);
-  mpipe(M.pwc,[[9.38,-.05,3.05],[9.38,.03,3.05],[9.38,.03,5.0],[9.6,.03,5.0],[9.6,.5,5.0],[9.52,.5,5.0]],.022);
+  for(const [f,ends,feeds] of KAB)for(const c of abzweigStellen(KEL.filter(e=>e.f===f),ends,feeds))abzweigdose(f,c,2.42);
+  deckenauslass(8.3,5.0);deckenzug([[8.3,EGT-.008,5.0],[XI1-.008,EGT-.008,5.0],[XI1-.008,2.472,5.0]]);
+  label('Abzweigdose',7.22,2.55,2.8,.06);label('Leitung zur Deckenleuchte',8.95,2.5,5.0,.06);
+  rohr(M.pwh,[[9.45,-.2,2.95],[9.45,.03,2.95],[9.45,.03,4.8],[9.6,.03,4.8],[9.6,.5,4.8],[9.52,.5,4.8]],.022);
+  rohr(M.pwc,[[9.38,-.2,3.05],[9.38,.03,3.05],[9.38,.03,5.0],[9.6,.03,5.0],[9.6,.5,5.0],[9.52,.5,5.0]],.022);
+  loch(9.45,2.95,.022,0);loch(9.38,3.05,.022,0);loch(9.53,5.95,.025,0);
   for(const [z,m] of [[4.8,M.red],[5.0,M.blueP]]){mcyl(M.brass,[XI1,.5,z],[9.6,.5,z],.03,12);mcyl(m,[9.52,.5,z],[9.49,.5,z],.026,12);}
   mpipe(M.ht,[[9.47,.42,4.9],[9.53,.42,4.9],[9.53,.085,4.9],[9.53,.085,5.95],[9.53,-.2,5.95]],.025,12);mcyl(M.white,[9.47,.42,4.9],[9.445,.42,4.9],.027,12);
   const h=.06;
@@ -730,6 +756,7 @@ inStage(FERTIG,()=>{
   // Leuchte, Steckdosen, Schalter
   mcyl(M.white,[8.3,EGT,5.0],[8.3,2.2,5.0],.004,6);mcyl(M.lampShade,[8.3,2.2,5.0],[8.3,2.06,5.0],.19,24);
   for(const e of KEL){const tiled=e.y>.91&&e.y<1.45&&((e.f===KN&&e.a>7.52)||(e.f===KE&&e.a<6.42));elGeraet(e.f,e.a,e.y,e.k,tiled?.024:.012);}
+  for(const [f,ends,feeds] of KAB)for(const c of abzweigStellen(KEL.filter(e=>e.f===f),ends,feeds))abzweigdose(f,c,2.42,true);
   block(9.0,0,2.64,XI1,.91,6.42);block(7.52,0,2.64,9.0,.91,3.27);block(6.92,0,2.64,7.52,2.15,3.25);
   const h=.06;
   label('Kühlschrank',7.22,1.6,3.35,h);label('Kochfeld',7.9,1.02,3.0,h);label('Backofen',7.9,.5,3.4,h);label('Dunstabzugshaube',7.9,1.72,3.25,h);
@@ -741,8 +768,8 @@ inStage(ROH,()=>{
   LROOM='Gästebad';
   for(const e of GEL)elDose(e.f,e.a,e.y,e.k);
   elKabel(GW,GEL.filter(e=>e.f===GW),2.42,[.4]);elKabel(GE,GEL.filter(e=>e.f===GE),2.42,[.5]);
-  abzweigdose(GW,1.7,2.42);
-  deckenauslass(3.56,1.6);
+  for(const [f,ends,feeds] of GAB)for(const c of abzweigStellen(GEL.filter(e=>e.f===f),ends,feeds))abzweigdose(f,c,2.42);
+  deckenauslass(3.56,1.6);deckenzug([[3.56,EGT-.008,1.6],[2.908,EGT-.008,1.6],[2.908,EGT-.008,1.7],[2.908,2.472,1.7]]);
   // WC-Vorwandelement mit Spülkasten
   const vx0=3.33,vx1=3.83;
   box(M.galv,vx0,0,.40,vx0+.04,1.12,.44);box(M.galv,vx1-.04,0,.40,vx1,1.12,.44);box(M.galv,vx0,1.08,.40,vx1,1.12,.44);box(M.galv,vx0,.36,.40,vx1,.40,.44);
@@ -750,26 +777,29 @@ inStage(ROH,()=>{
   box(M.blueP,3.40,.70,.39,3.76,1.06,.52);box(M.white,3.47,.90,.52,3.69,1.03,.528);
   mcyl(M.ht,[3.58,.23,.42],[3.58,.23,.62],.045,16);mcyl(M.white,[3.58,.23,.62],[3.58,.23,.64],.047,16);
   for(const x of [3.49,3.67])mcyl(M.steel,[x,.40,.44],[x,.40,.62],.006,8);
-  // Kalt- und Warmwasser (im Fußbodenaufbau, dann in der Wand hoch)
-  mpipe(M.pwc,[[4.08,-.05,.485],[4.08,.03,.485],[2.97,.03,.485],[2.97,.03,2.95],[2.94,.03,2.95],[2.94,.95,2.95]],.02);
+  // Kalt- und Warmwasser: Steigleitung aus dem Keller 15 cm vor der Wand, in einem Stück auf dem Rohboden weiter
+  // Kaltwasser springt bei z 1,8 mit einem Überspringbogen über die Warmwasserleitung (Rot bleibt unten)
+  rohr(M.pwc,[[4.08,-.2,.485],[4.08,.03,.485],[2.97,.03,.485],[2.97,.03,1.72],[2.97,.078,1.76],[2.97,.078,1.84],[2.97,.03,1.88],[2.97,.03,2.95],[2.97,.95,2.95]],.02);
   mpipe(M.pwc,[[3.70,.03,.485],[3.70,.72,.485]],.016);
   mpipe(M.pwc,[[2.97,.03,1.6],[2.935,.03,1.6],[2.935,.55,1.6],[3.02,.55,1.6]],.02);
-  mpipe(M.pwh,[[4.15,-.05,.62],[4.15,.03,.62],[3.04,.03,.62],[3.04,.03,3.05],[2.94,.03,3.05],[2.94,.95,3.05]],.02);
+  rohr(M.pwh,[[4.08,-.2,.62],[4.08,.03,.62],[3.04,.03,.62],[3.04,.03,2.96],[2.96,.03,3.04],[2.96,.95,3.04]],.02);
   mpipe(M.pwh,[[3.04,.03,1.8],[2.935,.03,1.8],[2.935,.55,1.8],[3.02,.55,1.8]],.02);
+  loch(4.08,.485,.02,0);loch(4.08,.62,.02,0);loch(4.08,3.26,.055,0);
   for(const [z,m] of [[1.6,M.blueP],[1.8,M.red]]){mcyl(M.brass,[2.9,.55,z],[2.935,.55,z],.028,12);mcyl(m,[3.02,.55,z],[3.05,.55,z],.024,12);}
   box(M.blueP,2.9,.92,2.88,2.98,1.28,3.12);box(M.white,2.98,1.04,2.94,2.985,1.16,3.06);
   // Abwasser: WC, Waschtisch und Bodenablauf zur Fallleitung
-  mpipe(M.ht,[[3.58,.23,.44],[3.58,.10,.44],[3.58,.10,.75],[3.90,.10,.75],[3.90,.10,3.26],[4.03,.10,3.26]],.045,14);
-  mpipe(M.ht,[[3.02,.45,1.7],[2.935,.45,1.7],[2.935,.085,1.7],[3.90,.085,1.7]],.022,12);mcyl(M.white,[3.02,.45,1.7],[3.045,.45,1.7],.024,12);
-  box(M.grayP,3.42,0,2.81,3.70,.09,3.09);box(M.steel,3.46,.09,2.85,3.66,.094,3.05);mpipe(M.ht,[[3.66,.06,2.95],[3.88,.06,2.95]],.025,12);
-  // Handtuchheizkörper: Vor- und Rücklauf aus dem Fußboden
-  mcyl(M.pwh,[4.15,0,.75],[4.15,.18,.75],.016,10);mcyl(M.red,[4.15,.18,.75],[4.15,.21,.75],.019,10);
-  mcyl(M.pwc,[4.15,0,.85],[4.15,.18,.85],.016,10);mcyl(M.blueP,[4.15,.18,.85],[4.15,.21,.85],.019,10);
+  // Abwasser: Richtungswechsel mit 2 × 45°, Abzweige mit 45° in Fließrichtung, Einmündung in die Fallleitung mit 45°
+  rohr(M.ht,[[3.58,.23,.44],[3.58,.10,.44],[3.58,.10,.75],[3.90,.10,.75],[3.90,.10,3.08],[4.04,.10,3.22]],.045,14);
+  mpipe(M.ht,[[3.02,.45,1.7],[2.935,.45,1.7],[2.935,.085,1.7],[3.70,.085,1.7],[3.857,.085,1.857]],.022,12);mcyl(M.white,[3.02,.45,1.7],[3.045,.45,1.7],.024,12);
+  box(M.grayP,3.42,0,2.81,3.70,.09,3.09);box(M.steel,3.46,.09,2.85,3.66,.094,3.05);mpipe(M.ht,[[3.70,.06,2.90],[3.73,.06,2.90],[3.857,.06,3.027]],.025,12);
+  // Handtuchheizkörper: Vor- und Rücklauf als Steigleitung aus dem Keller
+  for(const [z,m,c] of [[.75,M.pwh,M.red],[.85,M.pwc,M.blueP]]){mcyl(m,[4.15,-.2,z],[4.15,.18,z],.016,10);mcyl(c,[4.15,.18,z],[4.15,.21,z],.019,10);loch(4.15,z,.016,0);}
   const h=.055;
   label('WC-Vorwandelement mit Spülkasten',3.58,1.25,.66,h);label('Abwasser WC DN 90',3.58,.34,.8,h);
   label('Waschtisch: warm links, kalt rechts',3.12,.72,1.7,h);label('Abwasser Waschtisch DN 40',3.12,.36,1.72,h);
   label('Dusche: Unterputz-Grundkörper',3.1,1.36,3.0,h);label('Bodenablauf bodengleiche Dusche',3.56,.22,2.8,h);
-  label('Fallleitung DN 100',3.92,1.7,3.15,h);label('Handtuchheizkörper: Vor- und Rücklauf',4.0,.34,.8,h);
+  label('Fallleitung DN 100',3.92,1.7,3.15,h);label('Heizung Vor- und Rücklauf aus dem Keller',4.0,.34,.9,h);
+  label('Steigleitung kalt und warm aus dem Keller',3.95,.2,.5,h);label('Abzweig 45° in Fließrichtung',3.7,.2,1.82,h);
   label('Steckdose am Waschtisch',3.02,1.36,2.1,h);label('Auslass Spiegelleuchte',3.02,2.14,1.7,h);
   label('Lichtschalter (1,05 m)',4.08,1.2,2.25,h);label('Deckenauslass',3.56,2.4,1.6,h);label('Abzweigdose',3.02,2.53,1.7,h);
 });
@@ -800,7 +830,7 @@ inStage(FERTIG,()=>{
   for(let y=.26;y<1.3;y+=.1)mcyl(M.white,[4.17,y,.58],[4.17,y,1.02],.011,8);
   mcyl(M.lampShade,[3.56,EGT,1.6],[3.56,EGT-.04,1.6],.14,24);
   for(const e of GEL)elGeraet(e.f,e.a,e.y,e.k,.012);
-  abzweigdose(GW,1.7,2.42,true);
+  for(const [f,ends,feeds] of GAB)for(const c of abzweigStellen(GEL.filter(e=>e.f===f),ends,feeds))abzweigdose(f,c,2.42,true);
   block(2.9,0,ZI0,4.225,1.12,.577);block(3.40,0,.577,3.76,.43,1.18);block(2.9,0,1.425,3.36,.85,1.975);block(2.9,0,2.44,3.65,2.0,2.46);block(3.95,0,3.1,4.225,EGT,3.4);block(4.15,0,.56,4.225,1.3,1.04);
   const h=.055;
   label('WC wandhängend vor der Vorwand',3.58,.62,1.05,h);label('Waschtisch mit Spiegel',3.2,1.0,1.7,h);label('Dusche bodengleich',3.4,1.5,2.95,h);
