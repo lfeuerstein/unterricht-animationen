@@ -114,6 +114,7 @@ const canvas=$('c');
 const FORCE_TOUCH=/[?&]touch=1/.test((window.location&&location.search)||'');
 const TOUCH_DEV=FORCE_TOUCH||/iPad|iPhone|iPod/.test(navigator.userAgent||'')||((navigator.maxTouchPoints||0)>1&&!!window.matchMedia&&matchMedia('(pointer: coarse)').matches);
 const PR_MAX=Math.min(window.devicePixelRatio||1,TOUCH_DEV?1.5:2);
+const AUTO_PR=!/[?&]autopr=0/.test((window.location&&location.search)||''); // ?autopr=0: Auflösung nicht selbst senken (Messung)
 let renderer;
 try{ renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'}); }
 catch(e){ $('start').innerHTML='<div class="box"><h1>3D-Darstellung nicht verfügbar</h1><p>Dieser Browser kann WebGL nicht starten. Bitte einen aktuellen Browser (Chrome, Edge, Firefox) mit eingeschalteter Hardwarebeschleunigung verwenden.</p></div>'; return; }
@@ -668,8 +669,9 @@ function abzweigdose(f,a,y,fertig){ // viereckige Unterputz-Abzweigdose am Abzwe
 function abzweigStellen(list,ends,feeds){const drops=list.map(e=>e.a).concat(feeds||[]).sort((x,y)=>x-y),lo=Math.min(...drops,...ends),hi=Math.max(...drops,...ends),out=[];let cl=[];
   const flush=()=>{if(!cl.length)return;const c=(cl[0]+cl[cl.length-1])/2;if(cl.length>=2||(c>lo+.06&&c<hi-.06))out.push(c);cl=[];};
   for(const a of drops){if(cl.length&&a-cl[cl.length-1]>.13)flush();cl.push(a);}flush();return out;}
-function deckenzug(pts){ // Leitung sichtbar unter der Decke, mit Schellen alle 30 cm
+function deckenzug(pts){ // Leitung sichtbar unter der Decke, mit Schellen alle 30 cm; pts[0] = Leitungsende an der Leuchtenstelle (kein Deckenauslass)
   mpipe(M.nym,pts,.0065,6);
+  {const p=pts[0],q=pts[1],L=Math.hypot(q[0]-p[0],q[2]-p[2]);if(L>.1){const x=p[0]+(q[0]-p[0])/L*.04,z=p[2]+(q[2]-p[2])/L*.04;box(M.lightGray,x-.012,p[1]-.012,z-.012,x+.012,EGT,z+.012);}}
   for(let i=0;i<pts.length-1;i++){const p=pts[i],q=pts[i+1];if(Math.abs(p[1]-q[1])>.01)continue;const L=Math.hypot(q[0]-p[0],q[2]-p[2]),n=Math.floor(L/.3);
     for(let k=1;k<=n;k++){const t=k/(n+1),x=p[0]+(q[0]-p[0])*t,z=p[2]+(q[2]-p[2])*t;box(M.lightGray,x-.012,p[1]-.012,z-.012,x+.012,EGT,z+.012);}}}
 // Rohrführung: jeder 90°-Richtungswechsel in der Waagerechten wird zu zwei 45°-Bögen
@@ -682,7 +684,6 @@ function bend45(pts,s){const out=[pts[0]];
   out.push(pts[pts.length-1]);return out;}
 function rohr(mat,pts,r,seg,s){mpipe(mat,bend45(pts,s||r*2.2+.03),r,seg);}
 function loch(x,z,r,yf){mcyl(M.black,[x,yf+.001,z],[x,yf+.003,z],r+.014,16);} // Deckendurchbruch
-function deckenauslass(x,z){mcyl(M.doseBlue,[x,EGT,z],[x,EGT-.006,z],.036,16);mpipe(M.nym,[[x,EGT-.006,z],[x,EGT-.2,z],[x+.04,EGT-.3,z+.03]],.0055,6);}
 // Küche (EG, Ostseite): Wände, Steckdosen und Schalter
 const KN=WF('x',2.64,1),KE=WF('z',XI1,-1),KS=WF('x',ZI1,-1),KW=WF('z',6.92,1);
 const KAB=[[KN,[6.95,XI1-.02],[]],[KE,[2.66],[5.0]],[KW,[2.66],[]]]; // Wand, Leitungsenden, Zuleitung von der Decke
@@ -716,7 +717,7 @@ inStage(ROH,()=>{
   for(const e of KEL)elDose(e.f,e.a,e.y,e.k);
   elKabel(KN,KEL.filter(e=>e.f===KN),2.42,[6.95,XI1-.02]);elKabel(KE,KEL.filter(e=>e.f===KE),2.42,[2.66]);elKabel(KW,KEL.filter(e=>e.f===KW),2.42,[2.66]);
   for(const [f,ends,feeds] of KAB)for(const c of abzweigStellen(KEL.filter(e=>e.f===f),ends,feeds))abzweigdose(f,c,2.42);
-  deckenauslass(8.3,5.0);deckenzug([[8.3,EGT-.008,5.0],[XI1-.008,EGT-.008,5.0],[XI1-.008,2.472,5.0]]);
+  deckenzug([[8.3,EGT-.008,5.0],[XI1-.008,EGT-.008,5.0],[XI1-.008,2.472,5.0]]);
   label('Abzweigdose',7.22,2.55,2.8,.06);label('Leitung zur Deckenleuchte',8.95,2.5,5.0,.06);
   rohr(M.pwh,[[9.45,-.2,2.95],[9.45,.03,2.95],[9.45,.03,4.8],[9.6,.03,4.8],[9.6,.5,4.8],[9.52,.5,4.8]],.022);
   rohr(M.pwc,[[9.38,-.2,3.05],[9.38,.03,3.05],[9.38,.03,5.0],[9.6,.03,5.0],[9.6,.5,5.0],[9.52,.5,5.0]],.022);
@@ -726,7 +727,7 @@ inStage(ROH,()=>{
   const h=.06;
   label('Steckdose Kühlschrank',7.22,.48,2.8,h);label('Herdanschlussdose 400 V',7.9,.78,2.8,h);label('Steckdose Dunstabzugshaube',7.9,2.1,2.8,h);
   label('Steckdosen über der Arbeitsplatte (1,15 m)',8.6,1.3,2.8,h);label('Steckdosen Arbeitsplatte',9.45,1.3,3.6,h);label('Steckdosen Arbeitsplatte',9.45,1.3,6.1,h);
-  label('Steckdose Geschirrspüler',9.45,.48,5.75,h);label('Lichtschalter (1,05 m)',7.08,1.2,4.1,h);label('Deckenauslass für die Leuchte',8.3,2.2,5.0,h);
+  label('Steckdose Geschirrspüler',9.45,.48,5.75,h);label('Lichtschalter (1,05 m)',7.08,1.2,4.1,h);label('Leitungsende für die Deckenleuchte',8.3,2.2,5.0,h);
   label('Spüle: warm links, kalt rechts',9.4,.68,4.9,h);label('Abwasser DN 50',9.4,.28,5.15,h);label('Kalt- und Warmwasser aus dem Keller',9.3,.18,3.3,h);
   label('Leitungen nur in den Installationszonen',8.95,2.5,2.8,h);
 });
@@ -774,7 +775,7 @@ inStage(ROH,()=>{
   elKabel(GW,GEL.filter(e=>e.f===GW),2.42,[.4]);elKabel(GE,GEL.filter(e=>e.f===GE),2.42,[.5]);
   mpipe(M.nym,[[2.908,2.42,.4],[2.908,2.42,ZI0+.008],[4.217,2.42,ZI0+.008],[4.217,2.42,.5]],.0065,6); // Verbindung über dem Fenster (Fenstersturz endet bei 2,375 m)
   for(const [f,ends,feeds] of GAB)for(const c of abzweigStellen(GEL.filter(e=>e.f===f),ends,feeds))abzweigdose(f,c,2.42);
-  deckenauslass(3.56,1.6);deckenzug([[3.56,EGT-.008,1.6],[2.908,EGT-.008,1.6],[2.908,EGT-.008,1.7],[2.908,2.472,1.7]]);
+  deckenzug([[3.56,EGT-.008,1.6],[2.908,EGT-.008,1.6],[2.908,EGT-.008,1.7],[2.908,2.472,1.7]]);
   // WC-Vorwandelement mit Spülkasten
   const vx0=3.33,vx1=3.83;
   box(M.galv,vx0,0,.40,vx0+.04,1.12,.44);box(M.galv,vx1-.04,0,.40,vx1,1.12,.44);box(M.galv,vx0,1.08,.40,vx1,1.12,.44);box(M.galv,vx0,.36,.40,vx1,.40,.44);
@@ -806,7 +807,7 @@ inStage(ROH,()=>{
   label('Fallleitung DN 100',3.92,1.7,3.15,h);label('Heizung Vor- und Rücklauf aus dem Keller',4.0,.34,.9,h);
   label('Steigleitung kalt und warm aus dem Keller',3.95,.2,.5,h);label('Abzweig 45° in Fließrichtung',3.7,.2,1.82,h);
   label('Steckdose am Waschtisch',3.02,1.36,2.1,h);label('Auslass Spiegelleuchte',3.02,2.14,1.7,h);
-  label('Lichtschalter (1,05 m)',4.08,1.2,2.25,h);label('Deckenauslass',3.56,2.4,1.6,h);label('Abzweigdose',3.02,2.53,1.7,h);
+  label('Lichtschalter (1,05 m)',4.08,1.2,2.25,h);label('Leitungsende für die Deckenleuchte',3.56,2.4,1.6,h);label('Abzweigdose',3.02,2.53,1.7,h);
 });
 // --- Gästebad: Fertiginstallation
 inStage(FERTIG,()=>{
@@ -868,8 +869,10 @@ function strahler(x,z,yf,dx,dz){const l=Math.hypot(dx,dz);dx/=l;dz/=l;
   cyl(M.yellow,[x,yf+.5,z],[x,yf+1.55,z],.016,8);for(let i=0;i<3;i++){const a=i*2.094+.4;cyl(M.yellow,[x,yf+.72,z],[x+Math.cos(a)*.42,yf,z+Math.sin(a)*.42],.013,8);}
   const hd=new T.Mesh(new T.BoxGeometry(.3,.2,.07),M.black);hd.userData.noShadow=true;hd.position.set(x,yf+1.62,z);hd.rotation.y=Math.atan2(dx,dz);addProp(hd);
   const ln=new T.Mesh(new T.PlaneGeometry(.26,.16),new T.MeshBasicMaterial({color:0xfff3d2,toneMapped:false}));ln.position.set(x+dx*.037,yf+1.62,z+dz*.037);ln.rotation.y=Math.atan2(dx,dz);scene.add(ln);
-  const p=new T.PointLight(lin(0xffe0ad),1.5,11,1.4);p.position.set(x+dx*.3,yf+1.62,z+dz*.3);p.castShadow=true;p.shadow.mapSize.set(512,512);p.shadow.camera.near=.1;p.shadow.camera.far=12;p.shadow.bias=-.004;p.shadow.normalBias=.03;scene.add(p);return p;}
-strahler(2.3,2.75,Y_KG,-.2,-1);strahler(5.75,2.95,Y_KG,-.25,-1);strahler(3.4,6.6,Y_KG,-.4,-1);
+  const p=new T.PointLight(lin(0xffe0ad),1.5,11,1.4);p.position.set(x+dx*.3,yf+1.62,z+dz*.3);p.castShadow=!TOUCH_DEV;p.shadow.mapSize.set(512,512);p.shadow.camera.near=.1;p.shadow.camera.far=12;p.shadow.bias=-.004;p.shadow.normalBias=.03;scene.add(p);return p;}
+// Tablet: Strahler ohne Schatten (iPad gemessen: 21 → 42 Bilder/s bei Auflösung 1,0); ohne Schatten schiene ihr Licht durch die Decke
+// ins Erdgeschoss → dort sind sie aus und leuchten nur, solange man im Keller steht (Schleife: STRAHLER_HELL).
+const STRAHLER=[strahler(2.3,2.75,Y_KG,-.2,-1),strahler(5.75,2.95,Y_KG,-.25,-1),strahler(3.4,6.6,Y_KG,-.4,-1)],STRAHLER_HELL=1.5;
 const flash=new T.SpotLight(lin(0xfff2dc),0,22,.52,.55,1.1);flash.position.set(.18,-.12,0);camera.add(flash);flash.target.position.set(0,0,-4);camera.add(flash.target);
 
 // ---------------------------------------------------------------- Spieler
@@ -1002,9 +1005,10 @@ let last=performance.now(),hudT=0,perfT=0,perfN=0,perfWarm=0,pr=PR_MAX;
 renderer.shadowMap.needsUpdate=true;
 function frame(now){requestAnimationFrame(frame);
   const raw=(now-last)/1000,dt=Math.min(.05,raw);last=now;
-  // Schwächere Geräte: Auflösung stufenweise senken, bis es flüssig läuft (unter 40 Bildern je Sekunde)
-  if(running&&!document.hidden&&raw<1){perfWarm+=raw;if(perfWarm>3){perfT+=raw;perfN++;
-    if(perfT>2.5){if(perfT/perfN>1/40&&pr>.75){pr=Math.max(.75,pr-.25);renderer.setPixelRatio(pr);resize();}perfT=perfN=0;}}}
+  // Schwächere Geräte: Auflösung stufenweise senken, bis es flüssig läuft (unter 34 Bildern je Sekunde;
+  // bei 40 rutschte das iPad von 1,0 mit 41 Bildern/s noch auf 0,75 – unnötig unscharf, gemessen 22.11.2026)
+  if(AUTO_PR&&running&&!document.hidden&&raw<1){perfWarm+=raw;if(perfWarm>3){perfT+=raw;perfN++;
+    if(perfT>2.5){if(perfT/perfN>1/34&&pr>.75){pr=Math.max(.75,pr-.25);renderer.setPixelRatio(pr);resize();}perfT=perfN=0;}}}
   if(running)move(dt);
   if(DOOR.t!==DOOR.target){DOOR.t+=Math.sign(DOOR.target-DOOR.t)*Math.min(Math.abs(DOOR.target-DOOR.t),dt*1.5);
     const e=DOOR.t*DOOR.t*(3-2*DOOR.t);DOOR.pivot.rotation.y=-e*1.55;
@@ -1013,11 +1017,12 @@ function frame(now){requestAnimationFrame(frame);
   camera.position.set(P.x,P.camY+Math.sin(P.bob*6.2)*.022,P.z);camera.rotation.set(P.pitch,P.yaw,0);
   const inside=P.x>0&&P.x<HX&&P.z>0&&P.z<HZ,ex=!inside?1:P.feet<-.7?1.7:1.3;
   renderer.toneMappingExposure+=(ex-renderer.toneMappingExposure)*Math.min(1,dt*2.5);
+  if(TOUCH_DEV){const ziel=P.feet<-.7?STRAHLER_HELL:0;for(const s of STRAHLER)s.intensity+=(ziel-s.intensity)*Math.min(1,dt*6);}
   hudT+=dt;if(hudT>.1){hudT=0;hud();}
   renderer.render(scene,camera);}
 hud();requestAnimationFrame(frame);
 // Für Prüfzwecke: Standort setzen
-window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(n!==undefined)setStage(n);return STAGE;},go:(x,y,z,yaw,pitch)=>{P.x=x;P.feet=y;P.z=z;P.camY=y+EYE;P.vy=0;P.ground=true;if(yaw!==undefined)P.yaw=yaw;if(pitch!==undefined)P.pitch=pitch;},flash:toggleFlash,info:()=>renderer.info.render};
+window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(n!==undefined)setStage(n);return STAGE;},go:(x,y,z,yaw,pitch)=>{P.x=x;P.feet=y;P.z=z;P.camY=y+EYE;P.vy=0;P.ground=true;if(yaw!==undefined)P.yaw=yaw;if(pitch!==undefined)P.pitch=pitch;},flash:toggleFlash,info:()=>renderer.info.render,setPr:v=>{pr=v;renderer.setPixelRatio(v);resize();},teile:()=>({renderer,scene,camera})};
 })();
 </script>
 </body>
