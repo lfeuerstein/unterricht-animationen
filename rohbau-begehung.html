@@ -49,6 +49,22 @@
   #start td:first-child{white-space:nowrap;font-weight:600;color:#f3b086}
   #start .go{display:inline-block;padding:11px 22px;background:#e2854a;color:#16110d;font-weight:700;border-radius:4px;font-size:16px}
   #start .note{margin:14px 0 0;font-size:13px;opacity:.6}
+  /* Orte: direkt hinspringen, eigene Standorte speichern (22.11.2026) */
+  #orte{margin:0 0 20px;padding:14px 0 0;border-top:1px solid rgba(255,255,255,.14);cursor:default}
+  #orte h2{margin:0 0 8px;font-size:17px;font-weight:650}
+  #orte h2 small{font-size:12.5px;font-weight:400;opacity:.65}
+  #orte .reihe{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+  #orte button{font:600 15px "Segoe UI",system-ui,-apple-system,sans-serif;min-height:44px;padding:0 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;-webkit-appearance:none;appearance:none}
+  #orte button .nr{display:inline-block;min-width:16px;margin-right:6px;padding:0 4px;border:1px solid rgba(255,255,255,.6);border-radius:4px;font-size:12.5px}
+  #orte .mo{display:inline-flex}
+  #orte .mo button:first-child{border-color:#e2854a;border-radius:8px 0 0 8px}
+  #orte .mo button:last-child{border-color:#e2854a;border-left:0;border-radius:0 8px 8px 0;padding:0 12px;font-size:18px}
+  #orte button small{font-weight:400;opacity:.7;margin-left:6px}
+  #orte .leer{margin:0 0 10px;font-size:14px;opacity:.65}
+  #orteSpeichern{display:none;flex-wrap:wrap;gap:8px;align-items:center}
+  #orteSpeichern input{flex:1;min-width:170px;min-height:44px;box-sizing:border-box;padding:0 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,.35);background:rgba(0,0,0,.28);color:#fff;font:15px "Segoe UI",system-ui,-apple-system,sans-serif;user-select:text;-webkit-user-select:text;touch-action:auto}
+  #orteSpeichern button{background:#e2854a;border-color:#e2854a;color:#16110d}
+  #orteMeldung{margin:8px 0 0;font-size:13.5px;color:#f3b086;min-height:1em}
   /* Stationen: Infofenster und Moodle-Test über der Simulation */
   #info{position:fixed;inset:0;z-index:12;display:none;align-items:center;justify-content:center;background:rgba(10,12,16,.62)}
   #info .box{position:relative;max-height:calc(100% - 32px);overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;user-select:text;-webkit-user-select:text;box-sizing:border-box;width:min(760px,calc(100% - 32px));padding:26px 32px 22px;background:rgba(18,21,27,.96);border:1px solid rgba(255,255,255,.14);border-top:5px solid #e2854a;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
@@ -76,7 +92,7 @@
 <noscript><div style="position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:24px;background:#0e1014;color:#fff;font:18px/1.5 system-ui,sans-serif;text-align:center">Die Rohbau-Begehung braucht JavaScript.<br>Bitte die Datei in Safari, Chrome, Edge oder Firefox öffnen, nicht in einer Vorschau.</div></noscript>
 <canvas id="c"></canvas>
 <div id="hud">
-  <div id="keys">W A S D gehen · Maus umsehen · Umschalt rennen · Leertaste springen<br>E Bautür · I Ausbau · F Taschenlampe · B Beschriftungen · M Grundriss · Esc Pause</div>
+  <div id="keys">W A S D gehen · Maus umsehen · Umschalt rennen · Leertaste springen<br>E Bautür · I Ausbau · F Taschenlampe · B Beschriftungen · M Grundriss · Esc Pause<br>1–7 direkt zu den Orten · O Orte-Liste und Standort speichern</div>
   <canvas id="map" width="156" height="132"></canvas>
   <div id="cross"></div>
   <div id="hint"></div>
@@ -86,7 +102,7 @@
   <div id="tz"></div>
   <div id="joy" class="idle"><div id="knob"></div><div class="lbl">ziehen = gehen</div></div>
   <div id="lookHint">wischen = umsehen</div>
-  <div class="tbar"><button id="bStage" type="button">Ausbau: Rohbau</button><button id="bLamp" type="button">Lampe</button><button id="bLabels" type="button" class="on">Schilder</button><button id="bMap" type="button" class="on">Karte</button><button id="bPause" type="button">Pause</button></div>
+  <div class="tbar"><button id="bStage" type="button">Ausbau: Rohbau</button><button id="bLamp" type="button">Lampe</button><button id="bLabels" type="button" class="on">Schilder</button><button id="bMap" type="button" class="on">Karte</button><button id="bOrte" type="button">Orte</button><button id="bPause" type="button">Pause</button></div>
   <button id="bAct" type="button"></button>
   <button id="bJump" type="button">Springen</button>
 </div>
@@ -100,7 +116,8 @@
       <tr><td>Springen</td><td>runder Knopf unten rechts</td></tr>
       <tr><td>Orange Knopf</td><td>erscheint an der Bautür (öffnen, schließen) und im Keller (Lampe)</td></tr>
       <tr><td>Ausbau</td><td>Knopf oben rechts: Rohbau → Rohinstallation → fertig (in Küche und Gästebad auch der orange Knopf)</td></tr>
-      <tr><td>Oben rechts</td><td>Lampe, Schilder, Karte, Pause</td></tr>
+      <tr><td>Oben rechts</td><td>Lampe, Schilder, Karte, Orte, Pause</td></tr>
+      <tr><td>Orte</td><td>direkt in Hausanschlussraum, Gästebad, Küche … springen und eigene Standorte speichern (auch hier unten)</td></tr>
       <tr><td>Info-Zeichen</td><td>an der Hauswand antippen: Wissen zum Bauteil und ein kurzer Test</td></tr>
     </table>
     <table class="d-only">
@@ -113,7 +130,17 @@
       <tr><td>F</td><td>Taschenlampe (im Keller hilfreich)</td></tr>
       <tr><td>B · M</td><td>Beschriftungen · Grundriss ein und aus</td></tr>
       <tr><td>Esc</td><td>Pause, Maus wieder frei</td></tr>
+      <tr><td>1 – 7 · O</td><td>direkt zu einem Ort springen · Orte-Liste öffnen, eigenen Standort speichern</td></tr>
     </table>
+    <div id="orte">
+      <h2>Direkt hinspringen</h2>
+      <div class="reihe" id="orteFest"></div>
+      <h2>Meine Orte <small>– bleiben auf diesem Gerät in diesem Browser gespeichert</small></h2>
+      <div class="reihe" id="orteMein"></div>
+      <p class="leer" id="orteLeer">Noch keine eigenen Orte. Erst hingehen, dann hier „Standort speichern“.</p>
+      <div id="orteSpeichern"><input id="ortName" type="text" maxlength="40" autocomplete="off" placeholder="Name für den Standort"><button type="button" id="ortSave">Standort speichern</button></div>
+      <p id="orteMeldung"></p>
+    </div>
     <span class="go" id="go">Klicken, um die Baustelle zu betreten</span>
     <p class="note d-only">Die Maus wird eingefangen. Mit Esc kommt sie wieder frei.</p>
     <p class="note t-only">Am besten im Querformat. Als Vollbild-App: in Safari „Teilen“ → „Zum Home-Bildschirm“.</p>
@@ -1085,6 +1112,7 @@ tbtn('bLamp',()=>{toggleFlash();hud();});
 tbtn('bLabels',()=>{showLabels=!showLabels;syncBtns();hud();});
 tbtn('bMap',()=>{showMap=!showMap;syncBtns();});
 tbtn('bPause',()=>pause());
+tbtn('bOrte',()=>zeigeOrteListe());
 $('touch').addEventListener('contextmenu',e=>e.preventDefault());
 // iPad: kein Verschieben, kein Zoomen, kein Doppeltipp-Zoom (außer im Startfenster, das darf rollen)
 document.addEventListener('touchmove',e=>{const t=e.target;if(!(t&&t.closest&&t.closest('#start .box, #info .box')))e.preventDefault();},{passive:false});
@@ -1094,8 +1122,52 @@ function tryFullscreen(){const d=document.documentElement,rf=d&&(d.requestFullsc
   if(!rf||document.fullscreenElement||document.webkitFullscreenElement)return;try{const p=rf.call(d);if(p&&p.catch)p.catch(()=>{});}catch(_){}}
 
 function start(){running=true;everStarted=true;elStart.style.display='none';}
-function pause(){running=false;elStart.style.display='flex';goText();for(const k in keys)keys[k]=false;releaseTouch();}
-elStart.addEventListener('click',()=>{start();if(TOUCH){tryFullscreen();return;}try{const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{dragLook=true;});}catch(e){dragLook=true;}});
+function pause(){running=false;elStart.style.display='flex';goText();for(const k in keys)keys[k]=false;releaseTouch();orteAuffrischen();
+  if(everStarted){const el=$('orte');if(el.scrollIntoView)el.scrollIntoView({block:'start'});}} // Pause = Sprungbrett zu den Orten (Wunsch 22.11.2026)
+function betreten(){start();if(TOUCH){tryFullscreen();return;}try{const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{dragLook=true;});}catch(e){dragLook=true;}}
+elStart.addEventListener('click',e=>{if(e&&e.target&&e.target.closest&&e.target.closest('#orte'))return;betreten();});
+
+// ---------------------------------------------------------------- Orte: direkt hinspringen, eigene Standorte speichern
+// Wunsch des Lehrers (22.11.2026): Positionen speichern und direkt hinspringen, damit man nicht jedes Mal erst ins Haus laufen muss.
+// Feste Orte = Tasten 1–7; eigene Orte liegen im Speicher des Browsers (localStorage, je Gerät und Browser).
+const ORTE_FEST=[
+  {name:'Baustelle (Start)',x:-3.5,z:-8.5,feet:GY,yaw:-2.32,pitch:.06},
+  {name:'Bautür',x:5.57,z:-1.9,feet:GY,yaw:Math.PI,pitch:0},
+  {name:'Porotonstein',x:8.3,z:-2.3,feet:GY,yaw:Math.PI,pitch:.05},
+  {name:'Gästebad',x:3.95,z:1.85,feet:0,yaw:.55,pitch:-.12},
+  {name:'Küche',x:7.5,z:5.7,feet:0,yaw:-.85,pitch:-.1},
+  {name:'Hausanschlussraum',x:2.3,z:2.7,feet:Y_KG,yaw:0,pitch:-.05},
+  {name:'Dachgeschoss',x:3.2,z:4.2,feet:Y_DG,yaw:-Math.PI/2,pitch:.1}];
+const ORTE_KEY='rohbau-begehung-orte-v1';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function ladeOrte(){try{const a=JSON.parse(localStorage.getItem(ORTE_KEY)||'[]');
+  return Array.isArray(a)?a.filter(o=>o&&typeof o.name==='string'&&[o.x,o.z,o.feet,o.yaw].every(v=>typeof v==='number'&&isFinite(v))):[];}catch(_){return [];}}
+function sichereOrte(){try{localStorage.setItem(ORTE_KEY,JSON.stringify(MEINE));return true;}catch(_){return false;}}
+let MEINE=ladeOrte();
+function springe(o){if(!o)return;P.x=o.x;P.z=o.z;P.feet=o.feet;P.camY=o.feet+EYE;P.vy=0;P.ground=true;P.bob=0;P.yaw=o.yaw;P.pitch=o.pitch||0;
+  if(typeof o.stage==='number'&&o.stage!==STAGE)setStage(o.stage);releaseTouch();lastRoom='';hud();}
+function orteAuffrischen(meldung){
+  $('orteFest').innerHTML=ORTE_FEST.map((o,i)=>'<button type="button" data-fest="'+i+'"><span class="nr d-only">'+(i+1)+'</span>'+esc(o.name)+'</button>').join('');
+  $('orteMein').innerHTML=MEINE.map((o,i)=>'<span class="mo"><button type="button" data-mein="'+i+'">'+esc(o.name)+'<small>'+esc(STAGE_SHORT[o.stage]||'')+'</small></button>'+
+    '<button type="button" data-weg="'+i+'" aria-label="'+esc(o.name)+' löschen" title="löschen">×</button></span>').join('');
+  $('orteLeer').style.display=MEINE.length?'none':'block';
+  $('orteSpeichern').style.display=everStarted?'flex':'none';
+  $('ortName').placeholder='Name, z. B. „'+whereAmI()[1]+'“';
+  $('orteMeldung').textContent=meldung||'';}
+function speichereOrt(){if(!everStarted)return;const inp=$('ortName'),w=whereAmI();
+  const name=String(inp.value||'').trim().slice(0,40)||w[1];
+  MEINE.push({name,x:+P.x.toFixed(3),z:+P.z.toFixed(3),feet:+P.feet.toFixed(3),yaw:+P.yaw.toFixed(3),pitch:+P.pitch.toFixed(3),stage:STAGE});
+  if(MEINE.length>30)MEINE.shift();
+  const ok=sichereOrte();inp.value='';if(inp.blur)inp.blur();
+  orteAuffrischen(ok?'Gespeichert: „'+name+'“ (mit Ausbau „'+STAGE_SHORT[STAGE]+'“).':'Nur bis zum Neuladen gespeichert – dieses Fenster darf nichts dauerhaft speichern.');}
+function zeigeOrteListe(){if(document.pointerLockElement===canvas){try{document.exitPointerLock();}catch(_){}}
+  if(running)pause();const el=$('orte');if(el.scrollIntoView)el.scrollIntoView({block:'start'});}
+$('orte').addEventListener('click',e=>{if(e.stopPropagation)e.stopPropagation();const b=e.target&&e.target.closest?e.target.closest('button'):null;if(!b)return;
+  if(b.dataset.fest!==undefined){springe(ORTE_FEST[+b.dataset.fest]);betreten();}
+  else if(b.dataset.mein!==undefined){springe(MEINE[+b.dataset.mein]);betreten();}
+  else if(b.dataset.weg!==undefined){const o=MEINE.splice(+b.dataset.weg,1)[0];sichereOrte();orteAuffrischen(o?'Gelöscht: „'+o.name+'“.':'');}
+  else if(b.id==='ortSave')speichereOrt();});
+orteAuffrischen();
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running)pause();});
 document.addEventListener('pointerlockerror',()=>{dragLook=true;});
 document.addEventListener('pointerlockchange',()=>{if(document.pointerLockElement===canvas){dragLook=false;}else if(running&&!dragLook&&!TOUCH)pause();});
@@ -1106,10 +1178,13 @@ window.addEventListener('mouseup',e=>{dragging=false;const k=klick;klick=null; /
   if(k&&running&&dragLook&&Math.hypot(e.clientX-k.x,e.clientY-k.y)<5){const st=stationTreffer(e.clientX/window.innerWidth*2-1,-(e.clientY/window.innerHeight)*2+1);if(st)oeffneStation(st);}});
 document.addEventListener('mousemove',e=>{if(!running)return;const locked=document.pointerLockElement===canvas;if(!locked&&!dragging)return;
   const k=locked?.0022:-.004;P.yaw-=e.movementX*k;P.pitch=Math.max(-1.5,Math.min(1.5,P.pitch-e.movementY*k));});
-window.addEventListener('keydown',e=>{if(infoOffen){if(e.code==='Escape')schliesseStation();return;}
+window.addEventListener('keydown',e=>{const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'){if(e.key==='Enter'||e.code==='Enter'||e.code==='NumpadEnter')speichereOrt();return;}
+  if(infoOffen){if(e.code==='Escape')schliesseStation();return;}
   if(e.code==='Space'||e.code.startsWith('Arrow'))e.preventDefault();if(e.repeat)return;keys[e.code]=true;if(!running)return;
   if(e.code==='KeyE'){const s=actKind.startsWith('info:')?stationVonAct():null;if(s)oeffneStation(s);else toggleDoor();}else if(e.code==='KeyF')toggleFlash();else if(e.code==='KeyI')setStage(STAGE+1);else if(e.code==='KeyB'){showLabels=!showLabels;syncBtns();}
   else if(e.code==='KeyM'){showMap=!showMap;syncBtns();}
+  else if(e.code==='KeyO')zeigeOrteListe();
+  else if(/^(Digit|Numpad)[1-9]$/.test(e.code)){const o=ORTE_FEST[+e.code.slice(-1)-1];if(o)springe(o);}
   else if(e.code==='Escape'&&(dragLook||TOUCH))pause();});
 window.addEventListener('keyup',e=>{keys[e.code]=false;});
 window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false;releaseTouch();});
@@ -1147,7 +1222,10 @@ hud();requestAnimationFrame(frame);
 window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(n!==undefined)setStage(n);return STAGE;},go:(x,y,z,yaw,pitch)=>{P.x=x;P.feet=y;P.z=z;P.camY=y+EYE;P.vy=0;P.ground=true;if(yaw!==undefined)P.yaw=yaw;if(pitch!==undefined)P.pitch=pitch;},flash:toggleFlash,info:()=>renderer.info.render,setPr:v=>{pr=v;renderer.setPixelRatio(v);resize();},teile:()=>({renderer,scene,camera}),
   station:id=>{const s=STATIONEN.find(x=>x.id===id);if(s)oeffneStation(s);return !!infoOffen;},schliesse:()=>schliesseStation(),act:()=>actKind,
   treffer:(nx,ny)=>{const s=stationTreffer(nx,ny);return s?s.id:null;},
-  testFuer:id=>{const s=STATIONEN.find(x=>x.id===id);return s?{kontext:DATEI_KONTEXT,cmid:testCmid(s),adresse:testAdresse(s)}:null;}};
+  testFuer:id=>{const s=STATIONEN.find(x=>x.id===id);return s?{kontext:DATEI_KONTEXT,cmid:testCmid(s),adresse:testAdresse(s)}:null;},
+  orte:()=>ORTE_FEST,meineOrte:()=>MEINE,springe:name=>{const o=ORTE_FEST.find(x=>x.name===name)||MEINE.find(x=>x.name===name);springe(o);return !!o;},
+  speichere:name=>{$('ortName').value=name||'';speichereOrt();return MEINE.length;},wo:()=>whereAmI(),
+  frei:(x,z,feet)=>!hit(x,z,feet),boden:(x,z,feet)=>groundAt(x,z,feet)};
 })();
 </script>
 </body>
