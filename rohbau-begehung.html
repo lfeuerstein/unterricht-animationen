@@ -49,6 +49,27 @@
   #start td:first-child{white-space:nowrap;font-weight:600;color:#f3b086}
   #start .go{display:inline-block;padding:11px 22px;background:#e2854a;color:#16110d;font-weight:700;border-radius:4px;font-size:16px}
   #start .note{margin:14px 0 0;font-size:13px;opacity:.6}
+  /* Stationen: Infofenster und Moodle-Test über der Simulation */
+  #info{position:fixed;inset:0;z-index:12;display:none;align-items:center;justify-content:center;background:rgba(10,12,16,.62)}
+  #info .box{position:relative;max-height:calc(100% - 32px);overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;user-select:text;-webkit-user-select:text;box-sizing:border-box;width:min(760px,calc(100% - 32px));padding:26px 32px 22px;background:rgba(18,21,27,.96);border:1px solid rgba(255,255,255,.14);border-top:5px solid #e2854a;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  #info h2{margin:0 0 4px;font-size:26px;font-weight:650}
+  #info .unter{margin:0 0 14px;font-size:13px;opacity:.7;text-transform:uppercase;letter-spacing:1.1px}
+  #info p,#info li{line-height:1.5;font-size:15.5px;opacity:.92}
+  #info p{margin:0 0 12px}
+  #info ul{margin:0 0 12px;padding-left:20px}
+  #info b{color:#f3b086;font-weight:650}
+  #info figure{margin:4px 0 14px;text-align:center}
+  #info figure svg{max-width:100%;height:auto}
+  #info figcaption{font-size:13px;opacity:.7;margin-top:4px}
+  #info .quelle{font-size:12.5px;opacity:.6;margin:6px 0 0}
+  #info .knoepfe{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+  #info button{font:600 16px "Segoe UI",system-ui,-apple-system,sans-serif;min-height:48px;padding:0 20px;border-radius:8px;border:1.5px solid rgba(255,255,255,.5);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;-webkit-appearance:none;appearance:none}
+  #info button.haupt{background:#e2854a;border-color:#e2854a;color:#16110d}
+  #info button:disabled{opacity:.45;cursor:default}
+  #info.test .box{width:min(1100px,calc(100% - 16px));height:calc(100% - 16px);max-height:none;padding:0;display:flex;flex-direction:column;overflow:hidden}
+  #info .leiste{display:flex;align-items:center;gap:10px;padding:8px 10px 8px 16px;background:rgba(18,21,27,.98);flex-wrap:wrap}
+  #info .leiste span{flex:1;font-weight:600;font-size:16px;min-width:120px}
+  #info iframe{flex:1;width:100%;border:0;background:#fff;touch-action:auto}
 </style>
 </head>
 <body>
@@ -80,13 +101,14 @@
       <tr><td>Orange Knopf</td><td>erscheint an der Bautür (öffnen, schließen) und im Keller (Lampe)</td></tr>
       <tr><td>Ausbau</td><td>Knopf oben rechts: Rohbau → Rohinstallation → fertig (in Küche und Gästebad auch der orange Knopf)</td></tr>
       <tr><td>Oben rechts</td><td>Lampe, Schilder, Karte, Pause</td></tr>
+      <tr><td>Info-Zeichen</td><td>an der Hauswand antippen: Wissen zum Bauteil und ein kurzer Test</td></tr>
     </table>
     <table class="d-only">
       <tr><td>W A S D</td><td>gehen (Pfeiltasten gehen auch)</td></tr>
       <tr><td>Maus</td><td>umsehen</td></tr>
       <tr><td>Umschalt</td><td>rennen</td></tr>
       <tr><td>Leertaste</td><td>springen</td></tr>
-      <tr><td>E</td><td>Bautür öffnen und schließen</td></tr>
+      <tr><td>E</td><td>Bautür öffnen und schließen · am Info-Zeichen: Wissen und Test (oder Zeichen anklicken)</td></tr>
       <tr><td>I</td><td>Ausbau umschalten: Rohbau → Rohinstallation → fertig (Küche und Gästebad)</td></tr>
       <tr><td>F</td><td>Taschenlampe (im Keller hilfreich)</td></tr>
       <tr><td>B · M</td><td>Beschriftungen · Grundriss ein und aus</td></tr>
@@ -97,6 +119,7 @@
     <p class="note t-only">Am besten im Querformat. Als Vollbild-App: in Safari „Teilen“ → „Zum Home-Bildschirm“.</p>
   </div>
 </div>
+<div id="info" role="dialog" aria-modal="true"><div class="box" id="infoBox"></div></div>
 <script>/**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -873,6 +896,87 @@ function strahler(x,z,yf,dx,dz){const l=Math.hypot(dx,dz);dx/=l;dz/=l;
 // Tablet: Strahler ohne Schatten (iPad gemessen: 21 → 42 Bilder/s bei Auflösung 1,0); ohne Schatten schiene ihr Licht durch die Decke
 // ins Erdgeschoss → dort sind sie aus und leuchten nur, solange man im Keller steht (Schleife: STRAHLER_HELL).
 const STRAHLER=[strahler(2.3,2.75,Y_KG,-.2,-1),strahler(5.75,2.95,Y_KG,-.25,-1),strahler(3.4,6.6,Y_KG,-.4,-1)],STRAHLER_HELL=1.5;
+
+// ---------------------------------------------------------------- Stationen: Info-Zeichen an Bauteilen → Infofenster → Moodle-Test
+// Ein Test läuft im Fenster über der Simulation (iframe), wenn die Seite aus dem Schul-Moodle kommt (gleicher Ursprung,
+// Moodle sendet X-Frame-Options: SAMEORIGIN). Öffentlich (GitHub) öffnet „Test starten“ Moodle in einem neuen Tab.
+const MOODLE_HOST='04101606300.moodle.bw.schule';
+const STATIONEN=[{id:'poroton',kurz:'Porotonstein',titel:'Porotonstein – Planziegel aus gebranntem Ton',
+  x:8.3,y:1.45,z:-.03,flaeche:{x0:6.35,x1:9.55,y0:GY,y1:2.6},nah:()=>P.z<0&&P.z>-3&&Math.abs(P.x-8.3)<2.2&&P.feet>-.6,
+  html:()=>INFO_POROTON,test:{cmid:109465,name:'Test: Porotonstein'}}]; // Moodle-Test in Kurs 3176 (angelegt 22.11.2026, 6 Fragen, Kategorie 158294)
+const stationTex=(()=>{const c=mkCanvas(256,256),g=c.getContext('2d');g.fillStyle='#e2854a';g.beginPath();g.arc(128,128,118,0,7);g.fill();
+  g.lineWidth=12;g.strokeStyle='#fff';g.stroke();g.fillStyle='#fff';g.font='bold 170px Georgia,serif';g.textAlign='center';g.textBaseline='middle';g.fillText('i',128,140);
+  const t=new T.CanvasTexture(c);t.encoding=T.sRGBEncoding;return t;})();
+const stationMat=new T.MeshBasicMaterial({map:stationTex,transparent:true,toneMapped:false});
+for(const st of STATIONEN){
+  const m=new T.Mesh(new T.CircleGeometry(.2,40),stationMat);m.position.set(st.x,st.y,st.z);m.rotation.y=Math.PI;m.userData.noShadow=true;scene.add(m);st.zeichen=m;
+  const f=st.flaeche,h=new T.Mesh(new T.PlaneGeometry(f.x1-f.x0,f.y1-f.y0));h.position.set((f.x0+f.x1)/2,(f.y0+f.y1)/2,st.z+.025);h.rotation.y=Math.PI;h.updateMatrixWorld(true);st.treffer=h;}
+const strahl=new T.Raycaster();
+function stationNah(){for(const st of STATIONEN)if(st.nah())return st;return null;}
+// Tippen/Klicken: Strahl von der Kamera durch den Bildpunkt; trifft er die Wand um das Info-Zeichen (von außen, nicht zu weit)?
+function stationTreffer(nx,ny){strahl.setFromCamera({x:nx,y:ny},camera);
+  for(const st of STATIONEN){if(!(P.z<st.z))continue;const h=strahl.intersectObject(st.treffer,false)[0];if(h&&h.distance<14)return st;}return null;}
+const elInfo=$('info'),elInfoBox=$('infoBox');let infoOffen=null;
+function testAdresse(st){return 'https://'+MOODLE_HOST+'/mod/quiz/view.php?id='+st.test.cmid;}
+function zeigeInfo(st){
+  elInfo.classList.remove('test');
+  const imMoodle=location.host===MOODLE_HOST,hatTest=!!st.test.cmid;
+  elInfoBox.innerHTML='<p class="unter">Station an der Baustelle</p><h2>'+st.titel+'</h2>'+st.html()+
+    '<div class="knoepfe"><button type="button" class="haupt" data-a="test"'+(hatTest?'':' disabled')+'>'+(hatTest?(imMoodle?'Test starten':'Test in Moodle öffnen (neuer Tab)'):'Test folgt')+'</button>'+
+    '<button type="button" data-a="zu">Zurück zur Simulation</button></div>';
+  elInfoBox.scrollTop=0;}
+function zeigeTest(st){
+  if(location.host!==MOODLE_HOST){window.open(testAdresse(st),'_blank','noopener');return;}
+  elInfo.classList.add('test');
+  elInfoBox.innerHTML='<div class="leiste"><span>'+st.test.name+'</span><button type="button" data-a="info">Zurück zur Info</button><button type="button" class="haupt" data-a="zu">Zurück zur Simulation</button></div>'+
+    '<iframe title="'+st.test.name+'" src="'+testAdresse(st)+'"></iframe>';}
+function oeffneStation(st){if(infoOffen)return;infoOffen=st;running=false;for(const k in keys)keys[k]=false;releaseTouch();
+  if(document.pointerLockElement){try{document.exitPointerLock();}catch(_){}}
+  zeigeInfo(st);elInfo.style.display='flex';}
+function schliesseStation(){if(!infoOffen)return;infoOffen=null;elInfo.style.display='none';elInfo.classList.remove('test');elInfoBox.innerHTML='';
+  running=true;if(!TOUCH&&!dragLook){try{const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{dragLook=true;});}catch(_){dragLook=true;}}}
+elInfoBox.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button[data-a]');if(!b||!infoOffen)return;const a=b.dataset.a;
+  if(a==='zu')schliesseStation();else if(a==='test')zeigeTest(infoOffen);else if(a==='info')zeigeInfo(infoOffen);});
+elInfo.addEventListener('click',e=>{if(e.target===elInfo&&!elInfo.classList.contains('test'))schliesseStation();});
+// Inhalt der Station Porotonstein (Quelle: Fachbuch, siehe Arbeitsstand; der Test fragt nur, was hier steht)
+// G6 = Grundkenntnisse SHK 6. Aufl. 2019, F1 = Fachkenntnisse 1 (2011), T = Tabellenbuch SHK Westermann 1. Aufl. 2011
+const INFO_POROTON=(()=>{
+  // Zeichnung: Hochlochziegel schräg von oben, Löcher in der Lagerfläche
+  const o=[40,92],u=[250,0],v=[70,-46],P2=(a,b)=>[o[0]+u[0]*a+v[0]*b,o[1]+u[1]*a+v[1]*b],pt=p=>p[0].toFixed(1)+','+p[1].toFixed(1);
+  let loch='';for(let i=0;i<12;i++)for(let j=0;j<4;j++){const a0=(i+.2)/12,a1=(i+.8)/12,b0=(j+.22)/4,b1=(j+.78)/4;
+    loch+='<polygon points="'+[P2(a0,b0),P2(a1,b0),P2(a1,b1),P2(a0,b1)].map(pt).join(' ')+'" fill="#4a2214"/>';}
+  const top=[P2(0,0),P2(1,0),P2(1,1),P2(0,1)].map(pt).join(' '),H=118,
+    front=[P2(0,0),P2(1,0),[P2(1,0)[0],P2(1,0)[1]+H],[o[0],o[1]+H]].map(pt).join(' '),
+    side=[P2(1,0),P2(1,1),[P2(1,1)[0],P2(1,1)[1]+H],[P2(1,0)[0],P2(1,0)[1]+H]].map(pt).join(' ');
+  const svg='<svg viewBox="0 0 640 240" width="640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hochlochziegel mit senkrechter Lochung">'+
+    '<polygon points="'+front+'" fill="#b85d36"/><polygon points="'+side+'" fill="#93472a"/><polygon points="'+top+'" fill="#d27a4c"/>'+loch+
+    '<g stroke="#f3b086" stroke-width="1.5" fill="none"><path d="M215 60 L415 30"/><path d="M200 160 L415 150"/></g>'+
+    '<g fill="#fff" font-family="Segoe UI,system-ui,sans-serif" font-size="17"><text x="420" y="28">viele Kammern (Löcher)</text><text x="420" y="50" opacity=".75">darin ruhende Luft</text>'+
+    '<text x="420" y="148">gebrannter Ton</text><text x="420" y="170" opacity=".75">800 bis 1200 °C</text></g></svg>';
+  // Wärmeleitfähigkeit λ als Balken: je kürzer, desto besser dämmt der Baustoff
+  const bal=[['Stahlbeton',2.3],['Vollziegel',.68],['Hochlochziegel, leicht',.23],['Luft, ruhend',.025]];
+  let b='<svg viewBox="0 0 640 '+(bal.length*34+8)+'" width="640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Wärmeleitfähigkeit im Vergleich">';
+  bal.forEach(([n,l],i)=>{const y=i*34+6,w=Math.max(3,l/2.3*330);b+='<text x="0" y="'+(y+19)+'" fill="#fff" font-size="16" font-family="Segoe UI,system-ui,sans-serif">'+n+'</text>'+
+    '<rect x="200" y="'+(y+4)+'" width="'+w.toFixed(1)+'" height="20" rx="3" fill="'+(i===2?'#e2854a':'rgba(255,255,255,.45)')+'"/>'+
+    '<text x="'+(208+w).toFixed(1)+'" y="'+(y+19)+'" fill="#fff" font-size="15" font-family="Segoe UI,system-ui,sans-serif">'+String(l).replace('.',',')+'</text>';});
+  b+='</svg>';
+  return '<figure>'+svg+'<figcaption>Hochlochziegel: Die Löcher laufen senkrecht durch den ganzen Stein.</figcaption></figure>'+
+  '<p>Die Außenwände dieses Hauses sind 36,5 cm dick und aus <b>Porotonsteinen</b> gemauert. „Poroton“ ist ein Markenname. Fachlich ist es ein <b>Hochlochziegel</b> (Leichtziegel).</p>'+
+  '<ul><li><b>Material:</b> Mauerziegel werden aus Ton oder Lehm geformt und bei 800 bis 1200 °C gebrannt.</li>'+
+  '<li><b>Lochziegel</b> heißt ein Ziegel, wenn mehr als 15 % seiner Lagerfläche aus Löchern bestehen.</li></ul>'+
+  '<p><b>Warum dämmt er so gut?</b></p>'+
+  '<ul><li>In den vielen Kammern steht <b>ruhende Luft</b>. Abgesehen vom Vakuum ist ruhende Luft der beste Wärmedämmstoff.</li>'+
+  '<li>Dem Ton werden vor dem Brennen Sägemehl oder Polystyrolkörner beigemischt. Sie bilden <b>Poren</b>, die die Dämmung zusätzlich verbessern.</li>'+
+  '<li>Deshalb nimmt man Leichtziegel gern für <b>Außenwände</b>.</li></ul>'+
+  '<p>Die <b>Wärmeleitfähigkeit λ</b> in W/(m·K) zeigt, wie gut ein Baustoff Wärme leitet. <b>Je kleiner λ, desto besser dämmt er.</b></p>'+
+  '<figure>'+b+'</figure>'+
+  '<p><b>Wie wird gemauert?</b> Normale Steine liegen in einem Mörtelbett von etwa 10 bis 12 mm. Maß- und formgenaue Steine (Planziegel) werden dagegen mit einer dünnen Mörtelschicht <b>verklebt</b>. Die Stoßfugen (senkrecht zwischen zwei Steinen) bleiben oft ohne Mörtel.</p>'+
+  '<p><b>Für dich als Installateur wichtig</b></p>'+
+  '<ul><li><b>Bohren nur ohne Schlag</b> (Drehbohren). Mit Schlag brechen die dünnen Stege aus und das Bohrloch wird zu groß.</li>'+
+  '<li><b>Dübeln:</b> Hohlraumdübel oder Injektionsanker mit Siebhülse halten gut, weil sie sich an den Stegen verkrallen. <b>Nicht in die Stoßfuge</b> dübeln. Bolzensetzgeräte sind in Lochziegeln verboten.</li>'+
+  '<li><b>Schlitze</b> für Leitungen werden gefräst, nie einfach gestemmt. Ist unklar, ob eine Wand trägt, gilt sie als tragend: Architekt oder Statiker fragen.</li>'+
+  '<li>Rohre in einer <b>Außenwand</b> verschlechtern den Wärme- und Schallschutz erheblich.</li></ul>'+
+  '<p class="quelle">Quellen: Grundkenntnisse SHK (6. Aufl. 2019) S. 186–187, 193, 202, 207 · Fachkenntnisse 1 (2011) S. 34, 53–54 · Tabellenbuch SHK (Westermann 2011) Tab. 201.1, 383.1</p>';})();
 const flash=new T.SpotLight(lin(0xfff2dc),0,22,.52,.55,1.1);flash.position.set(.18,-.12,0);camera.add(flash);flash.target.position.set(0,0,-4);camera.add(flash.target);
 
 // ---------------------------------------------------------------- Spieler
@@ -928,13 +1032,14 @@ function drawMap(){const g=mapCtx,s=12,ox=-1.5,oz=-1.5,ya=P.feet+.5,yb=P.feet+1.
   const px=(P.x-ox)*s,pz=(P.z-oz)*s,fx=-Math.sin(P.yaw),fz=-Math.cos(P.yaw);
   g.fillStyle='#fff';g.beginPath();g.moveTo(px+fx*8,pz+fz*8);g.lineTo(px-fx*4-fz*4.5,pz-fz*4+fx*4.5);g.lineTo(px-fx*4+fz*4.5,pz-fz*4-fx*4.5);g.closePath();g.fill();}
 function hud(){const w=whereAmI(),key=w[0]+w[1]+STAGE;if(key!==lastRoom){lastRoom=key;elRoom.innerHTML='<small>'+(w[0]?FLOOR[w[0]]+' · ':'')+'Ausbau: '+STAGE_NAMES[STAGE]+'</small>'+w[1];}
-  const ausbau=w[1]==='Küche'||w[1]==='Gästebad';
-  const act=nearDoor()?(DOOR.target?'door1':'door0'):(w[0]==='KG'&&!flashHintDone)?'flash':ausbau?'stage'+STAGE:'';
-  if(act==='flash')setHint('flash','<b>F</b>Taschenlampe einschalten');
+  const ausbau=w[1]==='Küche'||w[1]==='Gästebad',st=stationNah();
+  const act=nearDoor()?(DOOR.target?'door1':'door0'):st?'info:'+st.id:(w[0]==='KG'&&!flashHintDone)?'flash':ausbau?'stage'+STAGE:'';
+  if(st&&act==='info:'+st.id)setHint(act,'<b>E</b>Info: '+st.kurz+' – Wissen und Test');
+  else if(act==='flash')setHint('flash','<b>F</b>Taschenlampe einschalten');
   else if(act==='door0'||act==='door1')setHint(act,'<b>E</b>Bautür '+(DOOR.target?'schließen':'öffnen'));
   else if(act)setHint(act,'<b>I</b>'+NEXT_TXT[STAGE]);
   else setHint('','');
-  if(act!==actKind){actKind=act;bAct.textContent=act==='door0'?'Tür öffnen':act==='door1'?'Tür schließen':act==='flash'?'Lampe an':act?NEXT_TXT[STAGE]:'';bAct.style.display=act?'block':'none';}
+  if(act!==actKind){actKind=act;bAct.textContent=act==='door0'?'Tür öffnen':act==='door1'?'Tür schließen':act==='flash'?'Lampe an':(st&&act==='info:'+st.id)?'Info: '+st.kurz:act?NEXT_TXT[STAGE]:'';bAct.style.display=act?'block':'none';}
   if(showMap)drawMap();
   const SB=1<<STAGE;
   for(const s of labels)s.visible=showLabels&&s.userData.room===w[1]&&(!s.userData.mask||!!(s.userData.mask&SB));}
@@ -948,20 +1053,27 @@ function placeJoy(x,y){joyEl.style.left=x+'px';joyEl.style.top=y+'px';}
 function joyRest(){placeJoy(112,window.innerHeight-128);knob.style.transform='';joyEl.classList.add('idle');joyEl.classList.remove('run');}
 function releaseTouch(){joy.id=null;joy.dx=joy.dy=0;joy.run=false;look.id=null;joyRest();}
 function moveKnob(){const d=Math.hypot(joy.dx,joy.dy),k=d>JR?JR/d:1;joy.run=d>JR*1.45;knob.style.transform='translate('+(joy.dx*k).toFixed(1)+'px,'+(joy.dy*k).toFixed(1)+'px)';joyEl.classList.toggle('run',joy.run);}
+const taps={}; // kurzes Antippen ohne Wischen → Info-Zeichen/Wand getroffen?
 tz.addEventListener('pointerdown',e=>{e.preventDefault();if(!running)return;try{tz.setPointerCapture(e.pointerId);}catch(_){}
+  taps[e.pointerId]={x:e.clientX,y:e.clientY,t:performance.now(),weg:0};
   const W=window.innerWidth,H=window.innerHeight;
   if(joy.id===null&&e.clientX<W*.45){joy.id=e.pointerId;joy.cx=clamp(e.clientX,85,W*.45);joy.cy=clamp(e.clientY,85,H-85);joy.dx=e.clientX-joy.cx;joy.dy=e.clientY-joy.cy;placeJoy(joy.cx,joy.cy);joyEl.classList.remove('idle');moveKnob();}
   else if(look.id===null){look.id=e.pointerId;look.x=e.clientX;look.y=e.clientY;}});
 tz.addEventListener('pointermove',e=>{
+  const tp=taps[e.pointerId];if(tp)tp.weg=Math.max(tp.weg,Math.hypot(e.clientX-tp.x,e.clientY-tp.y));
   if(e.pointerId===joy.id){joy.dx=e.clientX-joy.cx;joy.dy=e.clientY-joy.cy;moveKnob();}
   else if(e.pointerId===look.id){const dx=e.clientX-look.x,dy=e.clientY-look.y;look.x=e.clientX;look.y=e.clientY;
     if(running){P.yaw-=dx*LOOK;P.pitch=clamp(P.pitch-dy*LOOK,-1.5,1.5);}
     if(Math.abs(dx)+Math.abs(dy)>2)lookHint.style.opacity='0';}});
-function endPtr(e){if(e.pointerId===joy.id){joy.id=null;joy.dx=joy.dy=0;joy.run=false;joyRest();}if(e.pointerId===look.id)look.id=null;}
+function endPtr(e){const tp=taps[e.pointerId];delete taps[e.pointerId];
+  if(e.type==='pointerup'&&tp&&running&&tp.weg<12&&performance.now()-tp.t<450){
+    const st=stationTreffer(e.clientX/window.innerWidth*2-1,-(e.clientY/window.innerHeight)*2+1);if(st){oeffneStation(st);return;}}
+  if(e.pointerId===joy.id){joy.id=null;joy.dx=joy.dy=0;joy.run=false;joyRest();}if(e.pointerId===look.id)look.id=null;}
 ['pointerup','pointercancel','lostpointercapture'].forEach(n=>tz.addEventListener(n,endPtr));
 function tbtn(id,fn){$(id).addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(running)fn();});}
 tbtn('bJump',()=>{wantJump=true;});
-tbtn('bAct',()=>{if(actKind==='flash')toggleFlash();else if(actKind.startsWith('stage'))setStage(STAGE+1);else toggleDoor();hud();});
+const stationVonAct=()=>STATIONEN.find(s=>'info:'+s.id===actKind);
+tbtn('bAct',()=>{if(actKind.startsWith('info:')){const s=stationVonAct();if(s)oeffneStation(s);return;}if(actKind==='flash')toggleFlash();else if(actKind.startsWith('stage'))setStage(STAGE+1);else toggleDoor();hud();});
 tbtn('bStage',()=>setStage(STAGE+1));
 tbtn('bLamp',()=>{toggleFlash();hud();});
 tbtn('bLabels',()=>{showLabels=!showLabels;syncBtns();hud();});
@@ -969,7 +1081,7 @@ tbtn('bMap',()=>{showMap=!showMap;syncBtns();});
 tbtn('bPause',()=>pause());
 $('touch').addEventListener('contextmenu',e=>e.preventDefault());
 // iPad: kein Verschieben, kein Zoomen, kein Doppeltipp-Zoom (außer im Startfenster, das darf rollen)
-document.addEventListener('touchmove',e=>{const t=e.target;if(!(t&&t.closest&&t.closest('#start .box')))e.preventDefault();},{passive:false});
+document.addEventListener('touchmove',e=>{const t=e.target;if(!(t&&t.closest&&t.closest('#start .box, #info .box')))e.preventDefault();},{passive:false});
 ['gesturestart','gesturechange','dblclick'].forEach(n=>document.addEventListener(n,e=>e.preventDefault()));
 window.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&!TOUCH)setTouch(true);else if(e.pointerType==='mouse'&&TOUCH&&!TOUCH_DEV)setTouch(false);},true);
 function tryFullscreen(){const d=document.documentElement,rf=d&&(d.requestFullscreen||d.webkitRequestFullscreen);
@@ -982,12 +1094,15 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&running)pa
 document.addEventListener('pointerlockerror',()=>{dragLook=true;});
 document.addEventListener('pointerlockchange',()=>{if(document.pointerLockElement===canvas){dragLook=false;}else if(running&&!dragLook&&!TOUCH)pause();});
 let dragging=false;
-canvas.addEventListener('mousedown',e=>{if(TOUCH)return;if(document.pointerLockElement===canvas){if(e.button===0)toggleDoor();}else{dragging=true;if(running&&!dragLook){try{const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{dragLook=true;});}catch(er){dragLook=true;}}}});
-window.addEventListener('mouseup',()=>{dragging=false;});
+let klick=null;
+canvas.addEventListener('mousedown',e=>{if(TOUCH)return;if(document.pointerLockElement===canvas){if(e.button===0){const st=stationTreffer(0,0);if(st)oeffneStation(st);else toggleDoor();}}else{dragging=true;klick={x:e.clientX,y:e.clientY};if(running&&!dragLook){try{const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{dragLook=true;});}catch(er){dragLook=true;}}}});
+window.addEventListener('mouseup',e=>{dragging=false;const k=klick;klick=null; // ohne eingefangene Maus: Klick ohne Ziehen auf das Info-Zeichen
+  if(k&&running&&dragLook&&Math.hypot(e.clientX-k.x,e.clientY-k.y)<5){const st=stationTreffer(e.clientX/window.innerWidth*2-1,-(e.clientY/window.innerHeight)*2+1);if(st)oeffneStation(st);}});
 document.addEventListener('mousemove',e=>{if(!running)return;const locked=document.pointerLockElement===canvas;if(!locked&&!dragging)return;
   const k=locked?.0022:-.004;P.yaw-=e.movementX*k;P.pitch=Math.max(-1.5,Math.min(1.5,P.pitch-e.movementY*k));});
-window.addEventListener('keydown',e=>{if(e.code==='Space'||e.code.startsWith('Arrow'))e.preventDefault();if(e.repeat)return;keys[e.code]=true;if(!running)return;
-  if(e.code==='KeyE')toggleDoor();else if(e.code==='KeyF')toggleFlash();else if(e.code==='KeyI')setStage(STAGE+1);else if(e.code==='KeyB'){showLabels=!showLabels;syncBtns();}
+window.addEventListener('keydown',e=>{if(infoOffen){if(e.code==='Escape')schliesseStation();return;}
+  if(e.code==='Space'||e.code.startsWith('Arrow'))e.preventDefault();if(e.repeat)return;keys[e.code]=true;if(!running)return;
+  if(e.code==='KeyE'){const s=actKind.startsWith('info:')?stationVonAct():null;if(s)oeffneStation(s);else toggleDoor();}else if(e.code==='KeyF')toggleFlash();else if(e.code==='KeyI')setStage(STAGE+1);else if(e.code==='KeyB'){showLabels=!showLabels;syncBtns();}
   else if(e.code==='KeyM'){showMap=!showMap;syncBtns();}
   else if(e.code==='Escape'&&(dragLook||TOUCH))pause();});
 window.addEventListener('keyup',e=>{keys[e.code]=false;});
@@ -1017,12 +1132,15 @@ function frame(now){requestAnimationFrame(frame);
   camera.position.set(P.x,P.camY+Math.sin(P.bob*6.2)*.022,P.z);camera.rotation.set(P.pitch,P.yaw,0);
   const inside=P.x>0&&P.x<HX&&P.z>0&&P.z<HZ,ex=!inside?1:P.feet<-.7?1.7:1.3;
   renderer.toneMappingExposure+=(ex-renderer.toneMappingExposure)*Math.min(1,dt*2.5);
+  {const s=1+.08*Math.sin(now*.004);for(const st of STATIONEN)st.zeichen.scale.setScalar(s);} // Info-Zeichen pulsiert leicht
   if(TOUCH_DEV){const ziel=P.feet<-.7?STRAHLER_HELL:0;for(const s of STRAHLER)s.intensity+=(ziel-s.intensity)*Math.min(1,dt*6);}
   hudT+=dt;if(hudT>.1){hudT=0;hud();}
   renderer.render(scene,camera);}
 hud();requestAnimationFrame(frame);
 // Für Prüfzwecke: Standort setzen
-window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(n!==undefined)setStage(n);return STAGE;},go:(x,y,z,yaw,pitch)=>{P.x=x;P.feet=y;P.z=z;P.camY=y+EYE;P.vy=0;P.ground=true;if(yaw!==undefined)P.yaw=yaw;if(pitch!==undefined)P.pitch=pitch;},flash:toggleFlash,info:()=>renderer.info.render,setPr:v=>{pr=v;renderer.setPixelRatio(v);resize();},teile:()=>({renderer,scene,camera})};
+window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(n!==undefined)setStage(n);return STAGE;},go:(x,y,z,yaw,pitch)=>{P.x=x;P.feet=y;P.z=z;P.camY=y+EYE;P.vy=0;P.ground=true;if(yaw!==undefined)P.yaw=yaw;if(pitch!==undefined)P.pitch=pitch;},flash:toggleFlash,info:()=>renderer.info.render,setPr:v=>{pr=v;renderer.setPixelRatio(v);resize();},teile:()=>({renderer,scene,camera}),
+  station:id=>{const s=STATIONEN.find(x=>x.id===id);if(s)oeffneStation(s);return !!infoOffen;},schliesse:()=>schliesseStation(),act:()=>actKind,
+  treffer:(nx,ny)=>{const s=stationTreffer(nx,ny);return s?s.id:null;}};
 })();
 </script>
 </body>
