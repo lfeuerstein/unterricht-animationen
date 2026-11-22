@@ -1234,6 +1234,105 @@ if(window.visualViewport)visualViewport.addEventListener('resize',resize);
 if(TOUCH_DEV)setTouch(true);else goText();
 resize();
 
+// ---------------------------------------------------------------- Baustellenhund
+// Wunsch des Lehrers (22.11.2026): „im Außengelände der Baustelle springt ein kleiner Hund herum“. Kleiner Terrier aus Kugeln
+// und Rollen, je beweglichem Teil ein Netz mit Eckpunktfarben (8 Zeichenaufrufe, iPad). Läuft, hüpft, schnüffelt und dreht sich
+// innerhalb des Bauzauns, nie ins Haus; kommt ab und zu zum Spieler und springt vor ihm herum. Wirft keinen echten Schatten
+// (Schattenkarte wird nur bei Bedarf neu gerechnet), sondern einen weichen Fleck. Eigener Zufall: die Baustelle bleibt wie sie ist.
+let hs=4711;const hz=()=>{hs=hs+0x6D2B79F5|0;let t=Math.imul(hs^hs>>>15,1|hs);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;},hzw=(a,b)=>a+(b-a)*hz();
+const HMAT=new T.MeshStandardMaterial({vertexColors:true,roughness:.88}),HKUGEL=new T.SphereGeometry(1,14,10),HROLLE=new T.CylinderGeometry(1,.78,1,10),HRING=new T.TorusGeometry(1,.17,6,18);
+const FELL=0xefe8da,FLECK=0x8b5a30,DUNKEL=0x17120e;
+// Stücke [Form, Farbe, Größe, Lage, Drehung] zu einem Netz zusammenfassen, in einer Gruppe (Drehpunkt) an x,y,z
+function hundTeil(eltern,x,y,z,stuecke){
+  const pos=[],nor=[],col=[],idx=[],v=new T.Vector3(),s=new T.Vector3(),nm=new T.Matrix3(),m=new T.Matrix4(),q=new T.Quaternion(),e=new T.Euler();let base=0;
+  for(const [g,farbe,gr,lg,dr] of stuecke){const c=lin(farbe);q.setFromEuler(e.set(dr?dr[0]:0,dr?dr[1]:0,dr?dr[2]:0));m.compose(v.set(lg[0],lg[1],lg[2]),q,s.set(gr[0],gr[1],gr[2]));nm.getNormalMatrix(m);
+    const pa=g.attributes.position,na=g.attributes.normal,ix=g.index;
+    for(let i=0;i<pa.count;i++){v.fromBufferAttribute(pa,i).applyMatrix4(m);pos.push(v.x,v.y,v.z);v.fromBufferAttribute(na,i).applyMatrix3(nm).normalize();nor.push(v.x,v.y,v.z);col.push(c.r,c.g,c.b);}
+    for(let i=0;i<ix.count;i++)idx.push(base+ix.getX(i));base+=pa.count;}
+  const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(pos,3));geo.setAttribute('normal',new T.Float32BufferAttribute(nor,3));geo.setAttribute('color',new T.Float32BufferAttribute(col,3));geo.setIndex(idx);
+  const grp=new T.Group(),mesh=new T.Mesh(geo,HMAT);mesh.receiveShadow=true;grp.add(mesh);grp.position.set(x,y,z);eltern.add(grp);return grp;}
+// Körper: vorn = +z, Rumpfmitte in HBASIS Höhe, Pfoten am Boden
+const HBASIS=.28,hWurzel=new T.Group(),hKoerper=hundTeil(hWurzel,0,HBASIS,0,[
+  [HKUGEL,FELL,[.12,.115,.23],[0,0,0]],[HKUGEL,FLECK,[.108,.07,.13],[0,.058,-.05]],[HKUGEL,FELL,[.1,.105,.1],[0,-.005,.15]]]);
+const hKopf=hundTeil(hKoerper,0,.085,.19,[
+  [HKUGEL,FELL,[.062,.085,.065],[0,-.01,0],[.5,0,0]],[HKUGEL,FELL,[.082,.078,.088],[0,.075,.05]],[HKUGEL,FLECK,[.06,.055,.062],[.032,.098,.045]],
+  [HKUGEL,FELL,[.042,.038,.068],[0,.045,.125]],[HKUGEL,DUNKEL,[.02,.016,.016],[0,.06,.19]],
+  [HKUGEL,DUNKEL,[.012,.013,.009],[.04,.096,.118]],[HKUGEL,DUNKEL,[.012,.013,.009],[-.04,.096,.118]],
+  [HKUGEL,FLECK,[.032,.042,.011],[.058,.142,.045],[.35,0,-.45]],[HKUGEL,FLECK,[.032,.042,.011],[-.058,.142,.045],[.35,0,.45]],
+  [HKUGEL,0xd9707f,[.016,.005,.03],[0,.004,.15],[.6,0,0]],[HRING,0xc0392b,[.066,.066,.066],[0,-.005,0],[Math.PI/2+.5,0,0]]]);
+const hBein=(x,y,z,hinten)=>hundTeil(hKoerper,x,y,z,hinten
+  ?[[HKUGEL,FELL,[.046,.075,.065],[0,-.02,0]],[HROLLE,FELL,[.022,.2,.022],[0,-.125,-.01]],[HKUGEL,FELL,[.027,.02,.036],[0,-.23,.008]]]
+  :[[HROLLE,FELL,[.024,.215,.024],[0,-.11,0]],[HKUGEL,FELL,[.028,.02,.036],[0,-.225,.012]]]);
+const hBeine=[hBein(-.058,-.035,.13),hBein(.058,-.035,.13),hBein(-.062,-.03,-.15,true),hBein(.062,-.03,-.15,true)]; // vorn links, vorn rechts, hinten links, hinten rechts
+const hSchwanz=hundTeil(hKoerper,0,.045,-.2,[[HROLLE,FELL,[.014,.15,.014],[0,.075,0]],[HKUGEL,FELL,[.011,.016,.011],[0,.15,0]]]);
+const hSchatten=(()=>{const c=mkCanvas(64,64),g=c.getContext('2d'),gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(0,0,0,.6)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);
+  const s=new T.Mesh(new T.PlaneGeometry(1,1),new T.MeshBasicMaterial({map:new T.CanvasTexture(c),transparent:true,depthWrite:false,toneMapped:false,polygonOffset:true,polygonOffsetFactor:-2}));
+  s.rotation.x=-Math.PI/2;s.position.y=.012;hWurzel.add(s);return s;})();
+scene.add(hWurzel);
+// Wo er laufen darf: innerhalb des Bauzauns (1 m Abstand), nicht am Haus (Lichtschächte, Gerüst, Antritt) und nicht durch Hindernisse am Boden
+const HR={x0:SITE.x0+1,x1:SITE.x1-1,z0:SITE.z0+1,z1:SITE.z1-1},HHIN=[{x0:-.7,x1:11.45,z0:-1.05,z1:8.7}];
+for(const b of colliders)if(!b.mask&&b.y0<GY+.45&&b.y1>GY+.03&&b.x1>HR.x0&&b.x0<HR.x1&&b.z1>HR.z0&&b.z0<HR.z1)HHIN.push(b);
+function hFrei(x,z,p){if(x<HR.x0||x>HR.x1||z<HR.z0||z>HR.z1)return false;p=p===undefined?.3:p;
+  for(const r of HHIN)if(x>r.x0-p&&x<r.x1+p&&z>r.z0-p&&z<r.z1+p)return false;return true;}
+const hWeg=(ax,az,bx,bz)=>{const n=Math.ceil(Math.hypot(bx-ax,bz-az)/.1);for(let i=1;i<=n;i++)if(!hFrei(ax+(bx-ax)*i/n,az+(bz-az)*i/n))return false;return true;};
+const hWd=(a,b)=>{let d=(b-a)%(2*Math.PI);if(d>Math.PI)d-=2*Math.PI;else if(d<-Math.PI)d+=2*Math.PI;return d;};
+const H={x:-.6,z:-5.8,yaw:-2.4,zu:'springen',t:.8,n:3,tx:0,tz:0,schnell:false,zumSpieler:false,nachT:0,phase:0,h:0,vy:0,dreh:0,twist:0,froh:3,spielPause:10,wedel:0,strecke:0,maxH:0,zustaende:new Set()};
+const hDraussen=()=>!(P.x>-.3&&P.x<HX+.3&&P.z>-.3&&P.z<HZ+.3)&&P.feet<GY+.6;
+// Zufälliges Laufziel im Abstand a…b mit freier Linie; mit zx,zz: unter 40 Versuchen das Ziel, das (zx,zz) am nächsten liegt
+function hZiel(a,b,zx,zz){let best=Infinity;for(let i=0;i<40;i++){const w=hz()*Math.PI*2,d=hzw(a,b),x=H.x+Math.sin(w)*d,z=H.z+Math.cos(w)*d;
+  if(!hFrei(x,z)||!hWeg(H.x,H.z,x,z))continue;if(zx===undefined){H.tx=x;H.tz=z;return true;}const e=Math.hypot(x-zx,z-zz);if(e<best){best=e;H.tx=x;H.tz=z;}}return best<Infinity;}
+function hLauf(x,z,schnell,zumSpieler){H.tx=x;H.tz=z;H.zu='laufen';H.schnell=schnell;H.zumSpieler=!!zumSpieler;H.nachT=.3;}
+function hSpring(n,froh){H.zu='springen';H.n=n;H.t=.12;H.vy=0;H.h=0;if(froh)H.froh=Math.max(H.froh,2.5);}
+function hSpielerZiel(){const dx=H.x-P.x,dz=H.z-P.z,d=Math.hypot(dx,dz)||1,x=P.x+dx/d*1.3,z=P.z+dz/d*1.3;return hFrei(x,z)&&hWeg(H.x,H.z,x,z)?[x,z]:null;}
+function hWeiter(){const dp=Math.hypot(P.x-H.x,P.z-H.z);
+  if(hDraussen()&&H.spielPause<=0&&dp>2&&hz()<.6){const p=dp<14?hSpielerZiel():null;if(p){hLauf(p[0],p[1],true,true);H.spielPause=hzw(15,25);return;}
+    if(hZiel(3,9,P.x,P.z)){hLauf(H.tx,H.tz,true);return;}}  // zu weit oder Haus im Weg: erst näher heran (ums Haus herum)
+  const r=hz();
+  if(r<.45&&hZiel(2,10)){hLauf(H.tx,H.tz,hz()<.55);return;}
+  if(r<.65){hSpring(2+(hz()*3|0));return;}
+  if(r<.8){H.zu='schnueffeln';H.t=hzw(1.5,3.5);return;}
+  if(r<.9){H.zu='drehen';H.t=hzw(1,1.7);H.dreh=hz()<.5?-1:1;return;}
+  H.zu='stehen';H.t=hzw(1.2,3);}
+function hund(dt){
+  H.spielPause-=dt;H.froh=Math.max(0,H.froh-dt);
+  const dxp=P.x-H.x,dzp=P.z-H.z,dp=Math.hypot(dxp,dzp),draussen=hDraussen(),zumSp=Math.atan2(dxp,dzp);
+  let gang=0,hoch=0,duck=0,nick=0,kopfY=0;   // gang: 0 steht, 1 Trab, 2 Galopp, 3 in der Luft
+  // Spieler kommt zu dicht: zur Seite weg
+  if(draussen&&dp<.8&&H.zu!=='laufen'&&H.h<=0)for(let i=0;i<12;i++){const w=Math.atan2(-dxp,-dzp)+hzw(-1,1),d=hzw(1.5,3),x=H.x+Math.sin(w)*d,z=H.z+Math.cos(w)*d;if(hFrei(x,z)&&hWeg(H.x,H.z,x,z)){hLauf(x,z,true);break;}}
+  if((H.zu==='stehen'||H.zu==='schnueffeln')&&draussen&&dp<2.4&&H.spielPause<=0){hSpring(3,true);H.spielPause=8;}
+  H.zustaende.add(H.zu);
+  if(H.zu==='laufen'){
+    if(H.zumSpieler&&(H.nachT-=dt)<=0){H.nachT=.3;const p=draussen?hSpielerZiel():null;if(p){H.tx=p[0];H.tz=p[1];}else H.zumSpieler=false;}
+    const dx=H.tx-H.x,dz=H.tz-H.z,d=Math.hypot(dx,dz);
+    if(d<.08){if(H.zumSpieler)hSpring(3+(hz()*3|0),true);else hWeiter();}
+    else{const diff=hWd(H.yaw,Math.atan2(dx,dz));H.yaw+=Math.max(-dt*8,Math.min(dt*8,diff));
+      if(Math.abs(diff)>1.2){gang=1;H.phase+=dt*12;}  // erst auf der Stelle umdrehen (trippeln), dann los – bleibt so auf der geprüften Linie
+      else{const s=Math.min(d,(H.schnell?3.1:1.4)*dt);H.x+=dx/d*s;H.z+=dz/d*s;H.strecke+=s;H.phase+=s*2*Math.PI/(H.schnell?.8:.42);gang=H.schnell?2:1;}}
+    hoch=gang===2?Math.max(0,Math.sin(H.phase))*.09:Math.abs(Math.sin(H.phase))*.02;}
+  else if(H.zu==='springen'){
+    if(dp<7&&draussen&&!H.twist)H.yaw+=Math.max(-dt*6,Math.min(dt*6,hWd(H.yaw,zumSp)));
+    if(H.h>0||H.vy>0){H.vy-=9.81*dt;H.h+=H.vy*dt;H.yaw+=H.twist*dt;if(H.h<=0){H.h=0;H.vy=0;H.twist=0;H.t=.16;}gang=3;}
+    else if((H.t-=dt)<=0){if(H.n-->0){H.vy=hzw(2.2,2.8);H.h=.001;H.twist=hz()<.25?(hz()<.5?-1:1)*Math.PI*9.81/H.vy:0;gang=3;}else hWeiter();}
+    else duck=.035;
+    hoch=H.h;H.maxH=Math.max(H.maxH,H.h);}
+  else if(H.zu==='schnueffeln'){nick=.75;kopfY=Math.sin(H.t*5)*.35;if((H.t-=dt)<=0)hWeiter();}
+  else if(H.zu==='drehen'){H.yaw+=H.dreh*7.5*dt;H.phase+=dt*15;gang=1;hoch=Math.abs(Math.sin(H.phase))*.05;if((H.t-=dt)<=0)hWeiter();}
+  else{if(dp<7)kopfY=Math.max(-.9,Math.min(.9,hWd(H.yaw,zumSp)));if((H.t-=dt)<=0)hWeiter();}
+  // Haltung
+  const ph=H.phase,f=Math.min(1,dt*14),ziel=[0,0,0,0];
+  hWurzel.position.set(H.x,GY,H.z);hWurzel.rotation.y=H.yaw;
+  hKoerper.position.y=HBASIS+hoch-duck;
+  hKoerper.rotation.x=gang===2?-Math.cos(ph)*.13:gang===3?-Math.max(-.3,Math.min(.3,H.vy*.12)):0;
+  if(gang===1){const a=Math.sin(ph)*.45;ziel[0]=ziel[3]=a;ziel[1]=ziel[2]=-a;}
+  else if(gang===2){const a=Math.sin(ph)*.75,b=Math.sin(ph+2.3)*.75;ziel[0]=a;ziel[1]=a*.85;ziel[2]=b;ziel[3]=b*.85;}
+  else if(gang===3){const k=Math.min(1,H.h/.12);ziel[0]=ziel[1]=-.8*k;ziel[2]=ziel[3]=.7*k;}
+  for(let i=0;i<4;i++)hBeine[i].rotation.x=gang===1||gang===2?ziel[i]:hBeine[i].rotation.x+(ziel[i]-hBeine[i].rotation.x)*f;
+  hKopf.rotation.x+=(nick-hKopf.rotation.x)*f;hKopf.rotation.y+=(kopfY-hKopf.rotation.y)*f;
+  H.wedel+=dt*(H.froh>0||H.zu==='springen'?24:12);hSchwanz.rotation.set(gang===3?-.75:-.55,0,Math.sin(H.wedel)*.55);
+  const k=1/(1+hoch*4);hSchatten.scale.set(.34*k,.56*k,1);hSchatten.material.opacity=.9*k;}
+if(!hFrei(H.x,H.z)&&hZiel(.5,20)){H.x=H.tx;H.z=H.tz;}
+hund(0);
+
 // ---------------------------------------------------------------- Schleife
 let last=performance.now(),hudT=0,perfT=0,perfN=0,perfWarm=0,pr=PR_MAX;
 renderer.shadowMap.needsUpdate=true;
@@ -1244,6 +1343,7 @@ function frame(now){requestAnimationFrame(frame);
   if(AUTO_PR&&running&&!document.hidden&&raw<1){perfWarm+=raw;if(perfWarm>3){perfT+=raw;perfN++;
     if(perfT>2.5){if(perfT/perfN>1/34&&pr>.75){pr=Math.max(.75,pr-.25);renderer.setPixelRatio(pr);resize();}perfT=perfN=0;}}}
   if(running)move(dt);
+  hund(dt);
   if(DOOR.t!==DOOR.target){DOOR.t+=Math.sign(DOOR.target-DOOR.t)*Math.min(Math.abs(DOOR.target-DOOR.t),dt*1.5);
     const e=DOOR.t*DOOR.t*(3-2*DOOR.t);DOOR.pivot.rotation.y=-e*1.55;
     const c=DOOR.col;if(DOOR.t<.5){c.x0=5.06;c.x1=6.075;c.z0=.085;c.z1=.135;}else{c.x0=5.06;c.x1=5.13;c.z0=.1;c.z1=1.1;}
@@ -1265,7 +1365,8 @@ window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(
   orte:()=>ORTE_FEST,meineOrte:()=>MEINE,springe:name=>{const o=ORTE_FEST.find(x=>x.name===name)||MEINE.find(x=>x.name===name);springe(o);return !!o;}, // Prüfhilfe: ohne Sperre
   entdeckt:()=>[...ENTDECKT],vergiss:()=>{ENTDECKT=new Set([ORTE_FEST[0].name]);sichereEntdeckt();orteAuffrischen();},meldung:()=>elMeld.style.display==='block'?elMeld.textContent:'',
   speichere:name=>{$('ortName').value=name||'';speichereOrt();return MEINE.length;},wo:()=>whereAmI(),
-  frei:(x,z,feet)=>!hit(x,z,feet),boden:(x,z,feet)=>groundAt(x,z,feet)};
+  frei:(x,z,feet)=>!hit(x,z,feet),boden:(x,z,feet)=>groundAt(x,z,feet),
+  hund:()=>({x:H.x,z:H.z,h:H.h,zu:H.zu,strecke:H.strecke,maxH:H.maxH,zustaende:[...H.zustaende],frei:hFrei(H.x,H.z,.1),teile:hWurzel})};
 })();
 </script>
 </body>
