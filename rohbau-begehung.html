@@ -903,7 +903,7 @@ const STRAHLER=[strahler(2.3,2.75,Y_KG,-.2,-1),strahler(5.75,2.95,Y_KG,-.25,-1),
 const MOODLE_HOST='04101606300.moodle.bw.schule';
 const STATIONEN=[{id:'poroton',kurz:'Porotonstein',titel:'Porotonstein – Planziegel aus gebranntem Ton',
   x:8.3,y:1.45,z:-.03,flaeche:{x0:6.35,x1:9.55,y0:GY,y1:2.6},nah:()=>P.z<0&&P.z>-3&&Math.abs(P.x-8.3)<2.2&&P.feet>-.6,
-  html:()=>INFO_POROTON,test:{cmid:109465,name:'Test: Porotonstein'}}]; // Moodle-Test in Kurs 3176 (angelegt 22.11.2026, 6 Fragen, Kategorie 158294)
+  html:()=>INFO_POROTON,test:{cmid:109468,name:'Test: Porotonstein'}}]; // Moodle-Test in Kurs 3190 „Haus 1“ (SHK Lernbaustelle; Kopie des Tests 109465 aus 3176, dort am 22.11.2026 gelöscht; 6 Fragen, Kategorie 158296)
 const stationTex=(()=>{const c=mkCanvas(256,256),g=c.getContext('2d');g.fillStyle='#e2854a';g.beginPath();g.arc(128,128,118,0,7);g.fill();
   g.lineWidth=12;g.strokeStyle='#fff';g.stroke();g.fillStyle='#fff';g.font='bold 170px Georgia,serif';g.textAlign='center';g.textBaseline='middle';g.fillText('i',128,140);
   const t=new T.CanvasTexture(c);t.encoding=T.sRGBEncoding;return t;})();
@@ -917,7 +917,13 @@ function stationNah(){for(const st of STATIONEN)if(st.nah())return st;return nul
 function stationTreffer(nx,ny){strahl.setFromCamera({x:nx,y:ny},camera);
   for(const st of STATIONEN){if(!(P.z<st.z))continue;const h=strahl.intersectObject(st.treffer,false)[0];if(h&&h.distance<14)return st;}return null;}
 const elInfo=$('info'),elInfoBox=$('infoBox');let infoOffen=null;
-function testAdresse(st){return 'https://'+MOODLE_HOST+'/mod/quiz/view.php?id='+st.test.cmid;}
+// Test je Moodle-Kurs: Aus Moodle liegt die Datei unter /pluginfile.php/<Kontext der Datei>/mod_resource/…, daran erkennt die Begehung
+// ihren Kurs. Liegt dieselbe Begehung später in mehreren Kursen, hier je Kontext die Tests eintragen, z. B. {'<kontext>':{poroton:<cmid>}}.
+// Ohne Eintrag gilt der Test aus der Station (Haus 1, Kurs 3190: Datei 109467 = Kontext 131412, Test 109468).
+const TEST_JE_KONTEXT={};
+const DATEI_KONTEXT=(((window.location&&location.pathname)||'').match(/\/pluginfile\.php\/(\d+)\//)||[])[1]||'';
+function testCmid(st){const k=TEST_JE_KONTEXT[DATEI_KONTEXT];return (k&&k[st.id])||st.test.cmid;}
+function testAdresse(st){return 'https://'+MOODLE_HOST+'/mod/quiz/view.php?id='+testCmid(st);}
 function zeigeInfo(st){
   elInfo.classList.remove('test');
   const imMoodle=location.host===MOODLE_HOST,hatTest=!!st.test.cmid;
@@ -1140,7 +1146,8 @@ hud();requestAnimationFrame(frame);
 // Für Prüfzwecke: Standort setzen
 window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(n!==undefined)setStage(n);return STAGE;},go:(x,y,z,yaw,pitch)=>{P.x=x;P.feet=y;P.z=z;P.camY=y+EYE;P.vy=0;P.ground=true;if(yaw!==undefined)P.yaw=yaw;if(pitch!==undefined)P.pitch=pitch;},flash:toggleFlash,info:()=>renderer.info.render,setPr:v=>{pr=v;renderer.setPixelRatio(v);resize();},teile:()=>({renderer,scene,camera}),
   station:id=>{const s=STATIONEN.find(x=>x.id===id);if(s)oeffneStation(s);return !!infoOffen;},schliesse:()=>schliesseStation(),act:()=>actKind,
-  treffer:(nx,ny)=>{const s=stationTreffer(nx,ny);return s?s.id:null;}};
+  treffer:(nx,ny)=>{const s=stationTreffer(nx,ny);return s?s.id:null;},
+  testFuer:id=>{const s=STATIONEN.find(x=>x.id===id);return s?{kontext:DATEI_KONTEXT,cmid:testCmid(s),adresse:testAdresse(s)}:null;}};
 })();
 </script>
 </body>
