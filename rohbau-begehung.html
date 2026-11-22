@@ -118,11 +118,12 @@
       <tr><td>Linke Hälfte</td><td>Finger auflegen und ziehen = gehen, weit ziehen = rennen</td></tr>
       <tr><td>Rechte Hälfte</td><td>wischen = umsehen</td></tr>
       <tr><td>Springen</td><td>runder Knopf unten rechts</td></tr>
-      <tr><td>Orange Knopf</td><td>erscheint an der Bautür (öffnen, schließen) und im Keller (Lampe)</td></tr>
+      <tr><td>Orange Knopf</td><td>erscheint an der Bautür (öffnen, schließen), an den Gerüstleitern und im Keller (Lampe)</td></tr>
       <tr><td>Ausbau</td><td>Knopf oben rechts: Rohbau → Rohinstallation → fertig (sichtbar in Küche, Gästebad und Keller)</td></tr>
       <tr><td>Oben rechts</td><td>Lampe, Schilder, Karte, Orte, Pause</td></tr>
       <tr><td>Orte</td><td>erst zu Fuß erkunden – danach direkt in Hausanschlussraum, Gästebad, Küche … springen; eigene Standorte speichern (auch hier unten)</td></tr>
       <tr><td>Info-Zeichen</td><td>an der Hauswand antippen: Wissen zum Bauteil und ein kurzer Test</td></tr>
+      <tr><td>Gerüst</td><td>am Ostgiebel: in die Leiter hineingehen = hinaufsteigen, Knüppel zurück = hinab; oben „Leiter hinab“; von der obersten Ebene aufs Dach</td></tr>
     </table>
     <table class="d-only">
       <tr><td>W A S D</td><td>gehen (Pfeiltasten gehen auch)</td></tr>
@@ -135,6 +136,7 @@
       <tr><td>B · M</td><td>Beschriftungen · Grundriss ein und aus</td></tr>
       <tr><td>Esc</td><td>Pause, Maus wieder frei</td></tr>
       <tr><td>1 – 7 · O</td><td>direkt zu einem schon erkundeten Ort springen · Orte-Liste öffnen, eigenen Standort speichern</td></tr>
+      <tr><td>Gerüst</td><td>am Ostgiebel: in die Leiter hineingehen = hinaufsteigen (W), S = hinab; oben E = Leiter hinab; von der obersten Ebene aufs Dach</td></tr>
     </table>
     <div id="orte">
       <h2>Direkt hinspringen <small>– 🔒 noch nicht erkundet: erst einmal zu Fuß hingehen</small></h2>
@@ -494,14 +496,16 @@ outerWalls(EGT,Y_DG);slab(EGT,Y_DG);stairs(Y_EG);
 // ================================================================ DACHGESCHOSS und DACH
 prism(M.brick,[[0,Y_DG],[TW,Y_DG],[TW,rb(TW)],[0,rb(0)]],'x',TW,HX-TW);
 prism(M.brick,[[HZ,Y_DG],[HZ-TW,Y_DG],[HZ-TW,rb(TW)],[HZ,rb(0)]],'x',TW,HX-TW);
-block(0,Y_DG,0,HX,rb(TW),TW);block(0,Y_DG,HZ-TW,HX,rb(TW),HZ);
-block(0,3.3,.3,HX,6,.7,true);block(0,3.3,HZ-.7,HX,6,HZ-.3,true);     // unter der Dachschräge: Kopfhöhe
+// Kollisionskörper bleiben unter der Dachfläche, damit man oben auf dem Dach gehen kann (22.11.2026)
+block(0,Y_DG,0,HX,rb(0),TW);block(0,Y_DG,HZ-TW,HX,rb(0),HZ);
+block(0,3.3,.3,HX,rb(.3),.7,true);block(0,3.3,HZ-.7,HX,rb(.3),HZ-.3,true); // unter der Dachschräge: Kopfhöhe
 function gable(x0,x1){const g0=3.37,g1=4.63,gs=Y_DG+.9,gh=Y_DG+DH;
   prism(M.brick,[[0,Y_DG],[g0,Y_DG],[g0,rb(g0)],[0,rb(0)]],'x',x0,x1);
   prism(M.brick,[[HZ,Y_DG],[g1,Y_DG],[g1,rb(HZ-g1)],[HZ,rb(0)]],'x',x0,x1);
   box(M.brick,x0,Y_DG,g0,x1,gs,g1);box(M.sturz,x0,gh,g0,x1,gh+.115,g1);
   prism(M.brick,[[g0,gh+.115],[g1,gh+.115],[g1,rb(HZ-g1)],[HZ/2,rb(HZ/2)],[g0,rb(g0)]],'x',x0,x1);
-  windowFix('z',g0,g1,x0,x1,gs,gh);block(x0,Y_DG,0,x1,8,HZ);}
+  windowFix('z',g0,g1,x0,x1,gs,gh);
+  for(let z=0;z<HZ-1e-6;z+=.5)block(x0,Y_DG,z,x1,Math.min(roofY(z),roofY(z+.5)),z+.5);} // Giebelwand in Stufen unter der Dachfläche
 gable(0,TW);gable(HX-TW,HX);
 const rafterX=[];
 function roofSide(mir){const Z=z=>mir?HZ-z:z,poly=(za,zb,o0,o1)=>[[Z(za),rb(za)+o0],[Z(zb),rb(zb)+o0],[Z(zb),rb(zb)+o1],[Z(za),rb(za)+o1]];
@@ -520,6 +524,9 @@ roofSide(false);roofSide(true);
 box(M.ridge,-.34,rb(4)+.07,3.86,HX+.34,rb(4)+.18,4.14);                 // First
 box(M.wood,TW-.1,rb(4)-.44,3.93,HX-TW+.1,rb(4)-.24,4.07);              // Firstpfette
 for(const x of rafterX)box(M.wood,x+.08,5.45,1.9,x+.14,5.61,6.1);       // Kehlbalken
+// Dachfläche begehbar (vom Gerüst aus): Oberkante Ziegel; wirkt nur oberhalb von DACH.ab, das Dachgeschoss bleibt unberührt
+const DACH={x0:-.34,x1:HX+.34,z0:-.62,z1:HZ+.62,ab:3.6};
+const dachOben=z=>rb(Math.min(z,HZ-z))+.11;
 // Absturzsicherung am Treppenloch (Bretter)
 {const y=Y_DG;
   for(const z of[.42,.95,1.42])solid(M.wood,6.66,y,z-.03,6.72,y+1.1,z+.03);
@@ -665,12 +672,33 @@ solid(M.wool,1.0,Y_DG,5.2,2.2,Y_DG+.4,5.8);solid(M.wool,1.05,Y_DG+.4,5.22,2.25,Y
   for(const s of[-1,1]){const r=new T.Mesh(new T.CylinderGeometry(.15,.15,.012,22),M.black);r.rotation.x=Math.PI/2;r.position.z=s*.056;d.add(r);}
   const fr=new T.Mesh(new T.BoxGeometry(.26,.03,.2),M.black);fr.position.y=-.16;d.add(fr);d.position.set(4.75,.175,2.9);addProp(d);
   const b=new T.Mesh(new T.CylinderGeometry(.15,.12,.27,16),M.black);b.position.set(6.3,.135,3.1);addProp(b);}
-// Gerüst am Ostgiebel
-{const xi=10.62,xo=11.35,zs=[.15,2.72,5.28,7.85],lv=[1.65,3.65,5.65],top=6.9;
+// Gerüst am Ostgiebel – begehbar (Wunsch des Lehrers 22.11.2026: „am Gerüst hochklettern … auf die einzelnen Gerüstebenen und vom Gerüst
+// aufs Dach“): je Ebene eine Leiter mit Durchstiegsklappe (Leitergang wie beim Systemgerüst), Geländer halten auf, oberste Ebene zum Dach offen.
+// Leiter: Fuß bei zf auf Boden bzw. Belag (Höhe y0), steigt schräg in Richtung d (+1 Süden, −1 Norden) bis zur Klappe im Belag darüber (y1).
+const LEITERN=[];let LEITER=null;
+const leiterZ=(L,f)=>L.zf+L.d*(L.s*(f+1-L.y0)-.32); // Lage des Kletternden (Mitte) bei Fußhöhe f: hinter der Leiter
+{const xi=10.62,xo=11.35,zs=[.15,2.72,5.28,7.85],lv=[1.65,3.65,5.65],top=6.9,LX=(xi+xo)/2,KX0=10.69,KX1=11.28;
+  const lt=[{zf:1.35,d:1,y0:GY,y1:lv[0]+.05},{zf:3.6,d:1,y0:lv[0]+.05,y1:lv[1]+.05},{zf:2.2,d:-1,y0:lv[1]+.05,y1:lv[2]+.05}];
   for(const z of zs)for(const x of[xi,xo]){cyl(M.galv,[x,GY,z],[x,top,z],.024,10);box(M.galv,x-.07,GY,z-.07,x+.07,GY+.012,z+.07);block(x-.03,GY,z-.03,x+.03,top,z+.03);}
-  for(const y of lv){solid(M.plank,xi-.02,y,zs[0],xo+.02,y+.05,zs[3]);for(const z of zs)cyl(M.galv,[xi,y-.03,z],[xo,y-.03,z],.02,8);
+  lv.forEach((y,k)=>{const L=Object.assign({x:LX,s:.27,auf:0},lt[k]),x0=xi-.02,x1=xo+.02;
+    // Belag mit Luke: Klappe (Alu) trägt geschlossen, öffnet nur, solange man auf dieser Leiter ist; Scharnier hinter dem Kletternden
+    const za=L.zf-L.d*.25,a=Math.min(za,L.zf+L.d*.65),b=Math.max(za,L.zf+L.d*.65);
+    solid(M.plank,x0,y,zs[0],x1,y+.05,a);solid(M.plank,x0,y,b,x1,y+.05,zs[3]);solid(M.plank,x0,y,a,KX0,y+.05,b);solid(M.plank,KX1,y,a,x1,y+.05,b);
+    block(KX0,y,a,KX1,y+.05,b);
+    const kl=new T.Group(),km=new T.Mesh(new T.BoxGeometry(KX1-KX0,.035,b-a),M.galv);km.position.set((KX1-KX0)/2,-.0175,L.d*(b-a)/2);kl.add(km);
+    for(const q of[.15,.75]){const r=new T.Mesh(new T.BoxGeometry(KX1-KX0-.04,.012,.04),M.yellow);r.position.set((KX1-KX0)/2,.006,L.d*q);kl.add(r);}
+    kl.position.set(KX0,y+.05,za);addProp(kl);L.klappe=kl;
+    // Leiter (Alu, schräg) vom Fuß bis zur Klappe; steht auf dem unteren Belag im Weg
+    const zt=L.zf+L.d*L.s*(L.y1-L.y0);
+    for(const sx of[-.19,.19])mcyl(M.alu,[LX+sx,L.y0,L.zf],[LX+sx,L.y1-.01,zt],.022,8);
+    for(let h=.25;h<L.y1-L.y0-.08;h+=.28){const z=L.zf+L.d*L.s*h;mcyl(M.alu,[LX-.19,L.y0+h,z],[LX+.19,L.y0+h,z],.014,6);}
+    block(LX-.22,L.y0,Math.min(L.zf,zt),LX+.22,L.y1-.06,Math.max(L.zf,zt));
+    LEITERN.push(L);
+    for(const z of zs)cyl(M.galv,[xi,y-.03,z],[xo,y-.03,z],.02,8);
     for(const h of[.5,1.0])cyl(M.galv,[xo,y+h,zs[0]],[xo,y+h,zs[3]],.018,8);box(M.wood,xo-.02,y+.05,zs[0],xo+.012,y+.2,zs[3]);
-    for(const z of[zs[0],zs[3]])for(const h of[.5,1.0])cyl(M.galv,[xi,y+h,z],[xo,y+h,z],.018,8);}
+    for(const z of[zs[0],zs[3]])for(const h of[.5,1.0])cyl(M.galv,[xi,y+h,z],[xo,y+h,z],.018,8);
+    block(xo-.03,y+.05,zs[0],xo+.03,y+1.1,zs[3]);for(const z of[zs[0],zs[3]])block(xi-.03,y+.05,z-.03,xo+.03,y+1.1,z+.03); // Geländer außen und an den Stirnseiten
+    if(k<2){for(const h of[.5,1.0])mcyl(M.galv,[xi,y+h,zs[0]],[xi,y+h,zs[3]],.018,8);block(xi-.03,y+.05,zs[0],xi+.03,y+1.1,zs[3]);}}); // innen (Abstand zur Wand > 30 cm)
   cyl(M.galv,[xo,GY,zs[0]],[xo,lv[0],zs[1]],.018,8);cyl(M.galv,[xo,lv[0],zs[1]],[xo,lv[1],zs[2]],.018,8);cyl(M.galv,[xo,lv[1],zs[2]],[xo,lv[2],zs[3]],.018,8);}
 // Nachbarschaft und Bäume
 function neighbour(x,z,w,d,h){box(M.plaster,x,GY,z,x+w,GY+h,z+d);const m=z+d/2,r=d/2*.75;
@@ -1031,8 +1059,11 @@ const flash=new T.SpotLight(lin(0xfff2dc),0,22,.52,.55,1.1);flash.position.set(.
 const P={x:-3.5,z:-8.5,feet:GY,vy:0,yaw:-2.32,pitch:.06,ground:true,camY:GY+1.62,bob:0};
 const R=.25,HGT=1.75,EYE=1.62,STEP=.3;
 function hit(px,pz,feet){const lo=feet+STEP,hi=feet+HGT,SB=1<<STAGE;for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.y1<=lo||b.y0>=hi||(b.mask&&!(b.mask&SB)))continue;
-  const dx=px-Math.max(b.x0,Math.min(px,b.x1)),dz=pz-Math.max(b.z0,Math.min(pz,b.z1));if(dx*dx+dz*dz<R*R)return true;}return false;}
-function groundAt(px,pz,feet){let g=-60;const lim=feet+STEP+.001,r=.17,SB=1<<STAGE;for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.y1>lim||b.y1<=g||(b.mask&&!(b.mask&SB)))continue;if(px+r<b.x0||px-r>b.x1||pz+r<b.z0||pz-r>b.z1)continue;g=b.y1;}return g;}
+  const dx=px-Math.max(b.x0,Math.min(px,b.x1)),dz=pz-Math.max(b.z0,Math.min(pz,b.z1));if(dx*dx+dz*dz<R*R)return true;}
+  return feet>DACH.ab&&px+R>DACH.x0&&px-R<DACH.x1&&pz+R>DACH.z0&&pz-R<DACH.z1&&(t=>t>lo&&t-.35<hi)(dachOben(Math.max(DACH.z0,Math.min(DACH.z1,pz))));} // Dach höher als ein Schritt: wie eine Wand
+function groundAt(px,pz,feet){let g=-60;const lim=feet+STEP+.001,r=.17,SB=1<<STAGE;for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.y1>lim||b.y1<=g||(b.mask&&!(b.mask&SB)))continue;if(px+r<b.x0||px-r>b.x1||pz+r<b.z0||pz-r>b.z1)continue;g=b.y1;}
+  if(feet>DACH.ab&&px+r>DACH.x0&&px-r<DACH.x1&&pz+r>DACH.z0&&pz-r<DACH.z1){const t=dachOben(Math.max(DACH.z0,Math.min(DACH.z1,pz)));if(t<=lim&&t>g)g=t;} // auf dem Dach
+  return g;}
 function ceilAt(px,pz,feet){let c=99;const lim=feet+HGT-.25,r=.17,SB=1<<STAGE;for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.y0<lim||b.y0>=c||(b.mask&&!(b.mask&SB)))continue;if(px+r<b.x0||px-r>b.x1||pz+r<b.z0||pz-r>b.z1)continue;c=b.y0;}return c;}
 const keys={};let running=false,dragLook=false,showLabels=true,showMap=true,flashOn=false,flashHintDone=false,wantJump=false;
 const JR=60,joy={id:null,cx:0,cy:0,dx:0,dy:0,run:false},look={id:null,x:0,y:0}; // Touch: Knüppel links, Umsehen rechts
@@ -1041,6 +1072,8 @@ function move(dt){
   if(keys.ArrowLeft)P.yaw+=1.9*dt;if(keys.ArrowRight)P.yaw-=1.9*dt;
   if(joy.id!==null){const d=Math.hypot(joy.dx,joy.dy);if(d>JR*.15){const k=Math.min(d,JR)/(d*JR);f-=joy.dy*k;s+=joy.dx*k;}}
   const sp=(keys.ShiftLeft||keys.ShiftRight||joy.run)?5.6:2.9,l=Math.max(1,Math.hypot(f,s));f/=l;s/=l;
+  if(LEITER){klettern(dt,f,sp>3);return;}
+  if(f>.3){const L=leiterVor();if(L){leiterAuf(L,false);return;}}   // vorwärts in die Leiter hinein = hinaufsteigen
   const sn=Math.sin(P.yaw),cs=Math.cos(P.yaw),dx=(-sn*f+cs*s)*sp*dt,dz=(-cs*f-sn*s)*sp*dt,dist=Math.hypot(dx,dz);
   const n=Math.max(1,Math.ceil(dist/.08)),stuck=hit(P.x,P.z,P.feet);
   for(let i=0;i<n;i++){const nx=P.x+dx/n;if(stuck||!hit(nx,P.z,P.feet))P.x=nx;const nz=P.z+dz/n;if(stuck||!hit(P.x,nz,P.feet))P.z=nz;
@@ -1055,11 +1088,28 @@ function move(dt){
   if(P.ground&&dist>1e-4)P.bob+=dist;
   P.camY+=(P.feet+EYE-P.camY)*Math.min(1,dt*14);
 }
+// Leitern im Gerüst: vorwärts = hinauf, rückwärts = hinab; oben tritt man auf die Klappe, unten auf den Belag bzw. Boden
+function leiterVor(){const fz=-Math.cos(P.yaw);for(const L of LEITERN)if(Math.abs(P.feet-L.y0)<.15&&fz*L.d>.6&&Math.hypot(P.x-L.x,P.z-leiterZ(L,L.y0))<.45)return L;return null;}
+function leiterNah(){if(LEITER)return null;for(const L of LEITERN){
+  if(Math.abs(P.feet-L.y1)<.15&&Math.hypot(P.x-L.x,P.z-leiterZ(L,L.y1))<.55)return{L,oben:true};
+  if(Math.abs(P.feet-L.y0)<.15&&Math.hypot(P.x-L.x,P.z-leiterZ(L,L.y0))<.75)return{L,oben:false};}return null;}
+function leiterAuf(L,oben){LEITER=L;P.feet=oben?L.y1-.01:L.y0;P.x=L.x;P.z=leiterZ(L,P.feet);P.vy=0;P.ground=false;P.yaw=L.d>0?Math.PI:0;
+  if(TOUCH)melde('Leiter: Knüppel nach vorn = hinauf, nach hinten = hinab');}   // am PC steht es in der Hinweiszeile
+function leiterAktion(){const n=leiterNah();if(n)leiterAuf(n.L,n.oben);}
+function klettern(dt,f,schnell){const L=LEITER;wantJump=false;
+  P.feet=Math.max(L.y0,Math.min(L.y1,P.feet+f*(schnell?1.8:1.25)*dt));
+  if((f>0&&P.feet>=L.y1)||(f<0&&P.feet<=L.y0))LEITER=null;   // oben bzw. unten absteigen nur in Bewegungsrichtung
+  if(!LEITER){P.ground=true;P.vy=0;}
+  P.x=L.x;P.z=leiterZ(L,P.feet);P.bob+=Math.abs(f)*dt*.5;
+  P.camY+=(P.feet+EYE-P.camY)*Math.min(1,dt*14);}
 // ---------------------------------------------------------------- Räume, Anzeige, Bedienung
 const ROOMS=[['KG','Hausanschlussraum',XI0,4.225,ZI0,3.4],['KG','Kellerflur',4.4,6.745,ZI0,3.4],['KG','Keller 1',XI0,6.745,3.575,ZI1],['KG','Keller 2',6.92,XI1,2.64,ZI1],
   ['EG','Arbeitszimmer',XI0,2.725,ZI0,3.4],['EG','Gästebad',2.9,4.225,ZI0,3.4],['EG','Diele',4.4,6.745,ZI0,3.4],['EG','Wohnen und Essen',XI0,6.745,3.575,ZI1],['EG','Küche',6.92,XI1,2.64,ZI1]];
 const FLOOR={KG:'Kellergeschoss',EG:'Erdgeschoss',DG:'Dachgeschoss'};
-function raumAn(x,z,feet){if(!(x>0&&x<HX&&z>0&&z<HZ))return['','Baustelle – Außenbereich'];
+function raumAn(x,z,feet){
+  if(feet>DACH.ab&&x>DACH.x0-.1&&x<DACH.x1&&z>DACH.z0-.1&&z<DACH.z1+.1)return['','Auf dem Dach'];
+  if(feet>1&&x>=DACH.x1&&x<11.5&&z>0&&z<HZ)return['',LEITER?'Gerüst – auf der Leiter':'Gerüst – '+(feet<2.7?1:feet<4.7?2:3)+'. Ebene'];
+  if(!(x>0&&x<HX&&z>0&&z<HZ))return['','Baustelle – Außenbereich'];
   const fl=feet<-.7?'KG':feet<2.3?'EG':'DG';
   if(x>ST.x0+.05&&x<XI1+.1&&z<ST.z1+.05)return[fl,'Treppenhaus'];
   if(fl==='DG')return[fl,'Dachraum – Ausbau folgt'];
@@ -1081,16 +1131,20 @@ function drawMap(){const g=mapCtx,s=12,ox=-1.5,oz=-1.5,ya=P.feet+.5,yb=P.feet+1.
   g.fillStyle='rgba(232,150,96,.95)';for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.nomap||b.y1<=ya||b.y0>=yb||(b.mask&&!(b.mask&(1<<STAGE))))continue;g.fillRect((b.x0-ox)*s,(b.z0-oz)*s,Math.max(1,(b.x1-b.x0)*s),Math.max(1,(b.z1-b.z0)*s));}
   const px=(P.x-ox)*s,pz=(P.z-oz)*s,fx=-Math.sin(P.yaw),fz=-Math.cos(P.yaw);
   g.fillStyle='#fff';g.beginPath();g.moveTo(px+fx*8,pz+fz*8);g.lineTo(px-fx*4-fz*4.5,pz-fz*4+fx*4.5);g.lineTo(px-fx*4+fz*4.5,pz-fz*4-fx*4.5);g.closePath();g.fill();}
+let dachGemeldet=false;
 function hud(){const w=whereAmI(),key=w[0]+w[1]+STAGE;erkunde(w);if(key!==lastRoom){lastRoom=key;elRoom.innerHTML='<small>'+(w[0]?FLOOR[w[0]]+' · ':'')+'Ausbau: '+STAGE_NAMES[STAGE]+'</small>'+w[1];}
-  const ausbau=w[1]==='Küche'||w[1]==='Gästebad',st=stationNah();
+  if(w[1]==='Auf dem Dach'&&!dachGemeldet){dachGemeldet=true;melde('Auf dem Dach – auf echten Baustellen nur mit Absturzsicherung!');}
+  const ausbau=w[1]==='Küche'||w[1]==='Gästebad',st=stationNah(),ln=leiterNah();
   // iPad: Ausbau nur über den Knopf „Ausbau: …“ oben – kein zweiter oranger Knopf dafür (Lehrer 22.11.2026: „zwei gleiche Funktionen“)
-  const act=nearDoor()?(DOOR.target?'door1':'door0'):st?'info:'+st.id:(w[0]==='KG'&&!flashHintDone)?'flash':(ausbau&&!TOUCH)?'stage'+STAGE:'';
-  if(st&&act==='info:'+st.id)setHint(act,'<b>E</b>Info: '+st.kurz+' – Wissen und Test');
+  const act=LEITER?'klettern':nearDoor()?(DOOR.target?'door1':'door0'):st?'info:'+st.id:ln?'leiter'+(ln.oben?1:0)+':'+LEITERN.indexOf(ln.L):(w[0]==='KG'&&!flashHintDone)?'flash':(ausbau&&!TOUCH)?'stage'+STAGE:'';
+  if(act==='klettern')setHint(act,'<b>W</b>hinauf &nbsp; <b>S</b>hinab');
+  else if(act.startsWith('leiter'))setHint(act,act[6]==='1'?'<b>E</b>Leiter hinabsteigen':'<b>E</b>Leiter hinaufsteigen – oder einfach vorwärts gehen');
+  else if(st&&act==='info:'+st.id)setHint(act,'<b>E</b>Info: '+st.kurz+' – Wissen und Test');
   else if(act==='flash')setHint('flash','<b>F</b>Taschenlampe einschalten');
   else if(act==='door0'||act==='door1')setHint(act,'<b>E</b>Bautür '+(DOOR.target?'schließen':'öffnen'));
   else if(act)setHint(act,'<b>I</b>'+NEXT_TXT[STAGE]);
   else setHint('','');
-  if(act!==actKind){actKind=act;bAct.textContent=act==='door0'?'Tür öffnen':act==='door1'?'Tür schließen':act==='flash'?'Lampe an':(st&&act==='info:'+st.id)?'Info: '+st.kurz:act?NEXT_TXT[STAGE]:'';bAct.style.display=act?'block':'none';}
+  if(act!==actKind){actKind=act;bAct.textContent=act==='door0'?'Tür öffnen':act==='door1'?'Tür schließen':act==='flash'?'Lampe an':(st&&act==='info:'+st.id)?'Info: '+st.kurz:act.startsWith('leiter')?(act[6]==='1'?'Leiter hinab':'Leiter hinauf'):act?NEXT_TXT[STAGE]:'';bAct.style.display=act&&act!=='klettern'?'block':'none';}
   if(showMap)drawMap();
   const SB=1<<STAGE;
   for(const s of labels)s.visible=showLabels&&s.userData.room===w[1]&&(!s.userData.mask||!!(s.userData.mask&SB));}
@@ -1124,7 +1178,7 @@ function endPtr(e){const tp=taps[e.pointerId];delete taps[e.pointerId];
 function tbtn(id,fn){$(id).addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(running)fn();});}
 tbtn('bJump',()=>{wantJump=true;});
 const stationVonAct=()=>STATIONEN.find(s=>'info:'+s.id===actKind);
-tbtn('bAct',()=>{if(actKind.startsWith('info:')){const s=stationVonAct();if(s)oeffneStation(s);return;}if(actKind==='flash')toggleFlash();else if(actKind.startsWith('stage'))setStage(STAGE+1);else toggleDoor();hud();});
+tbtn('bAct',()=>{if(actKind.startsWith('leiter')){leiterAktion();hud();return;}if(actKind.startsWith('info:')){const s=stationVonAct();if(s)oeffneStation(s);return;}if(actKind==='flash')toggleFlash();else if(actKind.startsWith('stage'))setStage(STAGE+1);else toggleDoor();hud();});
 tbtn('bStage',()=>setStage(STAGE+1));
 tbtn('bLamp',()=>{toggleFlash();hud();});
 tbtn('bLabels',()=>{showLabels=!showLabels;syncBtns();hud();});
@@ -1181,7 +1235,7 @@ function erkunde(w){let neu=null;
   if(neu){sichereEntdeckt();melde('Neuer Ort erkundet: '+neu.name+' – ab jetzt über „Orte“ direkt erreichbar');}}
 const gesperrtText=o=>'„'+o.name+'“ ist noch gesperrt – erst einmal zu Fuß hingehen.';
 function springeFest(o){if(!o)return false;if(!frei(o)){melde(gesperrtText(o));return false;}springe(o);return true;}
-function springe(o){if(!o)return;P.x=o.x;P.z=o.z;P.feet=o.feet;P.camY=o.feet+EYE;P.vy=0;P.ground=true;P.bob=0;P.yaw=o.yaw;P.pitch=o.pitch||0;
+function springe(o){if(!o)return;LEITER=null;P.x=o.x;P.z=o.z;P.feet=o.feet;P.camY=o.feet+EYE;P.vy=0;P.ground=true;P.bob=0;P.yaw=o.yaw;P.pitch=o.pitch||0;
   if(typeof o.stage==='number'&&o.stage!==STAGE)setStage(o.stage);releaseTouch();lastRoom='';hud();}
 function orteAuffrischen(meldung){
   $('orteFest').innerHTML=ORTE_FEST.map((o,i)=>frei(o)?'<button type="button" data-fest="'+i+'"><span class="nr d-only">'+(i+1)+'</span>'+esc(o.name)+'</button>':
@@ -1219,7 +1273,7 @@ document.addEventListener('mousemove',e=>{if(!running)return;const locked=docume
 window.addEventListener('keydown',e=>{const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'){if(e.key==='Enter'||e.code==='Enter'||e.code==='NumpadEnter')speichereOrt();return;}
   if(infoOffen){if(e.code==='Escape')schliesseStation();return;}
   if(e.code==='Space'||e.code.startsWith('Arrow'))e.preventDefault();if(e.repeat)return;keys[e.code]=true;if(!running)return;
-  if(e.code==='KeyE'){const s=actKind.startsWith('info:')?stationVonAct():null;if(s)oeffneStation(s);else toggleDoor();}else if(e.code==='KeyF')toggleFlash();else if(e.code==='KeyI')setStage(STAGE+1);else if(e.code==='KeyB'){showLabels=!showLabels;syncBtns();}
+  if(e.code==='KeyE'){if(actKind.startsWith('leiter'))leiterAktion();else{const s=actKind.startsWith('info:')?stationVonAct():null;if(s)oeffneStation(s);else toggleDoor();}}else if(e.code==='KeyF')toggleFlash();else if(e.code==='KeyI')setStage(STAGE+1);else if(e.code==='KeyB'){showLabels=!showLabels;syncBtns();}
   else if(e.code==='KeyM'){showMap=!showMap;syncBtns();}
   else if(e.code==='KeyO')zeigeOrteListe();
   else if(/^(Digit|Numpad)[1-9]$/.test(e.code))springeFest(ORTE_FEST[+e.code.slice(-1)-1]);
@@ -1344,12 +1398,14 @@ function frame(now){requestAnimationFrame(frame);
     if(perfT>2.5){if(perfT/perfN>1/34&&pr>.75){pr=Math.max(.75,pr-.25);renderer.setPixelRatio(pr);resize();}perfT=perfN=0;}}}
   if(running)move(dt);
   hund(dt);
+  for(const L of LEITERN){const z=LEITER===L?1:0;if(L.auf!==z){ // Klappe öffnet, solange man auf dieser Leiter ist
+    L.auf+=Math.sign(z-L.auf)*Math.min(Math.abs(z-L.auf),dt*4);const e=L.auf*L.auf*(3-2*L.auf);L.klappe.rotation.x=-L.d*1.75*e;renderer.shadowMap.needsUpdate=true;}}
   if(DOOR.t!==DOOR.target){DOOR.t+=Math.sign(DOOR.target-DOOR.t)*Math.min(Math.abs(DOOR.target-DOOR.t),dt*1.5);
     const e=DOOR.t*DOOR.t*(3-2*DOOR.t);DOOR.pivot.rotation.y=-e*1.55;
     const c=DOOR.col;if(DOOR.t<.5){c.x0=5.06;c.x1=6.075;c.z0=.085;c.z1=.135;}else{c.x0=5.06;c.x1=5.13;c.z0=.1;c.z1=1.1;}
     renderer.shadowMap.needsUpdate=true;}
   camera.position.set(P.x,P.camY+Math.sin(P.bob*6.2)*.022,P.z);camera.rotation.set(P.pitch,P.yaw,0);
-  const inside=P.x>0&&P.x<HX&&P.z>0&&P.z<HZ,ex=!inside?1:P.feet<-.7?1.7:1.3;
+  const inside=P.x>0&&P.x<HX&&P.z>0&&P.z<HZ&&P.feet<DACH.ab,ex=!inside?1:P.feet<-.7?1.7:1.3;
   renderer.toneMappingExposure+=(ex-renderer.toneMappingExposure)*Math.min(1,dt*2.5);
   {const s=1+.08*Math.sin(now*.004);for(const st of STATIONEN)st.zeichen.scale.setScalar(s);} // Info-Zeichen pulsiert leicht
   if(TOUCH_DEV){const ziel=P.feet<-.7?STRAHLER_HELL:0;for(const s of STRAHLER)s.intensity+=(ziel-s.intensity)*Math.min(1,dt*6);}
@@ -1358,7 +1414,7 @@ function frame(now){requestAnimationFrame(frame);
   renderer.render(scene,camera);}
 hud();requestAnimationFrame(frame);
 // Für Prüfzwecke: Standort setzen
-window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(n!==undefined)setStage(n);return STAGE;},go:(x,y,z,yaw,pitch)=>{P.x=x;P.feet=y;P.z=z;P.camY=y+EYE;P.vy=0;P.ground=true;if(yaw!==undefined)P.yaw=yaw;if(pitch!==undefined)P.pitch=pitch;},flash:toggleFlash,info:()=>renderer.info.render,setPr:v=>{pr=v;renderer.setPixelRatio(v);resize();},teile:()=>({renderer,scene,camera}),
+window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(n!==undefined)setStage(n);return STAGE;},go:(x,y,z,yaw,pitch)=>{LEITER=null;P.x=x;P.feet=y;P.z=z;P.camY=y+EYE;P.vy=0;P.ground=true;if(yaw!==undefined)P.yaw=yaw;if(pitch!==undefined)P.pitch=pitch;},flash:toggleFlash,info:()=>renderer.info.render,setPr:v=>{pr=v;renderer.setPixelRatio(v);resize();},teile:()=>({renderer,scene,camera}),
   station:id=>{const s=STATIONEN.find(x=>x.id===id);if(s)oeffneStation(s);return !!infoOffen;},schliesse:()=>schliesseStation(),act:()=>actKind,
   treffer:(nx,ny)=>{const s=stationTreffer(nx,ny);return s?s.id:null;},
   testFuer:id=>{const s=STATIONEN.find(x=>x.id===id);return s?{kontext:DATEI_KONTEXT,cmid:testCmid(s),adresse:testAdresse(s)}:null;},
@@ -1366,6 +1422,7 @@ window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(
   entdeckt:()=>[...ENTDECKT],vergiss:()=>{ENTDECKT=new Set([ORTE_FEST[0].name]);sichereEntdeckt();orteAuffrischen();},meldung:()=>elMeld.style.display==='block'?elMeld.textContent:'',
   speichere:name=>{$('ortName').value=name||'';speichereOrt();return MEINE.length;},wo:()=>whereAmI(),
   frei:(x,z,feet)=>!hit(x,z,feet),boden:(x,z,feet)=>groundAt(x,z,feet),
+  leiter:()=>LEITER?LEITERN.indexOf(LEITER):-1,leitern:()=>LEITERN.map(L=>({x:L.x,zf:L.zf,d:L.d,y0:L.y0,y1:L.y1,oben:leiterZ(L,L.y1),unten:leiterZ(L,L.y0),auf:L.auf})),dachOben,
   hund:()=>({x:H.x,z:H.z,h:H.h,zu:H.zu,strecke:H.strecke,maxH:H.maxH,zustaende:[...H.zustaende],frei:hFrei(H.x,H.z,.1),teile:hWurzel})};
 })();
 </script>
