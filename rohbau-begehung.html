@@ -194,7 +194,7 @@
       <tr><td>Esc</td><td>Pause, Maus wieder frei</td></tr>
       <tr><td>1 – 7 · O</td><td>direkt zu einem schon erkundeten Ort springen · Orte-Liste öffnen, eigenen Standort speichern</td></tr>
       <tr><td>Gerüst</td><td>am Ostgiebel: in die Leiter hineingehen = hinaufsteigen (W), S = hinab; oben E = Leiter hinab; von der obersten Ebene aufs Dach</td></tr>
-      <tr><td>Gästebad</td><td>in der Rohinstallation: Dose anklicken oder E = Gerät wählen und Adern anklemmen; sonst E = Verdrahten üben (Übungen 1–6)</td></tr>
+      <tr><td>Gästebad</td><td>in der Rohinstallation: Dose anklicken oder E = Gerät wählen und Adern anklemmen; sonst E = Verdrahten üben (Übungen 1–12)</td></tr>
     </table>
     <div id="orte">
       <h2>Direkt hinspringen <small>– 🔒 noch nicht erkundet: erst einmal zu Fuß hingehen</small></h2>
@@ -1396,7 +1396,7 @@ const UEB=[
    bau:()=>[zuleitungsDose('VD','Verteilerdose',110,170),leuchteLinks('E',650,170)],
    leitungen:[['VD','E',3]],soll:{E:'dauer'},
    loesung:[['VD.L','E.l','braun'],['VD.PE','E.pe','gnge'],['VD.N','E.n','blau']],
-   fertig:()=>'Richtig angeschlossen – die Leuchte brennt. Aber sie brennt immer: Zum Ein- und Ausschalten fehlt ein Schalter. Weiter mit Übung 3.'},
+   fertig:()=>'Richtig angeschlossen – die Leuchte brennt. Aber sie brennt immer: Zum Ein- und Ausschalten fehlt ein Schalter.'},
   {titel:'Übung 3: Leuchte mit Schalter',
    text:'Die Leitung läuft von der Verteilerdose durch die Schalterdose zur Leuchte. Schließe Schalter und Leuchte so an, dass du die Leuchte ein- und ausschalten kannst. In der Schalterdose gibt es zwei Klemmen, um Adern weiterzuverbinden. Tipp: Tippe auf den Schalter (oder auf „Schalter betätigen“), um ihn ein- und auszuschalten.',
    bau:()=>[zuleitungsDose('VD','Verteilerdose',60,170),schalterQuer('S',380,170),leuchteLinks('E',720,170)],
@@ -1410,14 +1410,14 @@ const UEB=[
    leitungen:[['VD1','VD2',3],['VD2','E',3],['VD2','S',4]],soll:{E:'S'},
    loesung:[['VD1.L','VD2.a','braun'],['VD1.PE','VD2.b','gnge'],['VD1.N','VD2.c','blau'],
             ['VD2.a','S.e','braun'],['S.a','VD2.d','schwarz'],['VD2.b','S.pe','gnge'],['VD2.d','E.l','braun'],['VD2.b','E.pe','gnge'],['VD2.c','E.n','blau']],
-   fertig:st=>(st.S?'Richtig verdrahtet – die Leuchte brennt. Schalte sie mit dem Schalter aus.':'Richtig verdrahtet – der Schalter ist AUS, die Leuchte ist aus. Schalte sie ein.')+' Weiter mit Übung 5: Jetzt kommt eine Steckdose dazu.'},
+   fertig:st=>(st.S?'Richtig verdrahtet – die Leuchte brennt. Schalte sie mit dem Schalter aus.':'Richtig verdrahtet – der Schalter ist AUS, die Leuchte ist aus. Schalte sie ein.')},
   {titel:'Übung 5: Steckdose dazu',
-   text:'Wie in Übung 4, jetzt mit Steckdose: Von Verteilerdose 1 geht eine Leitung direkt zur Steckdose – sie soll immer Spannung haben. Über Verteilerdose 2 werden Leuchte und Schalter angeschlossen, die Leuchte wird geschaltet. Zwischen Verteilerdose 2 und Schalter liegt eine 4-adrige Leitung, alle anderen Leitungen sind 3-adrig.',
+   text:'Wie bei „Leuchte und Schalter über eine Verteilerdose“, jetzt mit Steckdose:Von Verteilerdose 1 geht eine Leitung direkt zur Steckdose – sie soll immer Spannung haben. Über Verteilerdose 2 werden Leuchte und Schalter angeschlossen, die Leuchte wird geschaltet. Zwischen Verteilerdose 2 und Schalter liegt eine 4-adrige Leitung, alle anderen Leitungen sind 3-adrig.',
    bau:()=>[zuleitungsDose('VD1','Verteilerdose 1',60,60),leereDose('VD2','Verteilerdose 2',400,60),leuchteLinks('E',740,60),steckdoseOben('SD',60,330),schalterHoch('S',400,330)],
    leitungen:[['VD1','VD2',3],['VD1','SD',3],['VD2','E',3],['VD2','S',4]],soll:{SD:'dauer',E:'S'},
    loesung:[['VD1.L','VD2.a','braun'],['VD1.PE','VD2.b','gnge'],['VD1.N','VD2.c','blau'],['VD1.L','SD.p1','braun'],['VD1.PE','SD.pe','gnge'],['VD1.N','SD.p2','blau'],
             ['VD2.a','S.e','braun'],['S.a','VD2.d','schwarz'],['VD2.b','S.pe','gnge'],['VD2.d','E.l','braun'],['VD2.b','E.pe','gnge'],['VD2.c','E.n','blau']],
-   fertig:st=>(st.S?'Richtig verdrahtet – die Leuchte brennt, die Steckdose hat Spannung.':'Richtig verdrahtet – Schalter AUS: Die Leuchte ist aus, die Steckdose hat trotzdem Spannung.')+' Weiter mit Übung 6.'},
+   fertig:st=>(st.S?'Richtig verdrahtet – die Leuchte brennt, die Steckdose hat Spannung.':'Richtig verdrahtet – Schalter AUS: Die Leuchte ist aus, die Steckdose hat trotzdem Spannung.')},
   // Übung 6 (Wunsch des Lehrers 23.11.2026 mit Skizze): „… so wie sie eben auch dann im Haus Neumann im Gästebad vorzufinden ist. Links die Steckdose,
   // dann kommt die Lampe und rechts der Schalter und oben drüber dann die Verteilerdose und der Netzanschluss kommt sozusagen von hinten. In dem Fall jetzt von oben.“
   {titel:'Übung 6: Gästebad – alles an einer Verteilerdose',
@@ -1427,7 +1427,7 @@ const UEB=[
    leitungen:[['VD','SD',3],['VD','E',3],['VD','S',4]],soll:{SD:'dauer',E:'S'},
    loesung:[['VD.L','SD.p1','braun'],['VD.PE','SD.pe','gnge'],['VD.N','SD.p2','blau'],['VD.L','S.e','braun'],['S.a','VD.f','schwarz'],['VD.PE','S.pe','gnge'],
             ['VD.f','E.l','braun'],['VD.PE','E.pe','gnge'],['VD.N','E.n','blau']],
-   fertig:st=>(st.S?'Richtig verdrahtet – die Leuchte brennt, die Steckdose hat Spannung.':'Richtig verdrahtet – Schalter AUS: Die Leuchte ist aus, die Steckdose hat trotzdem Spannung.')+' Genau so schließt du jetzt das Gästebad an.'}];
+   fertig:st=>(st.S?'Richtig verdrahtet – die Leuchte brennt, die Steckdose hat Spannung.':'Richtig verdrahtet – Schalter AUS: Die Leuchte ist aus, die Steckdose hat trotzdem Spannung.')}];
 
 // Varianten („Andere Anordnung“): Bit 0 = gespiegelt (Zuleitung von rechts), Bits darüber = andere Reihenfolge der Zuleitungsklemmen
 const PERM=[['L','PE','N'],['PE','N','L'],['N','L','PE']],VARIANTEN=6;
@@ -1440,6 +1440,27 @@ function uebung(n,v){const U=UEB[n];v=((v||0)%VARIANTEN+VARIANTEN)%VARIANTEN;con
   const zd=teile.find(t=>t.zuleitung);
   return {n,v,titel:U.titel,text:U.text,fertig:U.fertig,teile,leitungen:U.leitungen,soll:U.soll,loesung:U.loesung,lweg:!!U.lweg,
     quelle:{L:zd.id+'.L',N:zd.id+'.N',PE:zd.id+'.PE'},zuleitung:{teil:zd,seite:U.zul==='oben'?'oben':sp?'rechts':'links'}};}
+
+// Jede Übung zweimal – erst das Original, dann gespiegelt, jeweils als eigene Übung (Wunsch des Lehrers 24.11.2026: „Die andere Anordnung war
+// eigentlich so gedacht, dass es jeweils auch eine eigene Übung ist. … macht daraus jeweils eine eigene Übung, so dass die Schüler immer die
+// Originaldarstellung üben und dann nochmal die gespiegelte. Dann haben wir einfach doppelt so viele Übungen und der Button anderer Anordnungen kann
+// dann wegfallen.“) – 12 Übungen. g = Grundübung (UEB), v = Anordnung für uebung(): 0 Original, 1 gespiegelt. Die Nummern kommen aus der Reihenfolge.
+// erste = die erste der beiden Übungen einer Schaltung: nur dort gilt „zuerst die Außenleiter“ (die zweite ist freigestellt).
+// 🔴 Die letzte Übung ist genau das Gästebad wie auf der Baustelle (Wunsch des Lehrers 24.11.2026: „Die letzte Übung … soll dann genau die sein, wie sie
+// dann eben auch im Bad vorliegt, mit den gleichen Positionen der Steckdose, Schalter und Lampe und Stromanschluss. Also zum Schluss nicht die gespiegelte
+// Variante, sondern die Originalvariante … und danach kommt dann die Baustellenverdrahtung.“) – beim Gästebad erst gespiegelt (11), dann Original (12).
+const UEBUNGEN=UEB.flatMap((U,g)=>(g===UEB.length-1?[1,0]:[0,1]).map((v,k)=>({g,v,erste:k===0})));
+UEBUNGEN.forEach((u,i)=>{u.nr=i+1;u.name=UEB[u.g].titel.replace(/^Übung \d+:\s*/,'');u.baustelle=u.g===UEB.length-1&&u.v===0;
+  u.titel='Übung '+u.nr+': '+u.name+(u.v?' – gespiegelt':u.baustelle?' – wie auf der Baustelle':'');});
+// Satz nach einer gelösten Übung: wohin es weitergeht (immer mit der richtigen Nummer)
+function weiterText(i){const u=UEBUNGEN[i],n=UEBUNGEN[i+1];if(!u)return '';
+  if(!n)return ' Alle Übungen geschafft – jetzt schließt du die Dosen im Gästebad an.';
+  return ' Weiter mit Übung '+n.nr+(n.g===u.g?(n.v?': dieselbe Schaltung gespiegelt.':': dieselbe Schaltung, jetzt genau wie auf der Baustelle.'):': '+n.name+'.');}
+// Aufgabentext einer Übung: Hinweis auf die Übung davor, beim Spiegeln links/rechts getauscht, Reihenfolge der Adern
+function uebungsText(i,text){const u=UEBUNGEN[i];if(!u)return text;
+  if(u.v)text=text.replace('So sieht es im Gästebad von Familie Neumann aus:','Wie im Gästebad von Familie Neumann, nur gespiegelt:').replace(/\((links|rechts)\)/g,(_,s)=>s==='links'?'(rechts)':'(links)');
+  const vor=u.erste?'':u.v?'Dieselbe Schaltung wie in Übung '+(u.nr-1)+', diesmal gespiegelt. ':'Dieselbe Schaltung wie in Übung '+(u.nr-1)+', jetzt genau so angeordnet wie im Gästebad. ';
+  return vor+text+(u.erste?' Reihenfolge: zuerst alle Außenleiter (braun, schwarz, grau) – erst wenn sie richtig liegen, kommen grün-gelb (PE) und blau (N) dazu.':' Die Reihenfolge der Adern ist hier frei.');}
 
 // ================================================================ Rechenteil (ohne DOM)
 const teilVon=(S,pid)=>S.teile.find(t=>t.id===pid.split('.')[0]);
@@ -1498,6 +1519,17 @@ function bewerte(S,dr){
   liste.push([!lose,lose?'Eine Ader endet an einer Klemme, an der sonst nichts angeschlossen ist (lose Ader).':'Keine losen Adern.']);
   return {alles:dr.length>0&&liste.every(x=>x[0]),liste};}
 const loesungVon=S=>S.loesung.map(([a,b,farbe])=>({a,b,farbe,ecken:null}));
+// Reihenfolge in der Original-Übung (Wunsch des Lehrers 24.11.2026): „… in der ersten Übung soll immer zuerst alle spannungsführenden Leitungen verlegt
+// werden. Zuerst alle braunen, schwarzen oder grauen. Und erst wenn die alle richtig verlegt sind, dann soll grün, gelb und blau kommen. Wenn dann die
+// andere Übung kommt, da ist es dann freigestellt. so dass die Schüler lernen, dass man immer mit der spannungsführenden Phase anfängt und zum Schluss
+// nur noch Farb auf Farb machen muss.“
+// Prüft nur die spannungsführenden Adern (braun, schwarz, grau): „richtig“ heißt, zusammen mit PE und N der Musterlösung wäre alles richtig. Liegt L am
+// anderen Pol einer Steckdose oder Leuchte (erlaubt), wandert das N der Musterlösung an den freien Pol. Ergebnis wie bewerte(); alles = L-Teil fertig.
+function aussenleiterPruefung(S,dr){
+  const l=(dr||[]).filter(d=>L_FARBEN.includes(d.farbe)),belegt=new Set(l.flatMap(d=>[d.a,d.b]));
+  const pol=x=>{const T=teilVon(S,x),P=T&&LAST[T.typ];if(!P||!belegt.has(x))return x;const k=x.split('.')[1];return k===P.a?T.id+'.'+P.b:k===P.b?T.id+'.'+P.a:x;};
+  const rest=loesungVon(S).filter(d=>!L_FARBEN.includes(d.farbe)).map(d=>d.farbe==='blau'?Object.assign({},d,{a:pol(d.a),b:pol(d.b)}):d);
+  const r=bewerte(S,l.concat(rest));if(!l.length)r.alles=false;return r;}
 
 // Weg einer Ader: von Hand gesetzte Ecken oder automatisch, nur waagerecht und senkrecht.
 // Automatisch: Adern zwischen denselben zwei Teilen bekommen je eine eigene senkrechte Spur in der Lücke; die Spuren werden so
@@ -1707,11 +1739,13 @@ function css(){if(cssDa||typeof document==='undefined'||!document.head)return;cs
 .vd-kopf h2{margin:0;font-size:21px;font-weight:650}
 .vd-kopf p{margin:4px 0 0;font-size:14.5px;line-height:1.45;opacity:.92}
 .vd-leiste{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.vd-uebungen{padding:6px 16px}
+.vd-uebungen{padding:6px 16px;gap:6px}
+.vd-uebungen button{padding:0 10px;font-size:14px}
 .vd button{font:600 15px "Segoe UI",system-ui,-apple-system,Arial,sans-serif;min-height:44px;padding:0 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;-webkit-appearance:none;appearance:none}
 .vd button.an{background:#e2854a;border-color:#e2854a;color:#16110d}
 .vd button.haupt{background:#e2854a;border-color:#e2854a;color:#16110d}
 .vd button .ok{color:#5fd38a;margin-left:6px}
+.vd-farben button.gesperrt{opacity:.38;border-style:dashed}
 .vd button.an .ok{color:#14532d}
 .vd-haupt{flex:1;min-height:0;display:flex;gap:14px;padding:6px 16px 14px}
 .vd-bild{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
@@ -1761,15 +1795,25 @@ function uebungen(wurzel,opt){
   if(opt.zurueck){q('zurueck').textContent=opt.zurueck.text;q('zurueck').addEventListener('click',()=>opt.zurueck.tu());}
   for(const [k,F] of Object.entries(FARBEN)){const b=document.createElement('button');b.type='button';b.dataset.farbe=k;
     b.innerHTML=`<i style="background:${F.streifen?`repeating-linear-gradient(90deg,${F.c} 0 6px,${F.streifen} 6px 12px)`:F.c}"></i>${F.n}`;
-    b.addEventListener('click',()=>{z.farbe=k;farbenAn();if(z.wahl)zeichne();});q('farben').appendChild(b);}
-  const farbenAn=()=>q('farben').querySelectorAll('button').forEach(b=>b.classList.toggle('an',b.dataset.farbe===z.farbe));
+    // Falsche Farbe zuerst (Wunsch des Lehrers 24.11.2026): „Wenn Sie mit der falschen Farbe anfangen, dann soll eine Meldung kommen, bitte beginn
+    // zuerst nur mit den Außenleiter anfangen.“ – der Knopf bleibt antippbar (blass), die Farbe wechselt nicht, die Meldung erscheint
+    b.addEventListener('click',()=>{if(z.sperre&&!L_FARBEN.includes(k)){z.hinweis='Bitte beginne zuerst nur mit den Außenleitern (braun, schwarz oder grau). Grün-gelb und blau kommen erst danach.';zeichne();return;}
+      z.hinweis='';z.farbe=k;farbenAn();zeichne();});q('farben').appendChild(b);}
+  // In der Original-Übung sind grün-gelb und blau gesperrt, bis alle Außenleiter richtig liegen (z.sperre, gesetzt in zeichne)
+  const farbenAn=()=>{if(z.sperre&&!L_FARBEN.includes(z.farbe))z.farbe='braun';
+    q('farben').querySelectorAll('button').forEach(b=>{const zu=!!z.sperre&&!L_FARBEN.includes(b.dataset.farbe);b.classList.toggle('an',b.dataset.farbe===z.farbe);
+      b.classList.toggle('gesperrt',zu);b.title=zu?'Erst alle Außenleiter (braun, schwarz, grau) richtig verlegen':'';});};
+  // 12 Reiter (Original und gespiegelt je als eigene Übung); kein Knopf „Andere Anordnung“ mehr (Wunsch des Lehrers 24.11.2026)
   function reiter(){const r=q('reiter');r.innerHTML='';
-    UEB.forEach((U,i)=>{const b=document.createElement('button');b.type='button';b.className=i===z.n?'an':'';b.innerHTML='Übung '+(i+1)+(z.geloest.has(i)?'<span class="ok">✓</span>':'');
-      b.addEventListener('click',()=>setze(i,0));r.appendChild(b);});
-    const v=document.createElement('button');v.type='button';v.textContent='Andere Anordnung';v.addEventListener('click',()=>setze(z.n,z.v+1));r.appendChild(v);}
-  function setze(n,v){z.n=n;z.v=v||0;z.S=uebung(n,z.v);z.dr=[];z.wahl=null;z.ecken=[];z.pruef=false;z.hinweis='';z.st={};
+    UEBUNGEN.forEach((u,i)=>{const b=document.createElement('button');b.type='button';b.className=i===z.n?'an':'';b.title=u.titel;
+      b.innerHTML='Übung '+u.nr+(z.geloest.has(i)?'<span class="ok">✓</span>':'');
+      b.addEventListener('click',()=>setze(i));r.appendChild(b);});}
+  function setze(n){n=Math.max(0,Math.min(UEBUNGEN.length-1,n|0));const u=UEBUNGEN[n];z.n=n;z.v=u.v;z.S=uebung(u.g,u.v);z.S.titel=u.titel;
+    z.dr=[];z.wahl=null;z.ecken=[];z.pruef=false;z.hinweis='';z.st={};
     for(const t of z.S.teile)if(t.typ==='schalter')z.st[t.id]=1;
-    q('titel').textContent=z.S.titel;q('text').textContent=z.S.text;q('schalter').style.display=Object.keys(z.st).length?'':'none';reiter();farbenAn();zeichne();}
+    q('titel').textContent=z.S.titel;
+    q('text').textContent=uebungsText(n,z.S.text);
+    q('schalter').style.display=Object.keys(z.st).length?'':'none';reiter();farbenAn();zeichne();}
   function svgPunkt(ev){let x,y;
     try{const m=svg.getScreenCTM&&svg.getScreenCTM();if(m&&svg.createSVGPoint){const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const r=p.matrixTransform(m.inverse());x=r.x;y=r.y;}}catch(_){}
     if(x===undefined||!isFinite(x)){const r=svg.getBoundingClientRect(),s=Math.max(W/(r.width||W),H/(r.height||H));x=(ev.clientX-r.left-((r.width||W)-W/s)/2)*s;y=(ev.clientY-r.top-((r.height||H)-H/s)/2)*s;}
@@ -1789,6 +1833,8 @@ function uebungen(wurzel,opt){
   let vorschau=null;
   function zeichne(){
     const S=z.S;svg.innerHTML='';const g=el('g',{},svg),bew=bewerte(S,z.dr),w=netz(S,z.dr,z.st);z.bew=bew;
+    // Reihenfolge nur in der ersten Übung einer Schaltung: erst die Außenleiter, dann Farbe auf Farbe (zweite Übung: freigestellt)
+    z.reihe=!!(UEBUNGEN[z.n]&&UEBUNGEN[z.n].erste);z.sperre=z.reihe&&!bew.alles&&!aussenleiterPruefung(S,z.dr).alles;farbenAn();
     el('rect',{x:0,y:0,width:W,height:H,fill:'#fbfaf6'},g);
     for(const t of S.teile){zeichneTeil(g,t,bew.alles&&w.last[t.id],z,S);
       if(t.typ==='schalter'){const r=el('rect',{x:t.x+4,y:t.y+4,width:t.b-8,height:t.h-8,fill:'#000','fill-opacity':0,style:'cursor:pointer'},g);
@@ -1819,12 +1865,17 @@ function uebungen(wurzel,opt){
     if(w.kurz){k='schlecht';t='⚡ Kurzschluss zwischen L und N – der Leitungsschutzschalter hat ausgelöst.';}
     else if(w.lpe){k='schlecht';t='⚡ L ist mit PE verbunden – der Fehlerstromschutzschalter (RCD) hat ausgelöst.';}
     else if(w.npe){k='schlecht';t='⚡ N ist mit PE verbunden – der Fehlerstromschutzschalter (RCD) löst aus.';}
+    else if(z.hinweis&&z.sperre){k='schlecht';t=z.hinweis;}
     else if(z.wahl)t='Ader wird gezogen: Für Ecken auf die freie Fläche tippen, am Ziel-Anschluss beenden. Den Anfang noch einmal antippen bricht ab.';
-    else if(!z.dr.length)t='Wähle eine Aderfarbe und tippe den ersten Anschluss an.';
-    else if(bew.alles){k='gut';t=S.fertig(z.st);}
+    else if(!z.dr.length)t=z.sperre?'Fang mit den Außenleitern an: braun, schwarz oder grau. Grün-gelb und blau kommen danach.':'Wähle eine Aderfarbe und tippe den ersten Anschluss an.';
+    else if(bew.alles){k='gut';t=S.fertig(z.st)+weiterText(z.n);}
+    else if(z.sperre)t='Zuerst alle Außenleiter (braun, schwarz, grau) richtig verlegen – erst dann kommen grün-gelb und blau. „Prüfen“ zeigt dir, was noch fehlt.';
+    else if(z.reihe&&!z.dr.some(d=>!L_FARBEN.includes(d.farbe))){k='gut';t='Die Außenleiter liegen richtig. Jetzt nur noch Farbe auf Farbe: grün-gelb (PE) und blau (N).';}
     else t='Noch nicht fertig. „Prüfen“ zeigt dir, was noch fehlt.';
     st.className='vd-status'+(k?' '+k:'');st.textContent=t;
-    q('liste').innerHTML=z.pruef?bew.liste.map(([ok,s])=>`<li class="${ok?'ja':'nein'}">${s}</li>`).join('')+(bew.alles?'<li class="ja"><b>Alles richtig verdrahtet!</b></li>':''):'';
+    // Prüfliste: solange grün-gelb und blau gesperrt sind, nur die spannungsführenden Adern (PE und N gelten als gelegt)
+    const pl=z.sperre?aussenleiterPruefung(S,z.dr):bew;
+    q('liste').innerHTML=z.pruef?pl.liste.map(([ok,s])=>`<li class="${ok?'ja':'nein'}">${s}</li>`).join('')+(bew.alles?'<li class="ja"><b>Alles richtig verdrahtet!</b></li>':''):'';
     if(bew.alles&&!z.geloest.has(z.n)){z.geloest.add(z.n);reiter();if(opt.onGeloest)opt.onGeloest(z.n,[...z.geloest]);}}
   svg.addEventListener('click',ev=>{if(z.wahl)ecke(ev);});
   svg.addEventListener('pointermove',ev=>{if(!z.wahl||!vorschau)return;vorschau.setAttribute('d',pfad([...vorschau.__pts,rechtwinklig(svgPunkt(ev))]));});
@@ -1835,7 +1886,7 @@ function uebungen(wurzel,opt){
   q('pruefen').addEventListener('click',()=>{z.pruef=true;zeichne();});
   if(z.lehrer)q('loesung').addEventListener('click',()=>{z.dr=loesungVon(z.S);z.wahl=null;z.ecken=[];zeichne();});
   q('beschr').addEventListener('change',ev=>{z.beschr=!!ev.target.checked;zeichne();});
-  setze(z.n,0);
+  setze(z.n);
   return {z,setze,klick,schalte,zeichne,
     abbrechen(){if(!z.wahl)return false;z.wahl=null;z.ecken=[];zeichne();return true;},
     loesung(){z.dr=loesungVon(z.S);z.wahl=null;z.ecken=[];zeichne();return z.bew;},
@@ -2005,7 +2056,7 @@ function gbLoesung(){const v=(a,b)=>({a,b,farbe:pkt(GB,a).k.farbe,ecken:null}),d
   v('Sd.braun','S.e'),v('Sd.schwarz','S.a')];
   return {geraet:{SD:'steckdose',E:'leuchte',S:'schalter'},dr};}
 
-return {W,H,FARBEN,ADERN,L_FARBEN,UEB,VARIANTEN,uebung,netz,bewerte,weg,aufteilen,pkt,loesungVon,uebungen,entflechte,sauber,zulLinien,
+return {W,H,FARBEN,ADERN,L_FARBEN,UEB,UEBUNGEN,weiterText,uebungsText,aussenleiterPruefung,VARIANTEN,uebung,netz,bewerte,weg,aufteilen,pkt,loesungVon,uebungen,entflechte,sauber,zulLinien,
   GB,GB_DOSEN,neuerStand,gbDosen,gbBewerte,gbLicht,gbLoesung,doseHinweise,dose};
 })();
 
@@ -2070,7 +2121,7 @@ elInfoBox.addEventListener('click',e=>{const b=e.target.closest&&e.target.closes
 elInfo.addEventListener('click',e=>{if(e.target===elInfo&&!elInfo.classList.contains('test'))schliesseStation();});
 
 // ---------------------------------------------------------------- Gästebad: Verdrahten üben und Dosen anklemmen
-// Auftrag „Elektrik im Gästebad“ (Wunsch des Lehrers 23.11.2026): erst die Übungen 1–6 (Übung 4 seit 23.11. abends ohne Steckdose, Übung 5 mit Steckdose,
+// Auftrag „Elektrik im Gästebad“ (Wunsch des Lehrers 23.11.2026): erst die Übungen (seit 24.11.2026 zwölf: je Original und gespiegelt; vorher 1–6) (Übung 4 seit 23.11. abends ohne Steckdose, Übung 5 mit Steckdose,
 // Übung 6 Anordnung wie im Gästebad), dann jede Dose antippen, Gerät wählen, Adern anklemmen;
 // stimmt alles, schaltet der Schalter neben der Tür das Licht über dem Spiegel. Stand je Gerät im Browser (localStorage).
 const LEHRER=/[?&]lehrer=1/.test((window.location&&location.search)||'');   // ?lehrer=1: Musterlösungen sichtbar
@@ -2121,8 +2172,12 @@ const AUF={an:false,schritt:0,geloest:[],anreise:0,rueck:0,fertig:0};   // ferti
 try{const s=JSON.parse(LP.lies(GB_KEY)||'null');if(s&&s.geraet&&Array.isArray(s.dr)){Object.assign(GBST.geraet,s.geraet);GBST.dr=s.dr;GB_LICHT=!!s.licht;}}catch(_){}
 // Übungsnummern: Spielstände ohne uebv (Revision 11 und älter) kennen die neue Übung 4 (ohne Steckdose) noch nicht – alte Übung 4 (mit Steckdose)
 // ist jetzt Übung 5, wer sie gelöst hat, bekommt die leichtere neue Übung 4 gutgeschrieben; alte Übung 5 ist jetzt Übung 6.
-const UEBV=2,uebNeu=s=>(Array.isArray(s.geloest)?s.geloest:[]).flatMap(n=>s.uebv===UEBV||n<3?[n]:n===3?[3,4]:[n+1]);
-try{const s=JSON.parse(LP.lies(AUFTRAG_KEY)||'null');if(s){AUF.schritt=Math.max(0,Math.min(4,s.schritt|0));AUF.geloest=[...new Set(uebNeu(s))].filter(n=>n>=0&&n<VERDRAHTEN.UEB.length);
+// uebv 2 (6 Übungen, bis 24.11.2026) → uebv 3 (12 Übungen, Wunsch des Lehrers 24.11.2026: je Schaltung zwei Übungen 2n und 2n+1 – erst Original,
+// dann gespiegelt; beim Gästebad erst gespiegelt, zuletzt wie auf der Baustelle) – gutgeschrieben wird die erste der beiden, die zweite ist neu zu lösen.
+const UEBV=3,uebNeu=s=>{let g=Array.isArray(s.geloest)?s.geloest:[];if(s.uebv===UEBV)return g;
+  if(s.uebv!==2)g=g.flatMap(n=>n<3?[n]:n===3?[3,4]:[n+1]);
+  return g.map(n=>2*n);};
+try{const s=JSON.parse(LP.lies(AUFTRAG_KEY)||'null');if(s){AUF.schritt=Math.max(0,Math.min(4,s.schritt|0));AUF.geloest=[...new Set(uebNeu(s))].filter(n=>n>=0&&n<VERDRAHTEN.UEBUNGEN.length);
   AUF.anreise=typeof s.anreise==='number'?Math.max(0,Math.min(3,s.anreise|0)):(AUF.schritt>0||AUF.geloest.length?3:0);if(AUF.anreise===2)AUF.anreise=1;
   AUF.rueck=typeof s.rueck==='number'?Math.max(0,Math.min(4,s.rueck|0)):(AUF.schritt>=4?4:0);if(AUF.rueck===2)AUF.rueck=1;
   AUF.fertig=typeof s.fertig==='number'&&s.fertig>0&&AUF.schritt>=4?s.fertig:0;}}catch(_){}   // ältere Stände: erledigt = Feierabend; mitten in der Rückfahrt neu geladen: wieder am Wagen   // mitten in der Fahrt neu geladen: wieder am Wagen
@@ -2130,8 +2185,8 @@ let GB_OK=VERDRAHTEN.gbBewerte(GBST);
 punkteMelden();   // Lernpaket: Stand aus Moodle geladen – Punkte nachmelden, falls die letzte Meldung nicht ankam
 function sichereGB(){LP.setze(GB_KEY,JSON.stringify({geraet:GBST.geraet,dr:GBST.dr,licht:GB_LICHT}));punkteMelden();}
 function sichereAuftrag(){LP.setze(AUFTRAG_KEY,JSON.stringify({schritt:AUF.schritt,geloest:AUF.geloest,anreise:AUF.anreise,uebv:UEBV,rueck:AUF.rueck,fertig:AUF.fertig||0}));punkteMelden();}
-// Punkte fürs Lernpaket (nur in Moodle wirksam): 10 je gelöste Übung, 30 alle Dosen richtig, 10 Licht an (oder Auftrag erledigt)
-function punkteJetzt(){return 10*AUF.geloest.length+(GB_OK&&GB_OK.alles?30:0)+((GB_LICHT&&GB_OK&&GB_OK.alles)||AUF.schritt>=4?10:0);}
+// Punkte fürs Lernpaket (nur in Moodle wirksam): 5 je gelöste Übung (12 Übungen = 60; bis 24.11.2026 6 × 10), 30 alle Dosen richtig, 10 Licht an (oder Auftrag erledigt)
+function punkteJetzt(){return 5*AUF.geloest.length+(GB_OK&&GB_OK.alles?30:0)+((GB_LICHT&&GB_OK&&GB_OK.alles)||AUF.schritt>=4?10:0);}
 function punkteMelden(){if(LP.an)LP.punkte(punkteJetzt());}
 // Dosen im Gästebad: Mitte auf der Wandoberfläche, nx = Richtung in den Raum
 const GB_ZIELE=[{id:'VD',x:2.9,y:2.42,z:1.7,nx:1,kurz:'Verteilerdose',knopf:'Verteilerdose anklemmen'},
@@ -2184,19 +2239,19 @@ function gbAktion(zl){if(!zl)return false;
   if(STAGE!==1)return false;
   // Erst üben – auch beim „frei begehen“ (Wunsch des Lehrers 23.11.2026 abends: dort ließ sich das Bad ohne Übungen anschließen, das Licht brannte,
   // die Übungen waren nicht abgehakt und Moodle zählte schon 40 Punkte). Im Auftrag gilt wie bisher der Schritt (ältere Spielstände bleiben gleich).
-  if(AUF.an?AUF.schritt<2:!VERDRAHTEN.UEB.every((_,n)=>AUF.geloest.includes(n))){melde('Erst üben: Löse die Übungen 1 bis 6 („Verdrahten üben“).');return true;}
+  if(AUF.an?AUF.schritt<2:!VERDRAHTEN.UEBUNGEN.every((_,n)=>AUF.geloest.includes(n))){melde('Erst üben: Löse die Übungen 1 bis 12 („Verdrahten üben“).');return true;}
   oeffneVerdrahten('dose',zl.id);return true;}
 // Fenster über der Simulation (wie die Stationen): Übungen oder eine Dose
 function oeffneVerdrahten(art,id){if(infoOffen)return;infoOffen={id:'verdrahten'};running=false;for(const k in keys)keys[k]=false;releaseTouch();
   if(document.pointerLockElement){try{document.exitPointerLock();}catch(_){}}
   elInfo.classList.add('test');elInfo.classList.add('vdraht');elInfoBox.innerHTML='';const w=document.createElement('div');w.className='vd-wurzel';elInfoBox.appendChild(w);
   const zu={text:'Zurück zur Baustelle',tu:()=>schliesseStation()};
-  VD_UI=art==='uebung'?VERDRAHTEN.uebungen(w,{start:VERDRAHTEN.UEB.map((_,i)=>i).find(n=>!AUF.geloest.includes(n))||0,geloest:AUF.geloest,lehrer:LEHRER,zurueck:zu,
-      onGeloest:(n,alle)=>{AUF.geloest=alle.filter(x=>x>=0&&x<VERDRAHTEN.UEB.length);sichereAuftrag();if(AUF.geloest.length===VERDRAHTEN.UEB.length)melde('Alle sechs Übungen gelöst – jetzt die Dosen im Gästebad anklemmen!');}})
+  VD_UI=art==='uebung'?VERDRAHTEN.uebungen(w,{start:VERDRAHTEN.UEBUNGEN.map((_,i)=>i).find(n=>!AUF.geloest.includes(n))||0,geloest:AUF.geloest,lehrer:LEHRER,zurueck:zu,
+      onGeloest:(n,alle)=>{AUF.geloest=alle.filter(x=>x>=0&&x<VERDRAHTEN.UEBUNGEN.length);sichereAuftrag();if(AUF.geloest.length===VERDRAHTEN.UEBUNGEN.length)melde('Alle zwölf Übungen gelöst – jetzt die Dosen im Gästebad anklemmen!');}})
     :VERDRAHTEN.dose(w,{id,stand:GBST,lehrer:LEHRER,zurueck:zu,onAenderung:()=>gbGeaendert()});
   elInfo.style.display='flex';}
 // Auftrag: nächster Schritt oben in der Mitte (nur wenn „Auftrag“ gewählt ist)
-const SCHRITTE=['Geh ins Gästebad: Erdgeschoss, rechts hinter dem Eingang.','Übe zuerst das Verdrahten: Übungen 1 bis 6.',
+const SCHRITTE=['Geh ins Gästebad: Erdgeschoss, rechts hinter dem Eingang.','Übe zuerst das Verdrahten: Übungen 1 bis 12.',
   'Klemme die vier Dosen im Gästebad an – tippe sie an.','Schalte das Licht über dem Spiegel am Schalter neben der Tür ein.','Auftrag erledigt – das Gästebad ist angeschlossen.'];
 // Anreise (Auslieferung B): Betrieb → Chefin → Firmenwagen → Fahrt nach Navi; erst danach die Schritte an der Baustelle
 const ANREISE_TEXT=['Geh ins Büro zu deinem Chef.','Steig in den Firmenwagen im Hof.','Fahr nach Navi zur Baustelle von Familie Neumann.'];
@@ -2204,7 +2259,7 @@ const ANREISE_TEXT=['Geh ins Büro zu deinem Chef.','Steig in den Firmenwagen im
 // Eventuell wieder zurückfahren mit dem Auto zur Firma.“): nach dem Licht zurück zum Firmenwagen, nach Navi in den Betrieb, bei der Chefin melden
 const RUECK_TEXT=['','Fahr mit dem Firmenwagen zurück in den Betrieb – er steht vor dem Tor der Baustelle.','Fahr nach Navi zurück in den Betrieb.','Melde dich im Büro bei deinem Chef.','Auftrag abgeschlossen – Feierabend!'];
 function auftragText(){if(AUF.anreise>=3&&AUF.schritt>=4&&AUF.rueck>=1)return RUECK_TEXT[Math.min(4,AUF.rueck)];if(AUF.anreise<3)return AUF.anreise===0&&!BETRIEB.gerufen?'Du bist in der Werkstatt deines Betriebs – sieh dich ruhig um.':ANREISE_TEXT[AUF.anreise];
-  let t=SCHRITTE[AUF.schritt];const ohnePunkt=t.replace(/[.]$/,'');if(AUF.schritt===1)t=ohnePunkt+' ('+AUF.geloest.length+' von '+VERDRAHTEN.UEB.length+' gelöst).';
+  let t=SCHRITTE[AUF.schritt];const ohnePunkt=t.replace(/[.]$/,'');if(AUF.schritt===1)t=ohnePunkt+' ('+AUF.geloest.length+' von '+VERDRAHTEN.UEBUNGEN.length+' gelöst).';
   if(AUF.schritt===2){const n=['VD','SD','E','S'].filter(id=>GB_OK.dosen[id]).length;
     t=n===4&&!GB_OK.alles?'Alle Dosen sind angeklemmt, aber etwas stimmt noch nicht – öffne die Dosen und tippe auf „Prüfen“.':ohnePunkt+' ('+n+' von 4 angeklemmt).';}
   return t;}
@@ -2213,7 +2268,7 @@ function auftragWeiter(w){const el=$('auftrag');if(!AUF.an){if(aufGezeigt){aufGe
   const vor=AUF.schritt;
   if(AUF.anreise<3){const t='<small>Nächster Schritt</small>'+auftragText();if(t!==aufGezeigt){aufGezeigt=t;el.innerHTML=t;el.style.display='block';}return;}
   if(AUF.schritt===0&&w[1]==='Gästebad'){AUF.schritt=1;if(STAGE!==1)setStage(1);melde('Rohinstallation: Die Leitungen liegen schon – jetzt wird angeschlossen.');}
-  if(AUF.schritt===1&&VERDRAHTEN.UEB.every((_,n)=>AUF.geloest.includes(n)))AUF.schritt=2;
+  if(AUF.schritt===1&&VERDRAHTEN.UEBUNGEN.every((_,n)=>AUF.geloest.includes(n)))AUF.schritt=2;
   if(AUF.schritt===2&&GB_OK.alles)AUF.schritt=3;
   if(AUF.schritt===3&&GB_LICHT&&GB_OK.alles){AUF.schritt=4;AUF.rueck=1;AUF.fertig=Date.now();zeigeAbschluss();}
   if(AUF.schritt!==vor)sichereAuftrag();
@@ -2224,7 +2279,7 @@ function zeigeAbschluss(){if(infoOffen)return;infoOffen={id:'abschluss'};running
   elInfo.classList.remove('test');elInfo.classList.remove('vdraht');punkteMelden();
   elInfoBox.innerHTML='<p class="unter">Auftrag erledigt</p><h2>Elektrik im Gästebad</h2>'+
     '<p><b>'+CHEFIN_HANDY+':</b> „'+ABSCHLUSS_SATZ+' '+RUECK_SATZ+'“</p>'+
-    '<p>Du hast sechs Übungen gelöst und die Verteilerdose, die Steckdose, die Leuchte und den Schalter richtig angeklemmt.</p>'+
+    '<p>Du hast zwölf Übungen (jede Schaltung im Original und gespiegelt) gelöst und die Verteilerdose, die Steckdose, die Leuchte und den Schalter richtig angeklemmt.</p>'+
     '<h3 class="ausw-titel">Deine Auswertung</h3>'+auswertungHtml()+
     '<div class="knoepfe"><button type="button" class="haupt" data-a="zu">Weiter</button></div>';
   elInfo.style.display='flex';tonZeile({wer:CHEFIN_HANDY,text:RUECK_SATZ},[tonSchluessel('chef',tonText({text:ABSCHLUSS_SATZ}))]);}
@@ -2244,7 +2299,10 @@ const GB_NAMEN={VD:'Verteilerdose',SD:'Steckdose',E:'Leuchte',S:'Schalter'};
 const datumZeit=t=>{const d=new Date(t);return d.toLocaleDateString('de-DE')+', '+d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' Uhr';};
 function auswertungHtml(){const zeilen=[],ids=['VD','SD','E','S'];
   const z=(teil,stand,ok,p,max)=>zeilen.push('<tr><td>'+teil+'</td><td>'+(ok?'<span class="ja">✓</span> ':'<span class="nein">–</span> ')+stand+'</td><td class="p">'+(max?p+' / '+max:'')+'</td></tr>');
-  VERDRAHTEN.UEB.forEach((u,n)=>{const ok=AUF.geloest.includes(n);z(u.titel,ok?'gelöst':'offen',ok,ok?10:0,10);});
+  // je Grundübung eine Zeile: Original und gespiegelt (je 5 Punkte)
+  VERDRAHTEN.UEB.forEach((_,g)=>{const U=VERDRAHTEN.UEBUNGEN,ii=U.map((u,i)=>u.g===g?i:-1).filter(i=>i>=0),n=ii.filter(i=>AUF.geloest.includes(i)).length;
+    const orig=AUF.geloest.includes(ii.find(i=>U[i].v===0)),spie=AUF.geloest.includes(ii.find(i=>U[i].v===1));
+    z('Übung '+ii.map(i=>i+1).join(' und ')+': '+U[ii[0]].name,orig&&spie?'Original und gespiegelt gelöst':orig?'Original gelöst, gespiegelt offen':spie?'gespiegelt gelöst, Original offen':'offen',n===ii.length,5*n,5*ii.length);});
   const d=ids.filter(id=>GB_OK.dosen[id]).length;
   z('Dosen im Gästebad anklemmen ('+ids.map(id=>GB_NAMEN[id]).join(', ')+')',GB_OK.alles?'alle 4 richtig':d+' von 4 angeklemmt',GB_OK.alles,GB_OK.alles?30:0,30);
   const licht=(GB_LICHT&&GB_OK.alles)||AUF.schritt>=4;z('Licht über dem Spiegel eingeschaltet',licht?'brennt':'noch nicht',licht,licht?10:0,10);
@@ -2399,7 +2457,7 @@ function hud(){const w=whereAmI(),key=w[0]+w[1]+STAGE;erkunde(w);if(key!==lastRo
   else if(st&&act==='info:'+st.id)setHint(act,'<b>E</b>Info: '+st.kurz+' – Wissen und Test');
   else if(gz&&act==='dose:'+gz.id)setHint(act,'<b>E</b>'+gz.kurz+': anklemmen');
   else if(act.startsWith('licht'))setHint(act,'<b>E</b>Licht über dem Spiegel '+(GB_LICHT?'ausschalten':'einschalten'));
-  else if(act==='ueben')setHint(act,'<b>E</b>Verdrahten üben (Übungen 1–6)');
+  else if(act==='ueben')setHint(act,'<b>E</b>Verdrahten üben (Übungen 1–12)');
   else if(act==='flash')setHint('flash','<b>F</b>Taschenlampe einschalten');
   else if(act==='door0'||act==='door1')setHint(act,'<b>E</b>Bautür '+(DOOR.target?'schließen':'öffnen'));
   else if(act)setHint(act,'<b>I</b>'+NEXT_TXT[STAGE]);
