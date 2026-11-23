@@ -1083,10 +1083,17 @@ function reveal(mat,axis,a,b,s,h,c0,c1,sillMat){const B=(a0,y0,t0,a1,y1,t1,m)=>a
   if(sillMat){const o=c0>c1?.035:-.035;B(a-.02,s-.02,c1,b+.02,s+.012,c0+o,sillMat);}}
 function roomFinish(x0,x1,z0,z1,floorMat){face(floorMat,[[x0,.008,z0],[x1,.008,z0],[x1,.008,z1],[x0,.008,z1]],[0,1,0]);
   face(M.ceilW,[[x0,EGT-.004,z0],[x1,EGT-.004,z0],[x1,EGT-.004,z1],[x0,EGT-.004,z1]],[0,-1,0]);}
-function elDose(f,a,y,k){ // Rohinstallation: Unterputzdose, EIN Leitungsende hängt heraus (Wunsch des Lehrers 22.11.2026: „immer nur ein Kabel“)
+function elDose(f,a,y,k,ohneEnde){ // Rohinstallation: Unterputzdose, EIN Leitungsende hängt heraus (Wunsch des Lehrers 22.11.2026: „immer nur ein Kabel“)
   if(k==='herd'){wbox(M.doseBlue,f,a-.05,a+.05,y-.05,y+.05,-.01,.006);wbox(M.black,f,a-.036,a+.036,y-.036,y+.036,.006,.007);}
   else{wcyl(M.doseBlue,f,a,y,-.01,.005,.036,16);wcyl(M.black,f,a,y,.005,.006,.027,16);}
-  mpipe(M.nym,[wp(f,a,y+.006,.005),wp(f,a-.004,y-.014,.05),wp(f,a-.014,y-.1,.062)],.0055,6);}
+  if(!ohneEnde)mpipe(M.nym,elEndePunkte(f,a,y),.0055,6);}
+const elEndePunkte=(f,a,y)=>[wp(f,a,y+.006,.005),wp(f,a-.004,y-.014,.05),wp(f,a-.014,y-.1,.062)];
+// Gästebad: dasselbe Leitungsende als eigenes Teil, damit es beim Einbau des Geräts verschwinden kann (Wunsch des Lehrers 23.11.2026 abends:
+// „Wenn Lichtschalter und Steckdose und sonstige Einbauten montiert sind, dann soll kein Kabel mehr herausschauen.“)
+function elEndeTeil(f,a,y){const g=new T.Group(),pts=elEndePunkte(f,a,y),r=.0055;
+  for(let i=0;i+1<pts.length;i++){const p=pts[i],q=pts[i+1],d=new T.Vector3(q[0]-p[0],q[1]-p[1],q[2]-p[2]),len=d.length();
+    const m=new T.Mesh(new T.CylinderGeometry(r,r,len,6),M.nym);m.position.set(p[0]+d.x/2,p[1]+d.y/2,p[2]+d.z/2);m.quaternion.setFromUnitVectors(UP,d.normalize());g.add(m);}
+  const s=new T.Mesh(new T.SphereGeometry(r*1.05,8,6),M.nym);s.position.set(pts[1][0],pts[1][1],pts[1][2]);g.add(s);return g;}
 function elGeraet(f,a,y,k,o){ // Fertiginstallation: Steckdose, Schalter, Herdanschluss (reinweiß)
   if(k==='auslass')return;o=o||.012;
   if(k==='herd'){wbox(M.white,f,a-.05,a+.05,y-.05,y+.05,o,o+.016);return;}
@@ -1216,7 +1223,7 @@ inStage(FERTIG,()=>{
 // --- Gästebad: Rohinstallation
 inStage(ROH,()=>{
   LROOM='Gästebad';
-  for(const e of GEL)elDose(e.f,e.a,e.y,e.k);
+  for(const e of GEL)elDose(e.f,e.a,e.y,e.k,true);   // Leitungsenden als eigene Teile bei GB_ZIELE (verschwinden beim Einbau)
   {const v=GVD,d=.008,ox=2.9+d;abzweigdose(GW,v.a,v.y);
     // Zuleitung vom Stromkreisverteiler: aus der Mittelwand waagerecht in der oberen Installationszone in die Verteilerdose
     mcyl(M.nym,[ox,v.y+.03,3.4],[ox,v.y+.03,v.a+.052],.0065,6);
@@ -1501,8 +1508,31 @@ function legePaar(S,paar){
     while(hoehen.has(vm))vm+=6;hoehen.add(vm);
     out.set(w.d,[w.p,Z(u1,w.P.v),Z(u1,vm),Z(u2,vm),Z(u2,w.Q.v),w.q]);});
   return out;}
+// Verteilerdose der Baustelle (Wunsch des Lehrers 23.11.2026 abends, iPad-Foto): „Macht es bitte so, dass die Leitungen nicht übereinander liegen.
+// Wenn sie sich verdecken sollen, sie einen leichten Versatz haben und dann vielleicht, um an die Klemme anschließen zu können, dann mit 45 Grad auf
+// die Klemme gehen. … Hauptsache es gibt keine doppelt überlagerten Leitungen.“ – Jedes Ader-Ende hat eine eigene Spur (kurzes Stück aus dem Kabel,
+// eigene waagerechte Bahn), an der Klemme bekommt jede Ader eine eigene senkrechte Bahn (Versatz 8 px, bei vielen Adern enger, nie unter 5 px) und
+// geht zuletzt mit 45° auf die Klemme. Kreuzen ist erlaubt, Übereinanderliegen nie. Reihenfolge der Bahnen so, dass sich möglichst wenig kreuzt:
+// von links kommende Adern links, von rechts kommende rechts; oben links: tiefere Bahn weiter links, oben rechts: höhere Bahn weiter links,
+// unten links: klemmennähere Bahn weiter links, unten rechts: klemmenfernere Bahn weiter links.
+function vdWeg(S,d,dr){
+  const t=teilVon(S,d.a),A=pkt(S,d.a),B=pkt(S,d.b);if(!A||!B)return null;
+  const E=A.k.rolle==='ader'?A:B.k.rolle==='ader'?B:null,K=E===A?B:A;
+  if(!E||!E.k.spur||K.k.rolle!=='klemme')return null;
+  const sp=E.k.spur,oben=sp.seite==='oben';
+  const gruppe=(dr||[d]).concat(dr&&dr.includes(d)?[]:[d]).map(x=>{const p=pkt(S,x.a),q=pkt(S,x.b);if(!p||!q)return null;
+      const e=p.k.rolle==='ader'?p:q,k=e===p?q:p;return e.k.spur&&k.id===K.id&&e.k.spur.seite===sp.seite?{x,e}:null;}).filter(Boolean);
+  const rang=w=>{const s=w.e.k.spur,links=s.von==='links',auf=(oben?!links:links);return [links?0:1,auf?s.c:-s.c];};
+  gruppe.sort((u,v)=>{const a=rang(u),b=rang(v);return a[0]-b[0]||a[1]-b[1];});
+  const n=gruppe.length,i=Math.max(0,gruppe.findIndex(w=>w.x===d)),g=n>1?Math.max(5,Math.min(8,32/(n-1))):0,off=Math.round((i-(n-1)/2)*g*2)/2;
+  const sx=t.x+sp.s,cy=t.y+sp.c,L=K.x+off,ky=K.y,kn=oben?ky-Math.abs(off):ky+Math.abs(off);
+  const roh=[{x:E.x,y:E.y},{x:sx,y:E.y},{x:sx,y:cy},{x:L,y:cy},{x:L,y:kn},{x:K.x,y:ky}],pts=[];
+  for(const p of roh){const l=pts[pts.length-1];if(!l||Math.abs(l.x-p.x)>.01||Math.abs(l.y-p.y)>.01)pts.push(p);}
+  pts[0]=E;pts[pts.length-1]=K;   // Enden mit Kennung (wie pkt)
+  return E===A?pts:pts.slice().reverse();}
 function weg(S,d,dr){
   const a=pkt(S,d.a),b=pkt(S,d.b);if(!a||!b)return null;
+  {const vt=teilVon(S,d.a);if(vt&&vt.gross&&vt===teilVon(S,d.b)&&!(d.ecken&&d.ecken.length)){const v=vdWeg(S,d,dr);if(v)return v;}}
   if(d.ecken&&d.ecken.length){const pts=[a,...d.ecken],l=pts[pts.length-1];if(l.x!==b.x&&l.y!==b.y)pts.push({x:b.x,y:l.y});pts.push(b);return pts;}
   // Übung 6 (lweg): Teile schräg unter der Verteilerdose → erst waagerecht aus der Dose, dann senkrecht zum Gerät (wie in der Skizze des Lehrers)
   if(S.lweg){const A=teilVon(S,d.a),B=teilVon(S,d.b),ueber=A.x<B.x+B.b&&B.x<A.x+A.b;
@@ -1739,14 +1769,21 @@ const GB_DOSEN={
     falsch:'Diese Dose sitzt neben der Tür, 1,05 m hoch, und hier kommt die 4-adrige Leitung an – hier gehört der Lichtschalter hin.'}};
 const GERAETE={steckdose:'Steckdose',leuchte:'Leuchte',schalter:'Lichtschalter'};
 const A3=['gnge','blau','braun'],A4=['gnge','braun','schwarz','grau'];
-const ader=(pr,farben,lage)=>farben.map((f,i)=>({id:pr+f,dx:lage[i][0],dy:lage[i][1],rolle:'ader',farbe:f,txt:''}));
+// spur (nur Verteilerdose, Wunsch des Lehrers 23.11.2026 abends, siehe vdWeg): s = x des kurzen Stücks aus dem Kabel, c = Höhe der eigenen waagerechten
+// Bahn (beides relativ zur Dose), seite = über oder unter den Klemmen, von = Ader kommt von links oder rechts an die Klemmen.
+const ader=(pr,farben,lage,sp,seite,von)=>farben.map((f,i)=>({id:pr+f,dx:lage[i][0],dy:lage[i][1],rolle:'ader',farbe:f,txt:'',
+  spur:sp?{s:sp[i][0],c:sp[i][1],seite,von}:undefined}));
 function gaestebad(){
-  const VD={id:'VD',typ:'dose',name:'Verteilerdose',x:250,y:110,b:460,h:320,gross:true,
-    klemmen:[0,1,2,3,4].map(i=>({id:'k'+(i+1),dx:130+50*i,dy:160,rolle:'klemme',txt:''})).concat(
-      ader('z.',A3,[[70,30],[70,55],[70,80]]),ader('s.',A3,[[70,235],[70,260],[70,285]]),
-      ader('x.',A4,[[390,25],[390,45],[390,65],[390,85]]),ader('l.',A3,[[280,210],[310,220],[340,230]])),
-    kabel:[{pr:'z.',seite:'links',dx:0,dy:55,name:'Zuleitung (vom Stromkreisverteiler)'},{pr:'s.',seite:'links',dx:0,dy:260,name:'zur Steckdose'},
-      {pr:'x.',seite:'rechts',dx:460,dy:55,name:'zum Schalter (4-adrig)'},{pr:'l.',seite:'unten',dx:310,dy:320,name:'zur Leuchte'}]};
+  // Lage (seit 23.11.2026 abends): Klemmen in der Mitte (Höhe 200); darüber Zuleitung (links) und Schalterleitung (rechts), darunter Steckdose (links)
+  // und Leuchte (unten rechts, neben den Klemmen – nicht mehr darunter). Zwischen Ader-Enden und Klemmen je ein Band mit einer Bahn je Ader-Ende.
+  const VD={id:'VD',typ:'dose',name:'Verteilerdose',x:250,y:80,b:460,h:380,gross:true,
+    klemmen:[0,1,2,3,4].map(i=>({id:'k'+(i+1),dx:130+50*i,dy:200,rolle:'klemme',txt:''})).concat(
+      ader('z.',A3,[[70,32],[70,57],[70,82]],[[106,112],[96,128],[86,144]],'oben','links'),
+      ader('x.',A4,[[390,24],[390,46],[390,68],[390,90]],[[350,120],[358,136],[366,152],[374,160]],'oben','rechts'),
+      ader('s.',A3,[[70,286],[70,310],[70,334]],[[86,238],[96,254],[106,270]],'unten','links'),
+      ader('l.',A3,[[360,330],[380,330],[400,330]],[[360,262],[380,246],[400,230]],'unten','rechts')),
+    kabel:[{pr:'z.',seite:'links',dx:0,dy:57,name:'Zuleitung (vom Stromkreisverteiler)'},{pr:'s.',seite:'links',dx:0,dy:310,name:'zur Steckdose'},
+      {pr:'x.',seite:'rechts',dx:460,dy:57,name:'zum Schalter (4-adrig)'},{pr:'l.',seite:'unten',dx:380,dy:380,name:'zur Leuchte'}]};
   const udose=(id,name,farben,leitung)=>({id,typ:'udose',name,x:120,y:140,b:210,h:260,
     klemmen:ader('',farben,farben.length===4?[[170,80],[170,110],[170,140],[170,170]]:[[170,95],[170,130],[170,165]]),
     kabel:[{pr:'',seite:'oben',dx:90,dy:0,name:leitung}]});
@@ -2024,12 +2061,14 @@ inStage(ROH,()=>{
     else if(zl.id==='E'){const m=new T.Mesh(new T.BoxGeometry(.058,.07,.4),gbLampMat);m.position.set(2.941,1.985,1.7);g.add(m);}
     else{wb(M.white,.011,.08,.08,.006);if(zl.id==='S')wb(M.white,.006,.054,.054,.017);
       else{const c=new T.Mesh(new T.CylinderGeometry(.024,.024,.004,20),M.lightGray);c.rotation.z=Math.PI/2;c.position.set(zl.x+zl.nx*.019,zl.y,zl.z);g.add(c);}}
-    g.visible=false;addProp(g);zl.geraet=g;}});
+    g.visible=false;addProp(g);zl.geraet=g;
+    // Leitungsende aus der Dose (nur Steckdose, Leuchte, Schalter): sichtbar, bis das Gerät eingebaut ist
+    const ge=GEL.find(e=>({SD:'dose',E:'auslass',S:'schalter'})[zl.id]===e.k);zl.ende=ge?addProp(elEndeTeil(ge.f,ge.a,ge.y)):null;}});
 // fertiger Raum: Leuchtschicht über der Spiegelleuchte, sichtbar nur bei Licht EIN
 const gbGlow=new T.Mesh(new T.BoxGeometry(.062,.074,.404),gbLampMat);gbGlow.position.set(2.941,1.985,1.7);gbGlow.visible=false;gbGlow.userData.noShadow=true;
 inStage(FERTIG,()=>addProp(gbGlow));
 function gbAuffrischen(){const d=GB_OK.dosen,an=GB_LICHT&&GB_OK.alles;
-  for(const zl of GB_ZIELE){zl.ring.visible=!GB_OK.alles;zl.ring.material.color.copy(lin(d[zl.id]?0x2fae5c:0xe2854a));zl.geraet.visible=zl.id==='VD'?!!d.VD:!!GBST.geraet[zl.id];}
+  for(const zl of GB_ZIELE){zl.ring.visible=!GB_OK.alles;zl.ring.material.color.copy(lin(d[zl.id]?0x2fae5c:0xe2854a));zl.geraet.visible=zl.id==='VD'?!!d.VD:!!GBST.geraet[zl.id];if(zl.ende)zl.ende.visible=!zl.geraet.visible;}
   gbLampMat.emissive.setHex(an?0xffe2a8:0x000000);gbLampMat.emissiveIntensity=an?1.4:1;gbGlow.visible=an;
   if(an&&!GB_PL){GB_PL=new T.PointLight(lin(0xffe7c2),0,3.6,2);GB_PL.position.set(3.3,1.9,1.7);scene.add(GB_PL);} // erst beim ersten Einschalten (kein Licht ohne Not)
   if(GB_PL)GB_PL.intensity=an?(STAGE===2?.35:.7):0;
@@ -2747,7 +2786,7 @@ window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(
   leiter:()=>LEITER?LEITERN.indexOf(LEITER):-1,leitern:()=>LEITERN.map(L=>({x:L.x,zf:L.zf,d:L.d,y0:L.y0,y1:L.y1,oben:leiterZ(L,L.y1),unten:leiterZ(L,L.y0),auf:L.auf})),dachOben,
   hund:()=>({x:H.x,z:H.z,h:H.h,zu:H.zu,strecke:H.strecke,maxH:H.maxH,zustaende:[...H.zustaende],frei:hFrei(H.x,H.z,.1),teile:hWurzel}),
   schilder:()=>labels.map(l=>({text:l.userData.text,raum:l.userData.room,mask:l.userData.mask})),
-  gaestebad:()=>({stand:GBST,ok:GB_OK,licht:GB_LICHT,geraete:GB_ZIELE.map(z=>z.geraet.visible),ringe:GB_ZIELE.map(z=>z.ring.visible)}),gbZiel:()=>{const z=gbZiel();return z?z.id:null;},
+  gaestebad:()=>({stand:GBST,ok:GB_OK,licht:GB_LICHT,geraete:GB_ZIELE.map(z=>z.geraet.visible),ringe:GB_ZIELE.map(z=>z.ring.visible),enden:GB_ZIELE.map(z=>z.ende?z.ende.visible:null)}),gbZiel:()=>{const z=gbZiel();return z?z.id:null;},
   gbTreffer:(nx,ny)=>{const z=gbTreffer(nx,ny);return z?z.id:null;},gbAktion:id=>gbAktion(GB_ZIELE.find(z=>z.id===id)),vd:()=>VD_UI,offen:()=>infoOffen&&infoOffen.id,
   gbLoesung:()=>{const l=VERDRAHTEN.gbLoesung();GBST.geraet=l.geraet;GBST.dr=l.dr;gbGeaendert();return GB_OK.alles;},gbLeeren:()=>{GBST.geraet={SD:null,E:null,S:null};GBST.dr=[];GB_LICHT=false;gbGeaendert();},
   // Lernpaket (probe-lernpaket.mjs): Schnittstelle, Punkte, Licht schalten, Rücksprung, erkundete Orte, Auftrag sichern
@@ -2760,6 +2799,7 @@ window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(
     fahrt:FAHRT?{t:FAHRT.t,x:FAHRT.x,z:FAHRT.z,th:FAHRT.th,v:FAHRT.v,stoss:FAHRT.stoss,angekommen:FAHRT.angekommen,hilfe:FAHRT.hilfe,auto:!!FAHRT.auto,
       kante:DORF.KANTEN[FAHRT.nav.kante].join('-'),dir:FAHRT.nav.dir,route:FAHRT.route?FAHRT.route.knoten.slice():null,navi:FAHRT.navi.slice()}:null}),
   dlgWeiter:w=>dlgWeiter(w===undefined?-1:w),anreiseStart:()=>anreiseStart(),freiBegehen:()=>freiBegehen(),einsteigen:()=>{einsteigen();return !!FAHRT;},aussteigen:()=>{aussteigen();return !FAHRT;},
+  bild:()=>{camera.position.set(P.x,P.camY,P.z);camera.rotation.set(P.pitch,P.yaw,0);renderer.render(scene,camera);return true;},   // Prüfhilfe: genau ein Bild rechnen (Browser im Hintergrund)
   fahrtSetze:(x,zz,th)=>{if(!FAHRT)return false;const alt=FAHRT.th;Object.assign(FAHRT,{x,z:zz,th});wagenStellen(x,zz,th,false);P.yaw+=th-alt;sitzen(FAHRT);naviTakt();naviZeichnen();hud();return true;},   // Prüfhilfe (Bilder ohne laufende Schleife)
   autopilot:o=>{if(!FAHRT)return false;FAHRT.auto=o===false?null:Object.assign({linie:null,r:null},o||{});if(FAHRT.auto)FAHRT.auto.linie=autoLinie();return true;},
   fahrFrei:(x,zz,th)=>fahrFrei(x,zz,th||0),befahrbar:(x,zz)=>DORF.befahrbar(x,zz,0),route:(von,ueber)=>wegSuche(von,ueber,0),
