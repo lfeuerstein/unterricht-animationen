@@ -81,6 +81,19 @@
   #info figure svg{max-width:100%;height:auto}
   #info figcaption{font-size:13px;opacity:.7;margin-top:4px}
   #info .quelle{font-size:12.5px;opacity:.6;margin:6px 0 0}
+  /* Auswertung des Auftrags (Wunsch des Lehrers 23.11.2026 ~23:40) – im Start-/Pausenfenster aufklappbar, im Abschluss- und Feierabend-Fenster offen */
+  .ausw{width:100%;border-collapse:collapse;font-size:14.5px;margin:4px 0 12px}
+  .ausw th{text-align:left;font-weight:600;font-size:12px;letter-spacing:.6px;text-transform:uppercase;opacity:.65;padding:4px 10px 6px 0;border-bottom:1px solid rgba(255,255,255,.2)}
+  .ausw td{padding:5px 10px 5px 0;vertical-align:top;line-height:1.35;border-bottom:1px solid rgba(255,255,255,.08)}
+  #start .ausw td:first-child{white-space:normal;font-weight:400;color:inherit}
+  .ausw .p{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;padding-right:0}
+  .ausw .ja{color:#6fd08c;font-weight:800}
+  .ausw .nein{opacity:.5;font-weight:800}
+  .ausw tr.summe td{border-bottom:0;border-top:2px solid rgba(255,255,255,.32);font-weight:700;padding-top:8px}
+  .ausw-titel{margin:14px 0 2px;font-size:16px;font-weight:650;color:#f3b086}
+  .ausw-lp{font-size:14.5px}
+  #auswertung{margin:0 0 16px}
+  #auswertung summary{cursor:pointer;font-weight:650;color:#f3b086;padding:4px 0 8px;font-size:15.5px}
   #info .knoepfe{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
   #info button{font:600 16px "Segoe UI",system-ui,-apple-system,sans-serif;min-height:48px;padding:0 20px;border-radius:8px;border:1.5px solid rgba(255,255,255,.5);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;-webkit-appearance:none;appearance:none}
   #info button.haupt{background:#e2854a;border-color:#e2854a;color:#16110d}
@@ -156,7 +169,7 @@
   <div class="box">
     <h1>Rohbau-Begehung</h1>
     <p>Einfamilienhaus aus Poroton-Planziegeln. Das Dach ist gedeckt, die Fenster sind eingebaut, am Eingang hängt eine Bautür. Verputzt ist noch nichts. Im Keller liegt der Hausanschlussraum. In Küche und Gästebad lässt sich umschalten: Rohbau, Rohinstallation (was muss wohin?) und fertiger Raum. Im Gästebad wartet ein Auftrag: Steckdose, Leuchte und Schalter anschließen.</p>
-    <div id="auftragBox"><h2>Auftrag: Elektrik im Gästebad</h2><p id="auftragStand"></p><button type="button" class="haupt" id="bAuftrag">Auftrag beginnen</button><button type="button" id="bFrei">Auftrag ausblenden, frei begehen</button></div>
+    <div id="auftragBox"><h2>Auftrag: Elektrik im Gästebad</h2><p id="auftragStand"></p><details id="auswertung"><summary id="auswKopf">Auswertung</summary><div id="auswInhalt"></div></details><button type="button" class="haupt" id="bAuftrag">Auftrag beginnen</button><button type="button" id="bFrei">Auftrag ausblenden, frei begehen</button></div>
     <table class="t-only">
       <tr><td>Linke Hälfte</td><td>Finger auflegen und ziehen = gehen, weit ziehen = rennen</td></tr>
       <tr><td>Rechte Hälfte</td><td>wischen = umsehen</td></tr>
@@ -241,7 +254,7 @@ const rr=(a,b)=>a+(b-a)*rnd();
 const lin=h=>new T.Color(h).convertSRGBToLinear();
 // ---------------------------------------------------------------- Das gemeinsame Dorf (E:\#1_Schule\Claude Unterricht\_Dorf\dorf.js, eingesetzt von quelle.mjs → window.DORF)
 // =====================================================================================================================
-// Lernbaustellen-Dorf – gemeinsam für alle Haus-Spiele (Haus 1 Familie Neumann, Haus 2 Familie Eberle, später weitere). Version 1, 23.11.2026, Chat „M2AH (5)“.
+// Lernbaustellen-Dorf – gemeinsam für alle Haus-Spiele (Haus 1 Familie Neumann, Haus 2 Familie Heizler – bis 23.11.2026 „Eberle“, Schlüssel bleibt `eberle` –, später weitere). Version 1, 23.11.2026, Chat „M2AH (5)“.
 // Wunsch des Lehrers (23.11.2026): „… dass das Dorf immer gleich aussieht und der Schüler immer im selben Dorf herumfährt.“ Beschreibung: LIES-MICH.md.
 // 🔴 Nur HIER ändern. Jedes Spiel bettet diese Datei beim Bauen ein (Platzhalter /*__DORF__*/ in src.html, build.mjs) und lädt sie in probe.mjs vor dem Spiel.
 // Dorf-Koordinaten in Metern: x nach Osten, z nach SÜDEN (Norden = −z), Gelände y = GY. Ursprung = Nordwest-Ecke von Haus 2 (Familie Eberle).
@@ -271,7 +284,7 @@ const KANTEN=[['H','B'],['G0','B'],['B','J1'],['J1','Q1S'],['J1','J2'],['N0','J2
 // Ziele je Projekt: Knoten im Straßennetz, Parkplatz (rechte Fahrbahnseite, Front nach Osten) und Haus
 // Haus 1 (Neumann) liegt 8 m weiter südlich als Haus 2: die Rohbau-Begehung hat 19 m Vorplatz bis zur Straßenmitte (Baustelle x −9 … 19, z −13 … 17
 // um das Haus; Entscheidung des Lehrers 23.11.2026 ~17:10, eingetragen von Chat „Lernbaustelle“). Versatz der Begehung: x −64, z −8.
-const ZIELE={eberle:{knoten:'EB',x:2.9,z:-9.425,th:0,name:'Familie Eberle',haus:[0,0,11.99,10.173]},neumann:{knoten:'NM',x:69,z:-9.425,th:0,name:'Familie Neumann',haus:[64,8,74,16]}};
+const ZIELE={eberle:{knoten:'EB',x:2.9,z:-9.425,th:0,name:'Familie Heizler',haus:[0,0,11.99,10.173]},neumann:{knoten:'NM',x:69,z:-9.425,th:0,name:'Familie Neumann',haus:[64,8,74,16]}};
 const BAUPLAETZE=[{n:'Haus 3',x0:84,z0:-6.5,x1:100,z1:18,schild:[92,-5.8]},{n:'Haus 4',x0:-40,z0:-45,x1:-24,z1:-31,schild:[-32,-45.6]},{n:'Haus 5',x0:-92,z0:14,x1:-78,z1:28,schild:[-91.4,21]}];
 const imRechteck=(r,x,z,m)=>x>r.x0+m&&x<r.x1-m&&z>r.z0+m&&z<r.z1-m;
 // befahrbar: Punkt liegt auf Fahrbahn, Kreuzung, Platz oder im Wendehammer (m = Abstand zum Rand)
@@ -331,7 +344,7 @@ function bauen(a,projekt){
     fensterreihe('x',-.03,H[0]+.5,H[2]-.5,4,GY+1.1,1.3,1.3,-1);fensterreihe('x',-.03,H[0]+.5,H[2]-.5,4,GY+3.8,1.3,1.2,-1);fensterreihe('x',-.04,4.4,5.41,1,GY+.2,1.0,2.2,-1,F.tuer);
     solid(-4.05,GY,-6.62,3.9,GY+.6,-6.42,{c:0xb5ad9c,th:'umg2',ao:1});solid(5.9,GY,-6.62,16,GY+.6,-6.42,{c:0xb5ad9c,th:'umg2',ao:1});
     solid(16,GY,-6.5,16.5,GY+1.3,18.5,{c:F.hecke,th:'umg2',ao:1});solid(-4.05,GY,18,16,GY+1.3,18.5,{c:F.hecke,th:'umg2',ao:1});
-    stelle(['Haus 2','Familie Eberle'],5.75,GY+1.8,-.4,.09,{weit:25});}
+    stelle(['Haus 2','Familie Heizler'],5.75,GY+1.8,-.4,.09,{weit:25});}
   if(projekt!=='neumann'){const H=ZIELE.neumann.haus,P=0xc8785a,G=0x8a9096;   // Haus 1: Poroton-Rohbau mit Gerüst und Bauzaun (Platzhalter, bis die Rohbau-Begehung ihre Hülle liefert)
     const Z=H[1];   // Hausfront; Gerüst, Bauzaun und Schild beziehen sich darauf (Bauzaun wie in der Begehung: 12,7 m vor der Front, x −8,7 … 18,7)
     nachbarhaus(H[0],H[1],H[2],H[3],5.5,P,0x8f3f2c,true);fensterreihe('x',Z-.03,H[0]+.6,H[2]-.6,3,GY+1.0,1.2,1.3,-1,0x2a2420);fensterreihe('x',Z-.03,H[0]+.6,H[2]-.6,3,GY+3.7,1.2,1.2,-1,0x2a2420);
@@ -394,7 +407,7 @@ function bauen(a,projekt){
     for(const q of[[-150,25.5,1],[-138,26,1.1],[-127,24.8,.9],[-161.5,8,1],[-119,13,1.2],[-161,-2.5,.8]])baum(q[0],q[1],q[2]);}
   for(const z of[-6.6,-5.9])stelle(['Heizung · Sanitär · Klima','Dein Ausbildungsbetrieb'],-140.2,GY+2.25,z,.11,{weit:40,fg2:'#f3b086'});   // von der Straße und vom Hof lesbar
   stelle(['Büro'],-129.0,GY+2.65,5.6,.12,{weit:28});stelle(['Werkstatt'],-141.5,GY+3.45,5.6,.12,{weit:28});stelle(['Lager'],-151.2,GY+2.65,5.6,.12,{weit:28});
-  stelle(['Telefon'],-129.2,GY+1.08,12.58,.05,{weit:4});stelle(['Aufträge heute','Familie Eberle: neue Heizung'],-126.7,GY+2.45,14.9,.07,{weit:8,fg2:'#f3b086'});
+  stelle(['Telefon'],-129.2,GY+1.08,12.58,.05,{weit:4});stelle(['Aufträge heute','Familie Heizler: neue Heizung'],-126.7,GY+2.45,14.9,.07,{weit:8,fg2:'#f3b086'});
 }
 
 window.DORF={version:1,BT,STRASSEN,KREUZUNGEN,PLAETZE,UEBERGAENGE,KREISE,KNOTEN,KANTEN,ZIELE,BAUPLAETZE,befahrbar,strasseAn,bauen};
@@ -1028,17 +1041,20 @@ DORF.bauen({GY,F:DF,box:dbox,solid:dsolid,block:dblock,face:dface,flaeche:dflaec
   wall:dwall,fe:dfe,tu:dtu,tisch:dtisch,stuhl:dstuhl,stelle:dstelle,inBau:dinBau,GLAS:DB_G,rr:drr,rnd:drnd},'neumann');
 // Boden zum Gehen auf dem Grundstück des Betriebs (sonst trägt nur die Baustelle)
 dblock(BT.x0-1,GY-2,BT.z0-4,BT.x1+1,GY,BT.z1+1);
-// Deine Chefin: steht im Büro am Schreibtisch (Figur wie im Spiel „Haus Eberle“, ein festes Netz ohne Sonne)
+// Dein Chef: steht im Büro am Schreibtisch (Figur wie im Spiel „Haus Eberle“, ein festes Netz ohne Sonne). Wunsch des Lehrers 23.11.2026 ~23:35:
+// „Bitte wechsle die Chefin um in einen Chef.“ – kurzes Haar (kein langes Haar am Hinterkopf), Krawatte; Name intern weiter CHEFIN
 const CHEFIN={x:-129.7,z:13.75,dreh:Math.PI};   // Dorf-Koordinaten
-{const o={hose:0x2b2f3a,jacke:0x2f5f8f,haut:0xe9bf9d,haar:0x5a3a24,lang:true};
+{const o={hose:0x2b2f3a,jacke:0x2f5f8f,haut:0xe9bf9d,haar:0x3b3430,lang:false,krawatte:0x8e2a2a};
   const b=dLokal(true,()=>{dbox(-.17,0,-.09,-.03,.84,.09,{c:o.hose,ao:1});dbox(.03,0,-.09,.17,.84,.09,{c:o.hose,ao:1});dbox(-.18,0,-.1,-.02,.07,.16,{c:0x2a2a2a,ao:1});dbox(.02,0,-.1,.18,.07,.16,{c:0x2a2a2a,ao:1});
     dprim(new T.CylinderGeometry(.2,.23,.62,10),new T.Matrix4().makeTranslation(0,1.13,0),o.jacke,0,1);
     for(const s of[-1,1]){dzyl([s*.27,1.38,0],[s*.31,.84,.03],.055,o.jacke,0,8,1);dkugel([s*.31,.8,.03],.06,o.haut,0,1,1);}
     dzyl([0,1.42,0],[0,1.52,0],.06,o.haut,0,8,1);dkugel([0,1.62,0],.125,o.haut,0,1.1,1);dkugel([0,1.655,-.03],.132,o.haar,0,1,1);
-    dbox(-.12,1.42,-.15,.12,1.64,-.07,{c:o.haar,ao:1});dkugel([-.045,1.63,.118],.015,0x222222,0,1,1);dkugel([.045,1.63,.118],.015,0x222222,0,1,1);});
+    if(o.lang)dbox(-.12,1.42,-.15,.12,1.64,-.07,{c:o.haar,ao:1});
+    if(o.krawatte){dbox(-.035,1.36,.2,.035,1.43,.235,{c:o.krawatte,ao:1});dbox(-.028,1.08,.208,.028,1.37,.236,{c:o.krawatte,ao:1});}   // Knoten und Krawatte vorn auf der Jacke
+    dkugel([-.045,1.63,.118],.015,0x222222,0,1,1);dkugel([.045,1.63,.118],.015,0x222222,0,1,1);});
   const m=dNetz(b,DMAT_I),p=zuB(CHEFIN.x,CHEFIN.z);m.position.set(p[0],GY,p[1]);m.rotation.y=CHEFIN.dreh;
   dblock(CHEFIN.x-.22,GY,CHEFIN.z-.22,CHEFIN.x+.22,GY+1.7,CHEFIN.z+.22);
-  CHEFIN.schild=dstelle(['Deine Chefin'],CHEFIN.x,GY+2.0,CHEFIN.z,.105,{weit:15,fg2:'#f3b086'});}
+  CHEFIN.schild=dstelle(['Dein Chef'],CHEFIN.x,GY+2.0,CHEFIN.z,.105,{weit:15,fg2:'#f3b086'});}
 // Firmenwagen (Maße wie im Spiel „Haus Eberle“: vorn = +x, Mitte = 0, Boden = 0); innen offen: Scheiben nur von außen dunkel
 const FW={x:0,z:0,th:0,col:block(0,-100,0,0,-100,0),netz:null,schild:null};
 {const w=0xf2f2ee,dk=0x2c3a48,gr=0x3a3d42,o=(c,x)=>Object.assign({c,ao:1},x||{});
@@ -1533,7 +1549,7 @@ function vdWeg(S,d,dr){
 function weg(S,d,dr){
   const a=pkt(S,d.a),b=pkt(S,d.b);if(!a||!b)return null;
   {const vt=teilVon(S,d.a);if(vt&&vt.gross&&vt===teilVon(S,d.b)&&!(d.ecken&&d.ecken.length)){const v=vdWeg(S,d,dr);if(v)return v;}}
-  if(d.ecken&&d.ecken.length){const pts=[a,...d.ecken],l=pts[pts.length-1];if(l.x!==b.x&&l.y!==b.y)pts.push({x:b.x,y:l.y});pts.push(b);return pts;}
+  if(d.ecken&&d.ecken.length){const pts=[a,...d.ecken],l=pts[pts.length-1];if(l.x!==b.x&&l.y!==b.y)pts.push({x:b.x,y:l.y});pts.push(b);return sauber(pts);}
   // Übung 6 (lweg): Teile schräg unter der Verteilerdose → erst waagerecht aus der Dose, dann senkrecht zum Gerät (wie in der Skizze des Lehrers)
   if(S.lweg){const A=teilVon(S,d.a),B=teilVon(S,d.b),ueber=A.x<B.x+B.b&&B.x<A.x+A.b;
     if(!ueber&&A!==B){if(a.x===b.x||a.y===b.y)return [a,b];const o=a.y<b.y?a:b,u=o===a?b:a;return [a,{x:u.x,y:o.y},b];}}
@@ -1559,6 +1575,70 @@ function aufteilen(S,d,dr){const pts=weg(S,d,(dr||[]).concat([d]));if(!pts||pts.
   const out=[];for(let j=0;j+1<kette.length;j++){const A=kette[j],B=kette[j+1],e=ecken.filter(c=>c.s>A.s+1e-6&&c.s<B.s-1e-6).map(c=>({x:c.x,y:c.y}));
     out.push({a:A.id,b:B.id,farbe:d.farbe,ecken:e.length?e:null});}
   return out;}
+
+// Saubere Ecken (Wunsch des Lehrers 23.11.2026 ~23:30, Bild: braune Ader steht über die Ecke hinaus): „Wenn es einen Überstand gibt, dann wieder
+// korrigieren, dass es eine saubere Ecke gibt.“ – Doppelte Punkte und Punkte mitten auf einer Geraden fallen weg; läuft ein Weg über eine Ecke hinaus
+// und auf derselben Linie zurück (von Hand gesetzte Ecke zu weit), wird daraus eine saubere Ecke. Anfang und Ende (Klemmen) bleiben.
+const gleich=(p,q)=>Math.abs(p.x-q.x)<.01&&Math.abs(p.y-q.y)<.01;
+function sauber(pts){const r=[];
+  for(const q of pts){
+    if(r.length&&gleich(r[r.length-1],q)){if(q.id)r[r.length-1]=q;continue;}
+    while(r.length>=2){const a=r[r.length-2],b=r[r.length-1];
+      if((Math.abs(a.x-b.x)<.01&&Math.abs(b.x-q.x)<.01)||(Math.abs(a.y-b.y)<.01&&Math.abs(b.y-q.y)<.01))r.pop();else break;}
+    if(r.length&&gleich(r[r.length-1],q)){if(q.id)r[r.length-1]=q;continue;}
+    r.push(q);}
+  return r;}
+
+// Nie zwei Adern übereinander – in allen Leitungsplänen (Wunsch des Lehrers 23.11.2026 ~23:20, Bild: zwei grün-gelbe Adern auf einer Linie in die
+// Klemme): „Bitte bei allen Übungen überlappte Leitungen vermeiden. Die sollen dann leicht versetzt sein und dann zum Beispiel auf den schwarzen Punkt
+// mit 45 Grad anschließen, damit man den Versatz ausgleichen kann. Direkt an der Klemme darf auch immer ein kleines 45 Grad Stückchen zu sehen sein …
+// macht es generell bei allen Elektroleitungsplänen so.“
+// Nur fürs Zeichnen (Bewertung und „durch eine Klemme gezogen“ rechnen mit den Wegen aus weg()). linien: [{pts, fest}] – feste Linien (Zuleitung)
+// bleiben, wo sie sind. Läuft ein waagerechtes oder senkrechtes Stück einer Ader auf derselben Linie wie ein Stück einer anderen Ader (Abstand unter
+// 6 px, gemeinsame Länge über 1 px), rückt es um 8 px (16, 24 …) zur Seite – bevorzugt dorthin, woher die Ader kommt (weniger Kreuzungen). Die
+// Ecken wandern mit; am Anfang oder Ende (Klemme, Anschluss) gleicht ein 45°-Stück den Versatz aus. Früher gezogene Adern bleiben liegen.
+const ENT_G=8,ENT_MIN=6;
+function entflechte(linien){
+  const L=linien.map(l=>({pts:sauber(l.pts||[]),fest:!!l.fest}));
+  // je Linie ihre Stücke (null = schräges Stück, z. B. 45° der Baustellen-Dose: bleibt)
+  const SG=L.map((l,li)=>l.pts.slice(0,-1).map((a,i)=>{const b=l.pts[i+1],h=Math.abs(a.y-b.y)<.01,v=Math.abs(a.x-b.x)<.01;
+    return h===v?null:{li,i,h,c:h?a.y:a.x,o:0,fest:l.fest};}));
+  const alle=SG.flat().filter(Boolean);
+  const ver=s=>!s||!s.o?{x:0,y:0}:s.h?{x:0,y:s.o}:{x:s.o,y:0};
+  // Ecke i einer Linie mit den Versätzen beider anschließenden Stücke; Anfang und Ende bleiben
+  const punkt=(li,i)=>{const p=L[li].pts,sg=SG[li];if(i===0||i===p.length-1)return p[i];const a=ver(sg[i-1]),b=ver(sg[i]);return {x:p[i].x+a.x+b.x,y:p[i].y+a.y+b.y};};
+  const lage=(s,o)=>{const a=punkt(s.li,s.i),b=punkt(s.li,s.i+1);
+    return {c:s.c+(o===undefined?s.o:o),lo:Math.min(s.h?a.x:a.y,s.h?b.x:b.y),hi:Math.max(s.h?a.x:a.y,s.h?b.x:b.y)};};
+  const trifft=(s,ls,t)=>{if(t===s||t.li===s.li||t.h!==s.h)return false;const lt=lage(t);return Math.abs(lt.c-ls.c)<ENT_MIN&&Math.min(lt.hi,ls.hi)-Math.max(lt.lo,ls.lo)>1;};
+  const seite=s=>{const p=L[s.li].pts;let r=0;
+    if(s.i>0){const a=p[s.i-1],b=p[s.i];r+=Math.sign(s.h?a.y-b.y:a.x-b.x);}
+    if(s.i+2<p.length){const a=p[s.i+2],b=p[s.i+1];r+=Math.sign(s.h?a.y-b.y:a.x-b.x);}
+    return r<0?-1:1;};
+  const KS=[0,1,-1,2,-2,3,-3,4,-4];
+  // erster Versatz ohne Berührung mit den Stücken in „gegen“
+  const waehle=(s,gegen)=>{const p=seite(s);for(const k of KS){const o=k*p*ENT_G,ls=lage(s,o);if(!gegen.some(t=>trifft(s,ls,t)))return o;}return s.o;};
+  // 1. der Reihe nach: feste Linien, dann die Adern in der Reihenfolge, in der sie gezogen wurden
+  const gesetzt=alle.filter(s=>s.fest);
+  for(const s of alle)if(!s.fest){s.o=waehle(s,gesetzt);gesetzt.push(s);}
+  // 2. nachbessern: wandern Ecken mit, werden Nachbarstücke länger – liegt danach doch etwas übereinander, weicht die später gezogene Ader aus
+  for(let runde=0;runde<12;runde++){let neu=false;
+    for(const s of alle){if(s.fest)continue;const ls=lage(s);
+      const t=alle.find(t=>trifft(s,ls,t));if(!t||(!t.fest&&t.li>s.li))continue;   // die spätere Ader weicht aus
+      const o=waehle(s,alle.filter(u=>u!==s));if(o!==s.o){s.o=o;neu=true;}}
+    if(!neu)break;}
+  return L.map((l,li)=>{const p=l.pts,n=p.length,sg=SG[li];if(l.fest||n<2||sg.every(s=>!s||!s.o))return p;
+    // 45°-Stück am Anfang/Ende: vom Ende ein Stück ins Stück hinein und um den Versatz zur Seite – höchstens bis zur halben Stücklänge
+    const schraeg=(e,f,s)=>{const len=Math.abs(f.x-e.x)+Math.abs(f.y-e.y),o=Math.min(Math.abs(s.o),Math.max(1,len/2-1)),v=ver(s);
+      return {x:e.x+Math.sign(f.x-e.x)*o+v.x,y:e.y+Math.sign(f.y-e.y)*o+v.y};};
+    const out=[p[0]];
+    if(sg[0]&&sg[0].o)out.push(schraeg(p[0],p[1],sg[0]));
+    for(let i=1;i<n-1;i++)out.push(punkt(li,i));
+    if(sg[n-2]&&sg[n-2].o)out.push(schraeg(p[n-1],p[n-2],sg[n-2]));
+    out.push(p[n-1]);
+    return out.filter((q,i)=>!i||!gleich(q,out[i-1]));});}
+// Zuleitung einer Übung: von der Seite (oder von oben) bis an die Klemmen der Verteilerdose
+function zulLinien(S){const zt=S.zuleitung.teil,oben=S.zuleitung.seite==='oben',x0=S.zuleitung.seite==='rechts'?W-10:10;
+  return ['L','PE','N'].map(id=>{const p=pkt(S,zt.id+'.'+id);return {id,p,farbe:ZUL_FARBE[id],pts:[oben?{x:p.x,y:10}:{x:x0,y:p.y},p]};});}
 
 // ================================================================ Zeichnen und Bedienen
 const NS='http://www.w3.org/2000/svg';
@@ -1598,9 +1678,13 @@ function zeichneTeil(g,t,an,z,S){
     if(t.innen==='vh'){innen(g,t,K('p1'),cx-12,cy);innen(g,t,K('p2'),cx+12,cy);innen(g,t,K('pe'),cx,cy-28);}
     else{innen(g,t,K('p1'),cx-12,cy);innen(g,t,K('p2'),cx+12,cy);innen(g,t,K('pe'),cx+(cx>t.x+K('pe').dx?-28:28),cy);}
     dose230(g,cx,cy,an,t.innen==='vh');}
-  else if(t.typ==='leuchte'){const cx=t.x+t.sym.dx,cy=t.y+t.sym.dy,pe=K('pe');
-    innen(g,t,K('l'),cx,cy-22);innen(g,t,K('n'),cx,cy+22);innen(g,t,pe,cx+(cx>t.x+pe.dx?-22:22),cy);
-    lampe(g,cx,cy,an);}
+  else if(t.typ==='leuchte'){const cx=t.x+t.sym.dx,cy=t.y+t.sym.dy,pe=K('pe'),G=28;
+    // PE geht ans Gehäuse, nicht an die Lampe (Wunsch des Lehrers 23.11.2026 ~23:25: „Der PE geht ans Gehäuse, nicht an die Lampe.“) –
+    // Gehäuse gestrichelt um das Lampensymbol, PE endet am Gehäuse; L und N gehen durch das Gehäuse zur Lampe
+    innen(g,t,K('l'),cx,cy-22);innen(g,t,K('n'),cx,cy+22);innen(g,t,pe,cx+(cx>t.x+pe.dx?-G:G),cy);
+    lampe(g,cx,cy,an);
+    el('rect',{x:cx-G,y:cy-G,width:2*G,height:2*G,rx:4,fill:'none',stroke:'#444','stroke-width':1.8,'stroke-dasharray':'6 3.5'},g);
+    el('circle',{cx:cx+(cx>t.x+pe.dx?-G:G),cy,r:2.6,fill:'#444'},g);}
   else if(t.typ==='schalter'){const e=K('e'),a=K('a'),zu=z&&z.st[t.id],xl=t.x+Math.min(e.dx,a.dx),xr=t.x+Math.max(e.dx,a.dx);
     if(t.form==='links'){const x=t.x+e.dx,y1=t.y+Math.min(e.dy,a.dy),y2=t.y+Math.max(e.dy,a.dy),xs=t.x+95,p=y1+22,c=y2-22;
       // beide Anschlüsse links untereinander; Schaltglied senkrecht rechts davon
@@ -1710,15 +1794,17 @@ function uebungen(wurzel,opt){
       if(t.typ==='schalter'){const r=el('rect',{x:t.x+4,y:t.y+4,width:t.b-8,height:t.h-8,fill:'#000','fill-opacity':0,style:'cursor:pointer'},g);
         r.addEventListener('click',ev=>{ev.stopPropagation();if(z.wahl){ecke(ev);return;}schalte(t.id);});}}
     // Zuleitung von der Seite bis an ihre Klemmen (schwarze Punkte) – nach den Kästen gezeichnet, sonst deckt der weiße Kasten sie ab (Wunsch 23.11.2026)
-    const zt=S.zuleitung.teil,re=S.zuleitung.seite==='rechts',x0=re?W-10:10;let ymin=Infinity,xmin=Infinity;
+    const zt=S.zuleitung.teil,re=S.zuleitung.seite==='rechts',x0=re?W-10:10,zul=zulLinien(S);let ymin=Infinity,xmin=Infinity;
     if(S.zuleitung.seite==='oben'){const y0=10;   // Übung 6: Netz kommt „von hinten“ – im Bild von oben
-      for(const id of ['L','PE','N']){const p=pkt(S,zt.id+'.'+id);xmin=Math.min(xmin,p.x);aderLinie(g,[{x:p.x,y:y0},p],ZUL_FARBE[id]);
-        if(z.beschr)tx(g,p.x+6,y0+14,id,{'font-size':12,'font-weight':700,fill:'#555'});}
+      for(const l of zul){const p=l.p;xmin=Math.min(xmin,p.x);aderLinie(g,l.pts,l.farbe);
+        if(z.beschr)tx(g,p.x+6,y0+14,l.id,{'font-size':12,'font-weight':700,fill:'#555'});}
       tx(g,xmin-12,y0+14,'Zuleitung (Netz)',{'font-size':13,'font-weight':600,fill:'#555','text-anchor':'end'});}
-    else{for(const id of ['L','PE','N']){const p=pkt(S,zt.id+'.'+id);ymin=Math.min(ymin,p.y);aderLinie(g,[{x:x0,y:p.y},p],ZUL_FARBE[id]);
-        if(z.beschr)tx(g,re?x0-2:x0+2,p.y-8,id,{'font-size':12,'font-weight':700,fill:'#555','text-anchor':re?'end':'start'});}
+    else{for(const l of zul){const p=l.p;ymin=Math.min(ymin,p.y);aderLinie(g,l.pts,l.farbe);
+        if(z.beschr)tx(g,re?x0-2:x0+2,p.y-8,l.id,{'font-size':12,'font-weight':700,fill:'#555','text-anchor':re?'end':'start'});}
       tx(g,x0,Math.min(ymin-28,zt.y-9),'Zuleitung',{'font-size':13,'font-weight':600,fill:'#555','text-anchor':re?'end':'start'});}
-    z.dr.forEach((d,i)=>{const pts=weg(S,d,z.dr);if(!pts)return;const gr=el('g',{style:'cursor:pointer'},g);
+    // nie zwei Adern übereinander (Zuleitung bleibt fest, früher gezogene Adern bleiben liegen)
+    const ent=entflechte(zul.map(l=>({pts:l.pts,fest:true})).concat(z.dr.map(d=>({pts:weg(S,d,z.dr)||[]})))).slice(zul.length);
+    z.dr.forEach((d,i)=>{const pts=ent[i];if(!pts||pts.length<2)return;const gr=el('g',{style:'cursor:pointer'},g);
       el('path',{d:pfad(pts),fill:'none',stroke:'#000','stroke-opacity':0,'stroke-width':18},gr);aderLinie(gr,pts,d.farbe);
       gr.addEventListener('click',ev=>{ev.stopPropagation();if(z.wahl){ecke(ev);return;}z.dr.splice(i,1);z.pruef=false;zeichne();});});
     for(const t of S.teile)for(const k of t.klemmen){const id=t.id+'.'+k.id,p=pkt(S,id),gew=z.wahl===id,dose=t.typ==='dose'||k.rolle==='durch',s=el('g',{style:'cursor:pointer'},g);
@@ -1875,7 +1961,8 @@ function dose(wurzel,opt){
     const gb=gbBewerte(zst),licht=gb.alles&&netz(GB,zst.dr,{S:1}).last;
     for(const t of teile){if(t.typ==='dose'||t.typ==='udose')zeichneDose(g,t);else zeichneTeil(g,t,!!(licht&&licht[t.id]),{st:{S:1}},S);}
     const eigene=zst.dr.filter(d=>meine(d.a)&&meine(d.b));
-    eigene.forEach(d=>{const pts=weg(S,d,eigene);if(!pts)return;const gr=el('g',{style:'cursor:pointer'},g);
+    const ent=entflechte(eigene.map(d=>({pts:weg(S,d,eigene)||[]})));   // nie zwei Adern übereinander
+    eigene.forEach((d,i)=>{const pts=ent[i];if(!pts||pts.length<2)return;const gr=el('g',{style:'cursor:pointer'},g);
       el('path',{d:pfad(pts),fill:'none',stroke:'#000','stroke-opacity':0,'stroke-width':18},gr);aderLinie(gr,pts,d.farbe);
       gr.addEventListener('click',ev=>{ev.stopPropagation();zst.dr=zst.dr.filter(x=>x!==d);geaendert();});});
     for(const t of teile)for(const k of t.klemmen){const pid=t.id+'.'+k.id,p=pkt(GB,pid),gew=z.wahl===pid,s=el('g',{style:'cursor:pointer'},g);
@@ -1918,7 +2005,7 @@ function gbLoesung(){const v=(a,b)=>({a,b,farbe:pkt(GB,a).k.farbe,ecken:null}),d
   v('Sd.braun','S.e'),v('Sd.schwarz','S.a')];
   return {geraet:{SD:'steckdose',E:'leuchte',S:'schalter'},dr};}
 
-return {W,H,FARBEN,ADERN,L_FARBEN,UEB,VARIANTEN,uebung,netz,bewerte,weg,aufteilen,pkt,loesungVon,uebungen,
+return {W,H,FARBEN,ADERN,L_FARBEN,UEB,VARIANTEN,uebung,netz,bewerte,weg,aufteilen,pkt,loesungVon,uebungen,entflechte,sauber,zulLinien,
   GB,GB_DOSEN,neuerStand,gbDosen,gbBewerte,gbLicht,gbLoesung,doseHinweise,dose};
 })();
 
@@ -2030,18 +2117,19 @@ const GB_KEY='rohbau-begehung-gaestebad-v1',AUFTRAG_KEY='rohbau-begehung-auftrag
 let GBST=VERDRAHTEN.neuerStand(),GB_LICHT=false,VD_UI=null,GB_PL=null;
 // anreise (Auslieferung B): 0 im Betrieb (zur Chefin), 1 Auftrag erhalten (zum Firmenwagen), 2 Fahrt, 3 an der Baustelle angekommen.
 // Spielstände von Revision 11 (ohne anreise) mit begonnenem Auftrag gelten als angekommen – niemand muss zurück in den Betrieb.
-const AUF={an:false,schritt:0,geloest:[],anreise:0,rueck:0};   // rueck (Rückfahrt, Wunsch 23.11.2026 abends): 1 zum Wagen vor dem Tor, 2 Fahrt, 3 im Hof → zur Chefin, 4 Feierabend   // an: Auftrag läuft in dieser Sitzung (sonst „frei begehen“)
+const AUF={an:false,schritt:0,geloest:[],anreise:0,rueck:0,fertig:0};   // fertig: Zeitpunkt „Auftrag erledigt“ (ms, für die Auswertung) · rueck (Rückfahrt, Wunsch 23.11.2026 abends): 1 zum Wagen vor dem Tor, 2 Fahrt, 3 im Hof → zur Chefin, 4 Feierabend   // an: Auftrag läuft in dieser Sitzung (sonst „frei begehen“)
 try{const s=JSON.parse(LP.lies(GB_KEY)||'null');if(s&&s.geraet&&Array.isArray(s.dr)){Object.assign(GBST.geraet,s.geraet);GBST.dr=s.dr;GB_LICHT=!!s.licht;}}catch(_){}
 // Übungsnummern: Spielstände ohne uebv (Revision 11 und älter) kennen die neue Übung 4 (ohne Steckdose) noch nicht – alte Übung 4 (mit Steckdose)
 // ist jetzt Übung 5, wer sie gelöst hat, bekommt die leichtere neue Übung 4 gutgeschrieben; alte Übung 5 ist jetzt Übung 6.
 const UEBV=2,uebNeu=s=>(Array.isArray(s.geloest)?s.geloest:[]).flatMap(n=>s.uebv===UEBV||n<3?[n]:n===3?[3,4]:[n+1]);
 try{const s=JSON.parse(LP.lies(AUFTRAG_KEY)||'null');if(s){AUF.schritt=Math.max(0,Math.min(4,s.schritt|0));AUF.geloest=[...new Set(uebNeu(s))].filter(n=>n>=0&&n<VERDRAHTEN.UEB.length);
   AUF.anreise=typeof s.anreise==='number'?Math.max(0,Math.min(3,s.anreise|0)):(AUF.schritt>0||AUF.geloest.length?3:0);if(AUF.anreise===2)AUF.anreise=1;
-  AUF.rueck=typeof s.rueck==='number'?Math.max(0,Math.min(4,s.rueck|0)):(AUF.schritt>=4?4:0);if(AUF.rueck===2)AUF.rueck=1;}}catch(_){}   // ältere Stände: erledigt = Feierabend; mitten in der Rückfahrt neu geladen: wieder am Wagen   // mitten in der Fahrt neu geladen: wieder am Wagen
+  AUF.rueck=typeof s.rueck==='number'?Math.max(0,Math.min(4,s.rueck|0)):(AUF.schritt>=4?4:0);if(AUF.rueck===2)AUF.rueck=1;
+  AUF.fertig=typeof s.fertig==='number'&&s.fertig>0&&AUF.schritt>=4?s.fertig:0;}}catch(_){}   // ältere Stände: erledigt = Feierabend; mitten in der Rückfahrt neu geladen: wieder am Wagen   // mitten in der Fahrt neu geladen: wieder am Wagen
 let GB_OK=VERDRAHTEN.gbBewerte(GBST);
 punkteMelden();   // Lernpaket: Stand aus Moodle geladen – Punkte nachmelden, falls die letzte Meldung nicht ankam
 function sichereGB(){LP.setze(GB_KEY,JSON.stringify({geraet:GBST.geraet,dr:GBST.dr,licht:GB_LICHT}));punkteMelden();}
-function sichereAuftrag(){LP.setze(AUFTRAG_KEY,JSON.stringify({schritt:AUF.schritt,geloest:AUF.geloest,anreise:AUF.anreise,uebv:UEBV,rueck:AUF.rueck}));punkteMelden();}
+function sichereAuftrag(){LP.setze(AUFTRAG_KEY,JSON.stringify({schritt:AUF.schritt,geloest:AUF.geloest,anreise:AUF.anreise,uebv:UEBV,rueck:AUF.rueck,fertig:AUF.fertig||0}));punkteMelden();}
 // Punkte fürs Lernpaket (nur in Moodle wirksam): 10 je gelöste Übung, 30 alle Dosen richtig, 10 Licht an (oder Auftrag erledigt)
 function punkteJetzt(){return 10*AUF.geloest.length+(GB_OK&&GB_OK.alles?30:0)+((GB_LICHT&&GB_OK&&GB_OK.alles)||AUF.schritt>=4?10:0);}
 function punkteMelden(){if(LP.an)LP.punkte(punkteJetzt());}
@@ -2094,7 +2182,9 @@ function gbAktKnopf(){if(actKind.startsWith('dose:')){gbAktion(GB_ZIELE.find(z=>
 function gbAktion(zl){if(!zl)return false;
   if(zl.id==='S'&&GB_OK.alles){gbSchalten();return true;}
   if(STAGE!==1)return false;
-  if(AUF.an&&AUF.schritt<2){melde('Erst üben: Löse die Übungen 1 bis 6 („Verdrahten üben“).');return true;}
+  // Erst üben – auch beim „frei begehen“ (Wunsch des Lehrers 23.11.2026 abends: dort ließ sich das Bad ohne Übungen anschließen, das Licht brannte,
+  // die Übungen waren nicht abgehakt und Moodle zählte schon 40 Punkte). Im Auftrag gilt wie bisher der Schritt (ältere Spielstände bleiben gleich).
+  if(AUF.an?AUF.schritt<2:!VERDRAHTEN.UEB.every((_,n)=>AUF.geloest.includes(n))){melde('Erst üben: Löse die Übungen 1 bis 6 („Verdrahten üben“).');return true;}
   oeffneVerdrahten('dose',zl.id);return true;}
 // Fenster über der Simulation (wie die Stationen): Übungen oder eine Dose
 function oeffneVerdrahten(art,id){if(infoOffen)return;infoOffen={id:'verdrahten'};running=false;for(const k in keys)keys[k]=false;releaseTouch();
@@ -2109,10 +2199,10 @@ function oeffneVerdrahten(art,id){if(infoOffen)return;infoOffen={id:'verdrahten'
 const SCHRITTE=['Geh ins Gästebad: Erdgeschoss, rechts hinter dem Eingang.','Übe zuerst das Verdrahten: Übungen 1 bis 6.',
   'Klemme die vier Dosen im Gästebad an – tippe sie an.','Schalte das Licht über dem Spiegel am Schalter neben der Tür ein.','Auftrag erledigt – das Gästebad ist angeschlossen.'];
 // Anreise (Auslieferung B): Betrieb → Chefin → Firmenwagen → Fahrt nach Navi; erst danach die Schritte an der Baustelle
-const ANREISE_TEXT=['Geh ins Büro zu deiner Chefin.','Steig in den Firmenwagen im Hof.','Fahr nach Navi zur Baustelle von Familie Neumann.'];
+const ANREISE_TEXT=['Geh ins Büro zu deinem Chef.','Steig in den Firmenwagen im Hof.','Fahr nach Navi zur Baustelle von Familie Neumann.'];
 // Rückfahrt (Wunsch des Lehrers 23.11.2026 abends: „Jetzt ist der Auftrag abgeschlossen, aber es ist nicht zu erkennen, wie es jetzt weitergeht.
 // Eventuell wieder zurückfahren mit dem Auto zur Firma.“): nach dem Licht zurück zum Firmenwagen, nach Navi in den Betrieb, bei der Chefin melden
-const RUECK_TEXT=['','Fahr mit dem Firmenwagen zurück in den Betrieb – er steht vor dem Tor der Baustelle.','Fahr nach Navi zurück in den Betrieb.','Melde dich im Büro bei deiner Chefin.','Auftrag abgeschlossen – Feierabend!'];
+const RUECK_TEXT=['','Fahr mit dem Firmenwagen zurück in den Betrieb – er steht vor dem Tor der Baustelle.','Fahr nach Navi zurück in den Betrieb.','Melde dich im Büro bei deinem Chef.','Auftrag abgeschlossen – Feierabend!'];
 function auftragText(){if(AUF.anreise>=3&&AUF.schritt>=4&&AUF.rueck>=1)return RUECK_TEXT[Math.min(4,AUF.rueck)];if(AUF.anreise<3)return AUF.anreise===0&&!BETRIEB.gerufen?'Du bist in der Werkstatt deines Betriebs – sieh dich ruhig um.':ANREISE_TEXT[AUF.anreise];
   let t=SCHRITTE[AUF.schritt];const ohnePunkt=t.replace(/[.]$/,'');if(AUF.schritt===1)t=ohnePunkt+' ('+AUF.geloest.length+' von '+VERDRAHTEN.UEB.length+' gelöst).';
   if(AUF.schritt===2){const n=['VD','SD','E','S'].filter(id=>GB_OK.dosen[id]).length;
@@ -2125,7 +2215,7 @@ function auftragWeiter(w){const el=$('auftrag');if(!AUF.an){if(aufGezeigt){aufGe
   if(AUF.schritt===0&&w[1]==='Gästebad'){AUF.schritt=1;if(STAGE!==1)setStage(1);melde('Rohinstallation: Die Leitungen liegen schon – jetzt wird angeschlossen.');}
   if(AUF.schritt===1&&VERDRAHTEN.UEB.every((_,n)=>AUF.geloest.includes(n)))AUF.schritt=2;
   if(AUF.schritt===2&&GB_OK.alles)AUF.schritt=3;
-  if(AUF.schritt===3&&GB_LICHT&&GB_OK.alles){AUF.schritt=4;AUF.rueck=1;zeigeAbschluss();}
+  if(AUF.schritt===3&&GB_LICHT&&GB_OK.alles){AUF.schritt=4;AUF.rueck=1;AUF.fertig=Date.now();zeigeAbschluss();}
   if(AUF.schritt!==vor)sichereAuftrag();
   const t=(AUF.schritt<4||AUF.rueck<4?'<small>Nächster Schritt</small>':'<small>Auftrag</small>')+auftragText();
   if(t!==aufGezeigt){aufGezeigt=t;el.innerHTML=t;el.style.display='block';}}
@@ -2135,24 +2225,42 @@ function zeigeAbschluss(){if(infoOffen)return;infoOffen={id:'abschluss'};running
   elInfoBox.innerHTML='<p class="unter">Auftrag erledigt</p><h2>Elektrik im Gästebad</h2>'+
     '<p><b>'+CHEFIN_HANDY+':</b> „'+ABSCHLUSS_SATZ+' '+RUECK_SATZ+'“</p>'+
     '<p>Du hast sechs Übungen gelöst und die Verteilerdose, die Steckdose, die Leuchte und den Schalter richtig angeklemmt.</p>'+
-    (LP.an?'<p><b>'+LP.best()+' von 100 Punkten</b> – in Moodle eingetragen.</p>':'')+
+    '<h3 class="ausw-titel">Deine Auswertung</h3>'+auswertungHtml()+
     '<div class="knoepfe"><button type="button" class="haupt" data-a="zu">Weiter</button></div>';
-  elInfo.style.display='flex';tonZeile({wer:CHEFIN_HANDY,text:RUECK_SATZ},[tonSchluessel('chefin',tonText({text:ABSCHLUSS_SATZ}))]);}
+  elInfo.style.display='flex';tonZeile({wer:CHEFIN_HANDY,text:RUECK_SATZ},[tonSchluessel('chef',tonText({text:ABSCHLUSS_SATZ}))]);}
 // Ende der Rückfahrt: bei der Chefin gemeldet → Feierabend
 function zeigeFeierabend(){if(infoOffen)return;infoOffen={id:'feierabend'};haltAn();elInfo.classList.remove('test');elInfo.classList.remove('vdraht');
   elInfoBox.innerHTML='<p class="unter">Auftrag abgeschlossen</p><h2>Feierabend</h2>'+
     '<p>Du hast das Gästebad bei Familie Neumann angeschlossen und bist mit dem Firmenwagen zurück in den Betrieb gefahren.</p>'+
-    (LP.an?'<p><b>'+LP.best()+' von 100 Punkten</b> – in Moodle eingetragen.</p>':'')+
-    '<p>Über „Pause“ kannst du den Auftrag noch einmal von vorn beginnen oder die Baustelle frei begehen.</p>'+
+    '<h3 class="ausw-titel">Deine Auswertung</h3>'+auswertungHtml()+
+    '<p>Die Auswertung findest du jederzeit wieder unter „Pause“. Dort kannst du den Auftrag auch noch einmal von vorn beginnen oder die Baustelle frei begehen.</p>'+
     '<div class="knoepfe"><button type="button" class="haupt" data-a="zu">Weiter</button></div>';
   elInfo.style.display='flex';}
+// Auswertung des Auftrags (Wunsch des Lehrers 23.11.2026 ~23:40: „Ich sehe nicht meine Bewertungen. kannst du es jetzt so machen, dass man eben
+// irgendwo übersichtlich dann sieht, wie man … diesen Auftrag abgeschlossen hat.“) – Tabelle je Teil des Auftrags mit Stand und Punkten (wie
+// punkteJetzt: je Übung 10, alle Dosen richtig 30, Licht 10), Summe, Zeitpunkt „erledigt am“ und – im Lernpaket – der beste Stand in Moodle.
+// Steht im Start-/Pausenfenster (aufklappbar), im Abschlussfenster und im Fenster „Feierabend“.
+const GB_NAMEN={VD:'Verteilerdose',SD:'Steckdose',E:'Leuchte',S:'Schalter'};
+const datumZeit=t=>{const d=new Date(t);return d.toLocaleDateString('de-DE')+', '+d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' Uhr';};
+function auswertungHtml(){const zeilen=[],ids=['VD','SD','E','S'];
+  const z=(teil,stand,ok,p,max)=>zeilen.push('<tr><td>'+teil+'</td><td>'+(ok?'<span class="ja">✓</span> ':'<span class="nein">–</span> ')+stand+'</td><td class="p">'+(max?p+' / '+max:'')+'</td></tr>');
+  VERDRAHTEN.UEB.forEach((u,n)=>{const ok=AUF.geloest.includes(n);z(u.titel,ok?'gelöst':'offen',ok,ok?10:0,10);});
+  const d=ids.filter(id=>GB_OK.dosen[id]).length;
+  z('Dosen im Gästebad anklemmen ('+ids.map(id=>GB_NAMEN[id]).join(', ')+')',GB_OK.alles?'alle 4 richtig':d+' von 4 angeklemmt',GB_OK.alles,GB_OK.alles?30:0,30);
+  const licht=(GB_LICHT&&GB_OK.alles)||AUF.schritt>=4;z('Licht über dem Spiegel eingeschaltet',licht?'brennt':'noch nicht',licht,licht?10:0,10);
+  z('Mit dem Firmenwagen zurück, beim Chef gemeldet',AUF.rueck>=4?'Feierabend':'noch nicht',AUF.rueck>=4,0,0);
+  return '<table class="ausw"><tr><th>Teil des Auftrags</th><th>Stand</th><th class="p">Punkte</th></tr>'+zeilen.join('')+
+    '<tr class="summe"><td>Summe</td><td>'+(AUF.fertig?'erledigt am '+datumZeit(AUF.fertig):'')+'</td><td class="p">'+punkteJetzt()+' / 100</td></tr></table>'+
+    (LP.an?'<p class="ausw-lp">In Moodle eingetragen (bester Stand): <b>'+LP.best()+' von 100 Punkten</b>.</p>':'');}
 function auftragBoxAuffrischen(){const neu=AUF.schritt===0&&!AUF.geloest.length&&AUF.anreise===0;
-  $('auftragStand').textContent=neu?'Du startest in deinem Ausbildungsbetrieb: Deine Chefin gibt dir den Auftrag, dann fährst du den Firmenwagen selbst nach Navi zur Baustelle von Familie Neumann. Dort schließt du im Gästebad Steckdose, Leuchte und Schalter an – die Leitungen sind schon verlegt.'
+  const aw=$('auswertung');aw.style.display=neu&&!GB_OK.alles?'none':'';
+  $('auswKopf').textContent='Auswertung: '+punkteJetzt()+' von 100 Punkten'+(AUF.rueck>=4?' – Auftrag abgeschlossen':'');$('auswInhalt').innerHTML=auswertungHtml();
+  $('auftragStand').textContent=neu?'Du startest in deinem Ausbildungsbetrieb: Dein Chef gibt dir den Auftrag, dann fährst du den Firmenwagen selbst nach Navi zur Baustelle von Familie Neumann. Dort schließt du im Gästebad Steckdose, Leuchte und Schalter an – die Leitungen sind schon verlegt.'
     :AUF.schritt>=4&&AUF.rueck>=4?'Erledigt – Feierabend. Du kannst den Auftrag noch einmal von vorn machen.':'Begonnen. Nächster Schritt: '+auftragText();
   if(LP.an)$('auftragStand').textContent+=' Punkte in Moodle: '+LP.best()+' von 100.';
   $('bAuftrag').textContent=AUF.schritt>=4&&AUF.rueck>=4?'Auftrag neu beginnen':neu?'Auftrag beginnen':'Auftrag fortsetzen';$('bFrei').style.display=AUF.an?'':'none';}
 $('bAuftrag').addEventListener('click',e=>{if(e&&e.stopPropagation)e.stopPropagation();
-  if(AUF.schritt>=4&&AUF.rueck>=4){AUF.schritt=0;AUF.geloest=[];AUF.anreise=0;AUF.rueck=0;BETRIEB.t=0;BETRIEB.gerufen=false;GBST=VERDRAHTEN.neuerStand();GB_LICHT=false;gbGeaendert();sichereAuftrag();}
+  if(AUF.schritt>=4&&AUF.rueck>=4){AUF.schritt=0;AUF.geloest=[];AUF.anreise=0;AUF.rueck=0;AUF.fertig=0;BETRIEB.t=0;BETRIEB.gerufen=false;GBST=VERDRAHTEN.neuerStand();GB_LICHT=false;gbGeaendert();sichereAuftrag();}
   AUF.an=true;aufGezeigt='';anreiseStart();betreten();});
 $('bFrei').addEventListener('click',e=>{if(e&&e.stopPropagation)e.stopPropagation();AUF.an=false;freiBegehen();auftragWeiter(whereAmI());betreten();});
 auftragBoxAuffrischen();
@@ -2277,7 +2385,7 @@ function drawMap(){const g=mapCtx,s=12,ox=-1.5,oz=-1.5,ya=P.feet+.5,yb=P.feet+1.
   const px=(P.x-ox)*s,pz=(P.z-oz)*s,fx=-Math.sin(P.yaw),fz=-Math.cos(P.yaw);
   g.fillStyle='#fff';g.beginPath();g.moveTo(px+fx*8,pz+fz*8);g.lineTo(px-fx*4-fz*4.5,pz-fz*4+fx*4.5);g.lineTo(px-fx*4+fz*4.5,pz-fz*4-fx*4.5);g.closePath();g.fill();}
 let dachGemeldet=false;
-const BETRIEB_AKT={chefin:['Mit deiner Chefin sprechen','Sprechen'],einsteigen:['In den Firmenwagen einsteigen','Einsteigen'],aussteigen:['Aussteigen','Aussteigen'],navi:['Das Navi fährt für dich','Navi fährt für dich']};
+const BETRIEB_AKT={chefin:['Mit deinem Chef sprechen','Sprechen'],einsteigen:['In den Firmenwagen einsteigen','Einsteigen'],aussteigen:['Aussteigen','Aussteigen'],navi:['Das Navi fährt für dich','Navi fährt für dich']};
 function hud(){const w=whereAmI(),key=w[0]+w[1]+STAGE;erkunde(w);if(key!==lastRoom){lastRoom=key;
     elRoom.innerHTML=w[2]?'<small>'+(w[0]?FLOOR[w[0]]:FAHRT?'Im Firmenwagen':'Lerndorf')+'</small>'+w[1]:'<small>'+(w[0]?FLOOR[w[0]]+' · ':'')+'Ausbau: '+STAGE_NAMES[STAGE]+'</small>'+w[1];}
   if(w[1]==='Auf dem Dach'&&!dachGemeldet){dachGemeldet=true;melde('Auf dem Dach – auf echten Baustellen nur mit Absturzsicherung!');}
@@ -2554,7 +2662,7 @@ hund(0);
 // für gleiche Sätze). Fahren und Navi rechnen in Dorf-Koordinaten (wie dorf.js), P und alles Gezeichnete liegen in Koordinaten der Begehung (zuB).
 // =====================================================================================================================
 // ---------------------------------------------------------------- Ton: ton/<schlüssel>.mp3 neben der Begehung, schlüssel = FNV-1a über „rolle|text“ (wie Haus Eberle)
-const TON_ROLLEN=[[/^Deine Chefin/,'chefin'],[/^Navi/,'navi'],[/^Du$/,'du']];
+const TON_ROLLEN=[[/^Dein Chef/,'chef'],[/^Navi/,'navi'],[/^Du$/,'du']];
 const tonRolle=wer=>{for(const[m,r]of TON_ROLLEN)if(m.test(wer||''))return r;return'erzaehler';};
 const tonText=q=>String(q.text||String(q.html||'').replace(/<\/(li|p|div|h\d|tr)>/gi,'. ').replace(/<br\s*\/?>/gi,' ').replace(/<[^>]+>/g,' '))
   .replace(/&nbsp;/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/\s+/g,' ')
@@ -2598,7 +2706,7 @@ function dlgWeiter(w){if(!DLG)return;const q=DLG.z[DLG.i];
   const e=DLG.ende,vor=TON.vor;TON.vor=null;DLG=null;elDlg.style.display='none';if(vor)tonSpiele(vor);else tonStopp();if(e)e();weiter();hud();}
 elDlg.addEventListener('click',e=>{const b=e.target&&e.target.closest?e.target.closest('button[data-w]'):null;if(b)dlgWeiter(+b.dataset.w);});
 // ---------------------------------------------------------------- Betrieb und Chefin (Sätze wie im Plan, vom Lehrer bestätigt „Ja, so vertonen“, 23.11.2026)
-const CHEFIN_DA='Deine Chefin',CHEFIN_HANDY='Deine Chefin (Handy)',zl=(wer,text)=>({wer,text});
+const CHEFIN_DA='Dein Chef',CHEFIN_HANDY='Dein Chef (Handy)',zl=(wer,text)=>({wer,text});
 const D_RUF=()=>[{wer:CHEFIN_DA,text:'Kommst du bitte mal ins Büro?',wahl:[{text:'Ich komme!',dann:[]}]}];   // gleicher Wortlaut wie bei Eberle → gleiche Tondatei
 const D_AUFTRAG=()=>[zl(CHEFIN_DA,'Guten Morgen! Heute fährst du zur Baustelle von Familie Neumann – das Haus ist noch im Rohbau.'),
   zl(CHEFIN_DA,'Dein erster Auftrag: Schließ die Elektrik im Gästebad an. Die Leitungen sind schon verlegt.'),
@@ -2635,12 +2743,12 @@ function betriebAkt(){if(DLG||!running&&!FAHRT)return'';if(FAHRT)return FAHRT.an
   if(AUF.an&&AUF.schritt>=4&&AUF.rueck===1&&FW.x===ZIEL.x&&FW.z===ZIEL.z){const w=zuB(FW.x,FW.z);if(Math.hypot(P.x-w[0],P.z-w[1])<3.4)return'einsteigen';}   // Rückfahrt: Wagen vor dem Tor der Baustelle
   if(!imBetrieb())return'';const c=zuB(CHEFIN.x,CHEFIN.z);if(Math.hypot(P.x-c[0],P.z-c[1])<2.3)return'chefin';
   const e=zuB(-135.3,-.5);if(FW.x===HOF.x&&FW.z===HOF.z&&Math.hypot(P.x-e[0],P.z-e[1])<2.6)return'einsteigen';return'';}
-function betriebAktion(k){if(k==='chefin')chefinSprechen();else if(k==='einsteigen'){if(AUF.an&&AUF.schritt>=4&&AUF.rueck>=3){melde(AUF.rueck===3?'Melde dich erst im Büro bei deiner Chefin.':'Feierabend – der Firmenwagen bleibt heute im Hof.');return;}if(AUF.an&&AUF.anreise<1){melde('Erst holst du dir im Büro den Auftrag bei deiner Chefin.');return;}einsteigen();}
+function betriebAktion(k){if(k==='chefin')chefinSprechen();else if(k==='einsteigen'){if(AUF.an&&AUF.schritt>=4&&AUF.rueck>=3){melde(AUF.rueck===3?'Melde dich erst im Büro bei deinem Chef.':'Feierabend – der Firmenwagen bleibt heute im Hof.');return;}if(AUF.an&&AUF.anreise<1){melde('Erst holst du dir im Büro den Auftrag bei deinem Chef.');return;}einsteigen();}
   else if(k==='aussteigen')aussteigen();else if(k==='navi')naviFaehrt();}
 // Nach drei Sekunden in der Werkstatt ruft die Chefin dich ins Büro (nur beim Auftrag, noch ohne Auftrag)
 function betriebSchritt(dt){if(FAHRT){if(running)fahrtSchritt(dt);return;}
   if(!AUF.an||AUF.anreise!==0||BETRIEB.gerufen||!running||DLG||infoOffen||!imBetrieb())return;BETRIEB.t+=dt;
-  if(BETRIEB.t>3){BETRIEB.gerufen=true;sprich(D_RUF(),()=>melde('Deine Chefin wartet im Büro.'));}}
+  if(BETRIEB.t>3){BETRIEB.gerufen=true;sprich(D_RUF(),()=>melde('Dein Chef wartet im Büro.'));}}
 // ---------------------------------------------------------------- Selbst fahren (wie Haus Eberle, Revision 9): PC W/S Gas und Bremse (rückwärts), A/D lenken;
 // iPad linker Daumen (nach vorn Gas, zurück bremsen, zur Seite lenken). Der Wagen bleibt auf der Fahrbahn (DORF.befahrbar = Bordstein) und fährt nicht
 // durch Häuser, Zäune oder die geschlossene Schranke (colliders, außer den unsichtbaren Grenzen „rand“).
@@ -2756,7 +2864,7 @@ function naviFaehrt(){const f=FAHRT;if(!f||f.auto||!f.hilfe)return;f.auto={linie
 function fahrtEnde(){FAHRT=null;document.documentElement.classList.remove('fahrt');joyLabel('ziehen = gehen');FW.schild.versteckt=false;SCHRANKE.ziel=0;actKind='-';setHint('','');bAct.style.display='none';lastRoom='';}
 function aussteigen(){if(!FAHRT||!FAHRT.angekommen)return;
   if(NZ===BETRIEB_ZIEL){fahrtEnde();NZ=ZIEL;wagenStellen(HOF.x,HOF.z,HOF.th,true);if(AUF.an){AUF.rueck=3;sichereAuftrag();}springe(HOFSTART);
-    melde('Zurück im Betrieb. Melde dich im Büro bei deiner Chefin.');meldT=5;return;}
+    melde('Zurück im Betrieb. Melde dich im Büro bei deinem Chef.');meldT=5;return;}
   fahrtEnde();wagenStellen(ZIEL.x,ZIEL.z,ZIEL.th,true);
   if(AUF.an){AUF.anreise=3;sichereAuftrag();}springe(ANKUNFT);melde('Angekommen bei Familie Neumann. Geh durch das Tor im Bauzaun auf die Baustelle.');meldT=5;}
 // Navi-Karte (oben Norden): das ganze Dorf, Betrieb, Haus Neumann, restliche Route (blau), Wagen als Pfeil, Ziel als roter Punkt
@@ -2804,7 +2912,7 @@ function frame(now){requestAnimationFrame(frame);
   renderer.render(scene,camera);}
 hud();requestAnimationFrame(frame);
 // Für Prüfzwecke: Standort setzen
-window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(n!==undefined)setStage(n);return STAGE;},go:(x,y,z,yaw,pitch)=>{LEITER=null;P.x=x;P.feet=y;P.z=z;P.camY=y+EYE;P.vy=0;P.ground=true;if(yaw!==undefined)P.yaw=yaw;if(pitch!==undefined)P.pitch=pitch;},flash:toggleFlash,info:()=>renderer.info.render,setPr:v=>{pr=v;renderer.setPixelRatio(v);resize();},teile:()=>({renderer,scene,camera}),
+window.__sim={P,DOOR,colliders,start,pause:()=>pause(),joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(n!==undefined)setStage(n);return STAGE;},go:(x,y,z,yaw,pitch)=>{LEITER=null;P.x=x;P.feet=y;P.z=z;P.camY=y+EYE;P.vy=0;P.ground=true;if(yaw!==undefined)P.yaw=yaw;if(pitch!==undefined)P.pitch=pitch;},flash:toggleFlash,info:()=>renderer.info.render,setPr:v=>{pr=v;renderer.setPixelRatio(v);resize();},teile:()=>({renderer,scene,camera}),
   station:id=>{const s=STATIONEN.find(x=>x.id===id);if(s)oeffneStation(s);return !!infoOffen;},schliesse:()=>schliesseStation(),act:()=>actKind,
   treffer:(nx,ny)=>{const s=stationTreffer(nx,ny);return s?s.id:null;},
   testFuer:id=>{const s=STATIONEN.find(x=>x.id===id);return s?{kontext:DATEI_KONTEXT,cmid:testCmid(s),adresse:testAdresse(s)}:null;},
