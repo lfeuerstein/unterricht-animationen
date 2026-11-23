@@ -2030,17 +2030,18 @@ const GB_KEY='rohbau-begehung-gaestebad-v1',AUFTRAG_KEY='rohbau-begehung-auftrag
 let GBST=VERDRAHTEN.neuerStand(),GB_LICHT=false,VD_UI=null,GB_PL=null;
 // anreise (Auslieferung B): 0 im Betrieb (zur Chefin), 1 Auftrag erhalten (zum Firmenwagen), 2 Fahrt, 3 an der Baustelle angekommen.
 // Spielstände von Revision 11 (ohne anreise) mit begonnenem Auftrag gelten als angekommen – niemand muss zurück in den Betrieb.
-const AUF={an:false,schritt:0,geloest:[],anreise:0};   // an: Auftrag läuft in dieser Sitzung (sonst „frei begehen“)
+const AUF={an:false,schritt:0,geloest:[],anreise:0,rueck:0};   // rueck (Rückfahrt, Wunsch 23.11.2026 abends): 1 zum Wagen vor dem Tor, 2 Fahrt, 3 im Hof → zur Chefin, 4 Feierabend   // an: Auftrag läuft in dieser Sitzung (sonst „frei begehen“)
 try{const s=JSON.parse(LP.lies(GB_KEY)||'null');if(s&&s.geraet&&Array.isArray(s.dr)){Object.assign(GBST.geraet,s.geraet);GBST.dr=s.dr;GB_LICHT=!!s.licht;}}catch(_){}
 // Übungsnummern: Spielstände ohne uebv (Revision 11 und älter) kennen die neue Übung 4 (ohne Steckdose) noch nicht – alte Übung 4 (mit Steckdose)
 // ist jetzt Übung 5, wer sie gelöst hat, bekommt die leichtere neue Übung 4 gutgeschrieben; alte Übung 5 ist jetzt Übung 6.
 const UEBV=2,uebNeu=s=>(Array.isArray(s.geloest)?s.geloest:[]).flatMap(n=>s.uebv===UEBV||n<3?[n]:n===3?[3,4]:[n+1]);
 try{const s=JSON.parse(LP.lies(AUFTRAG_KEY)||'null');if(s){AUF.schritt=Math.max(0,Math.min(4,s.schritt|0));AUF.geloest=[...new Set(uebNeu(s))].filter(n=>n>=0&&n<VERDRAHTEN.UEB.length);
-  AUF.anreise=typeof s.anreise==='number'?Math.max(0,Math.min(3,s.anreise|0)):(AUF.schritt>0||AUF.geloest.length?3:0);if(AUF.anreise===2)AUF.anreise=1;}}catch(_){}   // mitten in der Fahrt neu geladen: wieder am Wagen
+  AUF.anreise=typeof s.anreise==='number'?Math.max(0,Math.min(3,s.anreise|0)):(AUF.schritt>0||AUF.geloest.length?3:0);if(AUF.anreise===2)AUF.anreise=1;
+  AUF.rueck=typeof s.rueck==='number'?Math.max(0,Math.min(4,s.rueck|0)):(AUF.schritt>=4?4:0);if(AUF.rueck===2)AUF.rueck=1;}}catch(_){}   // ältere Stände: erledigt = Feierabend; mitten in der Rückfahrt neu geladen: wieder am Wagen   // mitten in der Fahrt neu geladen: wieder am Wagen
 let GB_OK=VERDRAHTEN.gbBewerte(GBST);
 punkteMelden();   // Lernpaket: Stand aus Moodle geladen – Punkte nachmelden, falls die letzte Meldung nicht ankam
 function sichereGB(){LP.setze(GB_KEY,JSON.stringify({geraet:GBST.geraet,dr:GBST.dr,licht:GB_LICHT}));punkteMelden();}
-function sichereAuftrag(){LP.setze(AUFTRAG_KEY,JSON.stringify({schritt:AUF.schritt,geloest:AUF.geloest,anreise:AUF.anreise,uebv:UEBV}));punkteMelden();}
+function sichereAuftrag(){LP.setze(AUFTRAG_KEY,JSON.stringify({schritt:AUF.schritt,geloest:AUF.geloest,anreise:AUF.anreise,uebv:UEBV,rueck:AUF.rueck}));punkteMelden();}
 // Punkte fürs Lernpaket (nur in Moodle wirksam): 10 je gelöste Übung, 30 alle Dosen richtig, 10 Licht an (oder Auftrag erledigt)
 function punkteJetzt(){return 10*AUF.geloest.length+(GB_OK&&GB_OK.alles?30:0)+((GB_LICHT&&GB_OK&&GB_OK.alles)||AUF.schritt>=4?10:0);}
 function punkteMelden(){if(LP.an)LP.punkte(punkteJetzt());}
@@ -2109,7 +2110,10 @@ const SCHRITTE=['Geh ins Gästebad: Erdgeschoss, rechts hinter dem Eingang.','Ü
   'Klemme die vier Dosen im Gästebad an – tippe sie an.','Schalte das Licht über dem Spiegel am Schalter neben der Tür ein.','Auftrag erledigt – das Gästebad ist angeschlossen.'];
 // Anreise (Auslieferung B): Betrieb → Chefin → Firmenwagen → Fahrt nach Navi; erst danach die Schritte an der Baustelle
 const ANREISE_TEXT=['Geh ins Büro zu deiner Chefin.','Steig in den Firmenwagen im Hof.','Fahr nach Navi zur Baustelle von Familie Neumann.'];
-function auftragText(){if(AUF.anreise<3)return AUF.anreise===0&&!BETRIEB.gerufen?'Du bist in der Werkstatt deines Betriebs – sieh dich ruhig um.':ANREISE_TEXT[AUF.anreise];
+// Rückfahrt (Wunsch des Lehrers 23.11.2026 abends: „Jetzt ist der Auftrag abgeschlossen, aber es ist nicht zu erkennen, wie es jetzt weitergeht.
+// Eventuell wieder zurückfahren mit dem Auto zur Firma.“): nach dem Licht zurück zum Firmenwagen, nach Navi in den Betrieb, bei der Chefin melden
+const RUECK_TEXT=['','Fahr mit dem Firmenwagen zurück in den Betrieb – er steht vor dem Tor der Baustelle.','Fahr nach Navi zurück in den Betrieb.','Melde dich im Büro bei deiner Chefin.','Auftrag abgeschlossen – Feierabend!'];
+function auftragText(){if(AUF.anreise>=3&&AUF.schritt>=4&&AUF.rueck>=1)return RUECK_TEXT[Math.min(4,AUF.rueck)];if(AUF.anreise<3)return AUF.anreise===0&&!BETRIEB.gerufen?'Du bist in der Werkstatt deines Betriebs – sieh dich ruhig um.':ANREISE_TEXT[AUF.anreise];
   let t=SCHRITTE[AUF.schritt];const ohnePunkt=t.replace(/[.]$/,'');if(AUF.schritt===1)t=ohnePunkt+' ('+AUF.geloest.length+' von '+VERDRAHTEN.UEB.length+' gelöst).';
   if(AUF.schritt===2){const n=['VD','SD','E','S'].filter(id=>GB_OK.dosen[id]).length;
     t=n===4&&!GB_OK.alles?'Alle Dosen sind angeklemmt, aber etwas stimmt noch nicht – öffne die Dosen und tippe auf „Prüfen“.':ohnePunkt+' ('+n+' von 4 angeklemmt).';}
@@ -2121,26 +2125,34 @@ function auftragWeiter(w){const el=$('auftrag');if(!AUF.an){if(aufGezeigt){aufGe
   if(AUF.schritt===0&&w[1]==='Gästebad'){AUF.schritt=1;if(STAGE!==1)setStage(1);melde('Rohinstallation: Die Leitungen liegen schon – jetzt wird angeschlossen.');}
   if(AUF.schritt===1&&VERDRAHTEN.UEB.every((_,n)=>AUF.geloest.includes(n)))AUF.schritt=2;
   if(AUF.schritt===2&&GB_OK.alles)AUF.schritt=3;
-  if(AUF.schritt===3&&GB_LICHT&&GB_OK.alles){AUF.schritt=4;zeigeAbschluss();}
+  if(AUF.schritt===3&&GB_LICHT&&GB_OK.alles){AUF.schritt=4;AUF.rueck=1;zeigeAbschluss();}
   if(AUF.schritt!==vor)sichereAuftrag();
-  const t=(AUF.schritt<4?'<small>Nächster Schritt</small>':'<small>Auftrag</small>')+auftragText();
+  const t=(AUF.schritt<4||AUF.rueck<4?'<small>Nächster Schritt</small>':'<small>Auftrag</small>')+auftragText();
   if(t!==aufGezeigt){aufGezeigt=t;el.innerHTML=t;el.style.display='block';}}
 function zeigeAbschluss(){if(infoOffen)return;infoOffen={id:'abschluss'};running=false;for(const k in keys)keys[k]=false;releaseTouch();
   if(document.pointerLockElement){try{document.exitPointerLock();}catch(_){}}
   elInfo.classList.remove('test');elInfo.classList.remove('vdraht');punkteMelden();
   elInfoBox.innerHTML='<p class="unter">Auftrag erledigt</p><h2>Elektrik im Gästebad</h2>'+
-    '<p><b>'+CHEFIN_HANDY+':</b> „'+ABSCHLUSS_SATZ+'“</p>'+
+    '<p><b>'+CHEFIN_HANDY+':</b> „'+ABSCHLUSS_SATZ+' '+RUECK_SATZ+'“</p>'+
     '<p>Du hast sechs Übungen gelöst und die Verteilerdose, die Steckdose, die Leuchte und den Schalter richtig angeklemmt.</p>'+
     (LP.an?'<p><b>'+LP.best()+' von 100 Punkten</b> – in Moodle eingetragen.</p>':'')+
     '<div class="knoepfe"><button type="button" class="haupt" data-a="zu">Weiter</button></div>';
-  elInfo.style.display='flex';tonZeile({wer:CHEFIN_HANDY,text:ABSCHLUSS_SATZ});}
+  elInfo.style.display='flex';tonZeile({wer:CHEFIN_HANDY,text:RUECK_SATZ},[tonSchluessel('chefin',tonText({text:ABSCHLUSS_SATZ}))]);}
+// Ende der Rückfahrt: bei der Chefin gemeldet → Feierabend
+function zeigeFeierabend(){if(infoOffen)return;infoOffen={id:'feierabend'};haltAn();elInfo.classList.remove('test');elInfo.classList.remove('vdraht');
+  elInfoBox.innerHTML='<p class="unter">Auftrag abgeschlossen</p><h2>Feierabend</h2>'+
+    '<p>Du hast das Gästebad bei Familie Neumann angeschlossen und bist mit dem Firmenwagen zurück in den Betrieb gefahren.</p>'+
+    (LP.an?'<p><b>'+LP.best()+' von 100 Punkten</b> – in Moodle eingetragen.</p>':'')+
+    '<p>Über „Pause“ kannst du den Auftrag noch einmal von vorn beginnen oder die Baustelle frei begehen.</p>'+
+    '<div class="knoepfe"><button type="button" class="haupt" data-a="zu">Weiter</button></div>';
+  elInfo.style.display='flex';}
 function auftragBoxAuffrischen(){const neu=AUF.schritt===0&&!AUF.geloest.length&&AUF.anreise===0;
   $('auftragStand').textContent=neu?'Du startest in deinem Ausbildungsbetrieb: Deine Chefin gibt dir den Auftrag, dann fährst du den Firmenwagen selbst nach Navi zur Baustelle von Familie Neumann. Dort schließt du im Gästebad Steckdose, Leuchte und Schalter an – die Leitungen sind schon verlegt.'
-    :AUF.schritt>=4?'Erledigt. Du kannst den Auftrag noch einmal von vorn machen.':'Begonnen. Nächster Schritt: '+auftragText();
+    :AUF.schritt>=4&&AUF.rueck>=4?'Erledigt – Feierabend. Du kannst den Auftrag noch einmal von vorn machen.':'Begonnen. Nächster Schritt: '+auftragText();
   if(LP.an)$('auftragStand').textContent+=' Punkte in Moodle: '+LP.best()+' von 100.';
-  $('bAuftrag').textContent=AUF.schritt>=4?'Auftrag neu beginnen':neu?'Auftrag beginnen':'Auftrag fortsetzen';$('bFrei').style.display=AUF.an?'':'none';}
+  $('bAuftrag').textContent=AUF.schritt>=4&&AUF.rueck>=4?'Auftrag neu beginnen':neu?'Auftrag beginnen':'Auftrag fortsetzen';$('bFrei').style.display=AUF.an?'':'none';}
 $('bAuftrag').addEventListener('click',e=>{if(e&&e.stopPropagation)e.stopPropagation();
-  if(AUF.schritt>=4){AUF.schritt=0;AUF.geloest=[];AUF.anreise=0;BETRIEB.t=0;BETRIEB.gerufen=false;GBST=VERDRAHTEN.neuerStand();GB_LICHT=false;gbGeaendert();sichereAuftrag();}
+  if(AUF.schritt>=4&&AUF.rueck>=4){AUF.schritt=0;AUF.geloest=[];AUF.anreise=0;AUF.rueck=0;BETRIEB.t=0;BETRIEB.gerufen=false;GBST=VERDRAHTEN.neuerStand();GB_LICHT=false;gbGeaendert();sichereAuftrag();}
   AUF.an=true;aufGezeigt='';anreiseStart();betreten();});
 $('bFrei').addEventListener('click',e=>{if(e&&e.stopPropagation)e.stopPropagation();AUF.an=false;freiBegehen();auftragWeiter(whereAmI());betreten();});
 auftragBoxAuffrischen();
@@ -2379,8 +2391,8 @@ function erkunde(w){let neu=null;
 const gesperrtText=o=>'„'+o.name+'“ ist noch gesperrt – erst einmal zu Fuß hingehen.';
 // Auslieferung B: Solange der Auftrag läuft und du noch nicht angekommen bist, geht es nur mit dem Firmenwagen zur Baustelle
 const SPRUNG_ANREISE='Erst fährst du mit dem Firmenwagen zur Baustelle – danach kannst du wieder direkt springen.';
-const sprungGesperrt=()=>AUF.an&&AUF.anreise<3;
-function springeFest(o){if(!o)return false;if(sprungGesperrt()){melde(SPRUNG_ANREISE);return false;}if(!frei(o)){melde(gesperrtText(o));return false;}springe(o);return true;}
+const sprungGesperrt=()=>AUF.an&&(AUF.anreise<3||AUF.rueck===2);
+function springeFest(o){if(!o)return false;if(sprungGesperrt()){melde(AUF.rueck===2?'Erst fährst du mit dem Firmenwagen zurück in den Betrieb.':SPRUNG_ANREISE);return false;}if(!frei(o)){melde(gesperrtText(o));return false;}springe(o);return true;}
 function springe(o){if(!o)return;LEITER=null;P.x=o.x;P.z=o.z;P.feet=o.feet;P.camY=o.feet+EYE;P.vy=0;P.ground=true;P.bob=0;P.yaw=o.yaw;P.pitch=o.pitch||0;
   if(typeof o.stage==='number'&&o.stage!==STAGE)setStage(o.stage);releaseTouch();lastRoom='';hud();}
 function orteAuffrischen(meldung){
@@ -2596,22 +2608,34 @@ const D_AUFTRAG=()=>[zl(CHEFIN_DA,'Guten Morgen! Heute fährst du zur Baustelle 
   {wer:CHEFIN_DA,text:'Nimm den Firmenwagen im Hof, die Adresse ist schon im Navi. Ruf mich an, wenn du etwas brauchst – ich bin auf dem Handy erreichbar.',wahl:[{text:'Alles klar, ich fahre los.',dann:[]}]}];
 const CHEF_GUTEFAHRT='Der Firmenwagen steht im Hof. Gute Fahrt!';
 const ABSCHLUSS_SATZ='Super, das Licht über dem Spiegel brennt und die Steckdose hat Spannung. Das Gästebad ist angeschlossen – gute Arbeit!';
+// Rückfahrt (Wunsch des Lehrers 23.11.2026 abends) – neue Sätze, vertont erst nach Ja des Lehrers (bis dahin still, Text bleibt)
+const RUECK_SATZ='Komm mit dem Firmenwagen zurück in den Betrieb und melde dich bei mir.';
+const FEIERABEND_SATZ='Gute Arbeit! Für heute ist Feierabend.';
+const D_FEIERABEND=()=>[zl(CHEFIN_DA,'Da bist du ja wieder! Familie Neumann hat angerufen: Das Licht im Gästebad brennt.'),
+  {wer:CHEFIN_DA,text:FEIERABEND_SATZ,wahl:[{text:'Danke, bis morgen!',dann:[]}]}];
 // Startplätze (Koordinaten der Begehung): Werkstatt (Blick nach Osten zum Büro), Hof am Firmenwagen, Ankunft vor dem Tor der Baustelle
 const BSTART=(()=>{const p=zuB(-141.3,11.2);return{name:'Werkstatt',x:p[0],z:p[1],feet:GY,yaw:-Math.PI/2+.25,pitch:0};})();
 const HOFSTART=(()=>{const p=zuB(-136.4,.6),q=zuB(HOF.x,HOF.z);return{name:'Hof',x:p[0],z:p[1],feet:GY,yaw:Math.atan2(-(q[0]-p[0]),-(q[1]-p[1])),pitch:0};})();
 const ANKUNFT={name:'Vor dem Tor',x:(TOR.x0+TOR.x1)/2,z:-15.3,feet:GY,yaw:Math.PI,pitch:0};
+// Navi-Ziel: Familie Neumann (Anreise) oder der Hof des Betriebs (Rückfahrt; Knoten H = Wendehammer im Hof, angekommen erst hinter der Schranke)
+const BETRIEB_ZIEL={knoten:'H',x:HOF.x,z:.5,th:-Math.PI/2,radius:4,name:'Betrieb',haus:[BT.hx0,BT.hz0,BT.hx1,BT.hz1]};let NZ=ZIEL;
+function wagenParken(){const r=AUF.schritt>=4&&AUF.rueck>=1,b=r?AUF.rueck<3:AUF.anreise>=3;NZ=ZIEL;   // Rückfahrt zählt nur bei erledigtem Auftrag
+  if(b)wagenStellen(ZIEL.x,ZIEL.z,ZIEL.th,true);else wagenStellen(HOF.x,HOF.z,HOF.th,true);}
 const imBetrieb=()=>{const x=P.x-DV.x,z=P.z-DV.z;return x>BT.x0-.5&&x<BT.x1+.5&&z>BT.z0-.5&&z<BT.z1+.5;};
 function joyLabel(t){const l=$('joy').querySelector('.lbl');if(l)l.textContent=t;}
 function anreiseStart(){if(FAHRT||AUF.anreise>=3)return;if(AUF.anreise===2)AUF.anreise=1;wagenStellen(HOF.x,HOF.z,HOF.th,true);
   if(!imBetrieb())springe(AUF.anreise===0?BSTART:HOFSTART);}
-function freiBegehen(){const warDort=!!FAHRT||imBetrieb();if(FAHRT)fahrtEnde();if(AUF.anreise===2)AUF.anreise=1;
-  wagenStellen(AUF.anreise>=3?ZIEL.x:HOF.x,AUF.anreise>=3?ZIEL.z:HOF.z,AUF.anreise>=3?ZIEL.th:HOF.th,true);if(warDort)springe(ORTE_FEST[0]);}
-function chefinSprechen(){if(AUF.an&&AUF.anreise===0)sprich(D_AUFTRAG(),()=>{AUF.anreise=1;BETRIEB.gerufen=true;sichereAuftrag();melde('Nächster Schritt: zum Firmenwagen im Hof');});
+function freiBegehen(){const warDort=!!FAHRT||imBetrieb();if(FAHRT)fahrtEnde();if(AUF.anreise===2)AUF.anreise=1;if(AUF.rueck===2)AUF.rueck=1;
+  wagenParken();if(warDort)springe(ORTE_FEST[0]);}
+function chefinSprechen(){if(AUF.an&&AUF.schritt>=4&&AUF.rueck===3){sprich(D_FEIERABEND(),()=>{AUF.rueck=4;sichereAuftrag();zeigeFeierabend();});return;}
+  if(AUF.schritt>=4&&AUF.rueck>=4){sprich([zl(CHEFIN_DA,FEIERABEND_SATZ)]);return;}
+  if(AUF.an&&AUF.anreise===0)sprich(D_AUFTRAG(),()=>{AUF.anreise=1;BETRIEB.gerufen=true;sichereAuftrag();melde('Nächster Schritt: zum Firmenwagen im Hof');});
   else sprich([zl(CHEFIN_DA,CHEF_GUTEFAHRT)]);}
 function betriebAkt(){if(DLG||!running&&!FAHRT)return'';if(FAHRT)return FAHRT.angekommen?'aussteigen':(FAHRT.hilfe&&!FAHRT.auto?'navi':'');
+  if(AUF.an&&AUF.schritt>=4&&AUF.rueck===1&&FW.x===ZIEL.x&&FW.z===ZIEL.z){const w=zuB(FW.x,FW.z);if(Math.hypot(P.x-w[0],P.z-w[1])<3.4)return'einsteigen';}   // Rückfahrt: Wagen vor dem Tor der Baustelle
   if(!imBetrieb())return'';const c=zuB(CHEFIN.x,CHEFIN.z);if(Math.hypot(P.x-c[0],P.z-c[1])<2.3)return'chefin';
   const e=zuB(-135.3,-.5);if(FW.x===HOF.x&&FW.z===HOF.z&&Math.hypot(P.x-e[0],P.z-e[1])<2.6)return'einsteigen';return'';}
-function betriebAktion(k){if(k==='chefin')chefinSprechen();else if(k==='einsteigen'){if(AUF.an&&AUF.anreise<1){melde('Erst holst du dir im Büro den Auftrag bei deiner Chefin.');return;}einsteigen();}
+function betriebAktion(k){if(k==='chefin')chefinSprechen();else if(k==='einsteigen'){if(AUF.an&&AUF.schritt>=4&&AUF.rueck>=3){melde(AUF.rueck===3?'Melde dich erst im Büro bei deiner Chefin.':'Feierabend – der Firmenwagen bleibt heute im Hof.');return;}if(AUF.an&&AUF.anreise<1){melde('Erst holst du dir im Büro den Auftrag bei deiner Chefin.');return;}einsteigen();}
   else if(k==='aussteigen')aussteigen();else if(k==='navi')naviFaehrt();}
 // Nach drei Sekunden in der Werkstatt ruft die Chefin dich ins Büro (nur beim Auftrag, noch ohne Auftrag)
 function betriebSchritt(dt){if(FAHRT){if(running)fahrtSchritt(dt);return;}
@@ -2629,7 +2653,8 @@ const NAVI={route:['↑','Route zu Familie Neumann','Die Route zu Familie Neuman
   links:['↰','Jetzt links abbiegen','Biegen Sie jetzt links ab.'],gleichRechts:['↱','Gleich rechts abbiegen','Gleich rechts abbiegen.'],gleichLinks:['↰','Gleich links abbiegen','Gleich links abbiegen.'],
   gerade:['↑','Geradeaus weiter','Fahren Sie geradeaus weiter.'],wenden:['↩','Bitte wenden','Bitte wenden.'],neu:['↻','Route wird neu berechnet','Die Route wird neu berechnet.'],
   folgen:['↑','Der Straße folgen','Folgen Sie dem Straßenverlauf.'],bald:['↑','Gleich am Ziel','In 50 Metern haben Sie Ihr Ziel erreicht.'],
-  ziel:['⚑','Ziel erreicht – rechts','Sie haben Ihr Ziel erreicht. Das Ziel befindet sich auf der rechten Seite.'],zielLinks:['⚑','Ziel erreicht – links','Sie haben Ihr Ziel erreicht. Das Ziel befindet sich auf der linken Seite.']};
+  ziel:['⚑','Ziel erreicht – rechts','Sie haben Ihr Ziel erreicht. Das Ziel befindet sich auf der rechten Seite.'],zielLinks:['⚑','Ziel erreicht – links','Sie haben Ihr Ziel erreicht. Das Ziel befindet sich auf der linken Seite.'],
+  routeBetrieb:['↑','Route zum Betrieb','Die Route zum Betrieb wird berechnet. Bitte fahren Sie los.'],zielBetrieb:['⚑','Ziel erreicht – Betrieb','Sie haben Ihr Ziel erreicht.']};   // Rückfahrt (neu, Ton nach Ja)
 const NAVI_SCHL=new Set(Object.keys(NAVI).map(k=>tonSchluessel('navi',tonText({text:NAVI[k][2]}))));
 const SITZ={x:1.1,z:-.45,y:1.62};   // Augen der Fahrerin oder des Fahrers in Wagenmaßen (links vorn)
 function sitzen(p){const c=Math.cos(p.th),s=Math.sin(p.th);P.x=p.x+SITZ.x*c+SITZ.z*s+DV.x;P.z=p.z-SITZ.x*s+SITZ.z*c+DV.z;P.feet=GY;P.camY=GY+SITZ.y;P.vy=0;P.ground=true;}
@@ -2644,14 +2669,14 @@ function naviOrt(){const f=FAHRT,n=f.nav,hx=Math.cos(f.th),hz=-Math.sin(f.th);le
   if(best!==n.kante&&(kantePos(NETZ.kanten[best],f.x,f.z).d+2<cur||cur>7.5))n.kante=best;
   const k=NETZ.kanten[n.kante],dot=hx*k.ux+hz*k.uz;if(f.v>.3&&Math.abs(dot)>.4)n.dir=dot>0?1:-1;}
 // kürzester Weg vom Knoten n (angekommen über v, Weg bis dahin: kosten) zum Ziel; wenden nur im Wendehammer
-function wegSuche(n,v,kosten){const Z=ZIEL.knoten,dist={},prev={},key=(a,b)=>a+'<'+b,st=key(n,v),offen=[st];dist[st]=kosten;let ende=null;
+function wegSuche(n,v,kosten){const Z=NZ.knoten,dist={},prev={},key=(a,b)=>a+'<'+b,st=key(n,v),offen=[st];dist[st]=kosten;let ende=null;
   while(offen.length){offen.sort((x,y)=>dist[x]-dist[y]);const s=offen.shift(),[a,b]=s.split('<');if(a===Z){ende=s;break;}
     for(const e of NETZ.adj[a]){if(e.n===b&&!NETZ.K[a].sack)continue;const t=key(e.n,a),d=dist[s]+NETZ.kanten[e.i].l;
       if(dist[t]===undefined||d<dist[t]){dist[t]=d;prev[t]=s;if(!offen.includes(t))offen.push(t);}}}
   if(!ende)return null;const knoten=[];for(let s=ende;s;s=prev[s])knoten.unshift(s.split('<')[0]);return{knoten,laenge:dist[ende]};}
 function naviRoute(zwang){const f=FAHRT,k=NETZ.kanten[f.nav.kante],vor=f.nav.dir>0?k.b:k.a,von=f.nav.dir>0?k.a:k.b,q=kantePos(k,f.x,f.z),rest=f.nav.dir>0?k.l-q.t:q.t;
   let r;if(zwang&&vor===zwang.knoten){const e=NETZ.adj[vor].find(x=>x.n===zwang.nach),w=wegSuche(zwang.nach,vor,rest+NETZ.kanten[e.i].l);r=w&&{knoten:[vor].concat(w.knoten),laenge:w.laenge};}
-  else r=vor===ZIEL.knoten?{knoten:[vor],laenge:rest}:wegSuche(vor,von,rest);
+  else r=vor===NZ.knoten?{knoten:[vor],laenge:rest}:wegSuche(vor,von,rest);
   if(r){r.vor=vor;r.von=von;r.rest=rest;}return r;}
 // Richtung am Knoten n (von a nach b): links, rechts, gerade oder wenden
 function abbiegen(a,n,b){const A=NETZ.K[a],N=NETZ.K[n],B=NETZ.K[b],l1=Math.hypot(N.x-A.x,N.z-A.z),l2=Math.hypot(B.x-N.x,B.z-N.z),
@@ -2665,15 +2690,15 @@ function naviTakt(){const f=FAHRT,n=f.nav;naviOrt();const dk=n.kante*2+(n.dir>0?
   if(dk!==n.dk){n.dk=dk;const nx=r.knoten[1];n.erwartet=nx?NETZ.adj[r.vor].find(e=>e.n===nx).i*2+(NETZ.kanten[NETZ.adj[r.vor].find(e=>e.n===nx).i].a===r.vor?1:0):null;}
   if(r.vor!==n.vor){n.vor=r.vor;n.gesagt=new Set();if(r.rest>70&&f.t>3)naviSag('folgen');}
   const sag=k=>{if(!n.gesagt.has(k)){n.gesagt.add(k);naviSag(k);}},d=r.rest;let pfeil='↑',text='Der Straße folgen';
-  const amZiel=Math.hypot(f.x-ZIEL.x,f.z-ZIEL.z);
-  if(r.vor===ZIEL.knoten){pfeil='⚑';text=d>8?'Ziel in '+Math.round(d)+' m':'Ziel – hier anhalten';if(d<52&&d>20)sag('bald');}
+  const amZiel=Math.hypot(f.x-NZ.x,f.z-NZ.z);
+  if(r.vor===NZ.knoten){pfeil='⚑';text=d>8?'Ziel in '+Math.round(d)+' m':'Ziel – hier anhalten';if(d<52&&d>20)sag('bald');}
   else{const art=abbiegen(r.von,r.vor,r.knoten[1]),drei=NETZ.adj[r.vor].length>2;
     if(art==='wenden'){pfeil='↩';text='In '+Math.round(d)+' m wenden';if(d<28)sag('wenden');}
     else if(art==='gerade'){if(drei){text='In '+Math.round(d)+' m geradeaus';if(d<25)sag('gerade');}}
     else{pfeil=art==='links'?'↰':'↱';text='In '+Math.round(d)+' m '+art+' abbiegen';if(d<40&&d>=15)sag(art==='links'?'gleichLinks':'gleichRechts');if(d<15)sag(art);}}
-  const da=amZiel<9&&Math.abs(f.v)<1.2;
-  if(da&&!f.angekommen){f.angekommen=true;sag(Math.cos(f.th)>=0?'ziel':'zielLinks');actKind='-';}
-  else if(!da&&f.angekommen&&amZiel>12){f.angekommen=false;actKind='-';n.gesagt.delete('ziel');n.gesagt.delete('zielLinks');}
+  const da=amZiel<(NZ.radius||9)&&Math.abs(f.v)<1.2;
+  if(da&&!f.angekommen){f.angekommen=true;sag(NZ===BETRIEB_ZIEL?'zielBetrieb':Math.cos(f.th)>=0?'ziel':'zielLinks');actKind='-';}
+  else if(!da&&f.angekommen&&amZiel>12){f.angekommen=false;actKind='-';n.gesagt.delete('ziel');n.gesagt.delete('zielLinks');n.gesagt.delete('zielBetrieb');}
   if(!f.auto&&!f.angekommen&&!f.hilfe&&(f.t>120||f.stoss>=8)){f.hilfe=true;actKind='-';   // Hilfe: nach 2 Minuten oder 8 Anstößen
     melde('Schwierig? Das Navi kann für dich fahren – '+(TOUCH?'tippe auf den orangen Knopf':'drücke E')+'.');meldT=6;}
   if(f.angekommen){pfeil='⚑';text='Angekommen – '+(TOUCH?'tippe „Aussteigen“':'E = Aussteigen');}
@@ -2688,7 +2713,7 @@ function autoLinie(){const f=FAHRT,a=f.auto;let r=f.route;
     ri=(P,Q)=>{const l=Math.hypot(Q.x-P.x,Q.z-P.z),ux=(Q.x-P.x)/l,uz=(Q.z-P.z)/l;return{ux,uz,rx:-uz,rz:ux};};
   {const S=K[folge[0]];if(S.sack&&folge.length>1&&Math.hypot(f.x-S.x,f.z-S.z)<7.5){const d=ri(S,K[folge[1]]);pts.push([S.x+d.rx*1.4+d.ux*8,S.z+d.rz*1.4+d.uz*8]);}}   // noch im Wendehammer
   for(let i=0;i+1<folge.length;i++){const A=K[folge[i]],B=K[folge[i+1]],d=ri(A,B);
-    if(i+2===folge.length){pts.push(folge[i+1]===ZIEL.knoten?[ZIEL.x,ZIEL.z]:[B.x+d.rx*1.4,B.z+d.rz*1.4]);break;}
+    if(i+2===folge.length){pts.push(folge[i+1]===NZ.knoten?[NZ.x,NZ.z]:[B.x+d.rx*1.4,B.z+d.rz*1.4]);break;}
     const C=K[folge[i+2]];
     if(B.sack&&folge[i+2]===folge[i]){pts.push([B.x-d.ux*6+d.rx*1.4,B.z-d.uz*6+d.rz*1.4]);   // Wenden: Bogen mit 5 m Halbmesser um die Mitte des Wendehammers
       for(let j=0;j<=10;j++){const w=-Math.PI/6+j/10*Math.PI*7/6;pts.push([B.x+5*(Math.cos(w)*d.rx+Math.sin(w)*d.ux),B.z+5*(Math.cos(w)*d.rz+Math.sin(w)*d.uz)]);}
@@ -2704,13 +2729,14 @@ function autoSteuer(){const f=FAHRT,a=f.auto,L=a.linie||[];if(L.length<2||!a.r)r
   const al=voraus(Math.max(4.5,Math.min(6.5,f.v*1.2))),al2=voraus(12);   // Lenkpunkt und Blick weiter voraus (erst Gas, wenn es geradeaus geht)
   const l=clamp(al*2.2,-1,1),r=a.r;
   let vt=8.3;const art=r.knoten.length>1?abbiegen(r.von,r.vor,r.knoten[1]):'ziel';if(art!=='gerade'&&r.rest<22)vt=2.6;if(Math.abs(al)>.25||Math.abs(al2)>.3)vt=Math.min(vt,3.2);
-  if(r.vor===ZIEL.knoten)vt=Math.min(vt,Math.sqrt(2*1.8*Math.max(0,Math.hypot(f.x-ZIEL.x,f.z-ZIEL.z)-.8)));if(f.angekommen)vt=0;
+  if(r.vor===NZ.knoten)vt=Math.min(vt,Math.sqrt(2*1.8*Math.max(0,Math.hypot(f.x-NZ.x,f.z-NZ.z)-.8)));if(f.angekommen)vt=0;
   const g=vt>f.v+.15?clamp((vt-f.v)*.7,0,1):f.v>vt+.15?-clamp((f.v-vt)*.45,0,1):0;return{g,l};}
-function einsteigen(){FAHRT={t:0,x:HOF.x,z:HOF.z,th:HOF.th,v:0,lenk:0,stoss:0,stossT:-9,angekommen:false,hilfe:false,navi:[],route:null,auto:null,
+function einsteigen(){const zurueck=AUF.an&&AUF.schritt>=4&&AUF.rueck===1;NZ=zurueck?BETRIEB_ZIEL:ZIEL;   // Rückfahrt: Start am Wagen vor dem Tor
+  FAHRT={t:0,x:FW.x,z:FW.z,th:FW.th,v:0,lenk:0,stoss:0,stossT:-9,angekommen:false,hilfe:false,navi:[],route:null,auto:null,
     nav:{kante:0,dir:1,dk:null,erwartet:null,vor:null,gesagt:new Set(),takt:0}};
-  if(AUF.an){AUF.anreise=2;sichereAuftrag();}releaseTouch();LEITER=null;document.documentElement.classList.add('fahrt');FW.schild.versteckt=true;wagenStellen(HOF.x,HOF.z,HOF.th,false);
-  P.yaw=HOF.th-Math.PI/2;P.pitch=-.08;sitzen(FAHRT);actKind='-';setHint('','');bAct.style.display='none';joyLabel('ziehen = fahren und lenken');
-  naviSag('route');naviTakt();naviZeichnen();lastRoom='';
+  if(AUF.an){if(zurueck)AUF.rueck=2;else AUF.anreise=2;sichereAuftrag();}releaseTouch();LEITER=null;document.documentElement.classList.add('fahrt');FW.schild.versteckt=true;wagenStellen(FAHRT.x,FAHRT.z,FAHRT.th,false);
+  P.yaw=FAHRT.th-Math.PI/2;P.pitch=-.08;sitzen(FAHRT);actKind='-';setHint('','');bAct.style.display='none';joyLabel('ziehen = fahren und lenken');
+  naviSag(zurueck?'routeBetrieb':'route');naviTakt();naviZeichnen();lastRoom='';
   melde(TOUCH?'Du fährst selbst: linker Daumen nach vorn = Gas, zurück = bremsen, zur Seite = lenken. Das Navi zeigt den Weg.':'Du fährst selbst: W = Gas, S = bremsen und rückwärts, A und D = lenken. Das Navi zeigt den Weg.');meldT=7;}
 function fahrtSchritt(dt){const f=FAHRT;f.t+=dt;if(f.t>.8)SCHRANKE.ziel=1;let g=0,l=0;
   if(f.auto){if(f.auto.zurueck>0){f.auto.zurueck-=dt;g=-.8;l=-(f.auto.zl||0);}else{const s=autoSteuer();g=s.g;l=s.l;f.auto.zl=l;}}   // festgefahren: kurz zurücksetzen und gegenlenken
@@ -2728,21 +2754,24 @@ function fahrtSchritt(dt){const f=FAHRT;f.t+=dt;if(f.t>.8)SCHRANKE.ziel=1;let g=
   f.nav.takt-=dt;if(f.nav.takt<=0){f.nav.takt=.15;naviTakt();}naviZeichnen();}
 function naviFaehrt(){const f=FAHRT;if(!f||f.auto||!f.hilfe)return;f.auto={linie:null,r:null};f.auto.linie=autoLinie();actKind='-';melde('Das Navi fährt jetzt für dich.');}
 function fahrtEnde(){FAHRT=null;document.documentElement.classList.remove('fahrt');joyLabel('ziehen = gehen');FW.schild.versteckt=false;SCHRANKE.ziel=0;actKind='-';setHint('','');bAct.style.display='none';lastRoom='';}
-function aussteigen(){if(!FAHRT||!FAHRT.angekommen)return;fahrtEnde();wagenStellen(ZIEL.x,ZIEL.z,ZIEL.th,true);
+function aussteigen(){if(!FAHRT||!FAHRT.angekommen)return;
+  if(NZ===BETRIEB_ZIEL){fahrtEnde();NZ=ZIEL;wagenStellen(HOF.x,HOF.z,HOF.th,true);if(AUF.an){AUF.rueck=3;sichereAuftrag();}springe(HOFSTART);
+    melde('Zurück im Betrieb. Melde dich im Büro bei deiner Chefin.');meldT=5;return;}
+  fahrtEnde();wagenStellen(ZIEL.x,ZIEL.z,ZIEL.th,true);
   if(AUF.an){AUF.anreise=3;sichereAuftrag();}springe(ANKUNFT);melde('Angekommen bei Familie Neumann. Geh durch das Tor im Bauzaun auf die Baustelle.');meldT=5;}
 // Navi-Karte (oben Norden): das ganze Dorf, Betrieb, Haus Neumann, restliche Route (blau), Wagen als Pfeil, Ziel als roter Punkt
 function naviZeichnen(){const c=$('naviKarte'),g=c&&c.getContext?c.getContext('2d'):null;if(!g||typeof g.fillRect!=='function'||!FAHRT)return;
   const W=c.width||284,H=c.height||112,k=(W-8)/290,mx=x=>4+(x+172)*k,my=zz=>8+(zz+58)*k,f=FAHRT,re=(r,col)=>{g.fillStyle=col;g.fillRect(mx(r.x0),my(r.z0),(r.x1-r.x0)*k,(r.z1-r.z0)*k);};
   g.fillStyle='#24302a';g.fillRect(0,0,W,H);for(const r of DORF.STRASSEN.concat(DORF.KREUZUNGEN))re(r,'#6a7480');
   for(const q of DORF.KREISE){g.fillStyle='#6a7480';g.beginPath();g.arc(mx(q.x),my(q.z),q.r*k,0,7);g.fill();}
-  re({x0:BT.hx0,z0:BT.hz0,x1:BT.hx1,z1:BT.hz1},'#8a93a0');re({x0:ZIEL.haus[0],z0:ZIEL.haus[1],x1:ZIEL.haus[2],z1:ZIEL.haus[3]},'#e2854a');
+  re({x0:BT.hx0,z0:BT.hz0,x1:BT.hx1,z1:BT.hz1},'#8a93a0');re({x0:NZ.haus[0],z0:NZ.haus[1],x1:NZ.haus[2],z1:NZ.haus[3]},'#e2854a');
   const r=f.route;if(r){g.strokeStyle='#4fa3ff';g.lineWidth=3;g.lineCap='round';g.lineJoin='round';g.beginPath();g.moveTo(mx(f.x),my(f.z));
-    for(const id of r.knoten){const q=id===ZIEL.knoten?ZIEL:NETZ.K[id];g.lineTo(mx(q.x),my(q.z));}g.stroke();}
-  g.fillStyle='#d0281e';g.beginPath();g.arc(mx(ZIEL.x),my(ZIEL.z),4,0,7);g.fill();
+    for(const id of r.knoten){const q=id===NZ.knoten?NZ:NETZ.K[id];g.lineTo(mx(q.x),my(q.z));}g.stroke();}
+  g.fillStyle='#d0281e';g.beginPath();g.arc(mx(NZ.x),my(NZ.z),4,0,7);g.fill();
   g.save();g.translate(mx(f.x),my(f.z));g.rotate(-f.th);g.fillStyle='#fff';g.beginPath();g.moveTo(7,0);g.lineTo(-4.5,-4.5);g.lineTo(-4.5,4.5);g.closePath();g.fill();g.restore();
   g.fillStyle='#cfd6de';g.font='10px "Segoe UI",Arial,sans-serif';g.fillText('Betrieb',mx(BT.x0),my(BT.z1)+10);g.textAlign='right';g.fillText('Familie Neumann',Math.min(W-4,mx(ZIEL.haus[2])+30),my(ZIEL.haus[3])+11);g.textAlign='left';}
 // Firmenwagen beim Laden: an der Baustelle, wenn du schon angekommen bist, sonst im Hof des Betriebs
-if(AUF.anreise>=3)wagenStellen(ZIEL.x,ZIEL.z,ZIEL.th,true);else wagenStellen(HOF.x,HOF.z,HOF.th,true);
+wagenParken();
 schrankeStellen();
 
 // ---------------------------------------------------------------- Schleife
@@ -2794,7 +2823,7 @@ window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(
   auftrag:()=>AUF,auftragBeginnen:()=>{AUF.an=true;aufGezeigt='';},auftragZeile:()=>$('auftrag').innerHTML,ueben:()=>{oeffneVerdrahten('uebung');return !!VD_UI;},
   // Auslieferung B: Dorf, Betrieb, Chefin, Fahrt, Navi, Ton
   dorf:()=>({version:DORF.version,versatz:DV,schilder:DSCHILDER.map(e=>({x:e.x,z:e.z,sichtbar:e.s.visible}))}),zuB,
-  betrieb:()=>({anreise:AUF.anreise,gerufen:BETRIEB.gerufen,t:BETRIEB.t,imBetrieb:imBetrieb(),schranke:SCHRANKE.t,wagen:{x:FW.x,z:FW.z,th:FW.th,fest:FW.col.y1>0},
+  betrieb:()=>({anreise:AUF.anreise,rueck:AUF.rueck,ziel:NZ.name||'',gerufen:BETRIEB.gerufen,t:BETRIEB.t,imBetrieb:imBetrieb(),schranke:SCHRANKE.t,wagen:{x:FW.x,z:FW.z,th:FW.th,fest:FW.col.y1>0},
     dlg:DLG?{wer:DLG.z[DLG.i].wer,text:DLG.z[DLG.i].text,wahl:DLG.z[DLG.i].wahl?DLG.z[DLG.i].wahl.map(o=>o.text):null}:null,
     fahrt:FAHRT?{t:FAHRT.t,x:FAHRT.x,z:FAHRT.z,th:FAHRT.th,v:FAHRT.v,stoss:FAHRT.stoss,angekommen:FAHRT.angekommen,hilfe:FAHRT.hilfe,auto:!!FAHRT.auto,
       kante:DORF.KANTEN[FAHRT.nav.kante].join('-'),dir:FAHRT.nav.dir,route:FAHRT.route?FAHRT.route.knoten.slice():null,navi:FAHRT.navi.slice()}:null}),
@@ -2807,7 +2836,7 @@ window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(
   tonListe:()=>{const aus=new Map(),neu=(wer,text)=>{const r=tonRolle(wer),t=tonText({text});if(!t)return;const k=tonSchluessel(r,t),da=aus.get(k);
       if(!da)aus.set(k,{schluessel:k,rolle:r,wer,text:t});else if(da.text!==t||da.rolle!==r)throw new Error('Ton-Schlüssel doppelt: '+k);};
     const geh=z=>z.forEach(q=>{neu(q.wer,tonText(q));(q.wahl||[]).forEach(o=>{neu('Du',o.text);geh(o.dann||[]);});});
-    geh(D_RUF());geh(D_AUFTRAG());geh([zl(CHEFIN_DA,CHEF_GUTEFAHRT),zl(CHEFIN_HANDY,ABSCHLUSS_SATZ)]);for(const k in NAVI)geh([zl('Navi',NAVI[k][2])]);return[...aus.values()];}};
+    geh(D_RUF());geh(D_AUFTRAG());geh([zl(CHEFIN_DA,CHEF_GUTEFAHRT),zl(CHEFIN_HANDY,ABSCHLUSS_SATZ),zl(CHEFIN_HANDY,RUECK_SATZ)]);geh(D_FEIERABEND());for(const k in NAVI)geh([zl('Navi',NAVI[k][2])]);return[...aus.values()];}};
 })();
 </script>
 </body>
