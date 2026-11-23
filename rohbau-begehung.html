@@ -107,6 +107,28 @@
   #auftragBox p{margin:0 0 10px;font-size:14px;opacity:.9}
   #auftragBox button{min-height:44px;padding:0 18px;margin:0 8px 0 0;border-radius:6px;border:1.5px solid rgba(255,255,255,.5);background:rgba(255,255,255,.06);color:#fff;font:600 15px "Segoe UI",system-ui,-apple-system,sans-serif;cursor:pointer;-webkit-appearance:none;appearance:none}
   #auftragBox button.haupt{background:#e2854a;border-color:#e2854a;color:#16110d}
+  /* Auslieferung B (23.11.2026): Gespräch mit der Chefin, Ton, Navi beim Fahren – Aussehen wie im Spiel „Haus Eberle“ */
+  #dlg{position:fixed;inset:0;z-index:11;display:none;align-items:flex-end;justify-content:center;background:rgba(10,12,16,.28)}
+  #dlg .box{position:relative;box-sizing:border-box;width:min(820px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;margin:0 12px calc(18px + env(safe-area-inset-bottom));padding:18px 24px 16px;background:rgba(18,21,27,.96);border:1px solid rgba(255,255,255,.16);border-top:5px solid #e2854a;border-radius:8px;box-shadow:0 14px 50px rgba(0,0,0,.55);user-select:text;-webkit-user-select:text}
+  #dlgWer{font-size:13px;text-transform:uppercase;letter-spacing:1.2px;color:#f3b086;font-weight:650;margin-bottom:6px;padding-right:110px}
+  #dlgText{font-size:18px;line-height:1.5}
+  #dlgKnoepfe{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;justify-content:flex-end}
+  #dlg button{font:600 16px "Segoe UI",system-ui,-apple-system,sans-serif;min-height:48px;padding:0 20px;border-radius:8px;border:1.5px solid rgba(255,255,255,.5);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;-webkit-appearance:none;appearance:none;text-align:left}
+  #dlg button.haupt{background:#e2854a;border-color:#e2854a;color:#16110d}
+  #dlg button.wahl{flex:1 1 260px;border-color:#f3b086}
+  #dlg button.ton{position:absolute;top:10px;right:12px;min-height:38px;padding:0 12px;font-size:14px;border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.04)}
+  #dlg button.ton.aus{opacity:.65;border-style:dashed}
+  #bTon{display:inline-block;vertical-align:middle;margin:8px 0 0 12px;min-height:42px;padding:0 16px;border-radius:4px;border:1.5px solid rgba(255,255,255,.5);background:rgba(255,255,255,.06);color:#fff;font:600 15px "Segoe UI",system-ui,-apple-system,sans-serif;cursor:pointer;-webkit-appearance:none;appearance:none}
+  #navi{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:304px;box-sizing:border-box;display:none;padding:8px 10px 10px;background:rgba(14,17,22,.88);border:1px solid rgba(255,255,255,.18);border-top:4px solid #3f8fd6;border-radius:8px}
+  #navi .kopf{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  #naviPfeil{flex:0 0 40px;height:40px;border-radius:8px;background:#3f8fd6;font-size:28px;font-weight:700;line-height:40px;text-align:center}
+  #naviText{display:block;font-size:16px;font-weight:650;line-height:1.2}
+  #naviRest{display:block;font-size:12.5px;opacity:.8;margin-top:2px}
+  #naviSatz{margin:6px 0 0;font-size:12.5px;line-height:1.35;opacity:.85;font-style:italic}
+  #naviKarte{display:block;width:284px;height:112px;border-radius:5px}
+  #navi .naviHilfe{margin:4px 0 0;font-size:11.5px;opacity:.7}
+  html.fahrt #navi{display:block}
+  html.fahrt #bJump,html.fahrt #cross,html.fahrt #map,html.fahrt #keys{display:none!important}
 </style>
 </head>
 <body>
@@ -120,6 +142,7 @@
   <div id="room"></div>
   <div id="auftrag"></div>
   <div id="meldung"></div>
+  <div id="navi"><div class="kopf"><div id="naviPfeil">↑</div><div><b id="naviText"></b><small id="naviRest"></small></div></div><canvas id="naviKarte" width="284" height="112"></canvas><p id="naviSatz"></p><p class="naviHilfe d-only">W Gas · S bremsen/rückwärts · A D lenken</p><p class="naviHilfe t-only">Linker Daumen: vor = Gas, zurück = bremsen, seitlich = lenken</p></div>
 </div>
 <div id="touch">
   <div id="tz"></div>
@@ -158,23 +181,24 @@
       <tr><td>Esc</td><td>Pause, Maus wieder frei</td></tr>
       <tr><td>1 – 7 · O</td><td>direkt zu einem schon erkundeten Ort springen · Orte-Liste öffnen, eigenen Standort speichern</td></tr>
       <tr><td>Gerüst</td><td>am Ostgiebel: in die Leiter hineingehen = hinaufsteigen (W), S = hinab; oben E = Leiter hinab; von der obersten Ebene aufs Dach</td></tr>
-      <tr><td>Gästebad</td><td>in der Rohinstallation: Dose anklicken oder E = Gerät wählen und Adern anklemmen; sonst E = Verdrahten üben (Übungen 1–4)</td></tr>
+      <tr><td>Gästebad</td><td>in der Rohinstallation: Dose anklicken oder E = Gerät wählen und Adern anklemmen; sonst E = Verdrahten üben (Übungen 1–6)</td></tr>
     </table>
     <div id="orte">
       <h2>Direkt hinspringen <small>– 🔒 noch nicht erkundet: erst einmal zu Fuß hingehen</small></h2>
       <div class="reihe" id="orteFest"></div>
-      <h2>Meine Orte <small>– bleiben auf diesem Gerät in diesem Browser gespeichert</small></h2>
+      <h2>Meine Orte <small id="orteHinweis">– bleiben auf diesem Gerät in diesem Browser gespeichert</small></h2>
       <div class="reihe" id="orteMein"></div>
       <p class="leer" id="orteLeer">Noch keine eigenen Orte. Erst hingehen, dann hier „Standort speichern“.</p>
       <div id="orteSpeichern"><input id="ortName" type="text" maxlength="40" autocomplete="off" placeholder="Name für den Standort"><button type="button" id="ortSave">Standort speichern</button></div>
       <p id="orteMeldung"></p>
     </div>
-    <span class="go" id="go">Klicken, um die Baustelle zu betreten</span><button type="button" id="bKurs">← Zurück zum Moodle-Kurs</button>
+    <span class="go" id="go">Klicken, um die Baustelle zu betreten</span><button type="button" id="bTon">Ton: an</button><button type="button" id="bKurs">← Zurück zum Moodle-Kurs</button>
     <p class="note d-only">Die Maus wird eingefangen. Mit Esc kommt sie wieder frei.</p>
     <p class="note t-only">Am besten im Querformat. Als Vollbild-App: in Safari „Teilen“ → „Zum Home-Bildschirm“.</p>
   </div>
 </div>
 <div id="info" role="dialog" aria-modal="true"><div class="box" id="infoBox"></div></div>
+<div id="dlg" role="dialog" aria-modal="true"><div class="box"><button type="button" id="dlgTon" class="ton">🔊 Ton an</button><div id="dlgWer"></div><div id="dlgText"></div><div id="dlgKnoepfe"></div></div></div>
 <script>/**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -215,6 +239,167 @@ let seed=20261121;
 const rnd=()=>{seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
 const rr=(a,b)=>a+(b-a)*rnd();
 const lin=h=>new T.Color(h).convertSRGBToLinear();
+// ---------------------------------------------------------------- Das gemeinsame Dorf (E:\#1_Schule\Claude Unterricht\_Dorf\dorf.js, eingesetzt von quelle.mjs → window.DORF)
+// =====================================================================================================================
+// Lernbaustellen-Dorf – gemeinsam für alle Haus-Spiele (Haus 1 Familie Neumann, Haus 2 Familie Eberle, später weitere). Version 1, 23.11.2026, Chat „M2AH (5)“.
+// Wunsch des Lehrers (23.11.2026): „… dass das Dorf immer gleich aussieht und der Schüler immer im selben Dorf herumfährt.“ Beschreibung: LIES-MICH.md.
+// 🔴 Nur HIER ändern. Jedes Spiel bettet diese Datei beim Bauen ein (Platzhalter /*__DORF__*/ in src.html, build.mjs) und lädt sie in probe.mjs vor dem Spiel.
+// Dorf-Koordinaten in Metern: x nach Osten, z nach SÜDEN (Norden = −z), Gelände y = GY. Ursprung = Nordwest-Ecke von Haus 2 (Familie Eberle).
+// DORF.bauen(api, projekt) baut alles außer dem Haus des Projekts (das baut das Spiel selbst mit Innenleben); die anderen Häuser stehen als Statisten.
+// api = Bausteine des Spiels: GY, F (Farben), box, solid, block, face, flaeche, zyl, kegel, baum, nachbarhaus, fensterreihe, wall, fe, tu, tisch, stuhl,
+//       stelle, inBau, GLAS, rr, rnd – Muster: Spiel „Haus Eberle“ (LF7.1 Heizlast\Claude-Arbeitsstand\Haus-Eberle-Spiel\src.html).
+// =====================================================================================================================
+(function(){
+'use strict';
+// Betrieb (Ausbildungsbetrieb): Grundstück, Halle, Innenwände, Einfahrt mit Schranke
+const BT={x0:-158,x1:-122,z0:-6.5,z1:22,hx0:-156,hx1:-126,hz0:6,hz1:18,hh:4.0,w1:-146,w2:-136,tor0:-137.5,tor1:-129.4};
+// Fahrbahnen (6 m breit). Zusammen mit Kreuzungen, Plätzen und Wendehämmern ist das die befahrbare Fläche (dahinter: Bordstein).
+const STRASSEN=[{n:'Gewerbestraße',x0:-170,z0:-14,x1:-91,z1:-8},{n:'Ahornweg',x0:-100,z0:-50,x1:-94,z1:30},{n:'Nordring',x0:-140,z0:-53,x1:55,z1:-47},
+  {n:'Lindenweg',x0:-62,z0:-50,x1:-56,z1:-11},{n:'Birkenweg',x0:49,z0:-50,x1:55,z1:-11},{n:'Wohnstraße',x0:-78,z0:-14,x1:110,z1:-8}];
+// Kreuzungsflächen: zu den Seiten mit Einmündung 7 m aufgeweitet, gegenüber nur 1,4 m (abgesenkter Bordstein – Platz zum Abbiegen für den Transporter)
+const KREUZUNGEN=[{x:-97,z:-11,x0:-104,z0:-18,x1:-94,z1:-4},{x:-97,z:-50,x0:-104,z0:-54.4,x1:-90,z1:-43},{x:-59,z:-50,x0:-66,z0:-54.4,x1:-52,z1:-43},
+  {x:52,z:-50,x0:45,z0:-54.4,x1:56.4,z1:-43},{x:-59,z:-11,x0:-66,z0:-18,x1:-52,z1:-6.6},{x:52,z:-11,x0:45,z0:-18,x1:59,z1:-6.6}];
+const PLAETZE=[{n:'Hof',x0:BT.x0+.1,z0:BT.z0+.1,x1:BT.x1-.1,z1:BT.hz0-.05},{n:'Einfahrt',x0:-141,z0:-9.5,x1:-126,z1:-5}];
+// Übergänge Straße → Wendehammer (ausgerundete Ecken, sonst bleibt am Bordstein ein Zwickel, in dem der Wagen hängen bleibt)
+const UEBERGAENGE=[{x0:-165,z0:-15.5,x1:-155,z1:-6.5},{x0:-101.5,z0:20,x1:-92.5,z1:30},{x0:-140,z0:-54.5,x1:-130,z1:-45.5},{x0:-78,z0:-15.5,x1:-68,z1:-6.5},{x0:100,z0:-15.5,x1:110,z1:-6.5}];
+const KREISE=[{n:'Gewerbestraße',x:-165,z:-11,r:7},{n:'Ahornweg',x:-97,z:30,r:7},{n:'Nordring',x:-140,z:-50,r:7},{n:'Wohnstraße',x:-78,z:-11,r:7},{n:'Wohnstraße',x:110,z:-11,r:7}];
+// Straßennetz fürs Navi: Knoten (sack = Sackgasse mit Wendehammer, dort darf man wenden) und Kanten
+const KNOTEN={H:{x:-133.5,z:2,sack:true},B:{x:-133.5,z:-11},G0:{x:-165,z:-11,sack:true},J1:{x:-97,z:-11},Q1S:{x:-97,z:30,sack:true},J2:{x:-97,z:-50},
+  N0:{x:-140,z:-50,sack:true},J3:{x:-59,z:-50},J4:{x:52,z:-50},J5:{x:-59,z:-11},W0:{x:-78,z:-11,sack:true},EB:{x:2.9,z:-11},J6:{x:52,z:-11},NM:{x:69,z:-11},
+  W1:{x:110,z:-11,sack:true}};
+const KANTEN=[['H','B'],['G0','B'],['B','J1'],['J1','Q1S'],['J1','J2'],['N0','J2'],['J2','J3'],['J3','J4'],['J3','J5'],['J4','J6'],['W0','J5'],['J5','EB'],['EB','J6'],['J6','NM'],['NM','W1']];
+// Ziele je Projekt: Knoten im Straßennetz, Parkplatz (rechte Fahrbahnseite, Front nach Osten) und Haus
+// Haus 1 (Neumann) liegt 8 m weiter südlich als Haus 2: die Rohbau-Begehung hat 19 m Vorplatz bis zur Straßenmitte (Baustelle x −9 … 19, z −13 … 17
+// um das Haus; Entscheidung des Lehrers 23.11.2026 ~17:10, eingetragen von Chat „Lernbaustelle“). Versatz der Begehung: x −64, z −8.
+const ZIELE={eberle:{knoten:'EB',x:2.9,z:-9.425,th:0,name:'Familie Eberle',haus:[0,0,11.99,10.173]},neumann:{knoten:'NM',x:69,z:-9.425,th:0,name:'Familie Neumann',haus:[64,8,74,16]}};
+const BAUPLAETZE=[{n:'Haus 3',x0:84,z0:-6.5,x1:100,z1:18,schild:[92,-5.8]},{n:'Haus 4',x0:-40,z0:-45,x1:-24,z1:-31,schild:[-32,-45.6]},{n:'Haus 5',x0:-92,z0:14,x1:-78,z1:28,schild:[-91.4,21]}];
+const imRechteck=(r,x,z,m)=>x>r.x0+m&&x<r.x1-m&&z>r.z0+m&&z<r.z1-m;
+// befahrbar: Punkt liegt auf Fahrbahn, Kreuzung, Platz oder im Wendehammer (m = Abstand zum Rand)
+function befahrbar(x,z,m){m=m||0;for(const r of STRASSEN)if(imRechteck(r,x,z,m))return true;for(const r of KREUZUNGEN)if(imRechteck(r,x,z,m))return true;
+  for(const r of PLAETZE)if(imRechteck(r,x,z,m))return true;for(const r of UEBERGAENGE)if(imRechteck(r,x,z,m))return true;for(const c of KREISE)if(Math.hypot(x-c.x,z-c.z)<=c.r-m)return true;return false;}
+function strasseAn(x,z){for(const r of STRASSEN)if(imRechteck(r,x,z,0))return r.n;for(const c of KREISE)if(Math.hypot(x-c.x,z-c.z)<=c.r)return c.n;return'';}
+
+function bauen(a,projekt){
+  const{GY,F,box,solid,block,face,flaeche,zyl,kegel,baum,nachbarhaus,fensterreihe,wall,fe,tu,tisch,stuhl,stelle,inBau,GLAS,rr,rnd}=a;
+  // ---------------------------------------------------------------- Straßen: Fahrbahnen, Kreuzungen, Wendehämmer, Gehwege, Mittellinien
+  for(const r of STRASSEN.concat(KREUZUNGEN,UEBERGAENGE))flaeche(r.x0,r.z0,r.x1,r.z1,GY+.03,F.asphalt);
+  for(const c of KREISE){const p=[];for(let i=0;i<24;i++){const w=i/24*Math.PI*2;p.push([c.x+Math.cos(w)*c.r,GY+.03,c.z+Math.sin(w)*c.r]);}face(p,[0,1,0],F.asphalt,'umg',1);}
+  for(const g of[[-170,-15.5,-103,-14],[-170,-8,-103,-6.5],[-71,-8,103,-6.5],[-71,-15.5,-65,-14],[-53,-15.5,46,-14],[58,-15.5,103,-14]])flaeche(g[0],g[1],g[2],g[3],GY+.05,F.gehweg);
+  const frei=(x,z)=>!KREUZUNGEN.some(k=>Math.abs(x-k.x)<7&&Math.abs(z-k.z)<7)&&!KREISE.some(c=>Math.hypot(x-c.x,z-c.z)<8);
+  for(let x=-162;x<106;x+=6)if(x<-100||x>-72)if(frei(x+1.5,-11))flaeche(x,-11.08,x+3,-10.92,GY+.045,0xe8e8e0);
+  for(let x=-133;x<48;x+=6)if(frei(x+1.5,-50))flaeche(x,-50.08,x+3,-49.92,GY+.045,0xe8e8e0);
+  for(const xc of[-97,-59,52])for(let z=-44;z<27;z+=6)if((xc===-97||z<-17)&&frei(xc,z+1.5))flaeche(xc-.08,z,xc+.08,z+3,GY+.045,0xe8e8e0);
+  // Park zwischen Gewerbestraße und Wohnstraße (hier geht es nicht geradeaus weiter)
+  solid(-89.6,GY,-13.4,-86,GY+.8,-8.6,{c:F.hecke,th:'umg2',ao:1});baum(-88.2,-16.6,.9);baum(-87.6,-5.4,1);box(-89.2,GY,-4.4,-87.4,GY+.45,-3.9,{c:F.zaun,th:'umg2',ao:1});
+  // ---------------------------------------------------------------- Wohnstraße: Nachbarhäuser aus den Problemkarten (Haus 2) und weitere Kulisse
+  // Reihenhauszeile gegenüber (Karte 1: Reihenmittelhaus von 1975)
+  nachbarhaus(-12,-27,6,-18,5.8,0xd9cdb8,0x6e4a3a,true);
+  for(const x of[-6,0])box(x-.05,GY,-18,x+.05,GY+5.8,-17.96,{c:0xb3a895,th:'nachbar',ao:1});
+  for(let i=0;i<3;i++){const x=-12+6*i;fensterreihe('x',-17.97,x+.7,x+1.7,1,GY,1.0,2.05,1,i===1?0x7a3b2a:F.tuer);fensterreihe('x',-17.97,x+2.6,x+5.2,1,GY+.9,1.8,1.3,1);fensterreihe('x',-17.97,x,x+6,2,GY+3.5,1.3,1.2,1);}
+  // Mehrfamilienhaus gegenüber (Karte 2: Baujahr 1972, 20 Wohnungen)
+  solid(13,GY,-31,37,GY+11.6,-18,{c:0xcfc8b8,th:'nachbar',ao:1});box(12.8,GY+11.6,-31.2,37.2,GY+11.9,-17.8,{c:0x6a6a6a,th:'umg2',ao:1});
+  for(let f=0;f<4;f++)fensterreihe('x',-17.97,13.4,36.6,10,GY+1.0+f*2.75,1.3,1.35,1);
+  fensterreihe('x',-17.96,24.2,25.8,1,GY,1.6,2.2,1,0x3a4a5a);
+  for(let f=0;f<4;f++)fensterreihe('z',12.97,-30.5,-18.5,4,GY+1.0+f*2.75,1.3,1.35,-1);
+  // Neubau des Nachbarn Graf im Westen (Karte 3), Haus von Frau Lang im Osten (Karte 4), weitere Häuser als Kulisse
+  nachbarhaus(-19,.5,-9,9.5,5.6,0xf5f5f0,0x3a3d42,false);fensterreihe('z',-8.97,.5,9.5,3,GY+1.0,1.3,1.3,1);fensterreihe('z',-8.97,.5,9.5,3,GY+3.6,1.3,1.2,1);fensterreihe('x',.47,-19,-9,3,GY+1.0,1.3,1.3,-1);
+  solid(-8.2,GY,-5.6,-8.1,GY+2.0,-3.4,{c:F.zaun,th:'umg2',ao:1});
+  nachbarhaus(19.5,.5,30,9.5,5.4,0xd8c9a9,0x7a4a3a,true);fensterreihe('x',.47,19.5,30,3,GY+1.0,1.3,1.3,-1);fensterreihe('x',.47,19.5,30,3,GY+3.5,1.3,1.2,-1);fensterreihe('z',19.47,.5,9.5,2,GY+1.0,1.3,1.3,-1);
+  fensterreihe('x',.47,21.2,22.2,1,GY,1.0,2.05,-1,F.tuer);
+  nachbarhaus(-31,-27,-20,-18,5.6,0xcfd3c8,0x4a4d52,true);fensterreihe('x',-17.97,-31,-20,3,GY+1.0,1.3,1.3,1);
+  nachbarhaus(35,.5,45,9.5,5.6,0xe2d6c2,0x6e4a3a,false);fensterreihe('x',.47,35,45,3,GY+1.0,1.3,1.3,-1);
+  nachbarhaus(-33,.5,-24,9.5,5.2,0xd6cbb8,0x7a4a3a,true);fensterreihe('x',.47,-33,-24,3,GY+1.0,1.3,1.3,-1);
+  for(const q of[[-23,-17.2,1],[9.4,-17.3,1.1],[41,-5,1],[-26,13,1.3],[34,15,1.2],[24,15.5,1],[-12,-4.8,.9]])baum(q[0],q[1],q[2]);
+  // ---------------------------------------------------------------- Gewerbestraße, Ahornweg, Lindenweg, Nordring: Kulisse
+  nachbarhaus(-118,-28,-104,-19,6.0,0xd8d2c4,0x6e4a3a,true);fensterreihe('x',-18.97,-118,-104,4,GY+1.0,1.3,1.3,1);fensterreihe('x',-18.97,-118,-104,4,GY+3.6,1.3,1.2,1);
+  nachbarhaus(-92,-28,-81,-19,5.6,0xe2d6c2,0x4a4d52,false);fensterreihe('x',-18.97,-92,-81,3,GY+1.0,1.3,1.3,1);
+  nachbarhaus(-75,-28,-63,-19,5.8,0xcfd3c8,0x7a4a3a,true);fensterreihe('x',-18.97,-75,-63,3,GY+1.0,1.3,1.3,1);
+  nachbarhaus(-54,-27,-43,-18,5.4,0xd9cdb8,0x6e4a3a,false);fensterreihe('x',-17.97,-54,-43,3,GY+1.0,1.3,1.3,1);
+  nachbarhaus(-112,1,-102,10,5.4,0xd6cbb8,0x7a4a3a,true);fensterreihe('x',.97,-112,-102,3,GY+1.0,1.3,1.3,-1);
+  nachbarhaus(-90,.5,-80,9.5,5.6,0xe2d6c2,0x3a3d42,false);fensterreihe('x',.47,-90,-80,3,GY+1.0,1.3,1.3,-1);
+  nachbarhaus(-66,1,-56,10,5.2,0xcfd3c8,0x6e4a3a,true);fensterreihe('x',.97,-66,-56,3,GY+1.0,1.3,1.3,-1);
+  for(const h of[[-125,-113,0xd8d2c4,0x6e4a3a],[-85,-73,0xcfd3c8,0x4a4d52],[-45,-33,0xe2d6c2,0x7a4a3a],[-5,7,0xd9cdb8,0x6e4a3a],[25,37,0xd6cbb8,0x3a3d42]]){
+    nachbarhaus(h[0],-68,h[1],-58,5.6,h[2],h[3],true);fensterreihe('x',-57.97,h[0],h[1],3,GY+1.0,1.3,1.3,1);fensterreihe('x',-57.97,h[0],h[1],3,GY+3.6,1.3,1.2,1);}
+  for(const q of[[-121,-4.8,.9],[-105.5,-4.6,1],[-72,-4.9,1.1],[-50,-4.7,.9],[-108,-16.6,1],[-68,-16.5,1.1],[-104,-40,1.1],[-90,-38,.9],[-70,-42,1],[-48,-40,1.2],
+    [-10,-40,1],[20,-42,1.1],[40,-38,.9],[-130,-56,1],[-20,-56.5,.9],[44,-56,1.1],[60,-30,1],[50.5,-4.8,.9],[80,-17,1],[105,-18,1.1],[-104,20,1],[-88,35,1.1]])baum(q[0],q[1],q[2]);
+  // ---------------------------------------------------------------- Bauplätze für spätere Häuser (Erde, rot-weiße Pfosten, Schild)
+  for(const b of BAUPLAETZE){flaeche(b.x0+.5,b.z0+.5,b.x1-.5,b.z1-.5,GY+.012,0x9c8a6a);
+    for(const x of[b.x0+.5,b.x1-.6])for(const z of[b.z0+.5,b.z1-.6])box(x,GY,z,x+.1,GY+1.0,z+.1,{c:0xd0281e,cTop:0xf4f4f0,th:'umg2',ao:1});
+    stelle(['Bauplatz',b.n+' – kommt später'],b.schild[0],GY+1.6,b.schild[1],.1,{weit:30,fg2:'#f3b086'});}
+  // ---------------------------------------------------------------- Statisten: die Häuser der anderen Projekte (nur Hülle, ohne Innenleben)
+  if(projekt!=='eberle'){const H=ZIELE.eberle.haus;nachbarhaus(H[0],H[1],H[2],H[3],5.6,0xe9dfc8,0x8f3f2c,true);
+    fensterreihe('x',-.03,H[0]+.5,H[2]-.5,4,GY+1.1,1.3,1.3,-1);fensterreihe('x',-.03,H[0]+.5,H[2]-.5,4,GY+3.8,1.3,1.2,-1);fensterreihe('x',-.04,4.4,5.41,1,GY+.2,1.0,2.2,-1,F.tuer);
+    solid(-4.05,GY,-6.62,3.9,GY+.6,-6.42,{c:0xb5ad9c,th:'umg2',ao:1});solid(5.9,GY,-6.62,16,GY+.6,-6.42,{c:0xb5ad9c,th:'umg2',ao:1});
+    solid(16,GY,-6.5,16.5,GY+1.3,18.5,{c:F.hecke,th:'umg2',ao:1});solid(-4.05,GY,18,16,GY+1.3,18.5,{c:F.hecke,th:'umg2',ao:1});
+    stelle(['Haus 2','Familie Eberle'],5.75,GY+1.8,-.4,.09,{weit:25});}
+  if(projekt!=='neumann'){const H=ZIELE.neumann.haus,P=0xc8785a,G=0x8a9096;   // Haus 1: Poroton-Rohbau mit Gerüst und Bauzaun (Platzhalter, bis die Rohbau-Begehung ihre Hülle liefert)
+    const Z=H[1];   // Hausfront; Gerüst, Bauzaun und Schild beziehen sich darauf (Bauzaun wie in der Begehung: 12,7 m vor der Front, x −8,7 … 18,7)
+    nachbarhaus(H[0],H[1],H[2],H[3],5.5,P,0x8f3f2c,true);fensterreihe('x',Z-.03,H[0]+.6,H[2]-.6,3,GY+1.0,1.2,1.3,-1,0x2a2420);fensterreihe('x',Z-.03,H[0]+.6,H[2]-.6,3,GY+3.7,1.2,1.2,-1,0x2a2420);
+    for(let x=H[0]-.4;x<=H[2]+.41;x+=2.6)box(x,GY,Z-1.25,x+.06,GY+6.2,Z-1.19,{c:G,th:'umg2',ao:1});
+    for(const y of[2.55,5.3])box(H[0]-.4,GY+y,Z-1.3,H[2]+.46,GY+y+.05,Z-.35,{c:0xb08a5c,th:'umg2',ao:1});
+    for(let x=H[0]-8.7;x<H[0]+18.69;x+=3.5)box(x,GY,Z-12.72,Math.min(x+3.4,H[0]+18.7),GY+1.9,Z-12.69,{c:0xd8dcd8,th:'umg2',ao:1});
+    stelle(['Baustelle Haus 1','Familie Neumann'],(H[0]+H[2])/2,GY+2.5,Z-13.2,.11,{weit:30,fg2:'#f3b086'});}
+  // ---------------------------------------------------------------- Betrieb: Halle (Lager | Werkstatt | Büro), Hof, Zaun, Einfahrt, Schilder
+  {const IN={c:0xf3f1ea,th:'innen'},AUS={c:0xf3f1ea,cAus:0xc9ced3,thIn:'innen',thAus:'nachbar'},y0=GY,y1=GY+BT.hh,A=(o,aus)=>Object.assign({aus},o);
+    // Außenwände mit Türen und Fenstern (Höhen ab Hallenboden), Innenwände mit Durchgängen
+    wall('x',BT.hx0,BT.hx1,BT.hz0,BT.hz0+.3,y0,y1,[fe(-155,-153.2,1.2,2.4),tu(-151.8,-150.6,2.2),tu(-143.5,-139.5,3.3),fe(-138.4,-137,1.2,2.4),fe(-135.2,-131,.95,2.3),tu(-129.6,-128.4,2.2)],A(AUS,-1));
+    wall('x',BT.hx0,BT.hx1,BT.hz1-.3,BT.hz1,y0,y1,[fe(-152,-149,1.6,2.6),fe(-143,-139,2.0,3.2),fe(-133.4,-130.4,1.0,2.3)],A(AUS,1));
+    wall('z',BT.hz0+.3,BT.hz1-.3,BT.hx0,BT.hx0+.3,y0,y1,[fe(9,11,1.4,2.6)],A(AUS,-1));
+    wall('z',BT.hz0+.3,BT.hz1-.3,BT.hx1-.3,BT.hx1,y0,y1,[fe(9.5,12.5,.95,2.3)],A(AUS,1));
+    wall('z',BT.hz0+.3,BT.hz1-.3,BT.w1-.1,BT.w1+.1,y0,y1,[tu(9.2,10.4,2.1)],IN);   // Lager | Werkstatt
+    wall('z',BT.hz0+.3,BT.hz1-.3,BT.w2-.1,BT.w2+.1,y0,y1,[tu(8.0,9.1,2.1)],IN);    // Werkstatt | Büro
+    box(BT.hx0-.4,y1,BT.hz0-.4,BT.hx1+.4,y1+.35,BT.hz1+.4,{c:0x8f9499,cBot:0xf0efea,th:'nachbar',thBot:'innen',ao:1});   // Flachdach, innen weiße Decke
+    box(BT.hx0,GY+3.55,BT.hz0-.04,BT.hx1,GY+3.75,BT.hz0,{c:F.orange,th:'nachbar',ao:1});                                 // oranges Band zum Hof
+    box(-143.6,GY+3.3,BT.hz0+.3,-139.4,GY+3.8,BT.hz0+.75,{c:0x8a9096,th:'innen'});                                        // aufgerolltes Rolltor
+    flaeche(BT.hx0+.3,BT.hz0+.3,BT.w2-.1,BT.hz1-.3,GY+.012,0xa3a39d);flaeche(BT.w2+.1,BT.hz0+.3,BT.hx1-.3,BT.hz1-.3,GY+.012,0xb9a88a);   // Hallenboden, Büroboden
+    flaeche(BT.x0+.1,BT.z0+.1,BT.x1-.1,BT.hz0-.05,GY+.02,F.pflaster);                                                    // Hof
+    // Zaun (Gitter durchsichtig wie Glas, damit man vom Hof auf die Straße sieht) und Säule der Schranke (Arm: eigenes Netz, siehe unten)
+    const PF={c:0x3d463a,th:'umg2',ao:1},zaun=(ax,a0,a1,t)=>{const n=Math.max(1,Math.round((a1-a0)/2.5));
+      for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n;if(ax==='x')box(a-.04,GY,t-.04,a+.04,GY+1.85,t+.04,PF);else box(t-.04,GY,a-.04,t+.04,GY+1.85,a+.04,PF);}
+      if(ax==='x'){box(a0,GY+1.76,t-.025,a1,GY+1.82,t+.025,PF);inBau(GLAS,()=>box(a0,GY+.05,t-.01,a1,GY+1.76,t+.01,{c:0x2c3a2c,th:'umg2',ao:1}));block(a0,GY,t-.03,a1,GY+1.85,t+.03);}
+      else{box(t-.025,GY+1.76,a0,t+.025,GY+1.82,a1,PF);inBau(GLAS,()=>box(t-.01,GY+.05,a0,t+.01,GY+1.76,a1,{c:0x2c3a2c,th:'umg2',ao:1}));block(t-.03,GY,a0,t+.03,GY+1.85,a1);}};
+    zaun('x',BT.x0,BT.tor0-.15,BT.z0);zaun('x',BT.tor1+.32,BT.x1,BT.z0);zaun('x',BT.x0,BT.x1,BT.z1);zaun('z',BT.z0,BT.z1,BT.x0);zaun('z',BT.z0,BT.z1,BT.x1);
+    solid(BT.tor1,GY,BT.z0-.2,BT.tor1+.32,GY+1.15,BT.z0+.2,{c:0xe2c23a,cTop:0x3a3d42,th:'umg2',ao:1});box(BT.tor0-.2,GY,BT.z0-.06,BT.tor0-.08,GY+.95,BT.z0+.06,PF);
+    // Werkstatt: Werkbank mit Schraubstock und Lochwand, Rohrlager, Heizkörper auf einer Palette, ausgebauter Ölkessel, Wärmepumpen-Außengerät
+    solid(-144.6,GY,16.95,-140.4,GY+.9,17.7,{c:0x5a6470,cTop:0xb98d5c,th:'innen'});box(-143.9,GY+.9,17.05,-143.55,GY+1.08,17.3,{c:0x2f5f9f,th:'innen'});
+    box(-144.6,GY+1.15,17.62,-140.4,GY+2.3,17.7,{c:0x9aa3ab,th:'innen'});
+    [[-144.2,.12,.55,0xd0281e],[-143.7,.05,.45,0x3a3d42],[-143.3,.18,.3,0xe2c23a],[-142.7,.08,.6,0x2f5f9f],[-142.1,.25,.25,0x3a3d42],[-141.5,.06,.5,0xd0281e],[-140.95,.14,.4,0x2f6f4f]]
+      .forEach(q=>box(q[0],GY+1.35,17.58,q[0]+q[1],GY+1.35+q[2],17.62,{c:q[3],th:'innen'}));
+    for(const z of[11.5,14,16.5])box(-145.85,GY,z-.04,-145.2,GY+2.2,z+.04,{c:0x2f5f9f,th:'innen'});
+    for(const y of[.55,1.1,1.65])for(const x of[-145.75,-145.6,-145.45,-145.3])zyl([x,GY+y,11.4],[x,GY+y,16.6],.022,y>1.5?0x9aa3ab:0xb87333,'innen',6);
+    block(-145.9,GY,11.4,-145.15,GY+2.2,16.6);
+    solid(-138.9,GY,13.0,-136.9,GY+.14,14.2,{c:0xb08a5c,th:'innen'});for(let i=0;i<4;i++)box(-138.7,GY+.14,13.1+i*.27,-137.1,GY+.74,13.18+i*.27,{c:F.weiss,th:'heiz'});
+    block(-138.9,GY,13.0,-136.9,GY+.75,14.2);
+    solid(-145.5,GY,6.9,-144.5,GY+1.15,8.1,{c:0x3d5a80,th:'innen'});box(-144.5,GY+.28,7.3,-144.22,GY+.6,7.7,{c:0xc0392b,th:'innen'});
+    solid(-139.0,GY,16.95,-137.8,GY+.95,17.4,{c:0xdfe2df,cTop:0xcfd3d0,th:'innen'});zyl([-138.4,GY+.5,16.95],[-138.4,GY+.5,16.93],.3,0x3a3e44,'innen',16);
+    // Lager: drei Regalreihen mit Kartons
+    const regal=(x0,x1,z0,z1)=>{const h=2.3,o={c:0x2f5f9f,th:'innen'},b={c:0xc9ccd0,th:'innen'},kc=[0xc8a46e,0xb8935a,0xd9b98a,0x3f6fa8,0xe2854a];
+      for(const x of[x0,x1-.06])for(let k=0;k<3;k++){const z=z0+k*(z1-z0-.06)/2;box(x,GY,z,x+.06,GY+h,z+.06,o);}
+      for(let i=0;i<4;i++){const y=GY+.1+i*.7;box(x0,y,z0,x1,y+.04,z1,b);if(i===3)continue;
+        let z=z0+.1;while(z<z1-.45){const l=rr(.32,.62),hh=rr(.2,.42);box(x0+.07,y+.04,z,x1-.07,y+.04+hh,Math.min(z+l,z1-.1),{c:kc[Math.floor(rnd()*kc.length)],th:'innen'});z+=l+rr(.04,.18);}}
+      block(x0,GY,z0,x1,GY+h,z1);};
+    regal(-155.65,-154.85,11.4,17.5);regal(-152.6,-151.8,11.4,17.2);regal(-149.4,-148.6,11.4,17.2);
+    // Büro: Schreibtisch der Chefin mit Bildschirm und Telefon, Besucherstuhl, zweiter Schreibtisch am Fenster, Aktenregal, Auftragstafel
+    tisch(-131.2,12.3,-128.8,13.1,GY,.75,0xe9e2d4);box(-130.35,GY+.75,12.8,-129.95,GY+.77,13.0,{c:0x3a3d42,th:'innen'});box(-130.6,GY+.77,12.86,-129.7,GY+1.3,12.9,{c:0x2b2e33,cZp:0x9fd0f2,th:'innen'});
+    box(-129.35,GY+.75,12.45,-129.05,GY+.8,12.7,{c:0x2b2e33,th:'innen'});box(-129.37,GY+.8,12.47,-129.3,GY+.86,12.68,{c:0xd0281e,th:'innen'});
+    stuhl(-131.05,13.35,GY,false);stuhl(-131.0,11.45,GY,true);
+    tisch(-134.8,6.5,-132.6,7.2,GY,.75,0xe9e2d4);box(-134.15,GY+.77,6.6,-133.25,GY+1.28,6.64,{c:0x2b2e33,cZp:0x9fd0f2,th:'innen'});stuhl(-134.0,7.25,GY,false);
+    solid(-134.8,GY,17.25,-130.8,GY+2.0,17.7,{c:0xe9e5db,th:'innen'});
+    for(let r=0;r<3;r++)for(let i=0;i<14;i++)box(-134.7+i*.28,GY+.25+r*.6,17.21,-134.48+i*.28,GY+.61+r*.6,17.25,{c:[0x2f5f9f,0xd0281e,0xe2c23a,0x2f6f4f][(i+r)%4],th:'innen'});
+    box(-126.34,GY+1.05,13.75,-126.3,GY+2.15,16.05,{c:0x8a9096,th:'innen'});box(-126.36,GY+1.1,13.8,-126.3,GY+2.1,16.0,{c:0xf7f7f4,th:'innen'});   // Auftragstafel mit Rahmen
+    // Hof: Mulde, Paletten, Schild an der Einfahrt
+    solid(-156.8,GY,-4.6,-153.8,GY+1.3,-2.4,{c:0x2f6f4f,cTop:0x5a4a3a,th:'umg2',ao:1});
+    solid(-152.6,GY,1.6,-151.4,GY+.95,2.8,{c:0xc8a46e,th:'umg2',ao:1});solid(-150.9,GY,1.6,-149.7,GY+.6,2.8,{c:0xc8a46e,th:'umg2',ao:1});
+    for(const x of[-141.3,-139.1])solid(x,GY,-6.25,x+.1,GY+2.6,-6.15,PF);box(-141.35,GY+1.9,-6.27,-139.0,GY+2.6,-6.23,{c:0xf7f7f4,th:'umg2',ao:1});
+    for(const q of[[-150,25.5,1],[-138,26,1.1],[-127,24.8,.9],[-161.5,8,1],[-119,13,1.2],[-161,-2.5,.8]])baum(q[0],q[1],q[2]);}
+  for(const z of[-6.6,-5.9])stelle(['Heizung · Sanitär · Klima','Dein Ausbildungsbetrieb'],-140.2,GY+2.25,z,.11,{weit:40,fg2:'#f3b086'});   // von der Straße und vom Hof lesbar
+  stelle(['Büro'],-129.0,GY+2.65,5.6,.12,{weit:28});stelle(['Werkstatt'],-141.5,GY+3.45,5.6,.12,{weit:28});stelle(['Lager'],-151.2,GY+2.65,5.6,.12,{weit:28});
+  stelle(['Telefon'],-129.2,GY+1.08,12.58,.05,{weit:4});stelle(['Aufträge heute','Familie Eberle: neue Heizung'],-126.7,GY+2.45,14.9,.07,{weit:8,fg2:'#f3b086'});
+}
+
+window.DORF={version:1,BT,STRASSEN,KREUZUNGEN,PLAETZE,UEBERGAENGE,KREISE,KNOTEN,KANTEN,ZIELE,BAUPLAETZE,befahrbar,strasseAn,bauen};
+})();
+
 
 // ---------------------------------------------------------------- Maße des Hauses (Meter)
 const HX=10,HZ=8,TW=.365;                 // Außenmaß, Außenwand 36,5 cm
@@ -462,17 +647,26 @@ function windowFix(axis,a,b,t0,t1,s,h){
 }
 
 // ---------------------------------------------------------------- Wände mit Öffnungen
+// Sturz über Fenstern und Türen: bindet links und rechts ins Mauerwerk ein (Hinweis des Lehrers 23.11.2026: „Der Sturz … geht jeweils rechts
+// und links noch über die Fenster hinaus ins Mauerwerk hinein.“). Mindestauflager 11,5 cm; hier je Seite eine Steinlänge (25 cm), bei schmalen
+// Pfeilern höchstens bis zur Pfeilermitte bzw. bis zum Wandende. Das Mauerwerk daneben wird in Sturzhöhe um das Auflager kürzer.
+const AUFLAGER=.25;
 function wall(axis,a0,a1,t0,t1,y0,y1,ops,o){
   ops=(ops||[]).slice().sort((p,q)=>p.a-q.a);o=o||{};
-  const mat=o.mat||M.brick,put=o.collide===false?box:solid;
+  const mat=o.mat||M.brick,put=o.collide===false?box:solid,mitSturz=o.lintel!==false;
   const add=(aa,ab,ya,yb,m)=>{if(ab-aa<1e-4||yb-ya<1e-4)return;if(axis==='x')put(m||mat,aa,ya,t0,ab,yb,t1);else put(m||mat,t0,ya,aa,t1,yb,ab);};
+  const st=ops.map((op,i)=>{if(!mitSturz||!(op.h<y1))return null;const n=ops.length,l=i?ops[i-1].b:a0,r=i<n-1?ops[i+1].a:a1;
+    return{h:op.h,hl:Math.min(y1,op.h+.115),al:Math.max(0,Math.min(AUFLAGER,i?(op.a-l)/2:op.a-l)),ar:Math.max(0,Math.min(AUFLAGER,i<n-1?(r-op.b)/2:r-op.b))};});
+  // Pfeiler p0…p1 in waagerechten Bändern: links liegt ggf. das Auflager des Sturzes L, rechts das des Sturzes R
+  const pfeiler=(p0,p1,L,R)=>{const ys=[y0,y1];for(const q of[L,R])if(q)ys.push(q.h,q.hl);const Y=[...new Set(ys)].filter(y=>y>=y0&&y<=y1).sort((u,v)=>u-v);
+    for(let j=0;j+1<Y.length;j++){const ya=Y[j],yb=Y[j+1],m=(ya+yb)/2;add(p0+(L&&m>L.h&&m<L.hl?L.ar:0),p1-(R&&m>R.h&&m<R.hl?R.al:0),ya,yb);}};
   let cur=a0;
-  for(const op of ops){add(cur,op.a,y0,y1);const s=op.s===undefined?y0:op.s,h=op.h;
+  ops.forEach((op,i)=>{pfeiler(cur,op.a,i?st[i-1]:null,st[i]);const s=op.s===undefined?y0:op.s,h=op.h,q=st[i];
     add(op.a,op.b,y0,s);
-    if(h<y1){if(o.lintel===false)add(op.a,op.b,h,y1);else{const hl=Math.min(y1,h+.115);add(op.a,op.b,h,hl,M.sturz);add(op.a,op.b,hl,y1);}}
+    if(h<y1){if(!q)add(op.a,op.b,h,y1);else{add(op.a-q.al,op.b+q.ar,h,q.hl,M.sturz);add(op.a,op.b,q.hl,y1);}}
     if(o.fixtures!==false&&op.kind==='win')windowFix(axis,op.a,op.b,t0,t1,s,h);
-    cur=op.b;}
-  add(cur,a1,y0,y1);
+    cur=op.b;});
+  pfeiler(cur,a1,ops.length?st[ops.length-1]:null,null);
 }
 function outerWalls(y0,y1,ops,o){ops=ops||{};
   wall('x',0,HX,0,TW,y0,y1,ops.N,o);wall('x',0,HX,HZ-TW,HZ,y0,y1,ops.S,o);
@@ -570,19 +764,27 @@ function lightWell(side,a,b){const d=.55,pad=.12,bot=-1.3,w=.04,top=GY+.02;let x
   face(M.grate,[[x0,top,z0],[x1,top,z0],[x1,top,z1],[x0,top,z1]],[0,1,0]);
   block(x0,top-.06,z0,x1,top,z1,true);}
 lightWell('N',1.2,2.2);lightWell('S',4.7,5.7);lightWell('W',5.0,6.0);lightWell('E',4.5,5.5);
-const SITE={x0:-9,x1:19,z0:-13,z1:17},ROAD={x0:-260,x1:260,z0:-22,z1:-16};
+// Auslieferung B (23.11.2026): Die Straße vor der Baustelle kommt aus dem gemeinsamen Dorf (Wohnstraße, z −22 … −16 in Koordinaten der Begehung);
+// die Wiese reicht weit über das Dorf hinaus (Betrieb bei x ≈ −205), damit nirgends ein Rand zu sehen ist.
+const SITE={x0:-9,x1:19,z0:-13,z1:17};
 {let soil=[SITE];for(const h of holes)soil=subtract(soil,h);
   for(const r of soil){face(M.soil,[[r.x0,GY,r.z0],[r.x1,GY,r.z0],[r.x1,GY,r.z1],[r.x0,GY,r.z1]],[0,1,0]);block(r.x0,-4,r.z0,r.x1,GY,r.z1,true);}
-  let grass=subtract(subtract([{x0:-260,x1:260,z0:-260,z1:260}],SITE),ROAD);
-  for(const r of grass)face(M.grass,[[r.x0,GY,r.z0],[r.x1,GY,r.z0],[r.x1,GY,r.z1],[r.x0,GY,r.z1]],[0,1,0]);
-  face(M.asphalt,[[ROAD.x0,GY,ROAD.z0],[ROAD.x1,GY,ROAD.z0],[ROAD.x1,GY,ROAD.z1],[ROAD.x0,GY,ROAD.z1]],[0,1,0]);}
-// Bauzaun
+  let grass=subtract([{x0:-600,x1:420,z0:-420,z1:420}],SITE);
+  for(const r of grass)face(M.grass,[[r.x0,GY,r.z0],[r.x1,GY,r.z0],[r.x1,GY,r.z1],[r.x0,GY,r.z1]],[0,1,0]);}
+// Bauzaun; Auslieferung B: im Norden ein Tor (3,5 m offen, x 3,25 … 6,75) gegenüber dem Parkplatz des Firmenwagens, ein Torflügel steht offen innen am Zaun
+const TOR={x0:3.25,x1:6.75};
 {const f0=SITE.x0+.3,f1=SITE.x1-.3,g0=SITE.z0+.3,g1=SITE.z1-.3,y0=GY+.12,y1=GY+2.05;
   const run=(ax,a0,a1,c)=>{for(let a=a0;a<a1-.01;a+=3.5){const e=Math.min(a1,a+3.5);
     if(ax==='x'){face(M.fence,[[a,y0,c],[e,y0,c],[e,y1,c],[a,y1,c]],[0,0,1]);box(M.galv,a,y1-.04,c-.02,e,y1,c+.02);box(M.galv,a,y0,c-.02,e,y0+.04,c+.02);box(M.galv,a-.02,GY,c-.02,a+.02,y1,c+.02);box(M.concrete,a-.3,GY,c-.11,a+.3,GY+.12,c+.11);}
     else{face(M.fence,[[c,y0,a],[c,y0,e],[c,y1,e],[c,y1,a]],[1,0,0]);box(M.galv,c-.02,y1-.04,a,c+.02,y1,e);box(M.galv,c-.02,y0,a,c+.02,y0+.04,e);box(M.galv,c-.02,GY,a-.02,c+.02,y1,a+.02);box(M.concrete,c-.11,GY,a-.3,c+.11,GY+.12,a+.3);}}};
-  run('x',f0,f1,g0);run('x',f0,f1,g1);run('z',g0,g1,f0);run('z',g0,g1,f1);
-  block(f0-.3,GY,g0-.1,f1+.3,GY+2.2,g0+.1,true);block(f0-.3,GY,g1-.1,f1+.3,GY+2.2,g1+.1,true);block(f0-.1,GY,g0,f0+.1,GY+2.2,g1,true);block(f1-.1,GY,g0,f1+.1,GY+2.2,g1,true);}
+  run('x',f0,TOR.x0,g0);run('x',TOR.x1,f1,g0);run('x',f0,f1,g1);run('z',g0,g1,f0);run('z',g0,g1,f1);
+  for(const x of[TOR.x0,TOR.x1]){box(M.galv,x-.025,GY,g0-.025,x+.025,y1,g0+.025);box(M.concrete,x-.3,GY,g0-.11,x+.3,GY+.12,g0+.11);}   // Torpfosten
+  {const c=g0+.32,a=TOR.x1+.05,e=a+3.4;face(M.fence,[[a,y0,c],[e,y0,c],[e,y1,c],[a,y1,c]],[0,0,1]);box(M.galv,a,y1-.04,c-.02,e,y1,c+.02);box(M.galv,a,y0,c-.02,e,y0+.04,c+.02);
+    box(M.concrete,a-.25,GY,c-.11,a+.35,GY+.12,c+.11);box(M.concrete,e-.35,GY,c-.11,e+.25,GY+.12,c+.11);block(a,GY,c-.05,e,GY+2.1,c+.05,true);}   // offener Torflügel
+  block(f0-.3,GY,g0-.1,TOR.x0,GY+2.2,g0+.1,true);block(TOR.x1,GY,g0-.1,f1+.3,GY+2.2,g0+.1,true);block(f0-.3,GY,g1-.1,f1+.3,GY+2.2,g1+.1,true);block(f0-.1,GY,g0,f0+.1,GY+2.2,g1,true);block(f1-.1,GY,g0,f1+.1,GY+2.2,g1,true);
+  // Vor dem Tor: Boden zum Gehen bis an den Firmenwagen; unsichtbare Grenze (zu Fuß geht es nicht ins Dorf, der Wagen fährt hindurch: rand)
+  block(-1.2,GY-2,-16.8,11.2,GY,g0,true);
+  for(const b of[block(-1.2,GY,-16.9,11.2,GY+2.2,-16.75,true),block(-1.25,GY,-16.9,-1.1,GY+2.2,g0,true),block(11.1,GY,-16.9,11.25,GY+2.2,g0,true)])b.rand=true;}
 
 // ================================================================ BAUTÜR
 const DOOR={t:0,target:0,pivot:new T.Group(),col:null};
@@ -722,16 +924,151 @@ const leiterZ=(L,f)=>L.zf+L.d*(L.s*(f+1-L.y0)-.32); // Lage des Kletternden (Mit
     block(xo-.03,y+.05,zs[0],xo+.03,y+1.1,zs[3]);for(const z of[zs[0],zs[3]])block(xi-.03,y+.05,z-.03,xo+.03,y+1.1,z+.03); // Geländer außen und an den Stirnseiten
     if(k<2){for(const h of[.5,1.0])mcyl(M.galv,[xi,y+h,zs[0]],[xi,y+h,zs[3]],.018,8);block(xi-.03,y+.05,zs[0],xi+.03,y+1.1,zs[3]);}}); // innen (Abstand zur Wand > 30 cm)
   cyl(M.galv,[xo,GY,zs[0]],[xo,lv[0],zs[1]],.018,8);cyl(M.galv,[xo,lv[0],zs[1]],[xo,lv[1],zs[2]],.018,8);cyl(M.galv,[xo,lv[1],zs[2]],[xo,lv[2],zs[3]],.018,8);}
-// Nachbarschaft und Bäume
-function neighbour(x,z,w,d,h){box(M.plaster,x,GY,z,x+w,GY+h,z+d);const m=z+d/2,r=d/2*.75;
-  prism(M.plaster,[[z,GY+h],[z+d,GY+h],[m,GY+h+r]],'x',x,x+w);
-  prism(M.tiles,[[z-.4,GY+h-.3],[m,GY+h+r+.02],[m,GY+h+r+.17],[z-.4,GY+h-.15]],'x',x-.3,x+w+.3);
-  prism(M.tiles,[[z+d+.4,GY+h-.3],[m,GY+h+r+.02],[m,GY+h+r+.17],[z+d+.4,GY+h-.15]],'x',x-.3,x+w+.3);}
-neighbour(-22,-38,11,9,5.6);neighbour(-2,-39,10,8.5,5.4);neighbour(17,-38,12,9,5.8);neighbour(34,-4,9,11,5.6);neighbour(-33,2,9,10,5.4);neighbour(-4,34,11,9,5.6);
-{const trunk=new T.CylinderGeometry(.16,.22,2.4,7),crown=new T.SphereGeometry(1.7,9,7),mt=new T.MeshLambertMaterial({color:lin(0x5d4630)}),mc=[0x3f6a35,0x4c7a3c,0x355c30].map(c=>new T.MeshLambertMaterial({color:lin(c)}));
-  const spots=[[-13,-11],[-12,6],[-14,15],[23,-10],[24,4],[22,15],[4,21],[14,22],[-6,22],[-24,-26],[9,-27],[30,-27],[-40,-10],[40,12],[28,30],[-20,30]];
-  for(const p of spots){const s=rr(.85,1.35),a=new T.Mesh(trunk,mt);a.position.set(p[0],GY+1.2*s,p[1]);a.scale.setScalar(s);a.castShadow=true;scene.add(a);
-    const b=new T.Mesh(crown,mc[(rnd()*3)|0]);b.position.set(p[0],GY+(2.4+1.1)*s,p[1]);b.scale.set(s,s*rr(1,1.3),s);b.castShadow=true;scene.add(b);}}
+// ================================================================ DAS DORF (Auslieferung B, 23.11.2026)
+// Wunsch des Lehrers 23.11.2026: „… dass das Dorf immer gleich aussieht und der Schüler immer im selben Dorf herumfährt.“ Straßen, Nachbarhäuser, Betrieb,
+// Bauplätze und Haus 2 (Familie Eberle, Statist) baut DORF.bauen(api,'neumann') aus _Dorf\dorf.js – mit den Bausteinen des Spiels „Haus Eberle“ (Farbe je
+// Fläche statt Material). Diese Anpassungsschicht übersetzt sie: Dorf-Koordinaten + Versatz (x −64, z −8) = Begehung; Eckpunktfarben in drei Netzen
+// (außen mit Licht, in der Halle des Betriebs ohne Sonne – es gibt dort keine Schatten –, Glas). Fahrbahnen nehmen den Asphalt der Begehung.
+// Die bisherigen Nachbarhäuser und Bäume der Begehung entfallen: um die Baustelle herum steht jetzt das Dorf.
+const DV={x:-DORF.ZIELE.neumann.haus[0],z:-DORF.ZIELE.neumann.haus[1]};   // Versatz Dorf → Begehung
+const BT=DORF.BT;
+const zuB=(x,z)=>[x+DV.x,z+DV.z];                                          // Dorf → Begehung
+// Zustand von Fahrt, Gespräch und Betrieb (früh angelegt: hud() fragt sie schon beim Aufbau ab); HOF und ZIEL in Dorf-Koordinaten
+let FAHRT=null,DLG=null;
+const BETRIEB={t:0,gerufen:false},HOF={x:-133.5,z:1.0,th:Math.PI/2},ZIEL=DORF.ZIELE.neumann;
+const DF={putz:0xe9dfc8,daemmputz:0xf6f2e4,sockel:0xa9a59a,innen:0xf3efe4,decke:0xfafaf5,holz:0xb98d5c,fliese:0xcfd3d2,beton:0x9a9a94,keller:0xbdbbb2,kboden:0x8c8c88,
+  dach:0x8f3f2c,dachholz:0x9c7a54,rahmen:0xf7f7f4,glas:0x9cc3d9,tuer:0x5b3a24,stufe:0xa68763,rasen:0x93a98a,asphalt:0x56595d,gehweg:0xaaa9a3,pflaster:0xbfb8a8,
+  hecke:0x3f5f3a,zaun:0x7a5a3c,weiss:0xf4f4f0,moebel:0xc79a5f,dunkel:0x2f3338,orange:0xe2854a};   // Farben wie im Spiel „Haus Eberle“ (F)
+const dbNeu=()=>({pos:[],nor:[],col:[],idx:[]});
+const DB_A=dbNeu(),DB_I=dbNeu(),DB_G=dbNeu();
+let DBB=null,DOX=DV.x,DOZ=DV.z,DIN=false;   // Ziel-Netz (null = außen/innen nach Lage), Versatz, Schattierung „innen“ erzwingen
+const DBC={},dbc=h=>DBC[h]||(DBC[h]=lin(h));
+const _DL=new T.Vector3(.35,.85,.42).normalize();
+const dbHalle=(x,y,z)=>x>BT.hx0+.3&&x<BT.hx1-.3&&z>BT.hz0+.3&&z<BT.hz1-.3&&y<GY+BT.hh-.05;   // Dorf-Koordinaten
+const dbInnen=(nx,ny,nz)=>.5+.36*Math.max(0,nx*_DL.x+ny*_DL.y+nz*_DL.z)+.08*Math.max(0,ny);  // fest eingerechnetes Licht in der Halle
+function dbEcke(B,x,y,z,nx,ny,nz,cl,k){B.pos.push(x+DOX,y,z+DOZ);B.nor.push(nx,ny,nz);B.col.push(cl.r*k,cl.g*k,cl.b*k);}
+function dface(pts,hint,col,th,ao){
+  const a=pts[0],b=pts[1],c=pts[2];
+  let nx=(b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1]),ny=(b[2]-a[2])*(c[0]-a[0])-(b[0]-a[0])*(c[2]-a[2]),nz=(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+  const l=Math.hypot(nx,ny,nz)||1;nx/=l;ny/=l;nz/=l;
+  if(nx*hint[0]+ny*hint[1]+nz*hint[2]<0){pts=pts.slice().reverse();nx=-nx;ny=-ny;nz=-nz;}
+  if(col===DF.asphalt&&!DBB&&ny>.9){face(M.asphalt,pts.map(p=>[p[0]+DOX,p[1],p[2]+DOZ]),[0,1,0]);return;}   // Fahrbahn: Asphalt der Begehung
+  let cx=0,cy=0,cz=0;for(const p of pts){cx+=p[0];cy+=p[1];cz+=p[2];}cx/=pts.length;cy/=pts.length;cz/=pts.length;
+  const innen=DIN||(!DBB&&dbHalle(cx+nx*.08,cy+ny*.08,cz+nz*.08)),B=DBB||(innen?DB_I:DB_A),cl=dbc(col);
+  const k=(ao!==undefined?ao:innen?.92:1)*(innen?dbInnen(nx,ny,nz):B===DB_A&&ny>.9?.78:1);   // Böden draußen etwas dunkler: die Begehung hat starke Nachmittagssonne
+  const base=B.pos.length/3;for(const p of pts)dbEcke(B,p[0],p[1],p[2],nx,ny,nz,cl,k);
+  for(let i=1;i<pts.length-1;i++)B.idx.push(base,base+i,base+i+1);}
+function dbox(xa,ya,za,xb,yb,zb,o){
+  if(typeof o==='number')o={c:o};
+  const x0=Math.min(xa,xb),x1=Math.max(xa,xb),y0=Math.min(ya,yb),y1=Math.max(ya,yb),z0=Math.min(za,zb),z1=Math.max(za,zb);
+  const C=k=>o['c'+k]!==undefined?o['c'+k]:o.c,ao=o.ao;
+  dface([[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],[x1,y0,z1]],[1,0,0],C('Xp'),0,ao);dface([[x0,y0,z0],[x0,y1,z0],[x0,y1,z1],[x0,y0,z1]],[-1,0,0],C('Xm'),0,ao);
+  dface([[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1]],[0,1,0],C('Top'),0,ao);dface([[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1]],[0,-1,0],C('Bot'),0,ao);
+  dface([[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]],[0,0,1],C('Zp'),0,ao);dface([[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0]],[0,0,-1],C('Zm'),0,ao);
+  return{x0,x1,y0,y1,z0,z1};}
+function dblock(x0,y0,z0,x1,y1,z1){return block(x0+DOX,y0,z0+DOZ,x1+DOX,y1,z1+DOZ,true);}
+function dsolid(x0,y0,z0,x1,y1,z1,o){dbox(x0,y0,z0,x1,y1,z1,o);return dblock(x0,y0,z0,x1,y1,z1);}
+const _dv=new T.Vector3(),_dn=new T.Matrix3();
+function dprim(geo,m,col,th,ao){const p=geo.attributes.position,n=geo.attributes.normal,ix=geo.index,cl=dbc(col);_dn.getNormalMatrix(m);
+  geo.computeBoundingBox();const ctr=geo.boundingBox.getCenter(new T.Vector3()).applyMatrix4(m),innen=DIN||(!DBB&&dbHalle(ctr.x,ctr.y,ctr.z)),B=DBB||(innen?DB_I:DB_A),base=B.pos.length/3;
+  for(let i=0;i<p.count;i++){_v.fromBufferAttribute(p,i).applyMatrix4(m);const x=_v.x,y=_v.y,z=_v.z;_dv.fromBufferAttribute(n,i).applyMatrix3(_dn).normalize();
+    dbEcke(B,x,y,z,_dv.x,_dv.y,_dv.z,cl,(ao!==undefined?ao:innen?.92:1)*(innen?dbInnen(_dv.x,_dv.y,_dv.z):1));}
+  if(ix)for(let i=0;i<ix.count;i++)B.idx.push(base+ix.getX(i));else for(let i=0;i<p.count;i++)B.idx.push(base+i);geo.dispose();}
+function dzyl(p,q,r,col,th,seg,ao){const d=new T.Vector3(q[0]-p[0],q[1]-p[1],q[2]-p[2]),len=d.length();if(len<1e-5)return;
+  const m=new T.Matrix4().compose(new T.Vector3((p[0]+q[0])/2,(p[1]+q[1])/2,(p[2]+q[2])/2),new T.Quaternion().setFromUnitVectors(UP,d.normalize()),new T.Vector3(1,1,1));
+  dprim(new T.CylinderGeometry(r,r,len,seg||10),m,col,th,ao);}
+function dkugel(c,r,col,th,sy,ao){dprim(new T.SphereGeometry(r,10,8),new T.Matrix4().compose(new T.Vector3(c[0],c[1],c[2]),new T.Quaternion(),new T.Vector3(1,sy||1,1)),col,th,ao);}
+function dkegel(c,r,h,col,th,ao){dprim(new T.ConeGeometry(r,h,8),new T.Matrix4().makeTranslation(c[0],c[1]+h/2,c[2]),col,th,ao);}
+function dinBau(b,fn){const p=DBB;DBB=b;try{fn();}finally{DBB=p;}}
+// lokales Netz (Firmenwagen, Schrankenarm, Chefin): ohne Versatz, wird als eigener Körper bewegt
+function dLokal(innen,fn){const b=dbNeu(),p=[DBB,DOX,DOZ,DIN];DBB=b;DOX=0;DOZ=0;DIN=!!innen;try{fn();}finally{[DBB,DOX,DOZ,DIN]=p;}return b;}
+const DMAT_A=new T.MeshStandardMaterial({vertexColors:true,roughness:.9}),DMAT_I=new T.MeshBasicMaterial({vertexColors:true}),
+  DMAT_G=new T.MeshStandardMaterial({vertexColors:true,roughness:.08,transparent:true,opacity:.38,depthWrite:false});
+function dNetz(b,mat,eltern){const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(b.pos,3));geo.setAttribute('normal',new T.Float32BufferAttribute(b.nor,3));
+  geo.setAttribute('color',new T.Float32BufferAttribute(b.col,3));geo.setIndex(b.idx);const m=new T.Mesh(geo,mat);m.receiveShadow=mat!==DMAT_I;if(mat===DMAT_G)m.renderOrder=4;(eltern||scene).add(m);return m;}
+function dflaeche(x0,z0,x1,z1,y,c){dface([[x0,y,z0],[x1,y,z0],[x1,y,z1],[x0,y,z1]],[0,1,0],c,'umg',1);}
+function dbaum(x,z,s){s=s||1;dzyl([x,GY,z],[x,GY+1.3*s,z],.14,0x5a4632,'umg2',8,1);dkegel([x,GY+1.0*s,z],1.3*s,2.6*s,0x355a38,'umg2',1);dkegel([x,GY+2.5*s,z],1.0*s,2.3*s,0x3d6641,'umg2',1);dblock(x-.2,GY,z-.2,x+.2,GY+3,z+.2);}
+function dnachbarhaus(x0,z0,x1,z1,h,c,cd,firstX){const y=GY+h,d=.35;dsolid(x0,GY,z0,x1,y,z1,{c,ao:1});
+  if(firstX){const zm=(z0+z1)/2,hr=(z1-z0)*.36;
+    dface([[x0-d,y-.1,z0-d],[x1+d,y-.1,z0-d],[x1+d,y+hr,zm],[x0-d,y+hr,zm]],[0,1,-1],cd,'umg2',1);dface([[x0-d,y-.1,z1+d],[x1+d,y-.1,z1+d],[x1+d,y+hr,zm],[x0-d,y+hr,zm]],[0,1,1],cd,'umg2',1);
+    for(const q of[[x0,-1],[x1,1]])dface([[q[0],y,z0],[q[0],y,z1],[q[0],y+hr,zm]],[q[1],0,0],c,'nachbar',1);}
+  else{const xm=(x0+x1)/2,hr=(x1-x0)*.36;
+    dface([[x0-d,y-.1,z0-d],[x0-d,y-.1,z1+d],[xm,y+hr,z1+d],[xm,y+hr,z0-d]],[-1,1,0],cd,'umg2',1);dface([[x1+d,y-.1,z0-d],[x1+d,y-.1,z1+d],[xm,y+hr,z1+d],[xm,y+hr,z0-d]],[1,1,0],cd,'umg2',1);
+    for(const q of[[z0,-1],[z1,1]])dface([[x0,y,q[0]],[x1,y,q[0]],[xm,y+hr,q[0]]],[0,0,q[1]],c,'nachbar',1);}}
+function dfensterreihe(ax,t,a0,a1,n,y,w,h,s,c){const st=(a1-a0)/n;for(let i=0;i<n;i++){const a=a0+st*(i+.5)-w/2;
+  if(ax==='x')dface([[a,y,t],[a+w,y,t],[a+w,y+h,t],[a,y+h,t]],[0,0,s],c||0x4d6278,'nachbar2',1);else dface([[t,y,a],[t,y,a+w],[t,y+h,a+w],[t,y+h,a]],[s,0,0],c||0x4d6278,'nachbar2',1);}}
+// Fenster und Wände mit Öffnungen wie im Spiel „Haus Eberle“ (axis 'x': Wand entlang x; aus: −1 = außen bei t0, +1 = außen bei t1)
+function dfenster(axis,a0,a1,t0,t1,y0,y1,aus){const tm=aus<0?t0+.12:t1-.12,f=.06,R=(aa,ya,ab,yb)=>axis==='x'?dbox(aa,ya,tm-.035,ab,yb,tm+.035,{c:DF.rahmen}):dbox(tm-.035,ya,aa,tm+.035,yb,ab,{c:DF.rahmen});
+  R(a0,y0,a1,y0+f);R(a0,y1-f,a1,y1);R(a0,y0+f,a0+f,y1-f);R(a1-f,y0+f,a1,y1-f);
+  dinBau(DB_G,()=>{if(axis==='x')dbox(a0+f,y0+f,tm-.008,a1-f,y1-f,tm+.008,{c:DF.glas,ao:1});else dbox(tm-.008,y0+f,a0+f,tm+.008,y1-f,a1-f,{c:DF.glas,ao:1});});
+  if(axis==='x')dblock(a0,y0,t0,a1,y1,t1);else dblock(t0,y0,a0,t1,y1,a1);}
+function dwall(axis,a0,a1,t0,t1,y0,y1,ops,o){ops=(ops||[]).slice().sort((p,q)=>p.a0-q.a0);
+  const mk=(aa,ya,ab,yb)=>{if(ab-aa<1e-3||yb-ya<1e-3)return;const q={c:o.c};
+    if(o.aus){const k=(axis==='x'?'Z':'X')+(o.aus<0?'m':'p');q['c'+k]=o.cAus;}
+    if(axis==='x')dsolid(aa,ya,t0,ab,yb,t1,q);else dsolid(t0,ya,aa,t1,yb,ab,q);};
+  let a=a0;for(const p of ops){mk(a,y0,p.a0,y1);if(p.y0>0)mk(p.a0,y0,p.a1,y0+p.y0);if(y0+p.y1<y1-1e-3)mk(p.a0,y0+p.y1,p.a1,y1);
+    if(p.art==='f')dfenster(axis,p.a0,p.a1,t0,t1,y0+p.y0,y0+p.y1,o.aus||-1);a=p.a1;}
+  mk(a,y0,a1,y1);}
+const dfe=(a0,a1,y0,y1)=>({a0,a1,y0,y1:y1||2.2,art:'f'}),dtu=(a0,a1,y1)=>({a0,a1,y0:0,y1:y1||2.01,art:'t'});
+function dtisch(x0,z0,x1,z1,yb,h,c){dbox(x0,yb+h-.04,z0,x1,yb+h,z1,{c:c||DF.moebel});for(const x of[x0+.05,x1-.11])for(const z of[z0+.05,z1-.11])dbox(x,yb,z,x+.06,yb+h-.04,z+.06,{c:c||DF.moebel});dblock(x0,yb,z0,x1,yb+h,z1);}
+function dstuhl(x,z,yb,lehneNord){dsolid(x,yb,z,x+.42,yb+.46,z+.42,{c:0x8a6a4a});const zl=lehneNord?z:z+.38;dbox(x,yb+.46,zl,x+.42,yb+.92,zl+.04,{c:0x8a6a4a});}
+// Schilder des Dorfs: drehen sich zur Kamera, sichtbar bis „weit“ Meter (Schalter „Schilder“ gilt auch hier)
+const DSCHILDER=[];
+function dschild(zeilen,h,o){o=o||{};const fs=44,pad=16,lh=fs*1.24,font='600 '+fs+'px "Segoe UI",Arial,sans-serif',c=mkCanvas(8,8);let g=c.getContext('2d');g.font=font;
+  let w=0;for(const t of zeilen)w=Math.max(w,+g.measureText(t).width||t.length*22);c.width=Math.ceil(w+2*pad);c.height=Math.ceil(zeilen.length*lh+2*pad);
+  g=c.getContext('2d');g.fillStyle=o.bg||'rgba(14,17,22,.84)';g.fillRect(0,0,c.width,c.height);
+  g.font=font;g.textBaseline='middle';zeilen.forEach((t,i)=>{g.fillStyle=i&&o.fg2?o.fg2:(o.fg||'#fff');g.fillText(t,pad,pad+lh*(i+.5));});
+  const tx=new T.CanvasTexture(c);tx.encoding=T.sRGBEncoding;const s=new T.Sprite(new T.SpriteMaterial({map:tx,transparent:true,depthWrite:false,toneMapped:false}));
+  const H=zeilen.length*h*1.24+h*.72;s.scale.set(H*(c.width/(c.height||1)),H,1);return s;}
+function dstelle(zeilen,x,y,z,h,o){o=o||{};
+  if(zeilen[0]==='Aufträge heute')zeilen=['Aufträge heute','Familie Neumann: Elektrik Gästebad'];   // Tafel im Büro: der Auftrag DIESES Spiels (dorf.js nennt Eberle)
+  const s=dschild(zeilen,h||.1,o),p=zuB(x,z);s.position.set(p[0],y,p[1]);s.userData.noShadow=true;scene.add(s);const e={s,x:p[0],z:p[1],weit:o.weit||12};DSCHILDER.push(e);return e;}
+let dseed=20261123;const drnd=()=>{dseed=dseed+0x6D2B79F5|0;let t=Math.imul(dseed^dseed>>>15,1|dseed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;},drr=(a,b)=>a+(b-a)*drnd();
+DORF.bauen({GY,F:DF,box:dbox,solid:dsolid,block:dblock,face:dface,flaeche:dflaeche,zyl:dzyl,kegel:dkegel,baum:dbaum,nachbarhaus:dnachbarhaus,fensterreihe:dfensterreihe,
+  wall:dwall,fe:dfe,tu:dtu,tisch:dtisch,stuhl:dstuhl,stelle:dstelle,inBau:dinBau,GLAS:DB_G,rr:drr,rnd:drnd},'neumann');
+// Boden zum Gehen auf dem Grundstück des Betriebs (sonst trägt nur die Baustelle)
+dblock(BT.x0-1,GY-2,BT.z0-4,BT.x1+1,GY,BT.z1+1);
+// Deine Chefin: steht im Büro am Schreibtisch (Figur wie im Spiel „Haus Eberle“, ein festes Netz ohne Sonne)
+const CHEFIN={x:-129.7,z:13.75,dreh:Math.PI};   // Dorf-Koordinaten
+{const o={hose:0x2b2f3a,jacke:0x2f5f8f,haut:0xe9bf9d,haar:0x5a3a24,lang:true};
+  const b=dLokal(true,()=>{dbox(-.17,0,-.09,-.03,.84,.09,{c:o.hose,ao:1});dbox(.03,0,-.09,.17,.84,.09,{c:o.hose,ao:1});dbox(-.18,0,-.1,-.02,.07,.16,{c:0x2a2a2a,ao:1});dbox(.02,0,-.1,.18,.07,.16,{c:0x2a2a2a,ao:1});
+    dprim(new T.CylinderGeometry(.2,.23,.62,10),new T.Matrix4().makeTranslation(0,1.13,0),o.jacke,0,1);
+    for(const s of[-1,1]){dzyl([s*.27,1.38,0],[s*.31,.84,.03],.055,o.jacke,0,8,1);dkugel([s*.31,.8,.03],.06,o.haut,0,1,1);}
+    dzyl([0,1.42,0],[0,1.52,0],.06,o.haut,0,8,1);dkugel([0,1.62,0],.125,o.haut,0,1.1,1);dkugel([0,1.655,-.03],.132,o.haar,0,1,1);
+    dbox(-.12,1.42,-.15,.12,1.64,-.07,{c:o.haar,ao:1});dkugel([-.045,1.63,.118],.015,0x222222,0,1,1);dkugel([.045,1.63,.118],.015,0x222222,0,1,1);});
+  const m=dNetz(b,DMAT_I),p=zuB(CHEFIN.x,CHEFIN.z);m.position.set(p[0],GY,p[1]);m.rotation.y=CHEFIN.dreh;
+  dblock(CHEFIN.x-.22,GY,CHEFIN.z-.22,CHEFIN.x+.22,GY+1.7,CHEFIN.z+.22);
+  CHEFIN.schild=dstelle(['Deine Chefin'],CHEFIN.x,GY+2.0,CHEFIN.z,.105,{weit:15,fg2:'#f3b086'});}
+// Firmenwagen (Maße wie im Spiel „Haus Eberle“: vorn = +x, Mitte = 0, Boden = 0); innen offen: Scheiben nur von außen dunkel
+const FW={x:0,z:0,th:0,col:block(0,-100,0,0,-100,0),netz:null,schild:null};
+{const w=0xf2f2ee,dk=0x2c3a48,gr=0x3a3d42,o=(c,x)=>Object.assign({c,ao:1},x||{});
+  const b=dLokal(false,()=>{
+    dbox(-2.7,.32,-.975,.8,2.27,.975,o(w));dbox(-2.7,1.07,.975,.8,1.27,.987,o(DF.orange));dbox(-2.7,1.07,-.987,.8,1.27,-.975,o(DF.orange));
+    dbox(-1.3,.42,.975,0,2.12,.989,o(0xe2e2dc));dbox(.8,.32,-.975,2.15,.45,.975,o(gr));dbox(.8,2.0,-.975,2.15,2.05,.975,o(w,{cBot:0xd9dad6}));
+    for(const s of[-1,1]){dbox(.8,.45,s<0?-.975:.925,2.15,1.25,s<0?-.925:.975,o(w,s<0?{cZp:0x6b7078}:{cZm:0x6b7078}));dbox(2.09,1.25,s<0?-.975:.93,2.15,2.0,s<0?-.93:.975,o(w));
+      dface([[.8,1.25,s*.976],[2.09,1.25,s*.976],[2.09,2.0,s*.976],[.8,2.0,s*.976]],[0,0,s],dk,0,1);dbox(1.97,1.32,s<0?-1.1:.975,2.02,1.45,s<0?-.975:1.1,o(gr));}
+    dbox(2.15,.32,-.975,2.7,1.17,.975,o(w));dface([[2.152,1.17,-.93],[2.152,1.17,.93],[2.152,2.0,.93],[2.152,2.0,-.93]],[1,0,0],dk,0,1);
+    dbox(2.7,.42,-.95,2.76,.68,.95,o(gr));dbox(2.7,.85,-.86,2.72,1.0,-.56,o(0xfff6d0));dbox(2.7,.85,.56,2.72,1.0,.86,o(0xfff6d0));
+    dbox(-2.72,.9,-.95,-2.7,1.25,-.78,o(0xc0392b));dbox(-2.72,.9,.78,-2.7,1.25,.95,o(0xc0392b));
+    for(const x of[-1.9,1.7])for(const s of[-1,1])dzyl([x,.34,s*.955],[x,.34,s*.715],.34,0x1c1c1e,0,12,1);
+    dbox(1.84,.95,-.925,2.15,1.2,.925,o(0x2b2e33));dbox(1.9,1.2,-.11,1.93,1.33,.11,o(0x1d232b,{cXm:0x6fb4f0}));
+    dprim(new T.TorusGeometry(.17,.022,6,18),new T.Matrix4().compose(new T.Vector3(1.52,1.08,-.45),new T.Quaternion().setFromUnitVectors(new T.Vector3(0,0,1),new T.Vector3(-.85,.53,0).normalize()),new T.Vector3(1,1,1)),0x1c1c1e,0,1);
+    dzyl([1.54,1.07,-.45],[1.86,.98,-.45],.028,0x1c1c1e,0,8,1);
+    for(const zc of[-.47,.47]){dbox(1.0,.45,zc-.27,1.45,.86,zc+.27,o(0x3c4048));dbox(.86,.86,zc-.27,1.0,1.6,zc+.27,o(0x3c4048));}});
+  FW.netz=dNetz(b,DMAT_A);FW.netz.castShadow=true;FW.schild=dstelle(['Firmenwagen'],0,GY+2.75,0,.11,{weit:22});}
+// x, z, th in Dorf-Koordinaten; fest = Kollision an (geparkt), während der Fahrt ohne Kollision (du sitzt im Wagen)
+function wagenStellen(x,z,th,fest){FW.x=x;FW.z=z;FW.th=th;const p=zuB(x,z),m=FW.netz;m.position.set(p[0],GY,p[1]);m.rotation.y=th;
+  const c=Math.abs(Math.cos(th)),s=Math.abs(Math.sin(th)),hx=2.72*c+.99*s,hz=2.72*s+.99*c,k=FW.col;
+  if(fest){k.x0=p[0]-hx;k.x1=p[0]+hx;k.z0=p[1]-hz;k.z1=p[1]+hz;k.y0=GY;k.y1=GY+2.3;}else k.y0=k.y1=-100;
+  const L=FW.schild,lx=p[0]-.3*Math.cos(th),lz=p[1]+.3*Math.sin(th);L.s.position.set(lx,GY+2.75,lz);L.x=lx;L.z=lz;
+  if(Math.hypot(p[0]-HX/2,p[1]-HZ/2)<40)renderer.shadowMap.needsUpdate=true;}
+// Schranke an der Einfahrt des Betriebs: Arm als eigener Körper, Kollision nur geschlossen
+const SCHRANKE={t:0,ziel:0,pivot:new T.Group(),col:dblock(BT.tor0-.15,GY,BT.z0-.12,BT.tor1,GY+1.25,BT.z0+.12)};
+{const b=dLokal(false,()=>{dbox(-8.25,-.05,-.04,0,.05,.04,{c:0xf4f4f0,ao:1});for(let i=0;i<4;i++)dbox(-7.9+i*2.05,-.053,-.043,-7.0+i*2.05,.053,.043,{c:0xd0281e,ao:1});});
+  dNetz(b,DMAT_A,SCHRANKE.pivot);const p=zuB(BT.tor1+.16,BT.z0);SCHRANKE.pivot.position.set(p[0],GY+1.0,p[1]);scene.add(SCHRANKE.pivot);}
+function schrankeStellen(){const e=SCHRANKE.t*SCHRANKE.t*(3-2*SCHRANKE.t),i=colliders.indexOf(SCHRANKE.col),zu=SCHRANKE.t<.02;SCHRANKE.pivot.rotation.z=-e*1.45;
+  if(zu&&i<0)colliders.push(SCHRANKE.col);else if(!zu&&i>=0)colliders.splice(i,1);}
+dNetz(DB_A,DMAT_A);dNetz(DB_I,DMAT_I);dNetz(DB_G,DMAT_G);
 
 // ================================================================ AUSBAU: Küche und Gästebad
 // Rohbau: nichts. Rohinstallation: Dosen, Leitungen, Anschlüsse. Fertiginstallation: fertiger Raum, Anschlüsse an denselben Stellen.
@@ -965,12 +1302,13 @@ buildMeshes(MAIN,scene);for(const s of STAGEMAPS)buildMeshes(s.map,s.group);
 
 // ---------------------------------------------------------------- Himmel und Licht
 const SUN=new T.Vector3(-.62,.7,.38).normalize(); // Nachmittagssonne aus Südwest (Garten = Süden, Straße = Norden)
+const HIMMEL=new T.Group();scene.add(HIMMEL);   // Auslieferung B: Himmel und Sonne wandern mit der Kamera (der Betrieb liegt gut 200 m von der Baustelle entfernt)
 {const skyMat=new T.MeshBasicMaterial({map:texSky(),side:T.BackSide,fog:false,toneMapped:false,depthWrite:false});
-  const sky=new T.Mesh(new T.SphereGeometry(380,32,16),skyMat);sky.renderOrder=-10;scene.add(sky);
+  const sky=new T.Mesh(new T.SphereGeometry(380,32,16),skyMat);sky.renderOrder=-10;HIMMEL.add(sky);
   scene.fog=new T.Fog(lin(0xd3e0ea),60,330);
   try{const pm=new T.PMREMGenerator(renderer),es=new T.Scene();es.add(new T.Mesh(new T.SphereGeometry(50,24,12),skyMat));const env=pm.fromScene(es,0,.1,100).texture;for(const m of [M.glass,M.mirror,M.chrome]){m.envMap=env;m.needsUpdate=true;}pm.dispose();}catch(e){}
   const c=mkCanvas(128,128),g=c.getContext('2d'),gr=g.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(255,252,236,1)');gr.addColorStop(.14,'rgba(255,248,215,.95)');gr.addColorStop(.3,'rgba(255,240,190,.28)');gr.addColorStop(1,'rgba(255,240,190,0)');g.fillStyle=gr;g.fillRect(0,0,128,128);
-  const sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),transparent:true,depthWrite:false,fog:false,toneMapped:false,blending:T.AdditiveBlending}));sp.scale.set(90,90,1);sp.position.copy(SUN).multiplyScalar(360);scene.add(sp);}
+  const sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),transparent:true,depthWrite:false,fog:false,toneMapped:false,blending:T.AdditiveBlending}));sp.scale.set(90,90,1);sp.position.copy(SUN).multiplyScalar(360);HIMMEL.add(sp);}
 const hemi=new T.HemisphereLight(lin(0xcfe1ff),lin(0x8d7b66),.95);scene.add(hemi);
 const sun=new T.DirectionalLight(lin(0xfff0d8),2.5);
 sun.position.set(HX/2,0,HZ/2).addScaledVector(SUN,60);sun.target.position.set(HX/2,0,HZ/2);scene.add(sun,sun.target);
@@ -991,7 +1329,8 @@ const STRAHLER=[strahler(2.3,2.75,Y_KG,-.2,-1),strahler(5.75,2.95,Y_KG,-.25,-1),
 // verdrahten.js – Verdrahten im Gästebad (Haus 1, Familie Neumann; Wunsch des Lehrers 23.11.2026)
 // Übungsreihe nach den Skizzen des Lehrers: links die Verteilerdose mit der Zuleitung, rechts das Gerät; Adern nur waagerecht und senkrecht.
 //   Übung 1 Steckdose · Übung 2 Leuchte (brennt immer) · Übung 3 Leuchte über Schalter (Leitung durch die Schalterdose)
-//   Übung 4 wie im Gästebad: Steckdose aus Verteilerdose 1, Leuchte und Schalter über Verteilerdose 2, zum Schalter 4-adrig.
+//   Übung 4 Leuchte und Schalter über Verteilerdose 2 (noch ohne Steckdose; Wunsch des Lehrers 23.11.2026 abends) · Übung 5 dazu die Steckdose
+//   aus Verteilerdose 1, zum Schalter 4-adrig · Übung 6 Gästebad: alles an einer Verteilerdose, Netz von oben.
 // Entscheidungen des Lehrers: Pole der Steckdose dürfen vertauscht sein; der Schalter MUSS den Außenleiter L schalten.
 // Kennfarben (Tabellenbuch, Tab. „Kennfarben von Adern“): 3-adrig grün-gelb, blau, braun · 4-adrig grün-gelb, braun, schwarz, grau.
 // Eingesetzt von build.mjs an /*__VERDRAHTEN__*/ in src.html und in uebung-src.html; Rechenteil ohne DOM (probe-verdrahten.mjs).
@@ -1016,6 +1355,10 @@ const steckdoseOben=(id,x,y)=>teil(id,'steckdose','Steckdose',x,y,[['p1',45,30,'
 const leuchteLinks=(id,x,y)=>teil(id,'leuchte','Leuchte',x,y,[['l',30,45,'l','L'],['pe',45,80,'pe','PE'],['n',30,115,'n','N']],{sym:{dx:106,dy:80},innen:'hv'});
 const schalterQuer=(id,x,y)=>teil(id,'schalter','Schalter',x,y,[['e',30,45,'kontakt'],['a',130,45,'kontakt'],['d1',80,80,'durch'],['d2',80,115,'durch']],{b:160,form:'quer'});
 const schalterHoch=(id,x,y)=>teil(id,'schalter','Schalter',x,y,[['e',30,35,'kontakt'],['a',120,35,'kontakt'],['pe',15,130,'pe','PE']],{form:'hoch'});
+// Übung 6 (Skizze des Lehrers 23.11.2026, Anordnung wie im Gästebad): Leuchte mit Anschlüssen oben; Verteilerdose mit der Zuleitung von oben
+// (im Bad „von hinten“) und einer freien Klemme f für die geschaltete Ader; Name links neben dem Kasten (oben laufen die Zuleitungsadern)
+const leuchteOben=(id,x,y)=>teil(id,'leuchte','Leuchte',x,y,[['l',60,30,'l','L'],['pe',30,45,'pe','PE'],['n',110,30,'n','N']],{sym:{dx:75,dy:105},innen:'vh'});
+const verteilerOben=(id,name,x,y)=>teil(id,'dose',name,x,y,[['L',45,45,'quelle'],['PE',75,80,'quelle'],['N',105,115,'quelle'],['f',128,142,'frei']],{zuleitung:true,nameLinks:true});
 
 // ================================================================ Übungen
 const UEB=[
@@ -1032,18 +1375,36 @@ const UEB=[
    loesung:[['VD.L','E.l','braun'],['VD.PE','E.pe','gnge'],['VD.N','E.n','blau']],
    fertig:()=>'Richtig angeschlossen – die Leuchte brennt. Aber sie brennt immer: Zum Ein- und Ausschalten fehlt ein Schalter. Weiter mit Übung 3.'},
   {titel:'Übung 3: Leuchte mit Schalter',
-   text:'Die Leitung läuft von der Verteilerdose durch die Schalterdose zur Leuchte. Schließe Schalter und Leuchte so an, dass du die Leuchte ein- und ausschalten kannst. In der Schalterdose gibt es zwei Klemmen, um Adern weiterzuverbinden.',
+   text:'Die Leitung läuft von der Verteilerdose durch die Schalterdose zur Leuchte. Schließe Schalter und Leuchte so an, dass du die Leuchte ein- und ausschalten kannst. In der Schalterdose gibt es zwei Klemmen, um Adern weiterzuverbinden. Tipp: Tippe auf den Schalter (oder auf „Schalter betätigen“), um ihn ein- und auszuschalten.',
    bau:()=>[zuleitungsDose('VD','Verteilerdose',60,170),schalterQuer('S',380,170),leuchteLinks('E',720,170)],
    leitungen:[['VD','S',3],['S','E',3]],soll:{E:'S'},
    loesung:[['VD.L','S.e','braun'],['S.a','E.l','braun'],['VD.PE','S.d1','gnge'],['S.d1','E.pe','gnge'],['VD.N','S.d2','blau'],['S.d2','E.n','blau']],
    fertig:st=>st.S?'Richtig verdrahtet – die Leuchte brennt. Schalte sie mit dem Schalter aus.':'Richtig verdrahtet – der Schalter ist AUS, die Leuchte ist aus. Schalte sie ein.'},
-  {titel:'Übung 4: wie im Gästebad',
-   text:'Wie auf der Baustelle: Von Verteilerdose 1 geht eine Leitung direkt zur Steckdose – sie soll immer Spannung haben. Über Verteilerdose 2 werden Leuchte und Schalter angeschlossen, die Leuchte wird geschaltet. Zwischen Verteilerdose 2 und Schalter liegt eine 4-adrige Leitung, alle anderen Leitungen sind 3-adrig.',
+  // Übung 4 (Wunsch des Lehrers 23.11.2026 abends): „Mach hier die Übung 4 erstmal ohne Steckdose und dann erst die nächste Übung dann mit Steckdose.“
+  {titel:'Übung 4: Leuchte und Schalter über eine Verteilerdose',
+   text:'In Verteilerdose 1 kommt die Zuleitung an. Über Verteilerdose 2 werden Leuchte und Schalter angeschlossen, die Leuchte wird geschaltet. Zwischen Verteilerdose 2 und Schalter liegt eine 4-adrige Leitung, die anderen Leitungen sind 3-adrig.',
+   bau:()=>[zuleitungsDose('VD1','Verteilerdose 1',60,60),leereDose('VD2','Verteilerdose 2',400,60),leuchteLinks('E',740,60),schalterHoch('S',400,330)],
+   leitungen:[['VD1','VD2',3],['VD2','E',3],['VD2','S',4]],soll:{E:'S'},
+   loesung:[['VD1.L','VD2.a','braun'],['VD1.PE','VD2.b','gnge'],['VD1.N','VD2.c','blau'],
+            ['VD2.a','S.e','braun'],['S.a','VD2.d','schwarz'],['VD2.b','S.pe','gnge'],['VD2.d','E.l','braun'],['VD2.b','E.pe','gnge'],['VD2.c','E.n','blau']],
+   fertig:st=>(st.S?'Richtig verdrahtet – die Leuchte brennt. Schalte sie mit dem Schalter aus.':'Richtig verdrahtet – der Schalter ist AUS, die Leuchte ist aus. Schalte sie ein.')+' Weiter mit Übung 5: Jetzt kommt eine Steckdose dazu.'},
+  {titel:'Übung 5: Steckdose dazu',
+   text:'Wie in Übung 4, jetzt mit Steckdose: Von Verteilerdose 1 geht eine Leitung direkt zur Steckdose – sie soll immer Spannung haben. Über Verteilerdose 2 werden Leuchte und Schalter angeschlossen, die Leuchte wird geschaltet. Zwischen Verteilerdose 2 und Schalter liegt eine 4-adrige Leitung, alle anderen Leitungen sind 3-adrig.',
    bau:()=>[zuleitungsDose('VD1','Verteilerdose 1',60,60),leereDose('VD2','Verteilerdose 2',400,60),leuchteLinks('E',740,60),steckdoseOben('SD',60,330),schalterHoch('S',400,330)],
    leitungen:[['VD1','VD2',3],['VD1','SD',3],['VD2','E',3],['VD2','S',4]],soll:{SD:'dauer',E:'S'},
    loesung:[['VD1.L','VD2.a','braun'],['VD1.PE','VD2.b','gnge'],['VD1.N','VD2.c','blau'],['VD1.L','SD.p1','braun'],['VD1.PE','SD.pe','gnge'],['VD1.N','SD.p2','blau'],
             ['VD2.a','S.e','braun'],['S.a','VD2.d','schwarz'],['VD2.b','S.pe','gnge'],['VD2.d','E.l','braun'],['VD2.b','E.pe','gnge'],['VD2.c','E.n','blau']],
-   fertig:st=>(st.S?'Richtig verdrahtet – die Leuchte brennt, die Steckdose hat Spannung.':'Richtig verdrahtet – Schalter AUS: Die Leuchte ist aus, die Steckdose hat trotzdem Spannung.')+' So schließt du gleich das Gästebad an.'}];
+   fertig:st=>(st.S?'Richtig verdrahtet – die Leuchte brennt, die Steckdose hat Spannung.':'Richtig verdrahtet – Schalter AUS: Die Leuchte ist aus, die Steckdose hat trotzdem Spannung.')+' Weiter mit Übung 6.'},
+  // Übung 6 (Wunsch des Lehrers 23.11.2026 mit Skizze): „… so wie sie eben auch dann im Haus Neumann im Gästebad vorzufinden ist. Links die Steckdose,
+  // dann kommt die Lampe und rechts der Schalter und oben drüber dann die Verteilerdose und der Netzanschluss kommt sozusagen von hinten. In dem Fall jetzt von oben.“
+  {titel:'Übung 6: Gästebad – alles an einer Verteilerdose',
+   text:'So sieht es im Gästebad von Familie Neumann aus: Die Zuleitung (Netz) kommt von hinten in die Verteilerdose – hier im Bild von oben. Von dort gehen Leitungen zur Steckdose (links), zur Leuchte über dem Spiegel (Mitte) und zum Schalter neben der Tür (rechts). Zum Schalter liegt eine 4-adrige Leitung, sonst 3-adrig. Die Steckdose hat immer Spannung, die Leuchte wird geschaltet. In der Verteilerdose gibt es eine freie Klemme.',
+   zul:'oben',lweg:true,
+   bau:()=>[verteilerOben('VD','Verteilerdose',405,70),steckdoseOben('SD',60,350),leuchteOben('E',405,330),schalterHoch('S',750,330)],
+   leitungen:[['VD','SD',3],['VD','E',3],['VD','S',4]],soll:{SD:'dauer',E:'S'},
+   loesung:[['VD.L','SD.p1','braun'],['VD.PE','SD.pe','gnge'],['VD.N','SD.p2','blau'],['VD.L','S.e','braun'],['S.a','VD.f','schwarz'],['VD.PE','S.pe','gnge'],
+            ['VD.f','E.l','braun'],['VD.PE','E.pe','gnge'],['VD.N','E.n','blau']],
+   fertig:st=>(st.S?'Richtig verdrahtet – die Leuchte brennt, die Steckdose hat Spannung.':'Richtig verdrahtet – Schalter AUS: Die Leuchte ist aus, die Steckdose hat trotzdem Spannung.')+' Genau so schließt du jetzt das Gästebad an.'}];
 
 // Varianten („Andere Anordnung“): Bit 0 = gespiegelt (Zuleitung von rechts), Bits darüber = andere Reihenfolge der Zuleitungsklemmen
 const PERM=[['L','PE','N'],['PE','N','L'],['N','L','PE']],VARIANTEN=6;
@@ -1054,8 +1415,8 @@ function uebung(n,v){const U=UEB[n];v=((v||0)%VARIANTEN+VARIANTEN)%VARIANTEN;con
   const sp=v&1;
   if(sp)for(const t of teile){t.x=W-t.x-t.b;for(const k of t.klemmen)k.dx=t.b-k.dx;if(t.sym)t.sym={dx:t.b-t.sym.dx,dy:t.sym.dy};}
   const zd=teile.find(t=>t.zuleitung);
-  return {n,v,titel:U.titel,text:U.text,fertig:U.fertig,teile,leitungen:U.leitungen,soll:U.soll,loesung:U.loesung,
-    quelle:{L:zd.id+'.L',N:zd.id+'.N',PE:zd.id+'.PE'},zuleitung:{teil:zd,seite:sp?'rechts':'links'}};}
+  return {n,v,titel:U.titel,text:U.text,fertig:U.fertig,teile,leitungen:U.leitungen,soll:U.soll,loesung:U.loesung,lweg:!!U.lweg,
+    quelle:{L:zd.id+'.L',N:zd.id+'.N',PE:zd.id+'.PE'},zuleitung:{teil:zd,seite:U.zul==='oben'?'oben':sp?'rechts':'links'}};}
 
 // ================================================================ Rechenteil (ohne DOM)
 const teilVon=(S,pid)=>S.teile.find(t=>t.id===pid.split('.')[0]);
@@ -1105,7 +1466,7 @@ function bewerte(S,dr){
   if(S.leitungen){let fehl=null;const paare={};
     for(const d of dr){const A=teilVon(S,d.a),B=teilVon(S,d.b);if(A===B)continue;const k=[A.id,B.id].sort().join('|');(paare[k]||(paare[k]={A,B,f:[]})).f.push(d.farbe);}
     for(const k in paare){const p=paare[k],lt=S.leitungen.find(([a,b])=>[a,b].sort().join('|')===k);
-      if(!lt){fehl=fehl||`Zwischen ${p.A.name} und ${p.B.name} liegt keine Leitung – dort kann keine Ader verlaufen.`;continue;}
+      if(!lt){fehl=fehl||`Eine Ader läuft direkt zwischen ${p.A.name} und ${p.B.name} – dort liegt aber keine Leitung. Adern laufen nur in den verlegten Leitungen: Klemme sie in der Dose dazwischen an (schwarzer Punkt).`;continue;}
       const n=lt[2],bad=p.f.find(x=>!ADERN[n].includes(x)),dop=p.f.find((x,i)=>p.f.indexOf(x)!==i);
       if(bad)fehl=fehl||`Die Leitung ${p.A.name} – ${p.B.name} ist ${n}-adrig: Eine ${FARBEN[bad].adj} Ader gibt es darin nicht.`;
       else if(dop)fehl=fehl||`In der Leitung ${p.A.name} – ${p.B.name} ist die ${FARBEN[dop].adj} Ader doppelt – jede Farbe gibt es in einer Leitung nur einmal.`;}
@@ -1143,11 +1504,31 @@ function legePaar(S,paar){
 function weg(S,d,dr){
   const a=pkt(S,d.a),b=pkt(S,d.b);if(!a||!b)return null;
   if(d.ecken&&d.ecken.length){const pts=[a,...d.ecken],l=pts[pts.length-1];if(l.x!==b.x&&l.y!==b.y)pts.push({x:b.x,y:l.y});pts.push(b);return pts;}
+  // Übung 6 (lweg): Teile schräg unter der Verteilerdose → erst waagerecht aus der Dose, dann senkrecht zum Gerät (wie in der Skizze des Lehrers)
+  if(S.lweg){const A=teilVon(S,d.a),B=teilVon(S,d.b),ueber=A.x<B.x+B.b&&B.x<A.x+A.b;
+    if(!ueber&&A!==B){if(a.x===b.x||a.y===b.y)return [a,b];const o=a.y<b.y?a:b,u=o===a?b:a;return [a,{x:u.x,y:o.y},b];}}
   const key=x=>[teilVon(S,x.a).id,teilVon(S,x.b).id].sort().join('|'),paar=(dr||[d]).filter(x=>!(x.ecken&&x.ecken.length)&&key(x)===key(d));
   if(!paar.includes(d))paar.push(d);
   const m=legePaar(S,paar),pts=m&&m.get(d);if(pts)return pts[0].id===d.a?pts:pts.slice().reverse();
   if(a.x===b.x||a.y===b.y)return [a,b];
   return [a,{x:b.x,y:a.y},b];}
+// Läuft eine Ader sichtbar durch eine Klemme einer Dose (schwarzer Punkt), ist sie dort angeklemmt (Wunsch des Lehrers 23.11.2026:
+// „Die schwarzen Punkte sind ja die Klemmen.“ – in Übung 4 und 5 liegen Klemmen von Verteilerdose 1, Verteilerdose 2 und Leuchte auf einer Höhe).
+// Zerlegt die Ader d in Teilstücke von Klemme zu Klemme; Ecken bleiben, wo sie waren. Geräteanschlüsse (weiße Kreise) zählen nicht.
+const istKlemme=(t,k)=>t.typ==='dose'||k.rolle==='durch';
+function aufteilen(S,d,dr){const pts=weg(S,d,(dr||[]).concat([d]));if(!pts||pts.length<2)return[d];
+  const halt=[];let s0=0;
+  for(let i=0;i+1<pts.length;i++){const p=pts[i],q=pts[i+1];
+    for(const t of S.teile)for(const k of t.klemmen){const id=t.id+'.'+k.id;if(id===d.a||id===d.b||!istKlemme(t,k)||halt.some(h=>h.id===id))continue;
+      const x=t.x+k.dx,y=t.y+k.dy,auf=(p.x===q.x&&Math.abs(x-p.x)<.5&&y>=Math.min(p.y,q.y)-.5&&y<=Math.max(p.y,q.y)+.5)||(p.y===q.y&&Math.abs(y-p.y)<.5&&x>=Math.min(p.x,q.x)-.5&&x<=Math.max(p.x,q.x)+.5);
+      if(auf)halt.push({id,s:s0+Math.abs(x-p.x)+Math.abs(y-p.y)});}
+    s0+=Math.abs(q.x-p.x)+Math.abs(q.y-p.y);}
+  if(!halt.length)return[d];
+  halt.sort((u,v)=>u.s-v.s);const kette=[{id:d.a,s:0}].concat(halt,[{id:d.b,s:s0}]),ecken=[];let s=0;
+  for(let i=1;i<pts.length-1;i++){s+=Math.abs(pts[i].x-pts[i-1].x)+Math.abs(pts[i].y-pts[i-1].y);ecken.push({x:pts[i].x,y:pts[i].y,s});}
+  const out=[];for(let j=0;j+1<kette.length;j++){const A=kette[j],B=kette[j+1],e=ecken.filter(c=>c.s>A.s+1e-6&&c.s<B.s-1e-6).map(c=>({x:c.x,y:c.y}));
+    out.push({a:A.id,b:B.id,farbe:d.farbe,ecken:e.length?e:null});}
+  return out;}
 
 // ================================================================ Zeichnen und Bedienen
 const NS='http://www.w3.org/2000/svg';
@@ -1178,7 +1559,10 @@ function zeichneTeil(g,t,an,z,S){
   el('rect',{x:t.x,y:t.y,width:t.b,height:t.h,fill:'#fff',stroke:'#333','stroke-width':2.2,rx:3},g);
   // Name unter dem Kasten – oder darüber, wenn darunter ein weiteres Teil liegt (sonst laufen Adern durch die Schrift)
   const drunter=S&&S.teile.some(o=>o!==t&&o.y>=t.y+t.h&&o.x<t.x+t.b&&o.x+o.b>t.x);
-  tx(g,t.x+t.b/2,drunter?t.y-9:t.y+t.h+21,t.name,{'text-anchor':'middle','font-size':15,'font-weight':600,fill:'#333'});
+  if(t.nameLinks)tx(g,t.x-10,t.y+22,t.name,{'text-anchor':'end','font-size':15,'font-weight':600,fill:'#333'});   // Übung 6: oben laufen die Zuleitungsadern
+  else tx(g,t.x+t.b/2,drunter?t.y-9:t.y+t.h+21,t.name,{'text-anchor':'middle','font-size':15,'font-weight':600,fill:'#333'});
+  // Tipp am Schalter (Wunsch des Lehrers 23.11.2026 abends: „füge da einen Tipp hinzu, dass man den Schalter betätigen kann“) – nur in den Übungen
+  if(t.typ==='schalter'&&z&&z.tipp)tx(g,t.x+t.b/2,drunter?t.y-26:t.y+t.h+38,'Tipp: zum Schalten antippen',{'text-anchor':'middle','font-size':12.5,'font-weight':700,fill:'#c0612b'});
   const K=id=>t.klemmen.find(k=>k.id===id);
   if(t.typ==='steckdose'){const cx=t.x+t.sym.dx,cy=t.y+t.sym.dy;
     if(t.innen==='vh'){innen(g,t,K('p1'),cx-12,cy);innen(g,t,K('p2'),cx+12,cy);innen(g,t,K('pe'),cx,cy-28);}
@@ -1244,7 +1628,7 @@ const KENNFARBEN=`<table class="vd-tab"><tr><td>3-adrig</td><td><span style="bac
 // Übungsfenster. opt: {start, geloest:[Nummern], lehrer, onGeloest(n, alle), zurueck:{text, tu()}}
 function uebungen(wurzel,opt){
   opt=opt||{};css();
-  const z={n:opt.start||0,v:0,S:null,dr:[],farbe:'braun',wahl:null,ecken:[],st:{},beschr:true,geloest:new Set(opt.geloest||[]),lehrer:!!opt.lehrer,pruef:false,hinweis:''};
+  const z={n:opt.start||0,v:0,S:null,dr:[],farbe:'braun',wahl:null,ecken:[],st:{},beschr:true,tipp:true,geloest:new Set(opt.geloest||[]),lehrer:!!opt.lehrer,pruef:false,hinweis:'',zug:0};
   wurzel.innerHTML=`<div class="vd">
   <div class="vd-kopf"><div><h2 data-v="titel"></h2><p data-v="text"></p></div>${opt.zurueck?'<button type="button" class="haupt" data-v="zurueck"></button>':''}</div>
   <div class="vd-leiste vd-uebungen" data-v="reiter"></div>
@@ -1282,21 +1666,28 @@ function uebungen(wurzel,opt){
     if(!z.wahl){z.wahl=id;z.ecken=[];z.hinweis='';zeichne();return;}
     if(z.wahl===id){z.wahl=null;z.ecken=[];zeichne();return;}
     if(teilVon(z.S,z.wahl)===teilVon(z.S,id)){z.wahl=id;z.ecken=[];zeichne();return;}  // im selben Teil: neuer Anfang
-    if(!z.dr.some(d=>(d.a===z.wahl&&d.b===id)||(d.a===id&&d.b===z.wahl)))z.dr.push({a:z.wahl,b:id,farbe:z.farbe,ecken:z.ecken.length?z.ecken.slice():null});
+    // durch einen schwarzen Punkt gezogen = dort angeklemmt (aufteilen); die Teilstücke gehören zusammen (Rückgängig nimmt alle zurück)
+    const gruppe=++z.zug;
+    for(const d of aufteilen(z.S,{a:z.wahl,b:id,farbe:z.farbe,ecken:z.ecken.length?z.ecken.slice():null},z.dr))
+      if(!z.dr.some(x=>(x.a===d.a&&x.b===d.b)||(x.a===d.b&&x.b===d.a)))z.dr.push(Object.assign(d,{gruppe}));
     z.wahl=null;z.ecken=[];z.pruef=false;zeichne();}
   function schalte(id){id=id||Object.keys(z.st)[0];if(id===undefined)return;z.st[id]=z.st[id]?0:1;zeichne();}
   let vorschau=null;
   function zeichne(){
     const S=z.S;svg.innerHTML='';const g=el('g',{},svg),bew=bewerte(S,z.dr),w=netz(S,z.dr,z.st);z.bew=bew;
     el('rect',{x:0,y:0,width:W,height:H,fill:'#fbfaf6'},g);
-    // Zuleitung von der Seite
-    const zt=S.zuleitung.teil,re=S.zuleitung.seite==='rechts',x0=re?W-10:10;let ymin=Infinity;
-    for(const id of ['L','PE','N']){const p=pkt(S,zt.id+'.'+id);ymin=Math.min(ymin,p.y);aderLinie(g,[{x:x0,y:p.y},p],ZUL_FARBE[id]);
-      if(z.beschr)tx(g,re?x0-2:x0+2,p.y-8,id,{'font-size':12,'font-weight':700,fill:'#555','text-anchor':re?'end':'start'});}
-    tx(g,x0,Math.min(ymin-28,zt.y-9),'Zuleitung',{'font-size':13,'font-weight':600,fill:'#555','text-anchor':re?'end':'start'});
     for(const t of S.teile){zeichneTeil(g,t,bew.alles&&w.last[t.id],z,S);
       if(t.typ==='schalter'){const r=el('rect',{x:t.x+4,y:t.y+4,width:t.b-8,height:t.h-8,fill:'#000','fill-opacity':0,style:'cursor:pointer'},g);
         r.addEventListener('click',ev=>{ev.stopPropagation();if(z.wahl){ecke(ev);return;}schalte(t.id);});}}
+    // Zuleitung von der Seite bis an ihre Klemmen (schwarze Punkte) – nach den Kästen gezeichnet, sonst deckt der weiße Kasten sie ab (Wunsch 23.11.2026)
+    const zt=S.zuleitung.teil,re=S.zuleitung.seite==='rechts',x0=re?W-10:10;let ymin=Infinity,xmin=Infinity;
+    if(S.zuleitung.seite==='oben'){const y0=10;   // Übung 6: Netz kommt „von hinten“ – im Bild von oben
+      for(const id of ['L','PE','N']){const p=pkt(S,zt.id+'.'+id);xmin=Math.min(xmin,p.x);aderLinie(g,[{x:p.x,y:y0},p],ZUL_FARBE[id]);
+        if(z.beschr)tx(g,p.x+6,y0+14,id,{'font-size':12,'font-weight':700,fill:'#555'});}
+      tx(g,xmin-12,y0+14,'Zuleitung (Netz)',{'font-size':13,'font-weight':600,fill:'#555','text-anchor':'end'});}
+    else{for(const id of ['L','PE','N']){const p=pkt(S,zt.id+'.'+id);ymin=Math.min(ymin,p.y);aderLinie(g,[{x:x0,y:p.y},p],ZUL_FARBE[id]);
+        if(z.beschr)tx(g,re?x0-2:x0+2,p.y-8,id,{'font-size':12,'font-weight':700,fill:'#555','text-anchor':re?'end':'start'});}
+      tx(g,x0,Math.min(ymin-28,zt.y-9),'Zuleitung',{'font-size':13,'font-weight':600,fill:'#555','text-anchor':re?'end':'start'});}
     z.dr.forEach((d,i)=>{const pts=weg(S,d,z.dr);if(!pts)return;const gr=el('g',{style:'cursor:pointer'},g);
       el('path',{d:pfad(pts),fill:'none',stroke:'#000','stroke-opacity':0,'stroke-width':18},gr);aderLinie(gr,pts,d.farbe);
       gr.addEventListener('click',ev=>{ev.stopPropagation();if(z.wahl){ecke(ev);return;}z.dr.splice(i,1);z.pruef=false;zeichne();});});
@@ -1322,7 +1713,8 @@ function uebungen(wurzel,opt){
   svg.addEventListener('click',ev=>{if(z.wahl)ecke(ev);});
   svg.addEventListener('pointermove',ev=>{if(!z.wahl||!vorschau)return;vorschau.setAttribute('d',pfad([...vorschau.__pts,rechtwinklig(svgPunkt(ev))]));});
   q('schalter').addEventListener('click',()=>schalte());
-  q('zurueckNehmen').addEventListener('click',()=>{if(z.wahl){z.wahl=null;z.ecken=[];}else z.dr.pop();z.pruef=false;zeichne();});
+  q('zurueckNehmen').addEventListener('click',()=>{if(z.wahl){z.wahl=null;z.ecken=[];}
+    else if(z.dr.length){const g=z.dr[z.dr.length-1].gruppe;do z.dr.pop();while(g!==undefined&&z.dr.length&&z.dr[z.dr.length-1].gruppe===g);}z.pruef=false;zeichne();});
   q('leeren').addEventListener('click',()=>{z.dr=[];z.wahl=null;z.ecken=[];z.pruef=false;zeichne();});
   q('pruefen').addEventListener('click',()=>{z.pruef=true;zeichne();});
   if(z.lehrer)q('loesung').addEventListener('click',()=>{z.dr=loesungVon(z.S);z.wahl=null;z.ecken=[];zeichne();});
@@ -1489,7 +1881,7 @@ function gbLoesung(){const v=(a,b)=>({a,b,farbe:pkt(GB,a).k.farbe,ecken:null}),d
   v('Sd.braun','S.e'),v('Sd.schwarz','S.a')];
   return {geraet:{SD:'steckdose',E:'leuchte',S:'schalter'},dr};}
 
-return {W,H,FARBEN,ADERN,L_FARBEN,UEB,VARIANTEN,uebung,netz,bewerte,weg,pkt,loesungVon,uebungen,
+return {W,H,FARBEN,ADERN,L_FARBEN,UEB,VARIANTEN,uebung,netz,bewerte,weg,aufteilen,pkt,loesungVon,uebungen,
   GB,GB_DOSEN,neuerStand,gbDosen,gbBewerte,gbLicht,gbLoesung,doseHinweise,dose};
 })();
 
@@ -1524,9 +1916,11 @@ const DATEI_KONTEXT=(((window.location&&location.pathname)||'').match(/\/pluginf
 const KURS_JE_KONTEXT={'131412':3190}; // Haus 1, Familie Neumann (Datei 109467)
 const AUS_MOODLE=!!DATEI_KONTEXT;
 function kursAdresse(){const k=KURS_JE_KONTEXT[DATEI_KONTEXT];if(k)return 'https://'+MOODLE_HOST+'/course/view.php?id='+k;
+  // Lernpaket: Die Seite steckt im SCORM-Player von Moodle (gleiche Adresse) – dessen Kurs-ID steht in M.cfg.courseId
+  try{const c=window.top&&window.top.M&&window.top.M.cfg&&+window.top.M.cfg.courseId;if(c>1)return 'https://'+MOODLE_HOST+'/course/view.php?id='+c;}catch(_){}
   try{const r=document.referrer?new URL(document.referrer):null;if(r&&r.host===MOODLE_HOST&&!/\/pluginfile\.php\//.test(r.pathname))return r.href;}catch(_){}
   return 'https://'+MOODLE_HOST+'/my/courses.php';}
-function zumKurs(){const ziel=kursAdresse();try{(window.top||window).location.href=ziel;}catch(_){window.location.href=ziel;}}
+function zumKurs(){const ziel=kursAdresse();try{LP.ende();}catch(_){}try{(window.top||window).location.href=ziel;}catch(_){window.location.href=ziel;}}
 function testCmid(st){const k=TEST_JE_KONTEXT[DATEI_KONTEXT];return (k&&k[st.id])||st.test.cmid;}
 function testAdresse(st){return 'https://'+MOODLE_HOST+'/mod/quiz/view.php?id='+testCmid(st);}
 function zeigeInfo(st){
@@ -1552,17 +1946,67 @@ elInfoBox.addEventListener('click',e=>{const b=e.target.closest&&e.target.closes
 elInfo.addEventListener('click',e=>{if(e.target===elInfo&&!elInfo.classList.contains('test'))schliesseStation();});
 
 // ---------------------------------------------------------------- Gästebad: Verdrahten üben und Dosen anklemmen
-// Auftrag „Elektrik im Gästebad“ (Wunsch des Lehrers 23.11.2026): erst die Übungen 1–4, dann jede Dose antippen, Gerät wählen, Adern anklemmen;
+// Auftrag „Elektrik im Gästebad“ (Wunsch des Lehrers 23.11.2026): erst die Übungen 1–6 (Übung 4 seit 23.11. abends ohne Steckdose, Übung 5 mit Steckdose,
+// Übung 6 Anordnung wie im Gästebad), dann jede Dose antippen, Gerät wählen, Adern anklemmen;
 // stimmt alles, schaltet der Schalter neben der Tür das Licht über dem Spiegel. Stand je Gerät im Browser (localStorage).
 const LEHRER=/[?&]lehrer=1/.test((window.location&&location.search)||'');   // ?lehrer=1: Musterlösungen sichtbar
+// ---------------------------------------------------------------- Moodle-Lernpaket (SCORM 1.2)
+// Wunsch des Lehrers 23.11.2026: „ja als lernpeket bauen“ – Punkte direkt in die Moodle-Bewertung, Spielstand je Schüler in Moodle.
+// Läuft die Begehung als Lernpaket, findet sie die SCORM-Schnittstelle (API) in einem umgebenden Fenster. Dann gilt NUR der Spielstand aus
+// Moodle (cmi.suspend_data, höchstens 4096 Zeichen) – nie der des Geräts, sonst erbt ein Schüler am geteilten iPad den Stand des vorigen.
+// Ohne Lernpaket (öffentliche Seite, Datei-Element) bleibt alles wie bisher im Browser (localStorage).
+// Punkte (Entscheidung des Lehrers): je gelöste Übung 10 (6 × 10), alle Dosen richtig angeklemmt 30, Licht eingeschaltet 10 = 100.
+// Gemeldet wird das Beste dieses Versuchs – „Auftrag neu beginnen“ senkt die Punkte nicht. Bei 100 Punkten: Status „completed“.
+const LP=(()=>{
+  const finde=w=>{for(let i=0;w&&i<12;i++){try{if(w.API&&typeof w.API.LMSInitialize==='function')return w.API;}catch(_){return null;}
+      let p=null;try{p=w.parent;}catch(_){}if(!p||p===w)break;w=p;}return null;};
+  let api=null;try{api=finde(window)||(window.opener?finde(window.opener):null);}catch(_){}
+  // In Moodle (Schnittstelle gefunden) NIE den Gerätespeicher nehmen – auch wenn der Start scheitert: dann nur für diese Sitzung im Speicher
+  const imLMS=!!api;
+  if(api){try{if(String(api.LMSInitialize(''))!=='true')api=null;}catch(_){api=null;}}
+  const daten={},start=Date.now();let best=0,zeitAus=null,beendet=false,review=false;
+  const lese=k=>{try{return String(api.LMSGetValue(k)||'');}catch(_){return '';}},schreibe=(k,v)=>{try{return String(api.LMSSetValue(k,String(v)))==='true';}catch(_){return false;}};
+  if(api){try{const s=JSON.parse(lese('cmi.suspend_data')||'{}');if(s&&typeof s==='object'){if(s.d&&typeof s.d==='object')for(const k in s.d)if(typeof s.d[k]==='string')daten[k]=s.d[k];
+        best=Math.max(0,Math.min(100,+s.p||0));}}catch(_){}
+    best=Math.max(best,Math.min(100,+lese('cmi.core.score.raw')||0));review=lese('cmi.core.lesson_mode')==='review';
+    const st=lese('cmi.core.lesson_status');
+    if(!review){schreibe('cmi.core.score.min',0);schreibe('cmi.core.score.max',100);if(st!=='completed'&&st!=='passed')schreibe('cmi.core.lesson_status','incomplete');}}
+  // Spielstand packen; zu lang → erst „Meine Orte“ weglassen, dann die Ecken der Adern im Gästebad, zuletzt das Gästebad (Punkte bleiben)
+  function packe(){const roh=d=>JSON.stringify({v:1,p:best,d});let d=Object.assign({},daten),s=roh(d);
+    const schritte=[()=>{delete d['rohbau-begehung-orte-v1'];},
+      ()=>{try{const g=JSON.parse(d['rohbau-begehung-gaestebad-v1']);g.dr=g.dr.map(x=>({a:x.a,b:x.b,farbe:x.farbe,ecken:null}));d['rohbau-begehung-gaestebad-v1']=JSON.stringify(g);}catch(_){}},
+      ()=>{delete d['rohbau-begehung-gaestebad-v1'];}];
+    for(const f of schritte){if(s.length<=4096)break;f();s=roh(d);}return s.length<=4096?s:roh({});}
+  function sende(){if(!api||beendet||review)return;if(zeitAus){clearTimeout(zeitAus);zeitAus=null;}schreibe('cmi.suspend_data',packe());try{api.LMSCommit('');}catch(_){}}
+  const plane=()=>{if(!zeitAus)zeitAus=setTimeout(()=>{zeitAus=null;sende();},800);};
+  function lies(k){if(imLMS)return Object.prototype.hasOwnProperty.call(daten,k)?daten[k]:null;try{return localStorage.getItem(k);}catch(_){return null;}}
+  function setze(k,v){if(imLMS){daten[k]=String(v);if(api)plane();return true;}try{localStorage.setItem(k,v);return true;}catch(_){return false;}}
+  function punkte(p){p=Math.max(0,Math.min(100,Math.round(+p||0)));if(!api||review||p<=best)return;best=p;
+    schreibe('cmi.core.score.raw',best);if(best>=100)schreibe('cmi.core.lesson_status','completed');sende();}
+  function dauer(){const s=(Date.now()-start)/1000,h=Math.floor(s/3600),m=Math.floor(s%3600/60);return String(h).padStart(4,'0')+':'+String(m).padStart(2,'0')+':'+(s%60).toFixed(2).padStart(5,'0');}
+  function ende(){if(!api||beendet)return;if(!review){sende();schreibe('cmi.core.exit','suspend');schreibe('cmi.core.session_time',dauer());try{api.LMSCommit('');}catch(_){}}
+    try{api.LMSFinish('');}catch(_){}beendet=true;}
+  if(api){window.addEventListener('pagehide',ende);window.addEventListener('beforeunload',ende);
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')sende();});}
+  return {an:!!api,imLMS,lies,setze,punkte,sende,ende,packe,best:()=>best,review:()=>review};})();
 const GB_KEY='rohbau-begehung-gaestebad-v1',AUFTRAG_KEY='rohbau-begehung-auftrag-v1';
 let GBST=VERDRAHTEN.neuerStand(),GB_LICHT=false,VD_UI=null,GB_PL=null;
-const AUF={an:false,schritt:0,geloest:[]};   // an: Auftrag läuft in dieser Sitzung (sonst „frei begehen“)
-try{const s=JSON.parse(localStorage.getItem(GB_KEY)||'null');if(s&&s.geraet&&Array.isArray(s.dr)){Object.assign(GBST.geraet,s.geraet);GBST.dr=s.dr;GB_LICHT=!!s.licht;}}catch(_){}
-try{const s=JSON.parse(localStorage.getItem(AUFTRAG_KEY)||'null');if(s){AUF.schritt=Math.max(0,Math.min(4,s.schritt|0));AUF.geloest=Array.isArray(s.geloest)?s.geloest.filter(n=>n>=0&&n<4):[];}}catch(_){}
+// anreise (Auslieferung B): 0 im Betrieb (zur Chefin), 1 Auftrag erhalten (zum Firmenwagen), 2 Fahrt, 3 an der Baustelle angekommen.
+// Spielstände von Revision 11 (ohne anreise) mit begonnenem Auftrag gelten als angekommen – niemand muss zurück in den Betrieb.
+const AUF={an:false,schritt:0,geloest:[],anreise:0};   // an: Auftrag läuft in dieser Sitzung (sonst „frei begehen“)
+try{const s=JSON.parse(LP.lies(GB_KEY)||'null');if(s&&s.geraet&&Array.isArray(s.dr)){Object.assign(GBST.geraet,s.geraet);GBST.dr=s.dr;GB_LICHT=!!s.licht;}}catch(_){}
+// Übungsnummern: Spielstände ohne uebv (Revision 11 und älter) kennen die neue Übung 4 (ohne Steckdose) noch nicht – alte Übung 4 (mit Steckdose)
+// ist jetzt Übung 5, wer sie gelöst hat, bekommt die leichtere neue Übung 4 gutgeschrieben; alte Übung 5 ist jetzt Übung 6.
+const UEBV=2,uebNeu=s=>(Array.isArray(s.geloest)?s.geloest:[]).flatMap(n=>s.uebv===UEBV||n<3?[n]:n===3?[3,4]:[n+1]);
+try{const s=JSON.parse(LP.lies(AUFTRAG_KEY)||'null');if(s){AUF.schritt=Math.max(0,Math.min(4,s.schritt|0));AUF.geloest=[...new Set(uebNeu(s))].filter(n=>n>=0&&n<VERDRAHTEN.UEB.length);
+  AUF.anreise=typeof s.anreise==='number'?Math.max(0,Math.min(3,s.anreise|0)):(AUF.schritt>0||AUF.geloest.length?3:0);if(AUF.anreise===2)AUF.anreise=1;}}catch(_){}   // mitten in der Fahrt neu geladen: wieder am Wagen
 let GB_OK=VERDRAHTEN.gbBewerte(GBST);
-function sichereGB(){try{localStorage.setItem(GB_KEY,JSON.stringify({geraet:GBST.geraet,dr:GBST.dr,licht:GB_LICHT}));}catch(_){}}
-function sichereAuftrag(){try{localStorage.setItem(AUFTRAG_KEY,JSON.stringify({schritt:AUF.schritt,geloest:AUF.geloest}));}catch(_){}}
+punkteMelden();   // Lernpaket: Stand aus Moodle geladen – Punkte nachmelden, falls die letzte Meldung nicht ankam
+function sichereGB(){LP.setze(GB_KEY,JSON.stringify({geraet:GBST.geraet,dr:GBST.dr,licht:GB_LICHT}));punkteMelden();}
+function sichereAuftrag(){LP.setze(AUFTRAG_KEY,JSON.stringify({schritt:AUF.schritt,geloest:AUF.geloest,anreise:AUF.anreise,uebv:UEBV}));punkteMelden();}
+// Punkte fürs Lernpaket (nur in Moodle wirksam): 10 je gelöste Übung, 30 alle Dosen richtig, 10 Licht an (oder Auftrag erledigt)
+function punkteJetzt(){return 10*AUF.geloest.length+(GB_OK&&GB_OK.alles?30:0)+((GB_LICHT&&GB_OK&&GB_OK.alles)||AUF.schritt>=4?10:0);}
+function punkteMelden(){if(LP.an)LP.punkte(punkteJetzt());}
 // Dosen im Gästebad: Mitte auf der Wandoberfläche, nx = Richtung in den Raum
 const GB_ZIELE=[{id:'VD',x:2.9,y:2.42,z:1.7,nx:1,kurz:'Verteilerdose',knopf:'Verteilerdose anklemmen'},
   {id:'E',x:2.9,y:2.0,z:1.7,nx:1,kurz:'Auslass für die Leuchte über dem Spiegel',knopf:'Leuchte anklemmen'},
@@ -1610,29 +2054,33 @@ function gbAktKnopf(){if(actKind.startsWith('dose:')){gbAktion(GB_ZIELE.find(z=>
 function gbAktion(zl){if(!zl)return false;
   if(zl.id==='S'&&GB_OK.alles){gbSchalten();return true;}
   if(STAGE!==1)return false;
-  if(AUF.an&&AUF.schritt<2){melde('Erst üben: Löse die Übungen 1 bis 4 („Verdrahten üben“).');return true;}
+  if(AUF.an&&AUF.schritt<2){melde('Erst üben: Löse die Übungen 1 bis 6 („Verdrahten üben“).');return true;}
   oeffneVerdrahten('dose',zl.id);return true;}
 // Fenster über der Simulation (wie die Stationen): Übungen oder eine Dose
 function oeffneVerdrahten(art,id){if(infoOffen)return;infoOffen={id:'verdrahten'};running=false;for(const k in keys)keys[k]=false;releaseTouch();
   if(document.pointerLockElement){try{document.exitPointerLock();}catch(_){}}
   elInfo.classList.add('test');elInfo.classList.add('vdraht');elInfoBox.innerHTML='';const w=document.createElement('div');w.className='vd-wurzel';elInfoBox.appendChild(w);
   const zu={text:'Zurück zur Baustelle',tu:()=>schliesseStation()};
-  VD_UI=art==='uebung'?VERDRAHTEN.uebungen(w,{start:[0,1,2,3].find(n=>!AUF.geloest.includes(n))||0,geloest:AUF.geloest,lehrer:LEHRER,zurueck:zu,
-      onGeloest:(n,alle)=>{AUF.geloest=alle.filter(x=>x>=0&&x<4);sichereAuftrag();if(AUF.geloest.length===4)melde('Alle vier Übungen gelöst – jetzt die Dosen im Gästebad anklemmen!');}})
+  VD_UI=art==='uebung'?VERDRAHTEN.uebungen(w,{start:VERDRAHTEN.UEB.map((_,i)=>i).find(n=>!AUF.geloest.includes(n))||0,geloest:AUF.geloest,lehrer:LEHRER,zurueck:zu,
+      onGeloest:(n,alle)=>{AUF.geloest=alle.filter(x=>x>=0&&x<VERDRAHTEN.UEB.length);sichereAuftrag();if(AUF.geloest.length===VERDRAHTEN.UEB.length)melde('Alle sechs Übungen gelöst – jetzt die Dosen im Gästebad anklemmen!');}})
     :VERDRAHTEN.dose(w,{id,stand:GBST,lehrer:LEHRER,zurueck:zu,onAenderung:()=>gbGeaendert()});
   elInfo.style.display='flex';}
 // Auftrag: nächster Schritt oben in der Mitte (nur wenn „Auftrag“ gewählt ist)
-const SCHRITTE=['Geh ins Gästebad: Erdgeschoss, rechts hinter dem Eingang.','Übe zuerst das Verdrahten: Übungen 1 bis 4.',
+const SCHRITTE=['Geh ins Gästebad: Erdgeschoss, rechts hinter dem Eingang.','Übe zuerst das Verdrahten: Übungen 1 bis 6.',
   'Klemme die vier Dosen im Gästebad an – tippe sie an.','Schalte das Licht über dem Spiegel am Schalter neben der Tür ein.','Auftrag erledigt – das Gästebad ist angeschlossen.'];
-function auftragText(){let t=SCHRITTE[AUF.schritt];const ohnePunkt=t.replace(/[.]$/,'');if(AUF.schritt===1)t=ohnePunkt+' ('+AUF.geloest.length+' von 4 gelöst).';
+// Anreise (Auslieferung B): Betrieb → Chefin → Firmenwagen → Fahrt nach Navi; erst danach die Schritte an der Baustelle
+const ANREISE_TEXT=['Geh ins Büro zu deiner Chefin.','Steig in den Firmenwagen im Hof.','Fahr nach Navi zur Baustelle von Familie Neumann.'];
+function auftragText(){if(AUF.anreise<3)return AUF.anreise===0&&!BETRIEB.gerufen?'Du bist in der Werkstatt deines Betriebs – sieh dich ruhig um.':ANREISE_TEXT[AUF.anreise];
+  let t=SCHRITTE[AUF.schritt];const ohnePunkt=t.replace(/[.]$/,'');if(AUF.schritt===1)t=ohnePunkt+' ('+AUF.geloest.length+' von '+VERDRAHTEN.UEB.length+' gelöst).';
   if(AUF.schritt===2){const n=['VD','SD','E','S'].filter(id=>GB_OK.dosen[id]).length;
     t=n===4&&!GB_OK.alles?'Alle Dosen sind angeklemmt, aber etwas stimmt noch nicht – öffne die Dosen und tippe auf „Prüfen“.':ohnePunkt+' ('+n+' von 4 angeklemmt).';}
   return t;}
 let aufGezeigt='';
 function auftragWeiter(w){const el=$('auftrag');if(!AUF.an){if(aufGezeigt){aufGezeigt='';el.style.display='none';}return;}
   const vor=AUF.schritt;
+  if(AUF.anreise<3){const t='<small>Nächster Schritt</small>'+auftragText();if(t!==aufGezeigt){aufGezeigt=t;el.innerHTML=t;el.style.display='block';}return;}
   if(AUF.schritt===0&&w[1]==='Gästebad'){AUF.schritt=1;if(STAGE!==1)setStage(1);melde('Rohinstallation: Die Leitungen liegen schon – jetzt wird angeschlossen.');}
-  if(AUF.schritt===1&&[0,1,2,3].every(n=>AUF.geloest.includes(n)))AUF.schritt=2;
+  if(AUF.schritt===1&&VERDRAHTEN.UEB.every((_,n)=>AUF.geloest.includes(n)))AUF.schritt=2;
   if(AUF.schritt===2&&GB_OK.alles)AUF.schritt=3;
   if(AUF.schritt===3&&GB_LICHT&&GB_OK.alles){AUF.schritt=4;zeigeAbschluss();}
   if(AUF.schritt!==vor)sichereAuftrag();
@@ -1640,20 +2088,22 @@ function auftragWeiter(w){const el=$('auftrag');if(!AUF.an){if(aufGezeigt){aufGe
   if(t!==aufGezeigt){aufGezeigt=t;el.innerHTML=t;el.style.display='block';}}
 function zeigeAbschluss(){if(infoOffen)return;infoOffen={id:'abschluss'};running=false;for(const k in keys)keys[k]=false;releaseTouch();
   if(document.pointerLockElement){try{document.exitPointerLock();}catch(_){}}
-  elInfo.classList.remove('test');elInfo.classList.remove('vdraht');
+  elInfo.classList.remove('test');elInfo.classList.remove('vdraht');punkteMelden();
   elInfoBox.innerHTML='<p class="unter">Auftrag erledigt</p><h2>Elektrik im Gästebad</h2>'+
-    '<p><b>Deine Chefin (Handy):</b> „Super, das Licht über dem Spiegel brennt und die Steckdose hat Spannung. Das Gästebad ist angeschlossen – gute Arbeit!“</p>'+
-    '<p>Du hast vier Übungen gelöst und die Verteilerdose, die Steckdose, die Leuchte und den Schalter richtig angeklemmt.</p>'+
+    '<p><b>'+CHEFIN_HANDY+':</b> „'+ABSCHLUSS_SATZ+'“</p>'+
+    '<p>Du hast sechs Übungen gelöst und die Verteilerdose, die Steckdose, die Leuchte und den Schalter richtig angeklemmt.</p>'+
+    (LP.an?'<p><b>'+LP.best()+' von 100 Punkten</b> – in Moodle eingetragen.</p>':'')+
     '<div class="knoepfe"><button type="button" class="haupt" data-a="zu">Weiter</button></div>';
-  elInfo.style.display='flex';}
-function auftragBoxAuffrischen(){const neu=AUF.schritt===0&&!AUF.geloest.length;
-  $('auftragStand').textContent=neu?'Deine Chefin schickt dich ins Gästebad: Die Leitungen sind schon verlegt – du schließt Steckdose, Leuchte und Schalter an.'
+  elInfo.style.display='flex';tonZeile({wer:CHEFIN_HANDY,text:ABSCHLUSS_SATZ});}
+function auftragBoxAuffrischen(){const neu=AUF.schritt===0&&!AUF.geloest.length&&AUF.anreise===0;
+  $('auftragStand').textContent=neu?'Du startest in deinem Ausbildungsbetrieb: Deine Chefin gibt dir den Auftrag, dann fährst du den Firmenwagen selbst nach Navi zur Baustelle von Familie Neumann. Dort schließt du im Gästebad Steckdose, Leuchte und Schalter an – die Leitungen sind schon verlegt.'
     :AUF.schritt>=4?'Erledigt. Du kannst den Auftrag noch einmal von vorn machen.':'Begonnen. Nächster Schritt: '+auftragText();
+  if(LP.an)$('auftragStand').textContent+=' Punkte in Moodle: '+LP.best()+' von 100.';
   $('bAuftrag').textContent=AUF.schritt>=4?'Auftrag neu beginnen':neu?'Auftrag beginnen':'Auftrag fortsetzen';$('bFrei').style.display=AUF.an?'':'none';}
 $('bAuftrag').addEventListener('click',e=>{if(e&&e.stopPropagation)e.stopPropagation();
-  if(AUF.schritt>=4){AUF.schritt=0;AUF.geloest=[];GBST=VERDRAHTEN.neuerStand();GB_LICHT=false;gbGeaendert();sichereAuftrag();}
-  AUF.an=true;aufGezeigt='';betreten();});
-$('bFrei').addEventListener('click',e=>{if(e&&e.stopPropagation)e.stopPropagation();AUF.an=false;auftragWeiter(whereAmI());betreten();});
+  if(AUF.schritt>=4){AUF.schritt=0;AUF.geloest=[];AUF.anreise=0;BETRIEB.t=0;BETRIEB.gerufen=false;GBST=VERDRAHTEN.neuerStand();GB_LICHT=false;gbGeaendert();sichereAuftrag();}
+  AUF.an=true;aufGezeigt='';anreiseStart();betreten();});
+$('bFrei').addEventListener('click',e=>{if(e&&e.stopPropagation)e.stopPropagation();AUF.an=false;freiBegehen();auftragWeiter(whereAmI());betreten();});
 auftragBoxAuffrischen();
 // Inhalt der Station Porotonstein (Quelle: Fachbuch, siehe Arbeitsstand; der Test fragt nur, was hier steht)
 // G6 = Grundkenntnisse SHK 6. Aufl. 2019, F1 = Fachkenntnisse 1 (2011), T = Tabellenbuch SHK Westermann 1. Aufl. 2011
@@ -1746,8 +2196,11 @@ function klettern(dt,f,schnell){const L=LEITER;wantJump=false;
 // ---------------------------------------------------------------- Räume, Anzeige, Bedienung
 const ROOMS=[['KG','Hausanschlussraum',XI0,4.225,ZI0,3.4],['KG','Kellerflur',4.4,6.745,ZI0,3.4],['KG','Keller 1',XI0,6.745,3.575,ZI1],['KG','Keller 2',6.92,XI1,2.64,ZI1],
   ['EG','Arbeitszimmer',XI0,2.725,ZI0,3.4],['EG','Gästebad',2.9,4.225,ZI0,3.4],['EG','Diele',4.4,6.745,ZI0,3.4],['EG','Wohnen und Essen',XI0,6.745,3.575,ZI1],['EG','Küche',6.92,XI1,2.64,ZI1]];
-const FLOOR={KG:'Kellergeschoss',EG:'Erdgeschoss',DG:'Dachgeschoss'};
+const FLOOR={KG:'Kellergeschoss',EG:'Erdgeschoss',DG:'Dachgeschoss',BT:'Dein Ausbildungsbetrieb'};
 function raumAn(x,z,feet){
+  {const dx=x-DV.x,dz=z-DV.z;   // Auslieferung B: Betrieb und Straßen des Dorfs (dritter Eintrag „dorf“ = außerhalb der Baustelle)
+    if(dx>BT.x0-.3&&dx<BT.x1+.3&&dz>BT.z0-.3&&dz<BT.z1+.3){if(dx>BT.hx0&&dx<BT.hx1&&dz>BT.hz0&&dz<BT.hz1)return['BT',dx<BT.w1?'Lager':dx<BT.w2?'Werkstatt':'Büro','dorf'];return['BT','Hof','dorf'];}
+    if(!(x>SITE.x0-1.5&&x<SITE.x1+1.5&&z>-17&&z<SITE.z1+1.5)){const s=DORF.strasseAn(dx,dz);return['',s||'Lerndorf','dorf'];}}
   if(feet>DACH.ab&&x>DACH.x0-.1&&x<DACH.x1&&z>DACH.z0-.1&&z<DACH.z1+.1)return['','Auf dem Dach'];
   if(feet>1&&x>=DACH.x1&&x<11.5&&z>0&&z<HZ)return['',LEITER?'Gerüst – auf der Leiter':'Gerüst – '+(feet<2.7?1:feet<4.7?2:3)+'. Ebene'];
   if(!(x>0&&x<HX&&z>0&&z<HZ))return['','Baustelle – Außenbereich'];
@@ -1773,26 +2226,31 @@ function drawMap(){const g=mapCtx,s=12,ox=-1.5,oz=-1.5,ya=P.feet+.5,yb=P.feet+1.
   const px=(P.x-ox)*s,pz=(P.z-oz)*s,fx=-Math.sin(P.yaw),fz=-Math.cos(P.yaw);
   g.fillStyle='#fff';g.beginPath();g.moveTo(px+fx*8,pz+fz*8);g.lineTo(px-fx*4-fz*4.5,pz-fz*4+fx*4.5);g.lineTo(px-fx*4+fz*4.5,pz-fz*4-fx*4.5);g.closePath();g.fill();}
 let dachGemeldet=false;
-function hud(){const w=whereAmI(),key=w[0]+w[1]+STAGE;erkunde(w);if(key!==lastRoom){lastRoom=key;elRoom.innerHTML='<small>'+(w[0]?FLOOR[w[0]]+' · ':'')+'Ausbau: '+STAGE_NAMES[STAGE]+'</small>'+w[1];}
+const BETRIEB_AKT={chefin:['Mit deiner Chefin sprechen','Sprechen'],einsteigen:['In den Firmenwagen einsteigen','Einsteigen'],aussteigen:['Aussteigen','Aussteigen'],navi:['Das Navi fährt für dich','Navi fährt für dich']};
+function hud(){const w=whereAmI(),key=w[0]+w[1]+STAGE;erkunde(w);if(key!==lastRoom){lastRoom=key;
+    elRoom.innerHTML=w[2]?'<small>'+(w[0]?FLOOR[w[0]]:FAHRT?'Im Firmenwagen':'Lerndorf')+'</small>'+w[1]:'<small>'+(w[0]?FLOOR[w[0]]+' · ':'')+'Ausbau: '+STAGE_NAMES[STAGE]+'</small>'+w[1];}
   if(w[1]==='Auf dem Dach'&&!dachGemeldet){dachGemeldet=true;melde('Auf dem Dach – auf echten Baustellen nur mit Absturzsicherung!');}
-  const ausbau=w[1]==='Küche'||w[1]==='Gästebad',st=stationNah(),ln=leiterNah(),gz=gbZiel(),gbUeben=w[1]==='Gästebad'&&STAGE===1;
+  const ausbau=w[1]==='Küche'||w[1]==='Gästebad',st=stationNah(),ln=leiterNah(),gz=gbZiel(),gbUeben=w[1]==='Gästebad'&&STAGE===1,bk=betriebAkt();
   auftragWeiter(w);
   // iPad: Ausbau nur über den Knopf „Ausbau: …“ oben – kein zweiter oranger Knopf dafür (Lehrer 22.11.2026: „zwei gleiche Funktionen“)
-  const act=LEITER?'klettern':nearDoor()?(DOOR.target?'door1':'door0'):st?'info:'+st.id:ln?'leiter'+(ln.oben?1:0)+':'+LEITERN.indexOf(ln.L):gz?(gz.id==='S'&&GB_OK.alles?'licht'+(GB_LICHT?1:0):'dose:'+gz.id):gbUeben?'ueben':(w[0]==='KG'&&!flashHintDone)?'flash':(ausbau&&!TOUCH)?'stage'+STAGE:'';
-  if(act==='klettern')setHint(act,'<b>W</b>hinauf &nbsp; <b>S</b>hinab');
+  const act=bk?bk:FAHRT?'':LEITER?'klettern':nearDoor()?(DOOR.target?'door1':'door0'):st?'info:'+st.id:ln?'leiter'+(ln.oben?1:0)+':'+LEITERN.indexOf(ln.L):gz?(gz.id==='S'&&GB_OK.alles?'licht'+(GB_LICHT?1:0):'dose:'+gz.id):gbUeben?'ueben':(w[0]==='KG'&&!flashHintDone)?'flash':(ausbau&&!TOUCH)?'stage'+STAGE:'';
+  if(bk)setHint(act,'<b>E</b>'+BETRIEB_AKT[bk][0]);
+  else if(act==='klettern')setHint(act,'<b>W</b>hinauf &nbsp; <b>S</b>hinab');
   else if(act.startsWith('leiter'))setHint(act,act[6]==='1'?'<b>E</b>Leiter hinabsteigen':'<b>E</b>Leiter hinaufsteigen – oder einfach vorwärts gehen');
   else if(st&&act==='info:'+st.id)setHint(act,'<b>E</b>Info: '+st.kurz+' – Wissen und Test');
   else if(gz&&act==='dose:'+gz.id)setHint(act,'<b>E</b>'+gz.kurz+': anklemmen');
   else if(act.startsWith('licht'))setHint(act,'<b>E</b>Licht über dem Spiegel '+(GB_LICHT?'ausschalten':'einschalten'));
-  else if(act==='ueben')setHint(act,'<b>E</b>Verdrahten üben (Übungen 1–4)');
+  else if(act==='ueben')setHint(act,'<b>E</b>Verdrahten üben (Übungen 1–6)');
   else if(act==='flash')setHint('flash','<b>F</b>Taschenlampe einschalten');
   else if(act==='door0'||act==='door1')setHint(act,'<b>E</b>Bautür '+(DOOR.target?'schließen':'öffnen'));
   else if(act)setHint(act,'<b>I</b>'+NEXT_TXT[STAGE]);
   else setHint('','');
-  if(act!==actKind){actKind=act;bAct.textContent=act==='door0'?'Tür öffnen':act==='door1'?'Tür schließen':act==='flash'?'Lampe an':(st&&act==='info:'+st.id)?'Info: '+st.kurz:(gz&&act==='dose:'+gz.id)?gz.knopf:act.startsWith('licht')?(GB_LICHT?'Licht aus':'Licht ein'):act==='ueben'?'Verdrahten üben':act.startsWith('leiter')?(act[6]==='1'?'Leiter hinab':'Leiter hinauf'):act?NEXT_TXT[STAGE]:'';bAct.style.display=act&&act!=='klettern'?'block':'none';}
-  if(showMap)drawMap();
+  if(act!==actKind){actKind=act;bAct.textContent=bk?BETRIEB_AKT[bk][1]:act==='door0'?'Tür öffnen':act==='door1'?'Tür schließen':act==='flash'?'Lampe an':(st&&act==='info:'+st.id)?'Info: '+st.kurz:(gz&&act==='dose:'+gz.id)?gz.knopf:act.startsWith('licht')?(GB_LICHT?'Licht aus':'Licht ein'):act==='ueben'?'Verdrahten üben':act.startsWith('leiter')?(act[6]==='1'?'Leiter hinab':'Leiter hinauf'):act?NEXT_TXT[STAGE]:'';bAct.style.display=act&&act!=='klettern'?'block':'none';}
+  const karte=showMap&&!w[2]&&!FAHRT;if(elMap.style.display!==(karte?'block':'none'))elMap.style.display=karte?'block':'none';   // Grundriss nur an der Baustelle
+  if(karte)drawMap();
   const SB=1<<STAGE;
-  for(const s of labels)s.visible=showLabels&&s.userData.room===w[1]&&(!s.userData.mask||!!(s.userData.mask&SB));}
+  for(const s of labels)s.visible=showLabels&&s.userData.room===w[1]&&(!s.userData.mask||!!(s.userData.mask&SB));
+  for(const e of DSCHILDER)e.s.visible=showLabels&&!e.versteckt&&Math.hypot(e.x-P.x,e.z-P.z)<e.weit;}
 // ---------------------------------------------------------------- Touch-Bedienung (iPad)
 let TOUCH=false,everStarted=false;
 const tz=$('tz'),joyEl=$('joy'),knob=$('knob'),lookHint=$('lookHint'),LOOK=.0052;
@@ -1823,7 +2281,7 @@ function endPtr(e){const tp=taps[e.pointerId];delete taps[e.pointerId];
 function tbtn(id,fn){$(id).addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(running)fn();});}
 tbtn('bJump',()=>{wantJump=true;});
 const stationVonAct=()=>STATIONEN.find(s=>'info:'+s.id===actKind);
-tbtn('bAct',()=>{if(actKind.startsWith('leiter')){leiterAktion();hud();return;}if(gbAktKnopf())return;if(actKind.startsWith('info:')){const s=stationVonAct();if(s)oeffneStation(s);return;}if(actKind==='flash')toggleFlash();else if(actKind.startsWith('stage'))setStage(STAGE+1);else toggleDoor();hud();});
+tbtn('bAct',()=>{if(BETRIEB_AKT[actKind]){betriebAktion(actKind);hud();return;}if(actKind.startsWith('leiter')){leiterAktion();hud();return;}if(gbAktKnopf())return;if(actKind.startsWith('info:')){const s=stationVonAct();if(s)oeffneStation(s);return;}if(actKind==='flash')toggleFlash();else if(actKind.startsWith('stage'))setStage(STAGE+1);else toggleDoor();hud();});
 tbtn('bStage',()=>setStage(STAGE+1));
 tbtn('bLamp',()=>{toggleFlash();hud();});
 tbtn('bLabels',()=>{showLabels=!showLabels;syncBtns();hud();});
@@ -1842,7 +2300,7 @@ function start(){running=true;everStarted=true;elStart.style.display='none';}
 function pause(){running=false;elStart.style.display='flex';goText();auftragBoxAuffrischen();for(const k in keys)keys[k]=false;releaseTouch();orteAuffrischen();
   if(everStarted){const el=$('orte');if(el.scrollIntoView)el.scrollIntoView({block:'start'});}} // Pause = Sprungbrett zu den Orten (Wunsch 22.11.2026)
 function betreten(){start();if(TOUCH){tryFullscreen();return;}try{const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{dragLook=true;});}catch(e){dragLook=true;}}
-elStart.addEventListener('click',e=>{if(e&&e.target&&e.target.closest&&e.target.closest('#orte, #bKurs, #auftragBox'))return;betreten();});
+elStart.addEventListener('click',e=>{if(e&&e.target&&e.target.closest&&e.target.closest('#orte, #bKurs, #bTon, #auftragBox'))return;betreten();});
 $('bKurs').style.display=AUS_MOODLE?'inline-block':'none';
 $('bKurs').addEventListener('click',e=>{if(e&&e.stopPropagation)e.stopPropagation();zumKurs();});
 
@@ -1859,18 +2317,19 @@ const ORTE_FEST=[
   {name:'Dachgeschoss',x:3.2,z:4.2,feet:Y_DG,yaw:-Math.PI/2,pitch:.1}];
 const ORTE_KEY='rohbau-begehung-orte-v1';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function ladeOrte(){try{const a=JSON.parse(localStorage.getItem(ORTE_KEY)||'[]');
+function ladeOrte(){try{const a=JSON.parse(LP.lies(ORTE_KEY)||'[]');
   return Array.isArray(a)?a.filter(o=>o&&typeof o.name==='string'&&[o.x,o.z,o.feet,o.yaw].every(v=>typeof v==='number'&&isFinite(v))):[];}catch(_){return [];}}
-function sichereOrte(){try{localStorage.setItem(ORTE_KEY,JSON.stringify(MEINE));return true;}catch(_){return false;}}
+function sichereOrte(){return LP.setze(ORTE_KEY,JSON.stringify(MEINE));}
 let MEINE=ladeOrte();
+if(LP.imLMS)$('orteHinweis').textContent='– werden mit deinem Spielstand in Moodle gespeichert';   // Lernpaket: nicht im Gerät
 // Wunsch des Lehrers (22.11.2026, Chat (3)): „Direktspringen … nur möglich, wenn man die Orte schon zu Fuß erkundet hat …
 // zumindest in der Nähe dieser Stelle … beziehungsweise in diesem Raum.“ → Ein fester Ort ist frei, sobald man einmal im selben Raum
 // war (draußen: höchstens NAH_AUSSEN Meter entfernt). Der Start ist immer frei. Gemerkt je Gerät und Browser wie „Meine Orte“.
 const ENTDECKT_KEY='rohbau-begehung-entdeckt-v1',NAH_AUSSEN=3;
 for(const o of ORTE_FEST)o.raum=raumAn(o.x,o.z,o.feet);
-function ladeEntdeckt(){const s=new Set([ORTE_FEST[0].name]);try{const a=JSON.parse(localStorage.getItem(ENTDECKT_KEY)||'[]');
+function ladeEntdeckt(){const s=new Set([ORTE_FEST[0].name]);try{const a=JSON.parse(LP.lies(ENTDECKT_KEY)||'[]');
   if(Array.isArray(a))for(const n of a)if(ORTE_FEST.some(o=>o.name===n))s.add(n);}catch(_){}return s;}
-function sichereEntdeckt(){try{localStorage.setItem(ENTDECKT_KEY,JSON.stringify([...ENTDECKT]));}catch(_){}}
+function sichereEntdeckt(){LP.setze(ENTDECKT_KEY,JSON.stringify([...ENTDECKT]));}
 let ENTDECKT=ladeEntdeckt();
 const frei=o=>ENTDECKT.has(o.name);
 function erkunde(w){let neu=null;
@@ -1879,7 +2338,10 @@ function erkunde(w){let neu=null;
     if(da){ENTDECKT.add(o.name);neu=o;}}
   if(neu){sichereEntdeckt();melde('Neuer Ort erkundet: '+neu.name+' – ab jetzt über „Orte“ direkt erreichbar');}}
 const gesperrtText=o=>'„'+o.name+'“ ist noch gesperrt – erst einmal zu Fuß hingehen.';
-function springeFest(o){if(!o)return false;if(!frei(o)){melde(gesperrtText(o));return false;}springe(o);return true;}
+// Auslieferung B: Solange der Auftrag läuft und du noch nicht angekommen bist, geht es nur mit dem Firmenwagen zur Baustelle
+const SPRUNG_ANREISE='Erst fährst du mit dem Firmenwagen zur Baustelle – danach kannst du wieder direkt springen.';
+const sprungGesperrt=()=>AUF.an&&AUF.anreise<3;
+function springeFest(o){if(!o)return false;if(sprungGesperrt()){melde(SPRUNG_ANREISE);return false;}if(!frei(o)){melde(gesperrtText(o));return false;}springe(o);return true;}
 function springe(o){if(!o)return;LEITER=null;P.x=o.x;P.z=o.z;P.feet=o.feet;P.camY=o.feet+EYE;P.vy=0;P.ground=true;P.bob=0;P.yaw=o.yaw;P.pitch=o.pitch||0;
   if(typeof o.stage==='number'&&o.stage!==STAGE)setStage(o.stage);releaseTouch();lastRoom='';hud();}
 function orteAuffrischen(meldung){
@@ -1900,6 +2362,7 @@ function speichereOrt(){if(!everStarted)return;const inp=$('ortName'),w=whereAmI
 function zeigeOrteListe(){if(document.pointerLockElement===canvas){try{document.exitPointerLock();}catch(_){}}
   if(running)pause();const el=$('orte');if(el.scrollIntoView)el.scrollIntoView({block:'start'});}
 $('orte').addEventListener('click',e=>{if(e.stopPropagation)e.stopPropagation();const b=e.target&&e.target.closest?e.target.closest('button'):null;if(!b)return;
+  if((b.dataset.fest!==undefined||b.dataset.mein!==undefined)&&sprungGesperrt()){orteAuffrischen(SPRUNG_ANREISE);return;}
   if(b.dataset.fest!==undefined){const o=ORTE_FEST[+b.dataset.fest];if(!o)return;if(frei(o)){springe(o);betreten();}else orteAuffrischen(gesperrtText(o));}
   else if(b.dataset.mein!==undefined){springe(MEINE[+b.dataset.mein]);betreten();}
   else if(b.dataset.weg!==undefined){const o=MEINE.splice(+b.dataset.weg,1)[0];sichereOrte();orteAuffrischen(o?'Gelöscht: „'+o.name+'“.':'');}
@@ -1917,8 +2380,9 @@ document.addEventListener('mousemove',e=>{if(!running)return;const locked=docume
   const k=locked?.0022:-.004;P.yaw-=e.movementX*k;P.pitch=Math.max(-1.5,Math.min(1.5,P.pitch-e.movementY*k));});
 window.addEventListener('keydown',e=>{const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'){if(e.key==='Enter'||e.code==='Enter'||e.code==='NumpadEnter')speichereOrt();return;}
   if(infoOffen){if(e.code==='Escape'){if(VD_UI&&VD_UI.abbrechen())return;schliesseStation();}return;}
+  if(DLG){if(!e.repeat&&(e.code==='Enter'||e.code==='NumpadEnter'||e.code==='Space'||e.code==='KeyE')){e.preventDefault();const q=DLG.z[DLG.i];if(!q.wahl||q.wahl.length===1)dlgWeiter(q.wahl?0:-1);}return;}   // Gespräch: Weiter per Taste
   if(e.code==='Space'||e.code.startsWith('Arrow'))e.preventDefault();if(e.repeat)return;keys[e.code]=true;if(!running)return;
-  if(e.code==='KeyE'){if(actKind.startsWith('leiter'))leiterAktion();else if(gbAktKnopf()){}else{const s=actKind.startsWith('info:')?stationVonAct():null;if(s)oeffneStation(s);else toggleDoor();}}else if(e.code==='KeyF')toggleFlash();else if(e.code==='KeyI')setStage(STAGE+1);else if(e.code==='KeyB'){showLabels=!showLabels;syncBtns();}
+  if(e.code==='KeyE'){if(BETRIEB_AKT[actKind])betriebAktion(actKind);else if(actKind.startsWith('leiter'))leiterAktion();else if(gbAktKnopf()){}else{const s=actKind.startsWith('info:')?stationVonAct():null;if(s)oeffneStation(s);else toggleDoor();}}else if(e.code==='KeyF')toggleFlash();else if(e.code==='KeyI')setStage(STAGE+1);else if(e.code==='KeyB'){showLabels=!showLabels;syncBtns();}
   else if(e.code==='KeyM'){showMap=!showMap;syncBtns();}
   else if(e.code==='KeyO')zeigeOrteListe();
   else if(/^(Digit|Numpad)[1-9]$/.test(e.code))springeFest(ORTE_FEST[+e.code.slice(-1)-1]);
@@ -2032,6 +2496,216 @@ function hund(dt){
 if(!hFrei(H.x,H.z)&&hZiel(.5,20)){H.x=H.tx;H.z=H.tz;}
 hund(0);
 
+// =====================================================================================================================
+// AUSLIEFERUNG B (23.11.2026): Betrieb, Chefin, Firmenwagen, selbst fahren nach Navi, Ton – Vorlage: Spiel „Haus Eberle“, Fassung 9
+// Wünsche des Lehrers 23.11.2026: „Auch hier der Monteur bei Neumann erhält auch den Auftrag von der Chefin im Betrieb, fährt dann mit dem Wagen zur
+// Baustelle.“ – Schüler steuern den Wagen selbst, verfahren erlaubt, das Navi rechnet neu – „gleich vertonen wie Eberle“ (gleiche Stimmen, gleiche Dateien
+// für gleiche Sätze). Fahren und Navi rechnen in Dorf-Koordinaten (wie dorf.js), P und alles Gezeichnete liegen in Koordinaten der Begehung (zuB).
+// =====================================================================================================================
+// ---------------------------------------------------------------- Ton: ton/<schlüssel>.mp3 neben der Begehung, schlüssel = FNV-1a über „rolle|text“ (wie Haus Eberle)
+const TON_ROLLEN=[[/^Deine Chefin/,'chefin'],[/^Navi/,'navi'],[/^Du$/,'du']];
+const tonRolle=wer=>{for(const[m,r]of TON_ROLLEN)if(m.test(wer||''))return r;return'erzaehler';};
+const tonText=q=>String(q.text||String(q.html||'').replace(/<\/(li|p|div|h\d|tr)>/gi,'. ').replace(/<br\s*\/?>/gi,' ').replace(/<[^>]+>/g,' '))
+  .replace(/&nbsp;/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/\s+/g,' ')
+  .replace(/\s+([.,!?;:])/g,'$1').replace(/([.!?:;])(\s*\.)+/g,'$1').replace(/^[\s.]+/,'').trim();
+const tonSchluessel=(rolle,text)=>{const s=rolle+'|'+text;let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}return('0000000'+h.toString(16)).slice(-8);};
+const TON={an:true,el:null,schlange:[],akt:null,vor:null,frei:false,versuch:false,gespielt:[],fehlt:[],verlangt:[]};   // verlangt: jeder angeforderte Satz (Prüfung ohne Lautsprecher)
+try{TON.an=localStorage.getItem('rohbauBegehung.ton')!=='aus';}catch(_){}
+// iPad: Ton startet erst nach einem Fingertipp – beim ersten Tipp spielt dasselbe Audio-Element einen stillen Schnipsel
+const TON_STILLE=(()=>{try{const n=400,b=new Uint8Array(44+n),v=new DataView(b.buffer),s=(o,t)=>{for(let i=0;i<t.length;i++)b[o+i]=t.charCodeAt(i);};
+  s(0,'RIFF');v.setUint32(4,36+n,true);s(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,8000,true);
+  v.setUint16(32,1,true);v.setUint16(34,8,true);s(36,'data');v.setUint32(40,n,true);b.fill(128,44);let t='';for(let i=0;i<b.length;i++)t+=String.fromCharCode(b[i]);
+  return'data:audio/wav;base64,'+btoa(t);}catch(_){return'';}})();
+function tonEl(){if(!TON.el&&typeof Audio==='function'){try{const a=new Audio();a.preload='auto';
+    a.addEventListener('ended',tonNaechster);a.addEventListener('error',()=>{if(TON.akt){TON.fehlt.push(TON.akt);tonNaechster();}});TON.el=a;}catch(_){}}return TON.el;}
+function tonNaechster(){const a=TON.el;TON.akt=null;if(!a||!TON.an)return;const n=TON.schlange.shift();if(!n)return;
+  TON.akt=n;TON.gespielt.push(n);if(TON.gespielt.length>400)TON.gespielt.splice(0,200);a.src='ton/'+n+'.mp3';
+  try{const p=a.play();if(p&&p.then)p.then(()=>{TON.frei=true;},()=>{});}catch(_){}}
+function tonStopp(){TON.schlange=[];TON.akt=null;const a=TON.el;if(a){try{a.pause();}catch(_){}}}
+function tonSpiele(liste){tonStopp();if(!liste||!liste.length)return;TON.verlangt.push(...liste);if(TON.verlangt.length>400)TON.verlangt.splice(0,200);
+  if(!TON.an||!tonEl())return;TON.schlange=liste.slice();tonNaechster();}
+function tonZeile(q,vor){const liste=(vor||[]).slice(),t=q?tonText(q):'';if(t)liste.push(tonSchluessel(tonRolle(q.wer),t));tonSpiele(liste);}
+function tonFreischalten(){if(TON.frei||TON.versuch||TON.akt||!TON_STILLE)return;const a=tonEl();if(!a)return;TON.versuch=true;
+  try{a.src=TON_STILLE;const p=a.play();if(p&&p.then)p.then(()=>{TON.frei=true;TON.versuch=false;},()=>{TON.versuch=false;});else{TON.frei=true;TON.versuch=false;}}catch(_){TON.versuch=false;}}
+['touchend','click','keydown'].forEach(n=>window.addEventListener(n,tonFreischalten,true));
+function tonKnoepfe(){const d=$('dlgTon');d.textContent=TON.an?'🔊 Ton an':'🔇 Ton aus';d.classList.toggle('aus',!TON.an);$('bTon').textContent=TON.an?'Ton: an':'Ton: aus';}
+function tonUmschalten(){TON.an=!TON.an;try{localStorage.setItem('rohbauBegehung.ton',TON.an?'an':'aus');}catch(_){}tonKnoepfe();if(!TON.an)tonStopp();else if(DLG)tonZeile(DLG.z[DLG.i]);}
+$('dlgTon').addEventListener('click',e=>{if(e&&e.stopPropagation)e.stopPropagation();tonUmschalten();});
+$('bTon').addEventListener('click',e=>{if(e&&e.stopPropagation)e.stopPropagation();tonUmschalten();});
+tonKnoepfe();
+// ---------------------------------------------------------------- Gespräche (Fenster unten, Antwortknöpfe; vorgelesen, Text bleibt sichtbar)
+const elDlg=$('dlg');
+function haltAn(){running=false;for(const k in keys)keys[k]=false;releaseTouch();if(document.pointerLockElement){try{document.exitPointerLock();}catch(_){}}}
+function weiter(){if(DLG||infoOffen)return;running=true;if(!TOUCH&&!dragLook){try{const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{dragLook=true;});}catch(_){dragLook=true;}}}
+function zeigeZeile(){const q=DLG.z[DLG.i],letzte=DLG.i===DLG.z.length-1;$('dlgWer').textContent=q.wer||'';$('dlgText').innerHTML=q.html||esc(q.text||'');
+  $('dlgKnoepfe').innerHTML=q.wahl?q.wahl.map((o,i)=>'<button type="button" class="wahl" data-w="'+i+'">'+esc(o.text)+'</button>').join(''):'<button type="button" class="haupt" data-w="-1">'+(letzte?'Fertig':'Weiter')+'</button>';
+  tonZeile(q,TON.vor);TON.vor=null;}   // vorlesen (vorher die gewählte Antwort mit der Stimme des Monteurs)
+function sprich(zeilen,ende){haltAn();DLG={z:zeilen.slice(),i:0,ende:ende||null};zeigeZeile();elDlg.style.display='flex';}
+function dlgWeiter(w){if(!DLG)return;const q=DLG.z[DLG.i];
+  if(q.wahl){const o=q.wahl[w];if(!o)return;DLG.z.splice.apply(DLG.z,[DLG.i+1,0].concat(o.dann||[]));const t=tonText({text:o.text});TON.vor=t?[tonSchluessel('du',t)]:null;}
+  DLG.i++;if(DLG.i<DLG.z.length){zeigeZeile();return;}
+  const e=DLG.ende,vor=TON.vor;TON.vor=null;DLG=null;elDlg.style.display='none';if(vor)tonSpiele(vor);else tonStopp();if(e)e();weiter();hud();}
+elDlg.addEventListener('click',e=>{const b=e.target&&e.target.closest?e.target.closest('button[data-w]'):null;if(b)dlgWeiter(+b.dataset.w);});
+// ---------------------------------------------------------------- Betrieb und Chefin (Sätze wie im Plan, vom Lehrer bestätigt „Ja, so vertonen“, 23.11.2026)
+const CHEFIN_DA='Deine Chefin',CHEFIN_HANDY='Deine Chefin (Handy)',zl=(wer,text)=>({wer,text});
+const D_RUF=()=>[{wer:CHEFIN_DA,text:'Kommst du bitte mal ins Büro?',wahl:[{text:'Ich komme!',dann:[]}]}];   // gleicher Wortlaut wie bei Eberle → gleiche Tondatei
+const D_AUFTRAG=()=>[zl(CHEFIN_DA,'Guten Morgen! Heute fährst du zur Baustelle von Familie Neumann – das Haus ist noch im Rohbau.'),
+  zl(CHEFIN_DA,'Dein erster Auftrag: Schließ die Elektrik im Gästebad an. Die Leitungen sind schon verlegt.'),
+  zl(CHEFIN_DA,'Es gibt eine Leuchte über dem Spiegel, eine Steckdose neben dem Spiegel und den Schalter neben der Tür. Der Stromanschluss kommt in der Verteilerdose an.'),
+  zl(CHEFIN_DA,'Der Stromkreis ist freigeschaltet und gegen Wiedereinschalten gesichert. Übe zuerst das Verdrahten, dann klemmst du die Dosen an.'),
+  // letzter Satz wie bei Eberle (gleiche Tondatei; „Ruf mich an … Handy“ passt zum Abschluss am Handy)
+  {wer:CHEFIN_DA,text:'Nimm den Firmenwagen im Hof, die Adresse ist schon im Navi. Ruf mich an, wenn du etwas brauchst – ich bin auf dem Handy erreichbar.',wahl:[{text:'Alles klar, ich fahre los.',dann:[]}]}];
+const CHEF_GUTEFAHRT='Der Firmenwagen steht im Hof. Gute Fahrt!';
+const ABSCHLUSS_SATZ='Super, das Licht über dem Spiegel brennt und die Steckdose hat Spannung. Das Gästebad ist angeschlossen – gute Arbeit!';
+// Startplätze (Koordinaten der Begehung): Werkstatt (Blick nach Osten zum Büro), Hof am Firmenwagen, Ankunft vor dem Tor der Baustelle
+const BSTART=(()=>{const p=zuB(-141.3,11.2);return{name:'Werkstatt',x:p[0],z:p[1],feet:GY,yaw:-Math.PI/2+.25,pitch:0};})();
+const HOFSTART=(()=>{const p=zuB(-136.4,.6),q=zuB(HOF.x,HOF.z);return{name:'Hof',x:p[0],z:p[1],feet:GY,yaw:Math.atan2(-(q[0]-p[0]),-(q[1]-p[1])),pitch:0};})();
+const ANKUNFT={name:'Vor dem Tor',x:(TOR.x0+TOR.x1)/2,z:-15.3,feet:GY,yaw:Math.PI,pitch:0};
+const imBetrieb=()=>{const x=P.x-DV.x,z=P.z-DV.z;return x>BT.x0-.5&&x<BT.x1+.5&&z>BT.z0-.5&&z<BT.z1+.5;};
+function joyLabel(t){const l=$('joy').querySelector('.lbl');if(l)l.textContent=t;}
+function anreiseStart(){if(FAHRT||AUF.anreise>=3)return;if(AUF.anreise===2)AUF.anreise=1;wagenStellen(HOF.x,HOF.z,HOF.th,true);
+  if(!imBetrieb())springe(AUF.anreise===0?BSTART:HOFSTART);}
+function freiBegehen(){const warDort=!!FAHRT||imBetrieb();if(FAHRT)fahrtEnde();if(AUF.anreise===2)AUF.anreise=1;
+  wagenStellen(AUF.anreise>=3?ZIEL.x:HOF.x,AUF.anreise>=3?ZIEL.z:HOF.z,AUF.anreise>=3?ZIEL.th:HOF.th,true);if(warDort)springe(ORTE_FEST[0]);}
+function chefinSprechen(){if(AUF.an&&AUF.anreise===0)sprich(D_AUFTRAG(),()=>{AUF.anreise=1;BETRIEB.gerufen=true;sichereAuftrag();melde('Nächster Schritt: zum Firmenwagen im Hof');});
+  else sprich([zl(CHEFIN_DA,CHEF_GUTEFAHRT)]);}
+function betriebAkt(){if(DLG||!running&&!FAHRT)return'';if(FAHRT)return FAHRT.angekommen?'aussteigen':(FAHRT.hilfe&&!FAHRT.auto?'navi':'');
+  if(!imBetrieb())return'';const c=zuB(CHEFIN.x,CHEFIN.z);if(Math.hypot(P.x-c[0],P.z-c[1])<2.3)return'chefin';
+  const e=zuB(-135.3,-.5);if(FW.x===HOF.x&&FW.z===HOF.z&&Math.hypot(P.x-e[0],P.z-e[1])<2.6)return'einsteigen';return'';}
+function betriebAktion(k){if(k==='chefin')chefinSprechen();else if(k==='einsteigen'){if(AUF.an&&AUF.anreise<1){melde('Erst holst du dir im Büro den Auftrag bei deiner Chefin.');return;}einsteigen();}
+  else if(k==='aussteigen')aussteigen();else if(k==='navi')naviFaehrt();}
+// Nach drei Sekunden in der Werkstatt ruft die Chefin dich ins Büro (nur beim Auftrag, noch ohne Auftrag)
+function betriebSchritt(dt){if(FAHRT){if(running)fahrtSchritt(dt);return;}
+  if(!AUF.an||AUF.anreise!==0||BETRIEB.gerufen||!running||DLG||infoOffen||!imBetrieb())return;BETRIEB.t+=dt;
+  if(BETRIEB.t>3){BETRIEB.gerufen=true;sprich(D_RUF(),()=>melde('Deine Chefin wartet im Büro.'));}}
+// ---------------------------------------------------------------- Selbst fahren (wie Haus Eberle, Revision 9): PC W/S Gas und Bremse (rückwärts), A/D lenken;
+// iPad linker Daumen (nach vorn Gas, zurück bremsen, zur Seite lenken). Der Wagen bleibt auf der Fahrbahn (DORF.befahrbar = Bordstein) und fährt nicht
+// durch Häuser, Zäune oder die geschlossene Schranke (colliders, außer den unsichtbaren Grenzen „rand“).
+// Navi: kürzester Weg (wenden nur im Wendehammer), Ansage vor jeder Abzweigung, „Die Route wird neu berechnet.“ nach einem falschen Abzweig.
+const FZ={vmax:11,vrueck:3,beschl:2.4,brems:6,roll:.6,rmin:4.2,rand:.45};
+const NETZ=(()=>{const K=DORF.KNOTEN,adj={},kanten=DORF.KANTEN.map(([a,b])=>{const A=K[a],B=K[b],l=Math.hypot(B.x-A.x,B.z-A.z);return{a,b,l,ux:(B.x-A.x)/l,uz:(B.z-A.z)/l};});
+  kanten.forEach((k,i)=>{(adj[k.a]=adj[k.a]||[]).push({n:k.b,i});(adj[k.b]=adj[k.b]||[]).push({n:k.a,i});});return{K,adj,kanten};})();
+// Navi (Stimme „navi“): [Pfeil, Anzeige, gesprochener Satz] – bis auf die Route wortgleich mit Haus Eberle (gleiche Tondateien)
+const NAVI={route:['↑','Route zu Familie Neumann','Die Route zu Familie Neumann wird berechnet. Bitte fahren Sie los.'],rechts:['↱','Jetzt rechts abbiegen','Biegen Sie jetzt rechts ab.'],
+  links:['↰','Jetzt links abbiegen','Biegen Sie jetzt links ab.'],gleichRechts:['↱','Gleich rechts abbiegen','Gleich rechts abbiegen.'],gleichLinks:['↰','Gleich links abbiegen','Gleich links abbiegen.'],
+  gerade:['↑','Geradeaus weiter','Fahren Sie geradeaus weiter.'],wenden:['↩','Bitte wenden','Bitte wenden.'],neu:['↻','Route wird neu berechnet','Die Route wird neu berechnet.'],
+  folgen:['↑','Der Straße folgen','Folgen Sie dem Straßenverlauf.'],bald:['↑','Gleich am Ziel','In 50 Metern haben Sie Ihr Ziel erreicht.'],
+  ziel:['⚑','Ziel erreicht – rechts','Sie haben Ihr Ziel erreicht. Das Ziel befindet sich auf der rechten Seite.'],zielLinks:['⚑','Ziel erreicht – links','Sie haben Ihr Ziel erreicht. Das Ziel befindet sich auf der linken Seite.']};
+const NAVI_SCHL=new Set(Object.keys(NAVI).map(k=>tonSchluessel('navi',tonText({text:NAVI[k][2]}))));
+const SITZ={x:1.1,z:-.45,y:1.62};   // Augen der Fahrerin oder des Fahrers in Wagenmaßen (links vorn)
+function sitzen(p){const c=Math.cos(p.th),s=Math.sin(p.th);P.x=p.x+SITZ.x*c+SITZ.z*s+DV.x;P.z=p.z-SITZ.x*s+SITZ.z*c+DV.z;P.feet=GY;P.camY=GY+SITZ.y;P.vy=0;P.ground=true;}
+function fahrFrei(x,z,th){const c=Math.cos(th),s=Math.sin(th);
+  for(const p of[[x,z],[x+2.25*c,z-2.25*s],[x-2.25*c,z+2.25*s]]){if(!DORF.befahrbar(p[0],p[1],FZ.rand))return false;const bx=p[0]+DV.x,bz=p[1]+DV.z;
+    for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.rand||b.y1<=GY+.35||b.y0>=GY+2.2)continue;
+      const dx=bx-Math.max(b.x0,Math.min(bx,b.x1)),dz=bz-Math.max(b.z0,Math.min(bz,b.z1));if(dx*dx+dz*dz<.81)return false;}}return true;}
+function kantePos(k,x,z){const A=NETZ.K[k.a],t=clamp((x-A.x)*k.ux+(z-A.z)*k.uz,0,k.l);return{t,d:Math.hypot(x-(A.x+k.ux*t),z-(A.z+k.uz*t))};}
+function naviOrt(){const f=FAHRT,n=f.nav,hx=Math.cos(f.th),hz=-Math.sin(f.th);let best=-1,bd=1e9;
+  NETZ.kanten.forEach((k,i)=>{const q=kantePos(k,f.x,f.z);if(q.d>7.5)return;const sc=q.d+(1-Math.abs(hx*k.ux+hz*k.uz))*3;if(sc<bd){bd=sc;best=i;}});
+  if(best<0)return;const cur=kantePos(NETZ.kanten[n.kante],f.x,f.z).d;
+  if(best!==n.kante&&(kantePos(NETZ.kanten[best],f.x,f.z).d+2<cur||cur>7.5))n.kante=best;
+  const k=NETZ.kanten[n.kante],dot=hx*k.ux+hz*k.uz;if(f.v>.3&&Math.abs(dot)>.4)n.dir=dot>0?1:-1;}
+// kürzester Weg vom Knoten n (angekommen über v, Weg bis dahin: kosten) zum Ziel; wenden nur im Wendehammer
+function wegSuche(n,v,kosten){const Z=ZIEL.knoten,dist={},prev={},key=(a,b)=>a+'<'+b,st=key(n,v),offen=[st];dist[st]=kosten;let ende=null;
+  while(offen.length){offen.sort((x,y)=>dist[x]-dist[y]);const s=offen.shift(),[a,b]=s.split('<');if(a===Z){ende=s;break;}
+    for(const e of NETZ.adj[a]){if(e.n===b&&!NETZ.K[a].sack)continue;const t=key(e.n,a),d=dist[s]+NETZ.kanten[e.i].l;
+      if(dist[t]===undefined||d<dist[t]){dist[t]=d;prev[t]=s;if(!offen.includes(t))offen.push(t);}}}
+  if(!ende)return null;const knoten=[];for(let s=ende;s;s=prev[s])knoten.unshift(s.split('<')[0]);return{knoten,laenge:dist[ende]};}
+function naviRoute(zwang){const f=FAHRT,k=NETZ.kanten[f.nav.kante],vor=f.nav.dir>0?k.b:k.a,von=f.nav.dir>0?k.a:k.b,q=kantePos(k,f.x,f.z),rest=f.nav.dir>0?k.l-q.t:q.t;
+  let r;if(zwang&&vor===zwang.knoten){const e=NETZ.adj[vor].find(x=>x.n===zwang.nach),w=wegSuche(zwang.nach,vor,rest+NETZ.kanten[e.i].l);r=w&&{knoten:[vor].concat(w.knoten),laenge:w.laenge};}
+  else r=vor===ZIEL.knoten?{knoten:[vor],laenge:rest}:wegSuche(vor,von,rest);
+  if(r){r.vor=vor;r.von=von;r.rest=rest;}return r;}
+// Richtung am Knoten n (von a nach b): links, rechts, gerade oder wenden
+function abbiegen(a,n,b){const A=NETZ.K[a],N=NETZ.K[n],B=NETZ.K[b],l1=Math.hypot(N.x-A.x,N.z-A.z),l2=Math.hypot(B.x-N.x,B.z-N.z),
+  d1x=(N.x-A.x)/l1,d1z=(N.z-A.z)/l1,d2x=(B.x-N.x)/l2,d2z=(B.z-N.z)/l2,kr=d1x*d2z-d1z*d2x,dot=d1x*d2x+d1z*d2z;
+  return dot<-.7?'wenden':Math.abs(kr)<.35?'gerade':kr>0?'rechts':'links';}
+function naviSag(k){const n=NAVI[k];if(!n||!FAHRT)return;FAHRT.navi.push(k);$('naviSatz').textContent=n[2];
+  const s=tonSchluessel('navi',tonText({text:n[2]}));TON.schlange=TON.schlange.filter(x=>!NAVI_SCHL.has(x));if(TON.akt&&TON.an){TON.schlange.push(s);TON.verlangt.push(s);}else tonSpiele([s]);}
+function naviTakt(){const f=FAHRT,n=f.nav;naviOrt();const dk=n.kante*2+(n.dir>0?1:0);
+  if(n.dk!==null&&dk!==n.dk&&n.erwartet!==null&&dk!==n.erwartet&&!f.angekommen)naviSag('neu');   // anders abgebogen als geplant
+  const r=naviRoute();if(!r)return;f.route=r;
+  if(dk!==n.dk){n.dk=dk;const nx=r.knoten[1];n.erwartet=nx?NETZ.adj[r.vor].find(e=>e.n===nx).i*2+(NETZ.kanten[NETZ.adj[r.vor].find(e=>e.n===nx).i].a===r.vor?1:0):null;}
+  if(r.vor!==n.vor){n.vor=r.vor;n.gesagt=new Set();if(r.rest>70&&f.t>3)naviSag('folgen');}
+  const sag=k=>{if(!n.gesagt.has(k)){n.gesagt.add(k);naviSag(k);}},d=r.rest;let pfeil='↑',text='Der Straße folgen';
+  const amZiel=Math.hypot(f.x-ZIEL.x,f.z-ZIEL.z);
+  if(r.vor===ZIEL.knoten){pfeil='⚑';text=d>8?'Ziel in '+Math.round(d)+' m':'Ziel – hier anhalten';if(d<52&&d>20)sag('bald');}
+  else{const art=abbiegen(r.von,r.vor,r.knoten[1]),drei=NETZ.adj[r.vor].length>2;
+    if(art==='wenden'){pfeil='↩';text='In '+Math.round(d)+' m wenden';if(d<28)sag('wenden');}
+    else if(art==='gerade'){if(drei){text='In '+Math.round(d)+' m geradeaus';if(d<25)sag('gerade');}}
+    else{pfeil=art==='links'?'↰':'↱';text='In '+Math.round(d)+' m '+art+' abbiegen';if(d<40&&d>=15)sag(art==='links'?'gleichLinks':'gleichRechts');if(d<15)sag(art);}}
+  const da=amZiel<9&&Math.abs(f.v)<1.2;
+  if(da&&!f.angekommen){f.angekommen=true;sag(Math.cos(f.th)>=0?'ziel':'zielLinks');actKind='-';}
+  else if(!da&&f.angekommen&&amZiel>12){f.angekommen=false;actKind='-';n.gesagt.delete('ziel');n.gesagt.delete('zielLinks');}
+  if(!f.auto&&!f.angekommen&&!f.hilfe&&(f.t>120||f.stoss>=8)){f.hilfe=true;actKind='-';   // Hilfe: nach 2 Minuten oder 8 Anstößen
+    melde('Schwierig? Das Navi kann für dich fahren – '+(TOUCH?'tippe auf den orangen Knopf':'drücke E')+'.');meldT=6;}
+  if(f.angekommen){pfeil='⚑';text='Angekommen – '+(TOUCH?'tippe „Aussteigen“':'E = Aussteigen');}
+  $('naviPfeil').textContent=pfeil;$('naviText').textContent=text;
+  $('naviRest').textContent='noch '+Math.max(0,Math.round(f.angekommen?0:r.laenge))+' m · '+Math.round(Math.abs(f.v)*3.6)+' km/h';
+  if(f.auto)f.auto.linie=autoLinie();}
+// Autopilot (Prüfung und Hilfe „Navi fährt für dich“): Wegpunkte auf der rechten Fahrbahnseite, Wenden im Wendehammer als Halbkreis, Verfolgen eines Punkts voraus
+function autoLinie(){const f=FAHRT,a=f.auto;let r=f.route;
+  if(a.fehler&&!a.fehler.erledigt){const z=naviRoute(a.fehler);if(z&&z.knoten[0]===a.fehler.knoten)r=z;
+    const k=NETZ.kanten[f.nav.kante];if((k.a===a.fehler.knoten&&k.b===a.fehler.nach)||(k.b===a.fehler.knoten&&k.a===a.fehler.nach))a.fehler.erledigt=true;}
+  a.r=r;if(!r)return[];const folge=[r.von].concat(r.knoten),K=NETZ.K,pts=[[f.x,f.z]],
+    ri=(P,Q)=>{const l=Math.hypot(Q.x-P.x,Q.z-P.z),ux=(Q.x-P.x)/l,uz=(Q.z-P.z)/l;return{ux,uz,rx:-uz,rz:ux};};
+  {const S=K[folge[0]];if(S.sack&&folge.length>1&&Math.hypot(f.x-S.x,f.z-S.z)<7.5){const d=ri(S,K[folge[1]]);pts.push([S.x+d.rx*1.4+d.ux*8,S.z+d.rz*1.4+d.uz*8]);}}   // noch im Wendehammer
+  for(let i=0;i+1<folge.length;i++){const A=K[folge[i]],B=K[folge[i+1]],d=ri(A,B);
+    if(i+2===folge.length){pts.push(folge[i+1]===ZIEL.knoten?[ZIEL.x,ZIEL.z]:[B.x+d.rx*1.4,B.z+d.rz*1.4]);break;}
+    const C=K[folge[i+2]];
+    if(B.sack&&folge[i+2]===folge[i]){pts.push([B.x-d.ux*6+d.rx*1.4,B.z-d.uz*6+d.rz*1.4]);   // Wenden: Bogen mit 5 m Halbmesser um die Mitte des Wendehammers
+      for(let j=0;j<=10;j++){const w=-Math.PI/6+j/10*Math.PI*7/6;pts.push([B.x+5*(Math.cos(w)*d.rx+Math.sin(w)*d.ux),B.z+5*(Math.cos(w)*d.rz+Math.sin(w)*d.uz)]);}
+      pts.push([B.x-d.rx*1.4-d.ux*8,B.z-d.rz*1.4-d.uz*8]);}
+    else{const e=ri(B,C),kr=d.ux*e.uz-d.uz*e.ux;pts.push(Math.abs(kr)<.35?[B.x+d.rx*1.4,B.z+d.rz*1.4]:[B.x+(d.rx+e.rx)*1.4,B.z+(d.rz+e.rz)*1.4]);}}   // Ecke = Schnitt der rechten Fahrspuren
+  return pts;}
+function autoSteuer(){const f=FAHRT,a=f.auto,L=a.linie||[];if(L.length<2||!a.r)return{g:f.v>.05?-1:0,l:0};
+  let bi=0,bd=1e9,bt=0;for(let i=0;i+1<L.length;i++){const A=L[i],B=L[i+1],lx=B[0]-A[0],lz=B[1]-A[1],ll=lx*lx+lz*lz||1e-9,t=clamp(((f.x-A[0])*lx+(f.z-A[1])*lz)/ll,0,1),
+    d=Math.hypot(f.x-A[0]-lx*t,f.z-A[1]-lz*t);if(d<bd-.01){bd=d;bi=i;bt=t;}}
+  const voraus=weit=>{let rest=weit,i=bi,px=L[i][0]+(L[i+1][0]-L[i][0])*bt,pz=L[i][1]+(L[i+1][1]-L[i][1])*bt;
+    while(i+1<L.length){const l=Math.hypot(L[i+1][0]-px,L[i+1][1]-pz);if(l>=rest){px+=(L[i+1][0]-px)*rest/l;pz+=(L[i+1][1]-pz)*rest/l;break;}rest-=l;px=L[i+1][0];pz=L[i+1][1];i++;}
+    const w=Math.atan2(-(pz-f.z),px-f.x)-f.th;return Math.atan2(Math.sin(w),Math.cos(w));};
+  const al=voraus(Math.max(4.5,Math.min(6.5,f.v*1.2))),al2=voraus(12);   // Lenkpunkt und Blick weiter voraus (erst Gas, wenn es geradeaus geht)
+  const l=clamp(al*2.2,-1,1),r=a.r;
+  let vt=8.3;const art=r.knoten.length>1?abbiegen(r.von,r.vor,r.knoten[1]):'ziel';if(art!=='gerade'&&r.rest<22)vt=2.6;if(Math.abs(al)>.25||Math.abs(al2)>.3)vt=Math.min(vt,3.2);
+  if(r.vor===ZIEL.knoten)vt=Math.min(vt,Math.sqrt(2*1.8*Math.max(0,Math.hypot(f.x-ZIEL.x,f.z-ZIEL.z)-.8)));if(f.angekommen)vt=0;
+  const g=vt>f.v+.15?clamp((vt-f.v)*.7,0,1):f.v>vt+.15?-clamp((f.v-vt)*.45,0,1):0;return{g,l};}
+function einsteigen(){FAHRT={t:0,x:HOF.x,z:HOF.z,th:HOF.th,v:0,lenk:0,stoss:0,stossT:-9,angekommen:false,hilfe:false,navi:[],route:null,auto:null,
+    nav:{kante:0,dir:1,dk:null,erwartet:null,vor:null,gesagt:new Set(),takt:0}};
+  if(AUF.an){AUF.anreise=2;sichereAuftrag();}releaseTouch();LEITER=null;document.documentElement.classList.add('fahrt');FW.schild.versteckt=true;wagenStellen(HOF.x,HOF.z,HOF.th,false);
+  P.yaw=HOF.th-Math.PI/2;P.pitch=-.08;sitzen(FAHRT);actKind='-';setHint('','');bAct.style.display='none';joyLabel('ziehen = fahren und lenken');
+  naviSag('route');naviTakt();naviZeichnen();lastRoom='';
+  melde(TOUCH?'Du fährst selbst: linker Daumen nach vorn = Gas, zurück = bremsen, zur Seite = lenken. Das Navi zeigt den Weg.':'Du fährst selbst: W = Gas, S = bremsen und rückwärts, A und D = lenken. Das Navi zeigt den Weg.');meldT=7;}
+function fahrtSchritt(dt){const f=FAHRT;f.t+=dt;if(f.t>.8)SCHRANKE.ziel=1;let g=0,l=0;
+  if(f.auto){if(f.auto.zurueck>0){f.auto.zurueck-=dt;g=-.8;l=-(f.auto.zl||0);}else{const s=autoSteuer();g=s.g;l=s.l;f.auto.zl=l;}}   // festgefahren: kurz zurücksetzen und gegenlenken
+  else{if(keys.KeyW||keys.ArrowUp)g+=1;if(keys.KeyS||keys.ArrowDown)g-=1;if(keys.KeyA||keys.ArrowLeft)l+=1;if(keys.KeyD||keys.ArrowRight)l-=1;
+    if(joy.id!==null&&Math.hypot(joy.dx,joy.dy)>JR*.12){g-=joy.dy/JR;l-=joy.dx/JR;}}
+  g=clamp(g,-1,1);l=clamp(l,-1,1);if(f.t<1.4)g=Math.min(g,0);   // erst geht die Schranke auf
+  f.lenk+=(l-f.lenk)*Math.min(1,dt*(f.auto?8:5));
+  if(g>0)f.v+=(f.v<-.05?FZ.brems:FZ.beschl)*g*dt;else if(g<0)f.v-=(f.v>.05?FZ.brems:FZ.beschl*.6)*(-g)*dt;else{const r=FZ.roll*dt;f.v=Math.abs(f.v)<=r?0:f.v-Math.sign(f.v)*r;}
+  f.v=clamp(f.v,-FZ.vrueck,FZ.vmax);
+  const kr=f.lenk/(FZ.rmin*(1+f.v*f.v/60)),n=Math.max(1,Math.ceil(Math.abs(f.v)*dt/.25)),alt=f.th;
+  for(let i=0;i<n;i++){const s=f.v*dt/n,th=f.th+kr*s,x=f.x+Math.cos(th)*s,z=f.z-Math.sin(th)*s;
+    if(fahrFrei(x,z,th)){f.x=x;f.z=z;f.th=th;}
+    else{if(Math.abs(f.v)>.8){f.stoss++;if(f.t-f.stossT>2){f.stossT=f.t;melde('Rumms! Hier geht es nicht weiter – '+(TOUCH?'Daumen nach hinten':'S')+' = zurücksetzen.');}}if(f.auto)f.auto.zurueck=f.v>0?1.1:0;f.v=-f.v*.15;break;}}
+  wagenStellen(f.x,f.z,f.th,false);P.yaw+=f.th-alt;sitzen(f);   // der Blick dreht mit dem Wagen mit
+  f.nav.takt-=dt;if(f.nav.takt<=0){f.nav.takt=.15;naviTakt();}naviZeichnen();}
+function naviFaehrt(){const f=FAHRT;if(!f||f.auto||!f.hilfe)return;f.auto={linie:null,r:null};f.auto.linie=autoLinie();actKind='-';melde('Das Navi fährt jetzt für dich.');}
+function fahrtEnde(){FAHRT=null;document.documentElement.classList.remove('fahrt');joyLabel('ziehen = gehen');FW.schild.versteckt=false;SCHRANKE.ziel=0;actKind='-';setHint('','');bAct.style.display='none';lastRoom='';}
+function aussteigen(){if(!FAHRT||!FAHRT.angekommen)return;fahrtEnde();wagenStellen(ZIEL.x,ZIEL.z,ZIEL.th,true);
+  if(AUF.an){AUF.anreise=3;sichereAuftrag();}springe(ANKUNFT);melde('Angekommen bei Familie Neumann. Geh durch das Tor im Bauzaun auf die Baustelle.');meldT=5;}
+// Navi-Karte (oben Norden): das ganze Dorf, Betrieb, Haus Neumann, restliche Route (blau), Wagen als Pfeil, Ziel als roter Punkt
+function naviZeichnen(){const c=$('naviKarte'),g=c&&c.getContext?c.getContext('2d'):null;if(!g||typeof g.fillRect!=='function'||!FAHRT)return;
+  const W=c.width||284,H=c.height||112,k=(W-8)/290,mx=x=>4+(x+172)*k,my=zz=>8+(zz+58)*k,f=FAHRT,re=(r,col)=>{g.fillStyle=col;g.fillRect(mx(r.x0),my(r.z0),(r.x1-r.x0)*k,(r.z1-r.z0)*k);};
+  g.fillStyle='#24302a';g.fillRect(0,0,W,H);for(const r of DORF.STRASSEN.concat(DORF.KREUZUNGEN))re(r,'#6a7480');
+  for(const q of DORF.KREISE){g.fillStyle='#6a7480';g.beginPath();g.arc(mx(q.x),my(q.z),q.r*k,0,7);g.fill();}
+  re({x0:BT.hx0,z0:BT.hz0,x1:BT.hx1,z1:BT.hz1},'#8a93a0');re({x0:ZIEL.haus[0],z0:ZIEL.haus[1],x1:ZIEL.haus[2],z1:ZIEL.haus[3]},'#e2854a');
+  const r=f.route;if(r){g.strokeStyle='#4fa3ff';g.lineWidth=3;g.lineCap='round';g.lineJoin='round';g.beginPath();g.moveTo(mx(f.x),my(f.z));
+    for(const id of r.knoten){const q=id===ZIEL.knoten?ZIEL:NETZ.K[id];g.lineTo(mx(q.x),my(q.z));}g.stroke();}
+  g.fillStyle='#d0281e';g.beginPath();g.arc(mx(ZIEL.x),my(ZIEL.z),4,0,7);g.fill();
+  g.save();g.translate(mx(f.x),my(f.z));g.rotate(-f.th);g.fillStyle='#fff';g.beginPath();g.moveTo(7,0);g.lineTo(-4.5,-4.5);g.lineTo(-4.5,4.5);g.closePath();g.fill();g.restore();
+  g.fillStyle='#cfd6de';g.font='10px "Segoe UI",Arial,sans-serif';g.fillText('Betrieb',mx(BT.x0),my(BT.z1)+10);g.textAlign='right';g.fillText('Familie Neumann',Math.min(W-4,mx(ZIEL.haus[2])+30),my(ZIEL.haus[3])+11);g.textAlign='left';}
+// Firmenwagen beim Laden: an der Baustelle, wenn du schon angekommen bist, sonst im Hof des Betriebs
+if(AUF.anreise>=3)wagenStellen(ZIEL.x,ZIEL.z,ZIEL.th,true);else wagenStellen(HOF.x,HOF.z,HOF.th,true);
+schrankeStellen();
+
 // ---------------------------------------------------------------- Schleife
 let last=performance.now(),hudT=0,perfT=0,perfN=0,perfWarm=0,pr=PR_MAX;
 renderer.shadowMap.needsUpdate=true;
@@ -2041,7 +2715,9 @@ function frame(now){requestAnimationFrame(frame);
   // bei 40 rutschte das iPad von 1,0 mit 41 Bildern/s noch auf 0,75 – unnötig unscharf, gemessen 22.11.2026)
   if(AUTO_PR&&running&&!document.hidden&&raw<1){perfWarm+=raw;if(perfWarm>3){perfT+=raw;perfN++;
     if(perfT>2.5){if(perfT/perfN>1/34&&pr>.75){pr=Math.max(.75,pr-.25);renderer.setPixelRatio(pr);resize();}perfT=perfN=0;}}}
-  if(running)move(dt);
+  if(running&&!FAHRT)move(dt);
+  betriebSchritt(dt);              // Auslieferung B: Ruf der Chefin, Fahrt mit Navi
+  if(SCHRANKE.t!==SCHRANKE.ziel){SCHRANKE.t+=Math.sign(SCHRANKE.ziel-SCHRANKE.t)*Math.min(Math.abs(SCHRANKE.ziel-SCHRANKE.t),dt*.9);schrankeStellen();}
   hund(dt);
   for(const L of LEITERN){const z=LEITER===L?1:0;if(L.auf!==z){ // Klappe öffnet, solange man auf dieser Leiter ist
     L.auf+=Math.sign(z-L.auf)*Math.min(Math.abs(z-L.auf),dt*4);const e=L.auf*L.auf*(3-2*L.auf);L.klappe.rotation.x=-L.d*1.75*e;renderer.shadowMap.needsUpdate=true;}}
@@ -2049,7 +2725,7 @@ function frame(now){requestAnimationFrame(frame);
     const e=DOOR.t*DOOR.t*(3-2*DOOR.t);DOOR.pivot.rotation.y=-e*1.55;
     const c=DOOR.col;if(DOOR.t<.5){c.x0=5.06;c.x1=6.075;c.z0=.085;c.z1=.135;}else{c.x0=5.06;c.x1=5.13;c.z0=.1;c.z1=1.1;}
     renderer.shadowMap.needsUpdate=true;}
-  camera.position.set(P.x,P.camY+Math.sin(P.bob*6.2)*.022,P.z);camera.rotation.set(P.pitch,P.yaw,0);
+  camera.position.set(P.x,P.camY+Math.sin(P.bob*6.2)*.022,P.z);camera.rotation.set(P.pitch,P.yaw,0);HIMMEL.position.copy(camera.position);
   const inside=P.x>0&&P.x<HX&&P.z>0&&P.z<HZ&&P.feet<DACH.ab,ex=!inside?1:P.feet<-.7?1.7:1.3;
   renderer.toneMappingExposure+=(ex-renderer.toneMappingExposure)*Math.min(1,dt*2.5);
   {const s=1+.08*Math.sin(now*.004);for(const st of STATIONEN)st.zeichen.scale.setScalar(s);} // Info-Zeichen pulsiert leicht
@@ -2074,7 +2750,24 @@ window.__sim={P,DOOR,colliders,start,joy,touch:()=>TOUCH,pr:()=>pr,stage:n=>{if(
   gaestebad:()=>({stand:GBST,ok:GB_OK,licht:GB_LICHT,geraete:GB_ZIELE.map(z=>z.geraet.visible),ringe:GB_ZIELE.map(z=>z.ring.visible)}),gbZiel:()=>{const z=gbZiel();return z?z.id:null;},
   gbTreffer:(nx,ny)=>{const z=gbTreffer(nx,ny);return z?z.id:null;},gbAktion:id=>gbAktion(GB_ZIELE.find(z=>z.id===id)),vd:()=>VD_UI,offen:()=>infoOffen&&infoOffen.id,
   gbLoesung:()=>{const l=VERDRAHTEN.gbLoesung();GBST.geraet=l.geraet;GBST.dr=l.dr;gbGeaendert();return GB_OK.alles;},gbLeeren:()=>{GBST.geraet={SD:null,E:null,S:null};GBST.dr=[];GB_LICHT=false;gbGeaendert();},
-  auftrag:()=>AUF,auftragBeginnen:()=>{AUF.an=true;aufGezeigt='';},auftragZeile:()=>$('auftrag').innerHTML,ueben:()=>{oeffneVerdrahten('uebung');return !!VD_UI;}};
+  // Lernpaket (probe-lernpaket.mjs): Schnittstelle, Punkte, Licht schalten, Rücksprung, erkundete Orte, Auftrag sichern
+  lp:()=>LP,punkte:()=>punkteJetzt(),gbSchalten:()=>{gbSchalten();return GB_LICHT;},kursAdresse:()=>kursAdresse(),entdeckt:()=>[...ENTDECKT],sichereAuftrag:()=>sichereAuftrag(),
+  auftrag:()=>AUF,auftragBeginnen:()=>{AUF.an=true;aufGezeigt='';},auftragZeile:()=>$('auftrag').innerHTML,ueben:()=>{oeffneVerdrahten('uebung');return !!VD_UI;},
+  // Auslieferung B: Dorf, Betrieb, Chefin, Fahrt, Navi, Ton
+  dorf:()=>({version:DORF.version,versatz:DV,schilder:DSCHILDER.map(e=>({x:e.x,z:e.z,sichtbar:e.s.visible}))}),zuB,
+  betrieb:()=>({anreise:AUF.anreise,gerufen:BETRIEB.gerufen,t:BETRIEB.t,imBetrieb:imBetrieb(),schranke:SCHRANKE.t,wagen:{x:FW.x,z:FW.z,th:FW.th,fest:FW.col.y1>0},
+    dlg:DLG?{wer:DLG.z[DLG.i].wer,text:DLG.z[DLG.i].text,wahl:DLG.z[DLG.i].wahl?DLG.z[DLG.i].wahl.map(o=>o.text):null}:null,
+    fahrt:FAHRT?{t:FAHRT.t,x:FAHRT.x,z:FAHRT.z,th:FAHRT.th,v:FAHRT.v,stoss:FAHRT.stoss,angekommen:FAHRT.angekommen,hilfe:FAHRT.hilfe,auto:!!FAHRT.auto,
+      kante:DORF.KANTEN[FAHRT.nav.kante].join('-'),dir:FAHRT.nav.dir,route:FAHRT.route?FAHRT.route.knoten.slice():null,navi:FAHRT.navi.slice()}:null}),
+  dlgWeiter:w=>dlgWeiter(w===undefined?-1:w),anreiseStart:()=>anreiseStart(),freiBegehen:()=>freiBegehen(),einsteigen:()=>{einsteigen();return !!FAHRT;},aussteigen:()=>{aussteigen();return !FAHRT;},
+  fahrtSetze:(x,zz,th)=>{if(!FAHRT)return false;const alt=FAHRT.th;Object.assign(FAHRT,{x,z:zz,th});wagenStellen(x,zz,th,false);P.yaw+=th-alt;sitzen(FAHRT);naviTakt();naviZeichnen();hud();return true;},   // Prüfhilfe (Bilder ohne laufende Schleife)
+  autopilot:o=>{if(!FAHRT)return false;FAHRT.auto=o===false?null:Object.assign({linie:null,r:null},o||{});if(FAHRT.auto)FAHRT.auto.linie=autoLinie();return true;},
+  fahrFrei:(x,zz,th)=>fahrFrei(x,zz,th||0),befahrbar:(x,zz)=>DORF.befahrbar(x,zz,0),route:(von,ueber)=>wegSuche(von,ueber,0),
+  ton:()=>({an:TON.an,verlangt:TON.verlangt.slice()}),tonSchluessel,tonText,
+  tonListe:()=>{const aus=new Map(),neu=(wer,text)=>{const r=tonRolle(wer),t=tonText({text});if(!t)return;const k=tonSchluessel(r,t),da=aus.get(k);
+      if(!da)aus.set(k,{schluessel:k,rolle:r,wer,text:t});else if(da.text!==t||da.rolle!==r)throw new Error('Ton-Schlüssel doppelt: '+k);};
+    const geh=z=>z.forEach(q=>{neu(q.wer,tonText(q));(q.wahl||[]).forEach(o=>{neu('Du',o.text);geh(o.dann||[]);});});
+    geh(D_RUF());geh(D_AUFTRAG());geh([zl(CHEFIN_DA,CHEF_GUTEFAHRT),zl(CHEFIN_HANDY,ABSCHLUSS_SATZ)]);for(const k in NAVI)geh([zl('Navi',NAVI[k][2])]);return[...aus.values()];}};
 })();
 </script>
 </body>
