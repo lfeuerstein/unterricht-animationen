@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spannung und Strom messen – Übungen</title>
+<!-- Entwurf 21.11.2026 (Wunsch des Lehrers): Reihen-, Parallel- und gemischte Schaltungen mit gleich großen Widerständen.
+     Stufe 1: mit Messgerät messen und eintragen. Stufe 2: ohne Messgerät im Kopf rechnen. Eine Datei, ohne Internet.
+     Aussehen und Messgerät wie mockup-elektro-aufgaben.html (Teile 1 und 2). Modell: Leitungen ohne Widerstand, Messgeräte ideal.
+     Fassung 2 (21.11.2026, Wunsch des Lehrers „Verwende als Spannungsquelle 230 Volt“ – „Es geht hier hauptsächlich um Haushaltsstrom“):
+     überall Netzspannung 230 V ~ zwischen L und N; Reihe mit 5 statt 3 Widerständen (230 ÷ 3 geht nicht auf); gemischt (R1∥R2)+(R3∥R4)
+     statt R1+(R2∥R3) (2/3 von 230 geht nicht auf); je Zahlensatz andere Messpunkte. Parallel 2: A4 misst nur den Strom durch R2,
+     neue Stelle A5 an Punkt 7 = Gesamtstrom (Hinweis des Lehrers). -->
+<style>
+:root{--bg:#f4f6fa;--karte:#fff;--text:#1d2433;--leise:#5b6475;--rand:#d6dbe7;--akzent:#1f5fbf;--ok:#1a7f37;--fehler:#c62828;
+  /* Wunsch des Lehrers 21.11.: Strommessung rot, Spannungsmessung blau (Zeichnung, Knöpfe, Aufgaben) */
+  --spannung:#1f5fbf;--strom:#d32f2f}
+.knopf.an[data-modus="U"]{background:var(--spannung);border-color:var(--spannung)}
+.knopf.an[data-modus="I"]{background:var(--strom);border-color:var(--strom)}
+.farbe-u{color:var(--spannung)}.farbe-i{color:var(--strom)}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:#fff;border-bottom:1px solid var(--rand);padding:12px 16px}
+#zumKurs{float:right;margin:0 0 6px 12px;padding:5px 10px;border:1px solid var(--rand);border-radius:6px;color:inherit;text-decoration:none;font-size:14px;white-space:nowrap}#zumKurs:hover{background:#f1f3f5}#zumKurs[hidden]{display:none}
+h1{font-size:20px;margin:0}
+h2{font-size:18px;margin:0 0 6px}
+h3{font-size:15px;margin:0 0 6px}
+.unter{color:var(--leise);font-size:13px;margin-top:3px}
+nav{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px;background:#fff;border-bottom:1px solid var(--rand);position:sticky;top:0;z-index:5}
+nav button,.knopf{border:1px solid var(--rand);background:#fff;border-radius:999px;padding:7px 12px;font-size:14px;cursor:pointer;color:var(--text)}
+nav button.an,.knopf.an{background:var(--akzent);color:#fff;border-color:var(--akzent)}
+.knopf.haupt{background:var(--akzent);color:#fff;border-color:var(--akzent)}
+.knopf.fertig{border-color:var(--ok);color:var(--ok)}
+.knopf.fertig.an{background:var(--ok);color:#fff}
+main{max-width:1180px;margin:0 auto;padding:16px}
+.karte{background:var(--karte);border:1px solid var(--rand);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.aufgabe p{margin:6px 0;line-height:1.45}
+.raster{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(260px,1fr);gap:14px;align-items:start}
+@media (max-width:860px){.raster{grid-template-columns:1fr}}
+svg.bild{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--rand);border-radius:8px;touch-action:manipulation;user-select:none}
+.leiste{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;align-items:center}
+.anzeige{font-family:"Consolas","Courier New",monospace;font-size:34px;background:#10202f;color:#7CFC9A;border-radius:8px;padding:12px 14px;text-align:right;min-height:64px}
+.anzeige small{display:block;font-size:13px;color:#9fb3c8;text-align:left}
+.hinweis{font-size:13px;color:var(--leise);line-height:1.4}
+table.werte{border-collapse:collapse;width:100%;font-size:15px}
+table.werte th,table.werte td{border:1px solid var(--rand);padding:6px 8px;text-align:left;vertical-align:middle}
+table.werte th{background:#f0f3f9}
+table.werte tr.fokus td{background:#fff9db}
+table.werte input{width:96px;font-size:16px;padding:5px 7px;border:1px solid var(--rand);border-radius:6px}
+input.richtig{border-color:var(--ok)!important;background:#eaf6ee}
+input.falsch{border-color:var(--fehler)!important;background:#fdecec}
+td.erg{font-size:14px;line-height:1.35}
+td.erg.ok{color:var(--ok);font-weight:700}
+td.erg.nein{color:var(--fehler)}
+td.erg .tipp{display:block;color:#7a4b00;margin-top:3px}
+.status{padding:8px 12px;border-radius:8px;font-weight:600;margin-top:10px}
+.status.gut{background:#eaf6ee;color:var(--ok)}
+.status.neutral{background:#f0f3f9;color:var(--leise);font-weight:400}
+.merke{border-left:5px solid var(--ok);background:#eef8f1;padding:10px 12px;border-radius:6px;margin-top:10px;line-height:1.45}
+.daten{font-size:15px;line-height:1.6}
+.daten b{font-size:16px}
+footer{max-width:1180px;margin:0 auto;padding:0 16px 24px;color:var(--leise);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <a id="zumKurs" href="#" target="_top" hidden>← Zurück zum Moodle-Kurs</a>
+  <h1>Spannung und Strom messen – Übungen</h1>
+  <div class="unter">Haushalt: Netzspannung 230 V ~ · Reihen-, Parallel- und gemischte Schaltungen · alle Widerstände einer Schaltung sind gleich groß · Leitungen ohne Widerstand, Messgeräte ideal</div>
+</header>
+<nav id="stufen">
+  <button data-stufe="1" class="an">Stufe 1: Messen und eintragen</button>
+  <button data-stufe="2">Stufe 2: Ohne Messgerät – im Kopf rechnen</button>
+</nav>
+<main>
+  <div class="karte aufgabe" id="auftrag"></div>
+  <div class="leiste" id="schaltwahl"></div>
+  <div class="raster">
+    <div>
+      <svg class="bild" id="bild" viewBox="0 0 640 380" aria-label="Schaltung"></svg>
+      <div class="leiste"><button class="knopf" id="neu">↻ Neue Zahlen</button><span class="hinweis">Gleiche Schaltung, andere Widerstände und andere Messpunkte – die Netzspannung bleibt 230 V.</span></div>
+    </div>
+    <div class="karte" id="seite"></div>
+  </div>
+  <div class="karte">
+    <h3>Aufgaben</h3>
+    <table class="werte" id="aufg"></table>
+    <div class="leiste"><button class="knopf haupt" id="allePruefen">Alle prüfen</button><span class="hinweis">Im Haushalt ist es Wechselspannung (~): Das Messgerät zeigt den Wert ohne Plus oder Minus.</span></div>
+    <div id="stand"></div>
+  </div>
+</main>
+<footer>Eine Datei, läuft ohne Internet · Schaltzeichen nach DIN · eigene Darstellung</footer>
+
+<script>
+(function(){
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in (attrs||{}))e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function txt(parent,x,y,s,attrs){const t=el('text',Object.assign({x,y},attrs||{}),parent);t.textContent=s;return t;}
+function zahl(x,einheit){const a=Math.abs(x);const r=Math.round(a*100)/100;const t=(Math.abs(r-Math.round(r))<1e-9?String(Math.round(r)):String(r)).replace('.',',');return (x<-0.004?'−':'')+t+' '+einheit;}
+function lies(s){if(s==null)return NaN;s=String(s).trim().replace(/\s/g,'').replace('−','-').replace(',','.').replace(/[a-zA-ZΩ]+$/,'');return s===''?NaN:Number(s);}
+
+/* ---------- Rechner (Knotenpotenziale wie in mockup-elektro-aufgaben.html; nur ohmsche Widerstände, gilt so auch für die Effektivwerte bei 230 V ~) ---------- */
+function loese(knoten,fest,teile){
+  const frei=knoten.filter(k=>!(k in fest));const idx={};frei.forEach((k,i)=>idx[k]=i);const n=frei.length;
+  const G=Array.from({length:n},()=>new Array(n+1).fill(0));
+  for(let i=0;i<n;i++)G[i][i]+=1e-12;
+  for(const w of teile){const g=1/w.R;
+    for(const [p,q] of [[w.a,w.b],[w.b,w.a]])if(p in idx){const i=idx[p];G[i][i]+=g;if(q in idx)G[i][idx[q]]-=g;else G[i][n]+=g*fest[q];}}
+  for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(G[r][c])>Math.abs(G[p][c]))p=r;[G[c],G[p]]=[G[p],G[c]];
+    for(let r=0;r<n;r++){if(r===c)continue;const f=G[r][c]/G[c][c];if(!f)continue;for(let k=c;k<=n;k++)G[r][k]-=f*G[c][k];}}
+  const V=Object.assign({},fest);frei.forEach((k,i)=>V[k]=G[i][n]/G[i][i]);return V;
+}
+
+/* ---------- Die sechs Schaltungen ----------
+   Haushalt: Netzspannung 230 V ~ zwischen L (Außenleiter) und N (Neutralleiter). Knoten: p = L, m = N.
+   teile: [von, nach, Name]. Alle Widerstände einer Schaltung haben den Wert R.
+   zahlen: je Satz der Widerstand R und die Aufgaben a. Bei fester Netzspannung ändern sich die Spannungen mit R nicht –
+   deshalb fragt jeder Satz andere Punkte ab (Stufe 1 beginnt mit Satz 1, Stufe 2 mit Satz 2).
+   🔴 Die Zahl von R darf nie als Spannung vorkommen (Lehrer 21.11.: 46 Ω und 46 V „fallen so zusammen“ – „Sonst denken die Schüler, Widerstand
+   und die Spannung sei dasselbe“). Also nie I = 1 A, ½ A, ⅓ A … und nie R = 230 Ω. Gut im Kopf: runde Werte, z. B. 5 · 20 Ω = 100 Ω → 2,3 A.
+   🔴 Strommessstelle: strom = der Strom, der an DIESER Stelle wirklich fließt. Liegt die Stelle zwischen zwei Abzweigen,
+   fließt dort nur ein Zweigstrom (Parallel 2: A4 zwischen R1 und R2 = nur der Strom durch R2). */
+const NETZ=230;
+const SCH=[
+ {id:'r2',kurz:'Reihe · 2 Widerstände',typ:'reihe',titel:'Reihenschaltung mit zwei gleichen Widerständen',
+  knoten:['p','a','m'],teile:[['p','a','R1'],['a','m','R2']],
+  paths:['M70 168 V70 H220','M280 70 H400','M460 70 H570 V310 H70 V212'],
+  res:[{x:250,y:70,name:'R1'},{x:430,y:70,name:'R2'}],dots:[],
+  punkte:[{nr:1,x:70,y:120,k:'p',lx:-24,ly:5},{nr:2,x:180,y:70,k:'p'},{nr:3,x:330,y:70,k:'a'},{nr:4,x:510,y:70,k:'m'},{nr:5,x:570,y:200,k:'m',lx:12,ly:5},{nr:6,x:320,y:310,k:'m',ly:26}],
+  amp:[{name:'A1',x:120,y:70,strom:'ges',lx:-8,ly:-20},{name:'A2',x:365,y:70,strom:'R2',lx:-8,ly:-20},{name:'A3',x:450,y:310,strom:'ges',lx:-8,ly:34}],
+  zahlen:[
+   {R:46, a:[['U',2,3],['U',3,4],['U',2,4],['U',1,6],['U',4,6],['I','A1'],['I','A2'],['I','A3']]},
+   {R:23, a:[['U',1,3],['U',3,5],['U',2,5],['U',5,6],['U',3,6],['I','A1'],['I','A2'],['I','A3']]},
+   {R:50, a:[['U',3,6],['U',2,3],['U',1,2],['U',1,5],['U',4,5],['I','A2'],['I','A3'],['I','A1']]},
+   {R:25, a:[['U',2,3],['U',3,5],['U',1,4],['U',2,6],['U',1,2],['I','A3'],['I','A1'],['I','A2']]}],
+  tippU:'Reihenschaltung: Die 230 V teilen sich auf die Widerstände auf. Gleich große Widerstände bekommen gleich viel.',
+  tippI:'Reihenschaltung: Der Strom ist überall gleich groß. I = 230 V ÷ (R1 + R2).',
+  merke:'In der Reihenschaltung teilt sich die Spannung auf: 230 V = U1 + U2. Bei zwei gleichen Widerständen bekommt jeder die Hälfte, also 115 V. Der Strom ist an jeder Stelle gleich groß.'},
+ {id:'r5',kurz:'Reihe · 5 Widerstände',typ:'reihe',titel:'Reihenschaltung mit fünf gleichen Widerständen',
+  knoten:['p','a','b','c','d','m'],teile:[['p','a','R1'],['a','b','R2'],['b','c','R3'],['c','d','R4'],['d','m','R5']],
+  paths:['M70 168 V70 H150','M210 70 H300','M360 70 H450','M510 70 H570 V160','M570 220 V310 H360','M300 310 H70 V212'],
+  res:[{x:180,y:70,name:'R1'},{x:330,y:70,name:'R2'},{x:480,y:70,name:'R3'},{x:570,y:190,v:true,name:'R4'},{x:330,y:310,name:'R5'}],dots:[],
+  punkte:[{nr:1,x:70,y:120,k:'p',lx:-24,ly:5},{nr:2,x:235,y:70,k:'a'},{nr:3,x:385,y:70,k:'b'},{nr:4,x:570,y:100,k:'c',lx:12,ly:5},{nr:5,x:570,y:265,k:'d',lx:12,ly:5},{nr:6,x:200,y:310,k:'m',ly:26}],
+  /* Wunsch des Lehrers 21.11.: Strommessung auch zwischen den Widerständen – A1 vor R1, A2…A5 zwischen je zwei Widerständen, überall derselbe Strom */
+  amp:[{name:'A1',x:110,y:70,strom:'R1',lx:-8,ly:-20},{name:'A2',x:272,y:70,strom:'R1',lx:-8,ly:34},{name:'A3',x:422,y:70,strom:'R2',lx:-8,ly:34},{name:'A4',x:570,y:133,strom:'R3',lx:18,ly:5},{name:'A5',x:470,y:310,strom:'R4',lx:-8,ly:34}],
+  zahlen:[
+   {R:20, a:[['U',1,2],['U',2,3],['U',4,5],['U',1,3],['U',1,6],['U',3,6],['I','A1'],['I','A3'],['I','A5']]},
+   {R:23, a:[['U',2,3],['U',5,6],['U',2,4],['U',1,4],['U',4,6],['U',2,6],['I','A2'],['I','A4'],['I','A1']]},
+   {R:10, a:[['U',1,2],['U',4,5],['U',1,3],['U',3,6],['U',1,5],['U',1,6],['I','A5'],['I','A2'],['I','A4']]},
+   {R:100,a:[['U',3,4],['U',1,4],['U',2,5],['U',5,6],['U',3,5],['U',1,6],['I','A3'],['I','A1'],['I','A5']]}],
+  tippU:'Reihenschaltung: Fünf gleich große Widerstände teilen sich die 230 V – jeder bekommt ein Fünftel, also 46 V. Liegen mehrere Widerstände zwischen den Punkten, zählst du ihre Spannungen zusammen.',
+  tippI:'Reihenschaltung: Der Strom ist überall gleich groß. Gesamtwiderstand = 5 · R, dann I = 230 V ÷ Gesamtwiderstand.',
+  merke:'Fünf gleiche Widerstände in Reihe: Jeder bekommt ein Fünftel der Netzspannung (230 V ÷ 5 = 46 V). Zwischen zwei Punkten misst du die Summe der Teilspannungen dazwischen. Der Strom ist überall gleich: A1 bis A5 zeigen denselben Wert – vor, zwischen und hinter den Widerständen.'},
+ {id:'p2',kurz:'Parallel · 2 Widerstände',typ:'parallel',titel:'Parallelschaltung mit zwei gleichen Widerständen',
+  knoten:['p','m'],teile:[['p','m','R1'],['p','m','R2']],
+  paths:['M70 168 V70 H500 V170','M300 70 V170','M300 230 V310','M500 230 V310 H70 V212'],
+  res:[{x:300,y:200,v:true,name:'R1'},{x:500,y:200,v:true,name:'R2'}],dots:[[300,70],[300,310]],
+  punkte:[{nr:1,x:70,y:120,k:'p',lx:-24,ly:5},{nr:2,x:210,y:70,k:'p'},{nr:3,x:300,y:145,k:'p',lx:-26,ly:5},{nr:4,x:300,y:265,k:'m',lx:-26,ly:5},{nr:5,x:500,y:145,k:'p',lx:12,ly:5},{nr:6,x:500,y:265,k:'m',lx:12,ly:5},{nr:7,x:210,y:310,k:'m',ly:26}],
+  amp:[{name:'A1',x:140,y:70,strom:'ges',lx:-8,ly:-20},{name:'A2',x:300,y:105,strom:'R1',lx:-44,ly:5},{name:'A3',x:500,y:105,strom:'R2',lx:18,ly:5},{name:'A4',x:400,y:310,strom:'R2',lx:-8,ly:34},{name:'A5',x:140,y:310,strom:'ges',lx:-8,ly:34}],
+  zahlen:[
+   {R:115,a:[['U',3,4],['U',5,6],['U',1,7],['U',3,5],['I','A1'],['I','A2'],['I','A3'],['I','A4'],['I','A5']]},
+   {R:46, a:[['U',2,4],['U',4,6],['U',5,7],['U',1,2],['I','A1'],['I','A2'],['I','A3'],['I','A4'],['I','A5']]},
+   {R:100,a:[['U',3,6],['U',2,5],['U',1,4],['U',4,7],['I','A5'],['I','A4'],['I','A1'],['I','A3'],['I','A2']]},
+   {R:92, a:[['U',5,6],['U',3,5],['U',2,6],['U',1,7],['I','A4'],['I','A1'],['I','A2'],['I','A5'],['I','A3']]}],
+  tippU:'Parallelschaltung: Jeder Zweig hängt direkt an L und N – an jedem Widerstand liegen die vollen 230 V.',
+  tippI:'Parallelschaltung: In jedem Zweig fließt I = 230 V ÷ R. Wo sich die Zweige trennen und wieder treffen, addieren sich die Ströme. Schau genau, zwischen welchen Abzweigen die Messstelle liegt.',
+  merke:'In der Parallelschaltung liegen an jedem Zweig die vollen 230 V. Die Zweigströme addieren sich: I = I1 + I2. Den Gesamtstrom misst du nur dort, wo beide Zweigströme gemeinsam fließen – in der Zuleitung vor dem ersten Abzweig und in der Rückleitung hinter der letzten Verbindung (A1 und A5). A4 liegt zwischen den Zweigen: Dort fließt nur der Strom durch R2.'},
+ {id:'p3',kurz:'Parallel · 3 Widerstände',typ:'parallel',titel:'Parallelschaltung mit drei gleichen Widerständen',
+  knoten:['p','m'],teile:[['p','m','R1'],['p','m','R2'],['p','m','R3']],
+  paths:['M70 168 V70 H540 V170','M260 70 V170','M400 70 V170','M260 230 V310','M400 230 V310','M540 230 V310 H70 V212'],
+  res:[{x:260,y:200,v:true,name:'R1'},{x:400,y:200,v:true,name:'R2'},{x:540,y:200,v:true,name:'R3'}],dots:[[260,70],[400,70],[260,310],[400,310]],
+  punkte:[{nr:1,x:70,y:120,k:'p',lx:-24,ly:5},{nr:2,x:260,y:145,k:'p',lx:-26,ly:5},{nr:3,x:260,y:265,k:'m',lx:-26,ly:5},{nr:4,x:400,y:145,k:'p',lx:-26,ly:5},{nr:5,x:400,y:265,k:'m',lx:-26,ly:5},{nr:6,x:540,y:145,k:'p',lx:12,ly:5},{nr:7,x:540,y:265,k:'m',lx:12,ly:5}],
+  /* Entscheidung des Lehrers 22.11.2026 („ja“ auf den Vorschlag): Messstellen auch in der Rückleitung zwischen den Zweigen –
+     dort sammeln sich die Zweigströme von rechts nach links: A5 nur R3, A6 = R2 + R3, A7 = Gesamtstrom (bei 115 Ω: 2 A, 4 A, 6 A). */
+  amp:[{name:'A1',x:165,y:70,strom:'ges',lx:-8,ly:-20},{name:'A2',x:260,y:105,strom:'R1',lx:-44,ly:5},{name:'A3',x:400,y:105,strom:'R2',lx:-44,ly:5},{name:'A4',x:540,y:105,strom:'R3',lx:18,ly:5},
+       {name:'A5',x:470,y:310,strom:'R3',lx:-8,ly:34},{name:'A6',x:330,y:310,strom:'R2+R3',lx:-8,ly:34},{name:'A7',x:165,y:310,strom:'ges',lx:-8,ly:34}],
+  zahlen:[
+   {R:115,a:[['U',2,3],['U',6,7],['U',1,5],['U',2,6],['I','A1'],['I','A2'],['I','A4'],['I','A6'],['I','A7']]},
+   {R:100,a:[['U',4,5],['U',2,7],['U',3,7],['U',1,3],['I','A1'],['I','A3'],['I','A4'],['I','A5'],['I','A6']]},
+   {R:46, a:[['U',6,7],['U',1,2],['U',4,7],['U',3,5],['I','A1'],['I','A2'],['I','A3'],['I','A7'],['I','A5']]},
+   {R:92, a:[['U',2,3],['U',4,6],['U',1,7],['U',5,6],['I','A1'],['I','A4'],['I','A2'],['I','A6'],['I','A5']]}],
+  tippU:'Parallelschaltung: An jedem der drei Zweige liegen die vollen 230 V.',
+  tippI:'Parallelschaltung: In jedem Zweig fließt I = 230 V ÷ R. In der Zuleitung fließen alle drei Zweigströme zusammen. In der Rückleitung sammeln sie sich wieder: Zähle, wie viele Zweige schon in die Rückleitung eingemündet sind, bevor der Strom an der Messstelle vorbeikommt.',
+  merke:'Drei gleiche Widerstände parallel: An jedem liegen die vollen 230 V, durch jeden fließt derselbe Strom. In der Zuleitung fließt der dreifache Zweigstrom. In der Rückleitung sammeln sich die Zweigströme von rechts nach links: A5 misst nur den Strom von R3, A6 die Ströme von R2 und R3, A7 den Gesamtstrom – genauso viel wie A1 in der Zuleitung.'},
+ {id:'k1',kurz:'Gemischt · (R1 + R2) ∥ R3',typ:'gemischt',titel:'Gemischte Schaltung: R1 und R2 in Reihe, dazu R3 parallel',
+  knoten:['p','a','m'],teile:[['p','a','R1'],['a','m','R2'],['p','m','R3']],
+  paths:['M70 168 V70 H520 V160','M330 70 V115','M330 175 V205','M330 265 V310','M520 220 V310 H70 V212'],
+  res:[{x:330,y:145,v:true,name:'R1'},{x:330,y:235,v:true,name:'R2'},{x:520,y:190,v:true,name:'R3'}],dots:[[330,70],[330,310]],
+  punkte:[{nr:1,x:70,y:120,k:'p',lx:-24,ly:5},{nr:2,x:240,y:70,k:'p'},{nr:3,x:330,y:190,k:'a',lx:-26,ly:5},{nr:4,x:330,y:288,k:'m',lx:-26,ly:5},{nr:5,x:520,y:135,k:'p',lx:12,ly:5},{nr:6,x:520,y:265,k:'m',lx:12,ly:5},{nr:7,x:200,y:310,k:'m',ly:26}],
+  amp:[{name:'A1',x:150,y:70,strom:'ges',lx:-8,ly:-20},{name:'A2',x:330,y:93,strom:'R1',lx:-44,ly:5},{name:'A3',x:520,y:98,strom:'R3',lx:18,ly:5}],
+  zahlen:[
+   {R:46, a:[['U',2,3],['U',3,4],['U',5,6],['U',3,6],['U',2,5],['U',1,7],['I','A1'],['I','A2'],['I','A3']]},
+   {R:23, a:[['U',1,3],['U',3,7],['U',2,6],['U',3,5],['U',4,7],['U',2,4],['I','A1'],['I','A2'],['I','A3']]},
+   {R:50, a:[['U',3,4],['U',1,3],['U',2,5],['U',2,6],['U',3,7],['U',1,7],['I','A2'],['I','A3'],['I','A1']]}],
+  tippU:'Jeder Zweig hängt direkt an L und N und bekommt die vollen 230 V. Im linken Zweig teilen sich R1 und R2 diese Spannung je zur Hälfte.',
+  tippI:'Linker Zweig: I = 230 V ÷ (R1 + R2). Rechter Zweig: I = 230 V ÷ R3. In der Zuleitung fließen beide Zweigströme zusammen.',
+  merke:'Beide Zweige bekommen die vollen 230 V. Im linken Zweig teilen sich R1 und R2 die Spannung: je 115 V. Durch den rechten Zweig fließt doppelt so viel Strom wie durch den linken, weil sein Widerstand nur halb so groß ist.'},
+ {id:'k2',kurz:'Gemischt · (R1 ∥ R2) + (R3 ∥ R4)',typ:'gemischt',titel:'Gemischte Schaltung: zwei Parallel-Paare in Reihe',
+  knoten:['p','a','m'],teile:[['p','a','R1'],['p','a','R2'],['a','m','R3'],['a','m','R4']],
+  /* Wunsch des Lehrers 21.11.: Strommessung auch bei R2, bei R4 und bei Punkt 3 (zwischen den Paaren) – dafür das rechte Paar um 40 nach rechts gerückt.
+     Messstellen von links nach rechts: A1 Zuleitung, A2 R1, A3 R2, A4 zwischen den Paaren, A5 R3, A6 R4, A7 Rückleitung. */
+  paths:['M70 168 V70 H210','M140 70 V160 H210','M270 70 H480','M270 160 H310 V70','M410 70 V160 H480','M540 70 H610 V310 H70 V212','M540 160 H580 V70'],
+  res:[{x:240,y:70,name:'R1'},{x:240,y:160,name:'R2'},{x:510,y:70,name:'R3'},{x:510,y:160,name:'R4'}],dots:[[140,70],[310,70],[410,70],[580,70]],
+  punkte:[{nr:1,x:70,y:120,k:'p',lx:-24,ly:5},{nr:2,x:140,y:120,k:'p',lx:-24,ly:5},{nr:3,x:378,y:70,k:'a'},{nr:4,x:410,y:120,k:'a',lx:12,ly:5},{nr:5,x:610,y:200,k:'m',lx:12,ly:5},{nr:6,x:320,y:310,k:'m',ly:26}],
+  amp:[{name:'A1',x:105,y:70,strom:'ges',lx:-8,ly:-20},{name:'A2',x:175,y:70,strom:'R1',lx:-8,ly:-20},{name:'A3',x:175,y:160,strom:'R2',lx:-8,ly:-20},
+       {name:'A4',x:340,y:70,strom:'ges',lx:-8,ly:-20},{name:'A5',x:445,y:70,strom:'R3',lx:-8,ly:-20},{name:'A6',x:445,y:160,strom:'R4',lx:-8,ly:-20},{name:'A7',x:450,y:310,strom:'ges',lx:-8,ly:34}],
+  zahlen:[
+   {R:46, a:[['U',2,3],['U',3,5],['U',1,6],['U',3,4],['U',2,4],['I','A1'],['I','A2'],['I','A3'],['I','A4'],['I','A6']]},
+   {R:23, a:[['U',1,3],['U',4,5],['U',2,5],['U',5,6],['U',3,6],['I','A4'],['I','A6'],['I','A2'],['I','A7'],['I','A5']]},
+   {R:50, a:[['U',2,4],['U',4,6],['U',1,2],['U',1,6],['U',3,5],['I','A6'],['I','A1'],['I','A4'],['I','A3'],['I','A7']]}],
+  tippU:'Zwei gleiche Widerstände parallel wirken wie ein halb so großer Widerstand. Beide Paare sind gleich groß – sie teilen sich die 230 V je zur Hälfte.',
+  tippI:'Ein Paar wirkt wie R ÷ 2, beide Paare zusammen also wie R. Gesamtstrom I = 230 V ÷ R. In jedem Paar teilt er sich auf zwei gleiche Zweige auf. Zwischen den Paaren fließt wieder der ganze Strom.',
+  merke:'Zwei gleiche Widerstände parallel wirken wie ein halb so großer Widerstand. Die beiden gleichen Paare teilen sich die Netzspannung: je 115 V. Der ganze Strom fließt in der Zuleitung (A1), zwischen den Paaren bei Punkt 3 (A4) und in der Rückleitung (A7). In jedem Paar teilt er sich je zur Hälfte auf: A2 und A3, A5 und A6.'}
+];
+
+/* ---------- Zustand ---------- */
+const st={stufe:1,sch:0,zi:{},modus:'U',rot:null,schwarz:null,amp:null,fokus:null,erg:{}};
+const key=()=>st.stufe+'-'+SCH[st.sch].id;
+function zIndex(){const k=key();if(!(k in st.zi))st.zi[k]=st.stufe===1?0:1;return st.zi[k];}
+function zahlen(){return SCH[st.sch].zahlen[zIndex()];}
+const auf=()=>zahlen().a;
+function ergListe(){const k=key()+'-'+zIndex();if(!st.erg[k])st.erg[k]=auf().map(()=>({wert:'',ok:null,fehl:0,msg:''}));return st.erg[k];}
+function rechne(s,z){const teile=s.teile.map(t=>({a:t[0],b:t[1],R:z.R,name:t[2]}));const V=loese(s.knoten,{p:NETZ,m:0},teile);
+  const I={};teile.forEach(t=>I[t.name]=(V[t.a]-V[t.b])/t.R);I.ges=teile.filter(t=>t.a==='p').reduce((x,t)=>x+I[t.name],0);
+  for(const m of s.amp||[])if(String(m.strom).includes('+'))I[m.strom]=m.strom.split('+').reduce((x,k)=>x+I[k],0); // Teilsumme, z. B. 'R2+R3'
+  return {V,I};}
+const punkt=(s,nr)=>s.punkte.find(p=>p.nr===nr), ampOrt=(s,name)=>s.amp.find(m=>m.name===name);
+function soll(s,a,r){if(a[0]==='U')return Math.abs(r.V[punkt(s,a[1]).k]-r.V[punkt(s,a[2]).k]);return Math.abs(r.I[ampOrt(s,a[1]).strom]);}
+function fertig(stufe,i){const k=stufe+'-'+SCH[i].id;const zi=(k in st.zi)?st.zi[k]:(stufe===1?0:1);const l=st.erg[k+'-'+zi];return !!l&&l.every(e=>e.ok===true);}
+
+/* ---------- Zeichnen ---------- */
+const draht=(g,d)=>el('path',{d,fill:'none',stroke:'#2b2b2b','stroke-width':3,'stroke-linecap':'round','stroke-linejoin':'round'},g);
+function quelle(g,x,y){/* Netz 230 V ~ : Kreis mit Wellenlinie, oben L (braun), unten N (blau) */
+  el('circle',{cx:x,cy:y,r:22,fill:'#fff',stroke:'#2b2b2b','stroke-width':3},g);
+  el('path',{d:`M${x-12} ${y} q6 -11 12 0 t12 0`,fill:'none',stroke:'#2b2b2b','stroke-width':2.5},g);
+  txt(g,x-30,y-28,'L',{'font-size':15,fill:'#8d5524','font-weight':700});txt(g,x-30,y+40,'N',{'font-size':15,fill:'#1565c0','font-weight':700});
+  txt(g,x+30,y+6,'U = '+NETZ+' V ~',{'font-size':15,'font-weight':700});
+}
+function widerstand(g,w,R){const v=!!w.v,bw=v?24:60,bh=v?60:24;
+  el('rect',{x:w.x-bw/2,y:w.y-bh/2,width:bw,height:bh,fill:'#fff',stroke:'#2b2b2b','stroke-width':3},g);
+  if(v){txt(g,w.x+20,w.y-3,w.name,{'font-size':14,'font-weight':700});txt(g,w.x+20,w.y+15,R+' Ω',{'font-size':13});}
+  else txt(g,w.x,w.y-22,w.name+' = '+R+' Ω',{'font-size':14,'font-weight':700,'text-anchor':'middle'});}
+const FARBE_U='#1f5fbf', FARBE_I='#d32f2f'; /* Spannungsmesspunkte blau, Strommessstellen rot (Wunsch des Lehrers 21.11.) */
+function messpunkt(g,p,rot,schwarz,klickbar,hl){
+  const s=el('g',{style:klickbar?'cursor:pointer':''},g);
+  if(hl)el('circle',{cx:p.x,cy:p.y,r:14,fill:'#ffe066',opacity:.9},s);
+  if(klickbar)el('circle',{cx:p.x,cy:p.y,r:16,fill:'transparent'},s);
+  el('circle',{cx:p.x,cy:p.y,r:7,fill:rot?'#d32f2f':schwarz?'#222':'#fff',stroke:rot?'#d32f2f':schwarz?'#222':FARBE_U,'stroke-width':2.5},s);
+  txt(s,p.x+(p.lx==null?10:p.lx),p.y+(p.ly==null?-10:p.ly),String(p.nr),{'font-size':14,fill:FARBE_U,'font-weight':700});
+  if(klickbar)s.addEventListener('click',()=>klickPunkt(p.nr));}
+function ampStelle(g,m,drin,klickbar,hl){
+  const s=el('g',{style:klickbar?'cursor:pointer':''},g);
+  if(hl)el('circle',{cx:m.x,cy:m.y,r:20,fill:'#ffe066',opacity:.9},s);
+  if(drin){el('circle',{cx:m.x,cy:m.y,r:15,fill:'#fff',stroke:FARBE_I,'stroke-width':3},s);txt(s,m.x,m.y+5,'A',{'font-size':15,'text-anchor':'middle','font-weight':700,fill:FARBE_I});}
+  else{el('circle',{cx:m.x,cy:m.y,r:13,fill:'#fff',stroke:FARBE_I,'stroke-width':2,'stroke-dasharray':'3 3'},s);txt(s,m.x,m.y+4,'A',{'font-size':11,'text-anchor':'middle',fill:FARBE_I});}
+  txt(s,m.x+m.lx,m.y+m.ly,m.name,{'font-size':14,'font-weight':700,fill:FARBE_I});
+  if(klickbar){el('circle',{cx:m.x,cy:m.y,r:19,fill:'transparent'},s);s.addEventListener('click',()=>{st.amp=m.name;zeichne();zeigeWert();});}}
+function messgeraet(g){el('rect',{x:584,y:334,width:50,height:40,rx:6,fill:'#10202f'},g);txt(g,609,359,st.modus==='U'?'V~':'A~',{'font-size':15,'text-anchor':'middle',fill:'#7CFC9A','font-weight':700});
+  el('circle',{cx:596,cy:370,r:3,fill:'#d32f2f'},g);el('circle',{cx:622,cy:370,r:3,fill:'#888'},g);}
+function messleitung(g,p,farbe,ax){const ay=370;el('path',{d:`M${ax} ${ay} Q ${(ax+p.x)/2} ${Math.max(ay,p.y)+40} ${p.x} ${p.y}`,fill:'none',stroke:farbe,'stroke-width':2.5,opacity:.85},g);}
+
+function zeichne(){
+  const svg=$('bild');svg.innerHTML='';const s=SCH[st.sch],z=zahlen();const g=el('g',{},svg);
+  s.paths.forEach(d=>draht(g,d));s.dots.forEach(([x,y])=>el('circle',{cx:x,cy:y,r:5,fill:'#2b2b2b'},g));
+  quelle(g,70,190);s.res.forEach(w=>widerstand(g,w,z.R));
+  const f=st.fokus!=null?auf()[st.fokus]:null, mess=st.stufe===1;
+  s.amp.forEach(m=>ampStelle(g,m,mess&&st.modus==='I'&&st.amp===m.name,mess&&st.modus==='I',!!f&&f[0]==='I'&&f[1]===m.name));
+  s.punkte.forEach(p=>messpunkt(g,p,mess&&st.modus==='U'&&st.rot===p.nr,mess&&st.modus==='U'&&st.schwarz===p.nr,mess&&st.modus==='U',!!f&&f[0]==='U'&&(f[1]===p.nr||f[2]===p.nr)));
+  if(mess){messgeraet(g);if(st.modus==='U'){if(st.rot)messleitung(g,punkt(s,st.rot),'#d32f2f',596);if(st.schwarz)messleitung(g,punkt(s,st.schwarz),'#222',622);}}
+}
+function klickPunkt(nr){if(!st.rot||(st.rot&&st.schwarz)){st.rot=nr;st.schwarz=null;}else if(nr!==st.rot)st.schwarz=nr;zeichne();zeigeWert();}
+
+/* ---------- Seitenkarte: Messgerät (Stufe 1) oder Schaltungsdaten (Stufe 2) ---------- */
+function seite(){
+  const s=SCH[st.sch],z=zahlen();
+  const daten=`<div class="daten"><b>${s.titel}</b><br>Netzspannung zwischen L und N: <b>U = ${NETZ} V ~</b><br>Jeder Widerstand: <b>R = ${z.R} Ω</b></div>`;
+  if(st.stufe===1){
+    $('seite').innerHTML=`<h3>Messgerät</h3><div class="leiste" style="margin:0 0 8px"><button class="knopf ${st.modus==='U'?'an':''}" data-modus="U">Spannung messen (V~)</button><button class="knopf ${st.modus==='I'?'an':''}" data-modus="I">Strom messen (A~)</button></div>
+<div class="anzeige" id="anzeige"></div><p class="hinweis" id="mhinweis"></p>
+<p class="hinweis">Spannung: Das Messgerät wird <b>parallel</b> angeschlossen – an zwei Punkte. Strom: Das Messgerät wird <b>in die Leitung eingebaut</b> (in Reihe) – an einer Messstelle A.</p>${daten}`;
+    $('seite').querySelectorAll('[data-modus]').forEach(b=>b.addEventListener('click',()=>{st.modus=b.dataset.modus;st.rot=st.schwarz=null;st.amp=null;seite();zeichne();}));
+    zeigeWert();
+  } else {
+    $('seite').innerHTML=`<h3>Ohne Messgerät</h3><p class="hinweis" style="margin-top:0">Das Messgerät bleibt in der Schublade. Überlege, was es an den angegebenen Stellen anzeigen würde. Klicke in ein Eingabefeld – die zugehörigen Punkte leuchten in der Schaltung gelb.</p>${daten}`;
+  }
+}
+function zeigeWert(){
+  if(st.stufe!==1)return;const a=$('anzeige'),h=$('mhinweis');if(!a)return;const s=SCH[st.sch],r=rechne(s,zahlen());
+  if(st.modus==='U'){
+    if(st.rot&&st.schwarz){a.innerHTML=`<small>Spannung: rot an Punkt ${st.rot}, schwarz an Punkt ${st.schwarz}</small>${zahl(Math.abs(r.V[punkt(s,st.rot).k]-r.V[punkt(s,st.schwarz).k]),'V')}`;h.textContent='Für eine neue Messung wieder auf einen Punkt tippen.';}
+    else if(st.rot){a.innerHTML=`<small>rot an Punkt ${st.rot} – schwarze Spitze fehlt</small>– – –`;h.textContent='Jetzt den Punkt für die schwarze Messspitze antippen.';}
+    else{a.innerHTML='<small>Spannungsmesser</small>– – –';h.textContent='Tippe auf den Punkt für die rote Messspitze.';}
+  } else {
+    if(st.amp){a.innerHTML=`<small>Strommesser an Messstelle ${st.amp}</small>${zahl(Math.abs(r.I[ampOrt(s,st.amp).strom]),'A')}`;h.textContent='Andere Messstelle antippen, um den Strommesser umzusetzen.';}
+    else{a.innerHTML='<small>Strommesser</small>– – –';h.textContent='Tippe auf eine Messstelle A.';}
+  }
+}
+
+/* ---------- Aufgaben ---------- */
+function aufgabeText(a){return a[0]==='U'?`<span class="farbe-u">Spannung</span> zwischen Punkt <b class="farbe-u">${a[1]}</b> und Punkt <b class="farbe-u">${a[2]}</b>`:`<span class="farbe-i">Strom</span> an Messstelle <b class="farbe-i">${a[1]}</b>`;}
+function tipp(s,a){if(a[0]==='U'){const k1=punkt(s,a[1]).k,k2=punkt(s,a[2]).k;
+    if(k1===k2)return 'Beide Punkte hängen am selben Draht – dazwischen liegt kein Widerstand.';
+    if((k1==='p'&&k2==='m')||(k1==='m'&&k2==='p'))return 'Der eine Punkt hängt direkt an L, der andere direkt an N – dazwischen liegt die volle Netzspannung.';
+    return s.tippU;}
+  return s.tippI;}
+function tabelle(){
+  const l=ergListe(),A=auf();
+  $('aufg').innerHTML='<tr><th>Aufgabe</th><th>Dein Wert</th><th></th><th>Ergebnis</th></tr>'+A.map((a,i)=>`<tr data-i="${i}"><td>${aufgabeText(a)}</td><td><input inputmode="decimal" autocomplete="off" data-i="${i}" value="${l[i].wert.replace(/"/g,'')}"> ${a[0]==='U'?'V':'A'}</td><td><button class="knopf" data-pruef="${i}">Prüfen</button></td><td class="erg" id="erg${i}"></td></tr>`).join('');
+  $('aufg').querySelectorAll('input').forEach(inp=>{const i=+inp.dataset.i;
+    inp.addEventListener('input',()=>{l[i].wert=inp.value;});
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){pruefe(i);const n=$('aufg').querySelector(`input[data-i="${i+1}"]`);if(n&&l[i].ok)n.focus();}});
+    inp.addEventListener('focus',()=>{st.fokus=i;$('aufg').querySelectorAll('tr').forEach(tr=>tr.classList.toggle('fokus',tr.dataset.i===String(i)));zeichne();});});
+  $('aufg').querySelectorAll('[data-pruef]').forEach(b=>b.addEventListener('click',()=>pruefe(+b.dataset.pruef)));
+  A.forEach((_,i)=>zeile(i));stand();
+}
+function zeile(i){const l=ergListe()[i],td=$('erg'+i),inp=$('aufg').querySelector(`input[data-i="${i}"]`);if(!td)return;
+  td.className='erg'+(l.ok===true?' ok':l.ok===false?' nein':'');td.innerHTML=l.msg;
+  inp.classList.remove('richtig','falsch');if(l.ok===true)inp.classList.add('richtig');else if(l.ok===false)inp.classList.add('falsch');}
+function pruefe(i){
+  const s=SCH[st.sch],a=auf()[i],l=ergListe()[i],ist=lies(l.wert);
+  if(isNaN(ist)){l.ok=null;l.msg='Bitte eine Zahl eintragen.';zeile(i);return;}
+  const sw=soll(s,a,rechne(s,zahlen())),ok=Math.abs(Math.abs(ist)-sw)<=Math.max(0.011,sw*0.01);
+  l.ok=ok;if(!ok)l.fehl++;
+  if(ok)l.msg='✓ OK';
+  else if(st.stufe===1)l.msg=a[0]==='U'?`✗ Noch nicht richtig – miss noch einmal: rote Spitze an Punkt ${a[1]}, schwarze an Punkt ${a[2]}.`:`✗ Noch nicht richtig – setze den Strommesser an Messstelle ${a[1]} und lies ab.`;
+  else l.msg='✗ Noch nicht richtig – überlege noch einmal.'+(l.fehl>=2?`<span class="tipp">Tipp: ${tipp(s,a)}</span>`:'');
+  zeile(i);stand();
+}
+function stand(){
+  const s=SCH[st.sch],l=ergListe(),gut=l.filter(e=>e.ok===true).length,alle=l.length;
+  $('stand').innerHTML=gut===alle?`<div class="status gut">✓ Alles richtig – ${gut} von ${alle}! Weiter mit der nächsten Schaltung oder mit „Neue Zahlen“.</div><div class="merke"><b>Merke:</b> ${s.merke}</div>`
+    :`<div class="status neutral">${gut} von ${alle} Aufgaben richtig.</div>`;
+  schaltwahl();
+}
+function schaltwahl(){
+  $('schaltwahl').innerHTML=SCH.map((s,i)=>`<button class="knopf ${i===st.sch?'an':''} ${fertig(st.stufe,i)?'fertig':''}" data-sch="${i}">${fertig(st.stufe,i)?'✓ ':''}${s.kurz}</button>`).join('');
+  $('schaltwahl').querySelectorAll('[data-sch]').forEach(b=>b.addEventListener('click',()=>{st.sch=+b.dataset.sch;neuAufbauen();}));
+}
+function auftrag(){
+  $('auftrag').innerHTML=st.stufe===1
+   ?`<h2>Stufe 1: Messen und eintragen</h2><p>Wähle eine Schaltung. Miss mit dem Messgerät an den Stellen, die in den Aufgaben stehen, und trage den Wert ein. Bei „✓ OK“ stimmt dein Wert, sonst miss noch einmal.</p><p class="hinweis">So misst du die Spannung: „Spannung messen“ wählen, zuerst den Punkt für die <b style="color:#d32f2f">rote</b> Messspitze antippen, dann den Punkt für die <b>schwarze</b>. So misst du den Strom: „Strom messen“ wählen und eine Messstelle A antippen.</p><p class="hinweis"><b>Achtung:</b> 230 V sind lebensgefährlich. Hier misst du gefahrlos im Programm – an echten Anlagen misst nur eine Elektrofachkraft.</p>`
+   :`<h2>Stufe 2: Ohne Messgerät – im Kopf rechnen</h2><p>Jetzt gibt es kein Messgerät. Überlege, welchen Wert das Messgerät zwischen den angegebenen Punkten oder an der Messstelle A anzeigen würde, und trage ihn ein. Alle Widerstände einer Schaltung sind gleich groß – du kannst im Kopf rechnen.</p><p class="hinweis">Die Widerstände und die Messpunkte sind andere als in Stufe 1. Nach zwei falschen Versuchen bekommst du einen Tipp.</p>`;
+}
+function neuAufbauen(){st.rot=st.schwarz=null;st.amp=null;st.fokus=null;auftrag();seite();zeichne();tabelle();}
+
+document.querySelectorAll('#stufen button').forEach(b=>b.addEventListener('click',()=>{st.stufe=+b.dataset.stufe;document.querySelectorAll('#stufen button').forEach(x=>x.classList.toggle('an',x===b));neuAufbauen();}));
+$('neu').addEventListener('click',()=>{const k=key(),n=SCH[st.sch].zahlen.length;st.zi[k]=(zIndex()+1)%n;st.erg[k+'-'+st.zi[k]]=null;neuAufbauen();});
+$('allePruefen').addEventListener('click',()=>{auf().forEach((_,i)=>{if(ergListe()[i].wert.trim()!=='')pruefe(i);});});
+neuAufbauen();
+
+/* Selbstprüfung für die Entwicklung: window.__pruefe() rechnet alle Sollwerte aller Schaltungen und Zahlen aus */
+window.__pruefe=()=>SCH.map(s=>({id:s.id,zahlen:s.zahlen.map(z=>{const r=rechne(s,z);return 'R='+z.R+': '+z.a.map(a=>(a[0]==='U'?'U'+a[1]+'-'+a[2]:'I'+a[1])+'='+Math.round(soll(s,a,r)*1000)/1000).join(' ');})}));
+})();
+</script>
+<script>
+/* Zurück in den Moodle-Kurs (Wunsch des Lehrers 22.11.2026: „… eingesperrt … wieder im Moodle-Kurs ankommen“).
+   Nur sichtbar, wenn die Datei aus Moodle kommt (pluginfile.php). Ziel: Kurs zum Kontext der Datei, sonst die Moodle-Seite,
+   von der man kam, sonst „Meine Kurse“. Liegt die Datei in einem weiteren Kurs: Kontext der Datei → Kurs-ID eintragen. */
+(function () {
+  var m = (location.pathname || '').match(/\/pluginfile\.php\/(\d+)\//), a = document.getElementById('zumKurs');
+  if (!m || !a) return;
+  var KURS_JE_KONTEXT = { '131415': 3190, '131416': 3190, '131417': 3190 }, k = KURS_JE_KONTEXT[m[1]], ziel = '';
+  if (k) ziel = location.origin + '/course/view.php?id=' + k;
+  else { try { var r = document.referrer ? new URL(document.referrer) : null; if (r && r.host === location.host && !/\/pluginfile\.php\//.test(r.pathname)) ziel = r.href; } catch (e) {} }
+  a.href = ziel || location.origin + '/my/courses.php'; a.hidden = false;
+})();
+</script>
+</body>
+</html>

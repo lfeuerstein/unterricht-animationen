@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spannungsabfall – Bücher-Modell</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1d2430;--muted:#556070;--line:#ddd6c8;--hi:#fff6cf;--nav:#1f2a3a}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+body{font-size:clamp(15px,1.1vw,21px);line-height:1.35}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;padding:7px 16px;background:var(--nav);color:#fff}
+header h1{margin:0;font-size:1.05em;font-weight:600}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.tabs button{font:inherit;font-size:.82em;padding:5px 10px;border-radius:8px;border:1px solid #46566e;background:#2b3a50;color:#dfe6f0;cursor:pointer}
+.tabs button.on{background:#ffd54f;color:#1d2430;border-color:#ffd54f;font-weight:700}
+.icon{font:inherit;font-size:.82em;padding:5px 10px;border-radius:8px;border:1px solid #46566e;background:transparent;color:#fff;cursor:pointer}
+#zumKurs{font-size:.82em;padding:5px 10px;border-radius:8px;border:1px solid #7d8da6;color:#fff;text-decoration:none;white-space:nowrap}#zumKurs:hover{background:rgba(255,255,255,.12)}#zumKurs[hidden]{display:none}
+main{max-width:1600px;margin:0 auto;padding:6px 16px 70px}
+h2{margin:4px 0 2px;font-size:1.4em}
+.lead{margin:0 0 8px;color:var(--muted);max-width:1250px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.stage svg{width:100%;height:auto;max-height:34vh;display:block;margin:0 auto}
+.chart svg,.circ svg{width:100%;height:auto;max-height:29vh;display:block;margin:0 auto}
+.heiz svg{width:100%;height:auto;max-height:58vh;display:block;margin:0 auto}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:8px 0}
+.btn{font:inherit;padding:6px 14px;border-radius:9px;border:1px solid #b8b09f;background:#fff;color:var(--ink);cursor:pointer}
+.btn:hover{background:#f1ede4}
+.btn.primary{background:var(--nav);border-color:var(--nav);color:#fff}
+.btn.on{background:#ffd54f;border-color:#e0b400;font-weight:700}
+.ctl{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:4px 10px}
+.ctl input[type=range]{width:min(170px,38vw)}
+.ctl b{min-width:6em;display:inline-block}
+.ctl .btn{padding:4px 10px}
+.grid3{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1.15fr 1fr;gap:10px}
+.stack{display:flex;flex-direction:column;gap:10px}
+@media (max-width:1000px){.grid3,.grid2{grid-template-columns:1fr}}
+.merk{background:var(--hi);border-left:6px solid #e0b400;border-radius:8px;padding:7px 12px;margin:0 0 8px}
+.merk>b:first-child{display:block;margin-bottom:2px}
+.info{background:#eef4fb;border-left:6px solid #5c8fd6;border-radius:8px;padding:7px 12px;margin:8px 0 0;font-size:.95em}
+.warnbox{background:#fdecea;border-left:6px solid #c62828;border-radius:8px;padding:7px 12px;margin:8px 0 0;font-size:.95em}
+table.tr{border-collapse:collapse;width:100%;font-size:.92em}
+table.tr td,table.tr th{border-bottom:1px solid #eee7da;padding:3px 6px;text-align:left;vertical-align:top}
+table.tr th{color:var(--muted);font-weight:600}
+.vals{font-size:.97em}
+.vals .row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #eee7da;padding:3px 0}
+.vals .row b{white-space:nowrap}
+.dot{display:inline-block;width:.8em;height:.8em;border-radius:50%;margin-right:6px;vertical-align:-1px}
+ul.probe{margin:6px 0 0;padding-left:1.2em}
+footer{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 16px;background:rgba(255,255,255,.96);border-top:1px solid var(--line);z-index:5}
+.hint{color:var(--muted);font-size:.85em}
+svg text{font-family:"Segoe UI",system-ui,Arial,sans-serif}
+.lg{font-size:18px;font-weight:700}
+.lbl{font-size:18px;font-weight:700}
+.sm{font-size:15px}
+.pl{font-size:26px;font-weight:800;fill:#263238}
+.tick{font-size:16px;fill:#555}
+.axl{font-size:17px;fill:#333}
+.clab{font-size:17px;font-weight:700}
+.big{font-size:24px;font-weight:800}
+table.ov{border-collapse:separate;border-spacing:0;width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+table.ov th,table.ov td{padding:7px 10px;border-bottom:1px solid #eee7da;vertical-align:top;text-align:left}
+table.ov thead th{background:#2b3a50;color:#fff}
+table.ov tbody th{background:#faf7f0;width:17%}
+.quelle{color:var(--muted);font-size:.8em;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <a id="zumKurs" href="#" target="_top" hidden>← Zurück zum Moodle-Kurs</a>
+  <h1>Spannung und Spannungsabfall – das Bücher-Modell</h1>
+  <nav class="tabs" id="tabs"></nav>
+  <button class="icon" id="fs" title="Vollbild (Taste F)">⛶ Vollbild</button>
+</header>
+<main>
+  <noscript><p class="merk"><b>Hinweis</b>Diese Animation braucht JavaScript. Bitte die Datei in einem Browser öffnen (Chrome, Edge, Firefox oder Safari).</p></noscript>
+  <h2 id="ttl"></h2>
+  <p class="lead" id="lead"></p>
+  <div id="content"></div>
+</main>
+<footer>
+  <button class="btn" id="prev">◀ Zurück</button>
+  <span class="hint" id="pos"></span>
+  <button class="btn primary" id="next">Weiter ▶</button>
+</footer>
+<script>
+(()=>{
+'use strict';
+/* ---------- Grundlagen ---------- */
+const C_A='#c62828',C_B='#1565c0',C_L='#e65100',C_G='#546e7a',C_F='#2e7d32';
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,u)=>a+(b-a)*u;
+const ease=u=>{u=clamp(u,0,1);return u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;};
+const q=v=>Math.round(v*10)/10;
+const fmt=(v,d)=>Number(v).toLocaleString('de-DE',{minimumFractionDigits:d||0,maximumFractionDigits:d||0});
+const now=()=>performance.now()/1000;
+const LO=[30,99,198],MI=[142,68,173],HI=[211,47,47];
+function pcol(f){f=clamp(f,0,1);let a,b,u;if(f<.5){a=LO;b=MI;u=f/.5;}else{a=MI;b=HI;u=(f-.5)/.5;}
+  return 'rgb('+Math.round(lerp(a[0],b[0],u))+','+Math.round(lerp(a[1],b[1],u))+','+Math.round(lerp(a[2],b[2],u))+')';}
+function put(id,h){const el=document.getElementById(id);if(el&&el._h!==h){el.innerHTML=h;el._h=h;}}
+function on(id,fn,ev){const el=document.getElementById(id);if(el)el.addEventListener(ev||'click',fn);}
+const svg=(w,h,s)=>`<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+
+/* ---------- Zeichen-Bausteine ---------- */
+const floorL=y=>`<line x1="0" y1="${y}" x2="1000" y2="${y}" stroke="#cfc6b4" stroke-width="3"/>`;
+const table=(x1,x2,top,fl)=>`<rect x="${x1+18}" y="${top+10}" width="10" height="${fl-top-10}" fill="#8d6e4a"/><rect x="${x2-28}" y="${top+10}" width="10" height="${fl-top-10}" fill="#8d6e4a"/><rect x="${x1}" y="${top}" width="${x2-x1}" height="12" rx="3" fill="#b9935f" stroke="#7a5a33"/>`;
+function book(x,y,w,h,col,a){a=a==null?1:a;x=q(x);y=q(y);
+  return `<g opacity="${q(a)}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${col}" stroke="rgba(0,0,0,.55)" stroke-width="1.3"/>`+
+  `<line x1="${q(x+4)}" y1="${q(y+4)}" x2="${q(x+w-4)}" y2="${q(y+4)}" stroke="rgba(255,255,255,.55)" stroke-width="1.6"/>`+
+  `<line x1="${q(x+4)}" y1="${q(y+h-4)}" x2="${q(x+w-4)}" y2="${q(y+h-4)}" stroke="rgba(255,255,255,.55)" stroke-width="1.6"/>`+
+  `<rect x="${q(x+w*.3)}" y="${q(y+h*.3)}" width="${q(w*.4)}" height="${q(h*.4)}" rx="2" fill="rgba(255,255,255,.78)"/></g>`;}
+function wheel(cx,cy,r,ang,col){const c=Math.cos(ang)*r*.8,s=Math.sin(ang)*r*.8;
+  return `<circle cx="${q(cx)}" cy="${cy}" r="${r}" fill="${col||'#cfd8dc'}" stroke="#37474f" stroke-width="2"/><line x1="${q(cx-c)}" y1="${q(cy-s)}" x2="${q(cx+c)}" y2="${q(cy+s)}" stroke="#37474f" stroke-width="2"/>`;}
+function heat(x1,x2,y,a){if(a<=.02)return '';let d=`M${q(x1)},${y}`,i=0;for(let x=x1+5;x<=x2;x+=5,i++)d+=` L${q(x)},${y+(i%2?-3:3)}`;
+  return `<path d="${d}" fill="none" stroke="${C_L}" stroke-width="2.4" opacity="${q(clamp(a,0,1))}"/>`;}
+function arrowH(x1,x2,y,col,w){const L=Math.abs(x2-x1);if(L<3)return '';const d=Math.sign(x2-x1),hd=Math.min(18,L*.6),xs=x2-d*hd;
+  return `<line x1="${q(x1)}" y1="${y}" x2="${q(xs)}" y2="${y}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/><polygon points="${q(x2)},${y} ${q(xs)},${y-w*1.5} ${q(xs)},${y+w*1.5}" fill="${col}"/>`;}
+function person(hx,fl,dir,label,hand){
+  const L=50,hip=[hx,fl-70],sh=[hx+dir*16,fl-118],head=[sh[0]+dir*9,sh[1]-21];
+  const fb=[hx-dir*30,fl],kf=[hx+dir*14,fl-36],ff=[hx+dir*8,fl];
+  const elbow=(S,H)=>{const dx=H[0]-S[0],dy=H[1]-S[1],d=Math.hypot(dx,dy)||1,m=[(S[0]+H[0])/2,(S[1]+H[1])/2];
+    if(d>=2*L)return m;const h=Math.sqrt(L*L-d*d/4);let px=-dy/d,py=dx/d;if(py<0){px=-px;py=-py;}return [m[0]+px*h,m[1]+py*h];};
+  const H1=hand,H2=[hand[0]-dir*2,hand[1]+9],S2=[sh[0]-dir*3,sh[1]+4];
+  const P=a=>a.map(p=>q(p[0])+','+q(p[1])).join(' ');
+  return `<g stroke="#263238" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="${P([hip,fb])}"/><polyline points="${P([hip,kf,ff])}"/><polyline points="${P([hip,sh])}"/><polyline points="${P([S2,elbow(S2,H2),H2])}"/><polyline points="${P([sh,elbow(sh,H1),H1])}"/><circle cx="${q(head[0])}" cy="${q(head[1])}" r="15" fill="#fff"/></g><text x="${q(hx-dir*36)}" y="${fl-80}" text-anchor="middle" class="pl">${label}</text>`;}
+function legend(items,y){let x=16,s='';for(const [col,txt] of items){s+=`<rect x="${x}" y="${y-14}" width="15" height="15" rx="3" fill="${col}"/><text x="${x+21}" y="${y}" class="lg" fill="${col}">${txt}</text>`;x+=36+txt.length*9.4;}return s;}
+function plegend(x,y){return `<defs><linearGradient id="plg${x}${y}" x1="0" x2="1"><stop offset="0" stop-color="${pcol(1)}"/><stop offset=".5" stop-color="${pcol(.5)}"/><stop offset="1" stop-color="${pcol(0)}"/></linearGradient></defs><text x="${x}" y="${y}" class="sm" fill="#333">Druck: hoch</text><rect x="${x+86}" y="${y-12}" width="90" height="13" rx="3" fill="url(#plg${x}${y})"/><text x="${x+182}" y="${y}" class="sm" fill="#333">niedrig</text>`;}
+function gauge(x,y,val,max,unit,yBot,dec){const f=clamp(val/max,0,1),a=(-120+240*f)*Math.PI/180;let t='';
+  for(let i=0;i<=4;i++){const b=(-120+60*i)*Math.PI/180;t+=`<line x1="${q(x+Math.sin(b)*16)}" y1="${q(y-Math.cos(b)*16)}" x2="${q(x+Math.sin(b)*21)}" y2="${q(y-Math.cos(b)*21)}" stroke="#263238" stroke-width="2"/>`;}
+  return `<line x1="${q(x)}" y1="${y+24}" x2="${q(x)}" y2="${yBot}" stroke="#263238" stroke-dasharray="5 4" stroke-width="2"/><circle cx="${q(x)}" cy="${y}" r="24" fill="#fff" stroke="#263238" stroke-width="3"/>${t}<line x1="${q(x)}" y1="${y}" x2="${q(x+Math.sin(a)*15)}" y2="${q(y-Math.cos(a)*15)}" stroke="${C_A}" stroke-width="3.5" stroke-linecap="round"/><circle cx="${q(x)}" cy="${y}" r="3.5" fill="#263238"/><rect x="${q(x+30)}" y="${y-15}" width="84" height="30" rx="7" fill="#263238"/><text x="${q(x+72)}" y="${y+7}" text-anchor="middle" fill="#fff" class="lbl">${fmt(val,dec||0)} ${unit}</text>`;}
+function tag(x,y,txt,col){const w=txt.length*9+12;return `<rect x="${q(x-w/2)}" y="${y-16}" width="${w}" height="22" rx="5" fill="#fff" stroke="${col||'#263238'}" stroke-width="1.5"/><text x="${q(x)}" y="${y}" text-anchor="middle" class="sm" font-weight="700" fill="${col||'#263238'}">${txt}</text>`;}
+function pathAt(P,S,s){for(let i=1;i<P.length;i++){if(s<=S[i]){const u=(s-S[i-1])/((S[i]-S[i-1])||1);return [lerp(P[i-1][0],P[i][0],u),lerp(P[i-1][1],P[i][1],u)];}}return P[P.length-1];}
+function cum(P){const S=[0];for(let i=1;i<P.length;i++)S.push(S[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]));return S;}
+
+/* ---------- Diagramm ---------- */
+function chart(o){
+  const W=o.W||560,H=o.H||320,p=Object.assign({l:66,r:o.yt2?66:22,t:30,b:58},o.pad||{});
+  const sx=v=>p.l+(v-o.x[0])/(o.x[1]-o.x[0])*(W-p.l-p.r), sy=v=>H-p.b-(v-o.y[0])/(o.y[1]-o.y[0])*(H-p.t-p.b);
+  let s='';
+  for(const v of o.yt){const y=q(sy(v));s+=`<line x1="${p.l}" x2="${W-p.r}" y1="${y}" y2="${y}" stroke="#eee8dc"/><text x="${p.l-8}" y="${y+5}" text-anchor="end" class="tick">${fmt(v)}</text>`;}
+  if(o.yt2)for(const [v,lab] of o.yt2){const y=q(sy(v));s+=`<text x="${W-p.r+8}" y="${y+5}" class="tick" fill="#8a5a00">${lab}</text>`;}
+  s+=o.content(sx,sy);
+  for(const [v,lab,tk] of (o.xt||[])){const x=q(sx(v));if(tk!==false)s+=`<line x1="${x}" x2="${x}" y1="${H-p.b}" y2="${H-p.b+6}" stroke="#333"/>`;s+=`<text x="${x}" y="${H-p.b+24}" text-anchor="middle" class="tick">${lab}</text>`;}
+  s+=`<line x1="${p.l}" y1="${p.t-8}" x2="${p.l}" y2="${H-p.b}" stroke="#333" stroke-width="2"/><line x1="${p.l}" y1="${H-p.b}" x2="${W-p.r+6}" y2="${H-p.b}" stroke="#333" stroke-width="2"/>`;
+  if(o.yt2)s+=`<line x1="${W-p.r}" y1="${p.t-8}" x2="${W-p.r}" y2="${H-p.b}" stroke="#8a5a00" stroke-width="1.5"/>`;
+  s+=`<text x="${q((p.l+W-p.r)/2)}" y="${H-10}" text-anchor="middle" class="axl">${o.xlab}</text>`;
+  s+=`<text transform="translate(18 ${q((p.t+H-p.b)/2)}) rotate(-90)" text-anchor="middle" class="axl">${o.ylab}</text>`;
+  if(o.ylab2)s+=`<text transform="translate(${W-8} ${q((p.t+H-p.b)/2)}) rotate(90)" text-anchor="middle" class="axl" fill="#8a5a00">${o.ylab2}</text>`;
+  return svg(W,H,s);
+}
+const poly=(pts,col,w,extra)=>`<polyline points="${pts.map(p=>q(p[0])+','+q(p[1])).join(' ')}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" ${extra||''}/>`;
+
+/* ---------- Messen (Schritt 2 und 3) ---------- */
+function measure(M,t,J){if(!M.play)return;const per=1.15,el=Math.max(0,t-M.t0),i=Math.floor(el/per),u=(el-i*per)/per;
+  if(i>=J.length){M.play=false;M.rev=J.length-1;M.gx=J[J.length-1];return;}
+  M.gx=lerp(i?J[i-1]:J[0],J[i],ease(u/.45));M.rev=u>=.45?i:i-1;}
+function interp(J,F,x){if(x<=J[0])return F[0];for(let i=1;i<J.length;i++)if(x<=J[i])return lerp(F[i-1],F[i],(x-J[i-1])/(J[i]-J[i-1]));return F[F.length-1];}
+
+/* ---------- Stromkreis (Schritt 3 und 4) ---------- */
+function circuitSVG(c){
+  const x1=100,x2=400,y1=62,y2=262,b1=146,b2=180,ly=162,lr=26,Um=12;
+  const P=[[x1,b1],[x1,y1],[x2,y1],[x2,ly-lr],[x2,ly+lr],[x2,y2],[x1,y2],[x1,b2]],S=cum(P);
+  const LH=S[3],LL=S[4]-S[3],LR=S[7]-S[4];
+  const pot=s=>s<=LH?c.U-c.Uh*s/LH:s<=LH+LL?c.U-c.Uh-c.Ul*(s-LH)/LL:c.U-c.Uh-c.Ul-c.Ur*(s-LH-LL)/LR;
+  let defs='',w='';
+  for(let i=1;i<P.length;i++){if(i===4)continue;const [ax,ay]=P[i-1],[bx,by]=P[i],id=c.id+'w'+i;
+    defs+=`<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}"><stop offset="0" stop-color="${pcol(pot(S[i-1])/Um)}"/><stop offset="1" stop-color="${pcol(pot(S[i])/Um)}"/></linearGradient>`;
+    w+=`<line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" stroke="url(#${id})" stroke-width="10" stroke-linecap="round"/>`;}
+  let dots='';
+  if(c.I>0){const sp=30,tot=S[7];for(let s=((c.ph%sp)+sp)%sp;s<tot;s+=sp){if(s>LH-3&&s<LH+LL+3)continue;const p=pathAt(P,S,s);dots+=`<circle cx="${q(p[0])}" cy="${q(p[1])}" r="3.8" fill="#fff" stroke="#263238" stroke-width="1.2"/>`;}}
+  const g=clamp(c.glow,0,1),k=lr*.707;
+  defs+=`<radialGradient id="${c.id}gl"><stop offset="0" stop-color="#fff59d" stop-opacity="1"/><stop offset=".55" stop-color="#ffee58" stop-opacity=".55"/><stop offset="1" stop-color="#ffee58" stop-opacity="0"/></radialGradient>`;
+  let s=`<defs>${defs}</defs>`+w+dots;
+  s+=`<circle cx="${x2}" cy="${ly}" r="${q(lr+44*g)}" fill="url(#${c.id}gl)" opacity="${q(g)}"/>`;
+  s+=`<circle cx="${x2}" cy="${ly}" r="${lr}" fill="${g>.03?'rgb(255,'+Math.round(250-30*g)+','+Math.round(225-140*g)+')':'#fff'}" stroke="#263238" stroke-width="3"/><line x1="${q(x2-k)}" y1="${q(ly-k)}" x2="${q(x2+k)}" y2="${q(ly+k)}" stroke="#263238" stroke-width="2.5"/><line x1="${q(x2-k)}" y1="${q(ly+k)}" x2="${q(x2+k)}" y2="${q(ly-k)}" stroke="#263238" stroke-width="2.5"/>`;
+  s+=`<rect x="${x1-30}" y="${b1+3}" width="60" height="${b2-b1-6}" fill="#fff"/><line x1="${x1-26}" y1="${b1}" x2="${x1+26}" y2="${b1}" stroke="#263238" stroke-width="4"/><line x1="${x1-13}" y1="${b2}" x2="${x1+13}" y2="${b2}" stroke="#263238" stroke-width="10"/>`;
+  s+=`<text x="${x1+34}" y="${b1+6}" class="lbl" fill="${C_A}">+</text><text x="${x1+22}" y="${b2+8}" class="lbl" fill="${C_B}">−</text>`;
+  s+=`<text x="${x1-36}" y="${b1+10}" text-anchor="end" class="lbl">U₁ =</text><text x="${x1-36}" y="${b1+32}" text-anchor="end" class="lbl">${fmt(c.U,1)} V</text>`;
+  s+=`<text x="${q((x1+x2)/2-40)}" y="${y1-16}" text-anchor="middle" class="sm" font-weight="700">Hinleiter: ${fmt(c.Uh,2)} V</text>`;
+  s+=`<text x="${q((x1+x2)/2-40)}" y="${y2+30}" text-anchor="middle" class="sm" font-weight="700">Rückleiter: ${fmt(c.Ur,2)} V</text>`;
+  s+=`<text x="${x2-lr-12}" y="${ly-4}" text-anchor="end" class="lbl">Lampe</text><text x="${x2-lr-12}" y="${ly+20}" text-anchor="end" class="lbl" fill="${C_L}">U₂ = ${fmt(c.Ul,2)} V</text>`;
+  if(c.amps){for(const yy of [y1,y2]){s+=`<circle cx="330" cy="${yy}" r="14" fill="#fff" stroke="#263238" stroke-width="2.5"/><text x="330" y="${yy+6}" text-anchor="middle" class="lbl">A</text>`;}
+    s+=`<text x="330" y="${y1-20}" text-anchor="middle" class="lbl" fill="${C_F}">${fmt(c.I,2)} A</text><text x="330" y="${y2+34}" text-anchor="middle" class="lbl" fill="${C_F}">${fmt(c.I,2)} A</text>`;
+    s+=`<text x="244" y="${y2-42}" text-anchor="middle" class="sm" fill="#56606e">Punkte = technische Stromrichtung:</text><text x="244" y="${y2-22}" text-anchor="middle" class="sm" fill="#56606e">von + nach − (Elektronen umgekehrt)</text>`;}
+  return svg(480,310,s);
+}
+
+/* =====================================================================
+   SCHRITT 1 – kurze und lange Reihe
+   ===================================================================== */
+const G1={X0:170,W:82,BW:78,BH:30,TOP:236,FL:300};
+const S1={n:1,anim:null,auto:false,next:0};
+function s1add(){if(S1.anim||S1.n>=6)return;S1.anim=now();}
+function stage1(t){
+  const g=G1;let nb=S1.n,sh=0,na=0,add=false;
+  if(S1.anim){const p=(t-S1.anim)/1.1;if(p>=1){S1.anim=null;S1.n=Math.min(6,S1.n+1);nb=S1.n;}else{add=true;sh=g.W*ease(p/.55);na=ease((p-.55)/.45);}}
+  const FB=100-15*nb;
+  let s=legend([[C_A,'A drückt: 100 N'],[C_B,`B hält dagegen: ${FB} N`],[C_L,`Reibungsverlust: ${15*nb} N`]],30)+plegend(752,30);
+  s+=floorL(g.FL)+table(140,960,g.TOP,g.FL);
+  for(let i=0;i<nb;i++){const x=g.X0+sh+i*g.W;s+=heat(x+5,x+g.BW-5,g.TOP+1,.35+.3*Math.sin(t*7+i*1.7));s+=book(x,g.TOP-g.BH,g.BW,g.BH,pcol((100-15*(i+.5))/100));}
+  if(add)s+=book(g.X0,g.TOP-g.BH-80*(1-na),g.BW,g.BH,pcol(1),Math.max(.2,na));
+  const xe=g.X0+sh+nb*g.W-4;
+  s+=person(96,g.FL,1,'A',[g.X0-1,g.TOP-15]);
+  s+=person(xe+58,g.FL,-1,'B',[xe+1,g.TOP-15]);
+  s+=arrowH(g.X0+2,g.X0+122,106,C_A,8)+`<text x="${g.X0+2}" y="88" class="lbl" fill="${C_A}">100 N</text>`;
+  s+=arrowH(xe-2,xe-2-FB*1.2,140,C_B,8)+`<text x="${q(xe-2)}" y="172" text-anchor="end" class="lbl" fill="${C_B}">${FB} N</text>`;
+  s+=`<text x="520" y="${g.TOP+40}" text-anchor="middle" class="sm" font-weight="700" fill="${C_L}">Reibung bremst jedes Buch (je 15 N)</text>`;
+  return svg(1000,310,s);
+}
+function chart1(nb){
+  return chart({x:[0,6],y:[0,100],yt:[0,25,50,75,100],pad:{r:150},xt:[0,1,2,3,4,5,6].map(v=>[v,String(v)]),xlab:'Anzahl Bücher  =  Länge der Leitung',ylab:'Kraft in N',content:(sx,sy)=>{
+    const L=(f,c,w,op,to)=>{const p=[];for(let i=0;i<=to*4;i++){const x=i/4;p.push([sx(x),sy(f(x))]);}return p.length>1?poly(p,c,w,`opacity="${op}"`):'';};
+    const fA=()=>100,fL=x=>15*x,fB=x=>100-15*x;
+    let s=L(fA,C_A,3,.22,6)+L(fL,C_L,3,.22,6)+L(fB,C_B,3,.22,6)+L(fA,C_A,5,1,nb)+L(fL,C_L,5,1,nb)+L(fB,C_B,5,1,nb);
+    s+=`<line x1="${q(sx(nb))}" x2="${q(sx(nb))}" y1="${q(sy(0))}" y2="${q(sy(100))}" stroke="#888" stroke-dasharray="5 5"/>`;
+    for(const [f,c] of [[fA,C_A],[fL,C_L],[fB,C_B]])s+=`<circle cx="${q(sx(nb))}" cy="${q(sy(f(nb)))}" r="7" fill="${c}" stroke="#fff" stroke-width="2"/>`;
+    const xr=sx(6)+10;
+    s+=`<text x="${q(xr)}" y="${q(sy(100)+2)}" class="clab" fill="${C_A}">A drückt</text>`;
+    s+=`<text x="${q(xr)}" y="${q(sy(90)+16)}" class="clab" fill="${C_L}">Reibungs-</text><text x="${q(xr)}" y="${q(sy(90)+34)}" class="clab" fill="${C_L}">verlust</text>`;
+    s+=`<text x="${q(xr)}" y="${q(sy(10)+2)}" class="clab" fill="${C_B}">B hält</text><text x="${q(xr)}" y="${q(sy(10)+20)}" class="clab" fill="${C_B}">dagegen</text>`;
+    return s;}});
+}
+function vals1(nb){const FB=100-15*nb;
+  return `<div class="row"><span>Anzahl Bücher (Länge der Reihe)</span><b>${nb}</b></div>
+<div class="row"><span><i class="dot" style="background:${C_A}"></i>A drückt</span><b>100 N</b></div>
+<div class="row"><span><i class="dot" style="background:${C_L}"></i>Reibungsverlust (${nb} × 15 N)</span><b>${15*nb} N</b></div>
+<div class="row"><span><i class="dot" style="background:${C_B}"></i>B muss dagegenhalten</span><b>${FB} N</b></div>
+<div class="row"><span>Probe: Verlust + B</span><b>${15*nb} N + ${FB} N = 100 N</b></div>
+<p class="hint" style="margin:8px 0 0">Die Bücher stehen hier still. Es geht nur um den Druck. Was fließt, kommt in Schritt 4 dazu.</p>`;}
+
+/* =====================================================================
+   SCHRITT 2 – Druckverlauf entlang der Reihe
+   ===================================================================== */
+const S2={play:false,t0:0,rev:-1,gx:null};
+const J2=[0,1,2,3,4,5,6].map(j=>j===0?G1.X0:j===6?G1.X0+6*G1.W-4:G1.X0+j*G1.W-2), F2=[0,1,2,3,4,5,6].map(j=>100-15*j);
+function stage2(t){
+  const g=G1;measure(S2,t,J2);
+  let s=legend([[C_A,'A drückt: 100 N'],[C_B,'B hält dagegen: 10 N'],['#263238','Druckmesser zwischen den Büchern']],30);
+  s+=floorL(g.FL)+table(140,960,g.TOP,g.FL);
+  for(let i=0;i<6;i++){const x=g.X0+i*g.W;s+=heat(x+5,x+g.BW-5,g.TOP+1,.35+.3*Math.sin(t*7+i*1.7));s+=book(x,g.TOP-g.BH,g.BW,g.BH,pcol((100-15*(i+.5))/100));}
+  const xe=J2[6];
+  s+=person(96,g.FL,1,'A',[g.X0-1,g.TOP-15])+person(xe+58,g.FL,-1,'B',[xe+1,g.TOP-15]);
+  s+=arrowH(xe-2,xe-14,140,C_B,8);
+  for(let j=0;j<=S2.rev;j++)s+=tag(J2[j],g.TOP-g.BH-12,fmt(F2[j]),pcol(F2[j]/100));
+  if(S2.gx!=null)s+=gauge(S2.gx,82,interp(J2,F2,S2.gx),100,'N',g.TOP-g.BH-30);
+  s+=plegend(752,58);
+  return svg(1000,310,s);
+}
+function chart2(rev){
+  return chart({x:[0,6],y:[0,100],yt:[0,25,50,75,100],xt:[[0,'A'],[6,'B']].concat([0,1,2,3,4,5].map(i=>[i+.5,'Buch '+(i+1),false])),xlab:'Weg entlang der Reihe – von A nach B',ylab:'Kraft (Druck) in N',content:(sx,sy)=>{
+    let s=poly([[sx(0),sy(100)],[sx(6),sy(10)]],'#bbb',2,'stroke-dasharray="6 5"');
+    for(let j=1;j<=rev;j++){const a=F2[j-1],b=F2[j];
+      s+=`<line x1="${q(sx(j-1))}" y1="${q(sy(a))}" x2="${q(sx(j))}" y2="${q(sy(a))}" stroke="#aaa" stroke-dasharray="3 3"/><line x1="${q(sx(j))}" y1="${q(sy(a))}" x2="${q(sx(j))}" y2="${q(sy(b))}" stroke="${C_L}" stroke-width="4"/><text x="${q(sx(j)+6)}" y="${q((sy(a)+sy(b))/2+6)}" class="clab" fill="${C_L}">−15</text>`;}
+    if(rev>=1)s+=poly(F2.slice(0,rev+1).map((v,j)=>[sx(j),sy(v)]),'#263238',4);
+    for(let j=0;j<=rev;j++)s+=`<circle cx="${q(sx(j))}" cy="${q(sy(F2[j]))}" r="7" fill="${pcol(F2[j]/100)}" stroke="#fff" stroke-width="2"/>`;
+    return s;}});
+}
+function vals2(rev){const nm=['A (Anfang)','nach Buch 1','nach Buch 2','nach Buch 3','nach Buch 4','nach Buch 5','B (Ende)'];
+  let s='<div class="row"><span><b>Messstelle</b></span><b>Druck</b></div>';
+  for(let j=0;j<7;j++)s+=`<div class="row"><span>${nm[j]}</span><b>${j<=rev?fmt(F2[j])+' N':'…'}</b></div>`;return s;}
+
+/* =====================================================================
+   SCHRITT 3 – Rollen, Stapel, Rollen
+   ===================================================================== */
+const S3={play:false,t0:0,rev:-1,gx:null};
+const SEG3=['c','c','c','s','c','c','c'],F3=[100,99,98,97,3,2,1,0];
+const J3=F3.map((_,j)=>j===0?G1.X0:j===7?G1.X0+7*G1.W-4:G1.X0+j*G1.W-2);
+function stage3(t){
+  const g=G1;measure(S3,t,J3);
+  let s=legend([[C_A,'A drückt: 100 N'],[C_G,'Rollen: kaum Reibung'],[C_L,'Stapel: viel Reibung']],30)+plegend(752,30);
+  s+=floorL(g.FL)+table(140,960,g.TOP,g.FL);
+  s+=`<defs><linearGradient id="gst3" gradientUnits="userSpaceOnUse" x1="${J3[3]}" y1="0" x2="${J3[4]}" y2="0"><stop offset="0" stop-color="${pcol(.97)}"/><stop offset="1" stop-color="${pcol(.03)}"/></linearGradient></defs>`;
+  for(let i=0;i<7;i++){const x=g.X0+i*g.W;
+    if(SEG3[i]==='c'){s+=wheel(x+16,g.TOP-8,8,0)+wheel(x+62,g.TOP-8,8,0)+book(x,g.TOP-16-g.BH,78,g.BH,pcol((F3[i]+F3[i+1])/200));}
+    else{s+=heat(x+4,x+74,g.TOP+1,.6+.35*Math.sin(t*8));for(let k=0;k<5;k++)s+=book(x+(k%2?2:-1),g.TOP-22*(k+1),78,22,'url(#gst3)');}}
+  s+=person(96,g.FL,1,'A',[g.X0-1,g.TOP-31]);
+  s+=`<text x="${J3[7]+18}" y="${g.TOP-62}" class="lbl" fill="${C_B}">Ende der Reihe:</text><text x="${J3[7]+18}" y="${g.TOP-40}" class="lbl" fill="${C_B}">0 N übrig</text><text x="${J3[7]+18}" y="${g.TOP-18}" class="sm" fill="#333">(wie am Minuspol)</text>`;
+  s+=`<text x="${G1.X0+3.5*G1.W}" y="${g.TOP+40}" text-anchor="middle" class="sm" font-weight="700" fill="${C_L}">Unter dem Stapel: große Reibung</text>`;
+  for(let j=0;j<=S3.rev;j++)s+=tag(J3[j],112,fmt(F3[j]),pcol(F3[j]/100));
+  if(S3.gx!=null)s+=gauge(S3.gx,64,interp(J3,F3,S3.gx),100,'N',118);
+  return svg(1000,310,s);
+}
+function chart3(rev){
+  return chart({x:[0,7],y:[0,100],yt:[0,25,50,75,100],yt2:[[0,'0 V'],[25,'3 V'],[50,'6 V'],[75,'9 V'],[100,'12 V']],xt:[[0,'A'],[1.5,'Rollen',false],[3.5,'Stapel',false],[5.5,'Rollen',false],[7,'Ende']],xlab:'Weg: Hinleiter → Lampe → Rückleiter',ylab:'Kraft in N',ylab2:'Spannung in V',content:(sx,sy)=>{
+    let s=`<rect x="${q(sx(3))}" y="${q(sy(100))}" width="${q(sx(4)-sx(3))}" height="${q(sy(0)-sy(100))}" fill="#fff0e0"/>`;
+    s+=poly(F3.map((v,j)=>[sx(j),sy(v)]),'#ccc',2,'stroke-dasharray="6 5"');
+    if(rev>=1)s+=poly(F3.slice(0,rev+1).map((v,j)=>[sx(j),sy(v)]),'#263238',4);
+    for(let j=0;j<=rev;j++)s+=`<circle cx="${q(sx(j))}" cy="${q(sy(F3[j]))}" r="6.5" fill="${pcol(F3[j]/100)}" stroke="#fff" stroke-width="2"/>`;
+    if(rev>=3)s+=`<text x="${q(sx(1.5))}" y="${q(sy(97)+30)}" text-anchor="middle" class="clab" fill="${C_G}">−3 N ≙ −0,36 V</text>`;
+    if(rev>=4)s+=`<text x="${q(sx(4)+10)}" y="${q(sy(52))}" class="clab" fill="${C_L}">−94 N ≙ −11,28 V</text>`;
+    if(rev>=7)s+=`<text x="${q(sx(5.5))}" y="${q(sy(3)-14)}" text-anchor="middle" class="clab" fill="${C_G}">−3 N ≙ −0,36 V</text>`;
+    return s;}});
+}
+
+/* =====================================================================
+   SCHRITT 4 – Durchfluss = Strom
+   ===================================================================== */
+const S4={drive:1,h:3,bad:false,run:true,o:30,rot:0,ph:0,fall:[]};
+const G4={xs:150,xe:918,P:64,BW:60,BH:28,FL:318,TT:240,RY:232,BY:196,sx1:430,sx2:610};
+function m4(){const rl=S4.bad?2:.25,rc=8*S4.h,R=2*rl+rc,U=12*S4.drive,I=U/R;return {rl,rc,R,U,I,Uh:I*rl,Ul:I*rc,Ur:I*rl,P:I*I*rc,bpm:I*50,F:100*S4.drive};}
+function stage4(t,m){
+  const g=G4,dh=m.Uh/12*100,dl=m.Ul/12*100,dr=m.Ur/12*100;
+  const pr=x=>x<=g.xs?m.F:x<=g.sx1?m.F-dh*(x-g.xs)/(g.sx1-g.xs):x<=g.sx2?m.F-dh-dl*(x-g.sx1)/(g.sx2-g.sx1):x<=g.xe?m.F-dh-dl-dr*(x-g.sx2)/(g.xe-g.sx2):0;
+  const ht=clamp(m.P/16,0,1);
+  let s=`<defs><pattern id="hatch4" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#8d6e63"/><line x1="0" y1="0" x2="0" y2="8" stroke="#5d4037" stroke-width="3"/></pattern><clipPath id="cl4"><rect x="140" y="0" width="${g.xe-140}" height="400"/></clipPath><linearGradient id="gs4" gradientUnits="userSpaceOnUse" x1="${g.sx1}" y1="0" x2="${g.sx2}" y2="0"><stop offset="0" stop-color="${pcol(pr(g.sx1)/100)}"/><stop offset="1" stop-color="${pcol(pr(g.sx2)/100)}"/></linearGradient></defs>`;
+  s+=legend([[C_A,`A drückt: ${fmt(m.F)} N`],[C_F,`Durchfluss: ${fmt(m.bpm)} Bücher pro Minute`]],30)+plegend(752,30);
+  s+=floorL(g.FL);
+  for(let i=0;i<3;i++)s+=book(8+(i%2)*4,g.FL-18*(i+1),44,18,'#9e9e9e');
+  s+=`<path d="M 958 302 L 74 302" stroke="#7b8794" stroke-width="3" stroke-dasharray="10 7" fill="none"/><polygon points="60,302 76,294 76,310" fill="#7b8794"/>`;
+  s+=`<text x="520" y="294" text-anchor="middle" class="sm" fill="#56606e">Rückweg: Die Bücher laufen im Kreis zurück zu A – es geht keins verloren.</text>`;
+  s+=table(140,925,g.TT,g.FL);
+  s+=`<polygon points="918,240 928,240 974,288 962,290" fill="#a1887f"/><rect x="930" y="284" width="66" height="34" rx="3" fill="#d7ccc8" stroke="#6d4c41" stroke-width="2"/>`;
+  s+=`<rect x="${g.sx1+2}" y="62" width="6" height="${g.BY+28-62}" fill="#90a4ae"/><rect x="${g.sx2-8}" y="62" width="6" height="${g.BY+28-62}" fill="#90a4ae"/><rect x="${g.sx1+2}" y="58" width="${g.sx2-g.sx1-4}" height="7" rx="2" fill="#90a4ae"/><text x="${(g.sx1+g.sx2)/2}" y="52" text-anchor="middle" class="sm" fill="#56606e">Rahmen hält den Stapel fest</text>`;
+  const CX=[392,652,900];
+  for(const cx of CX)s+=`<rect x="${cx-3}" y="150" width="6" height="${g.BY+28-150}" fill="#b0bec5"/>`;
+  const rcol=S4.bad?'#a1887f':'#cfd8dc';
+  for(let x=g.xs+14;x<g.sx1;x+=28)s+=wheel(x,g.RY,8,S4.rot,rcol);
+  for(let x=g.sx2+14;x<g.xe;x+=28)s+=wheel(x,g.RY,8,S4.rot,rcol);
+  s+=`<rect x="${g.sx1}" y="${g.BY+28}" width="${g.sx2-g.sx1}" height="${g.TT-g.BY-28}" fill="url(#hatch4)"/>`;
+  s+='<g clip-path="url(#cl4)">';
+  for(let k=0;;k++){const x=g.xs+S4.o+k*g.P;if(x>=g.xe)break;const yo=k===0?-20*(1-ease(S4.o/(.35*g.P))):0;s+=book(x,g.BY+yo,g.BW,g.BH,pcol(pr(x+g.BW/2)/100));}
+  s+='</g>';
+  for(let i=0;i<S4.h;i++)s+=book(g.sx1+10+(i%2?3:-2),g.BY-24*(i+1),g.sx2-g.sx1-20,24,'url(#gs4)');
+  s+=heat(g.sx1+10,g.sx2-10,g.BY,ht*(.6+.4*Math.sin(t*9)))+heat(g.sx1+10,g.sx2-10,g.BY+28,ht*(.6+.4*Math.sin(t*9+1)));
+  for(const t0 of S4.fall){const u=clamp((t-t0)/.9,0,1);s+=`<g transform="translate(${q(922+42*u)} ${q(214+64*u)}) rotate(${q(25+35*u)})"><rect x="-20" y="-9" width="40" height="18" rx="3" fill="${pcol(0)}" stroke="rgba(0,0,0,.5)"/></g>`;}
+  for(const cx of CX){const qq=(((g.xs+S4.o+g.BW-cx)%g.P)+g.P)%g.P,fl=(m.bpm>0&&qq<12)?1-qq/12:0;
+    s+=`<circle cx="${cx}" cy="150" r="8" fill="${fl>0?'#ff1744':'#ef9a9a'}" stroke="#b71c1c" stroke-width="1.5" opacity="${q(.55+.45*fl)}"/><text x="${cx}" y="132" text-anchor="middle" class="lbl" fill="${C_F}">${fmt(m.bpm)}/min</text>`;}
+  s+=person(92,g.FL,1,'A',[g.xs+S4.o-1,212]);
+  s+=arrowH(g.xs,g.xs+m.F*1.3,104,C_A,8);
+  const lab=S4.bad?'schwergängige Rollen':'Rollen';
+  s+=`<text x="${(g.xs+g.sx1)/2}" y="272" text-anchor="middle" class="sm" font-weight="700" fill="${C_G}">${lab} = Hinleiter</text><text x="${(g.sx1+g.sx2)/2}" y="272" text-anchor="middle" class="sm" font-weight="700" fill="${C_L}">Stapel = Lampe</text><text x="${(g.sx2+g.xe)/2}" y="272" text-anchor="middle" class="sm" font-weight="700" fill="${C_G}">${lab} = Rückleiter</text>`;
+  return svg(1000,325,s);
+}
+function chart4(m){const U=m.U;
+  return chart({x:[0,1],y:[0,12],yt:[0,3,6,9,12],yt2:[[0,'0 N'],[3,'25 N'],[6,'50 N'],[9,'75 N'],[12,'100 N']],xt:[[0,'+'],[.2,'Hinleiter',false],[.5,'Lampe',false],[.8,'Rückleiter',false],[1,'−']],xlab:'Weg durch den Stromkreis: von + nach −',ylab:'Spannung in V',ylab2:'Kraft in N (Bücher)',content:(sx,sy)=>{
+    let s=`<rect x="${q(sx(.4))}" y="${q(sy(12))}" width="${q(sx(.6)-sx(.4))}" height="${q(sy(0)-sy(12))}" fill="#fff0e0"/>`;
+    const P=[[0,U],[.4,U-m.Uh],[.6,m.Ur],[1,0]].map(p=>[sx(p[0]),sy(p[1])]);
+    s+=poly([P[0],P[1]],C_G,5)+poly([P[1],P[2]],C_L,6)+poly([P[2],P[3]],C_G,5);
+    for(const p of P)s+=`<circle cx="${q(p[0])}" cy="${q(p[1])}" r="6" fill="#263238" stroke="#fff" stroke-width="2"/>`;
+    s+=`<text x="${q(sx(.2))}" y="${q(sy(U-m.Uh/2)+26)}" text-anchor="middle" class="clab" fill="${C_G}">−${fmt(m.Uh,2)} V</text>`;
+    s+=`<text x="${q(sx(.6)+10)}" y="${q(sy(U/2))}" class="clab" fill="${C_L}">−${fmt(m.Ul,2)} V</text>`;
+    s+=`<text x="${q(sx(.8))}" y="${q(sy(m.Ur/2)-14)}" text-anchor="middle" class="clab" fill="${C_G}">−${fmt(m.Ur,2)} V</text>`;
+    return s;}});
+}
+function vals4(m){
+  let s=`<div class="row"><span><i class="dot" style="background:${C_F}"></i>Durchfluss (Bücher)</span><b>${fmt(m.bpm)} pro Minute</b></div>
+<div class="row"><span><i class="dot" style="background:${C_F}"></i>Stromstärke I (überall gleich)</span><b>${fmt(m.I,2)} A</b></div>
+<div class="row"><span>Spannungsabfall Hin- und Rückleiter</span><b>je ${fmt(m.Uh,2)} V</b></div>
+<div class="row"><span>Spannung an der Lampe U₂</span><b>${fmt(m.Ul,2)} V</b></div>
+<div class="row"><span>I = U ÷ R</span><b>${fmt(m.U,1)} V ÷ ${fmt(m.R,1)} Ω = ${fmt(m.I,2)} A</b></div>`;
+  if(S4.bad)s+=`<div class="warnbox">Lange, dünne Leitung: Auf Hin- und Rückleiter fallen zusammen ${fmt(m.Uh+m.Ur,2)} V ab. Die Lampe bekommt nur noch ${fmt(m.Ul,2)} V und leuchtet schwächer.</div>`;
+  return s;}
+
+/* =====================================================================
+   SCHRITT 5 – Heizkreis
+   ===================================================================== */
+const S5={pump:1,valve:3,bad:false,run:true,ph:0,rot:0};
+const RV=[Infinity,60,30,15,7,3],VN=['zu','fast zu','wenig offen','halb offen','weit offen','ganz offen'];
+function m5(){const rp=S5.bad?6:1,rh=1,rv=RV[S5.valve],dp=200*S5.pump;
+  if(S5.valve===0)return {dp,V:0,dP:0,dV:dp,dH:0,closed:true};
+  const Ss=2*rp+rv+rh,V=dp>0?Math.sqrt(dp/(0.000772*Ss)):0;
+  return {dp,V,dP:dp*rp/Ss,dV:dp*rv/Ss,dH:dp*rh/Ss,closed:false};}
+function heizSVG(m){
+  const x1=150,x2=530,y1=84,y2=300,py=192,pr=28,vt=116,vb=144,ht=176,hb=252;
+  const P=[[x1,py-pr],[x1,y1],[x2,y1],[x2,vt],[x2,vb],[x2,ht],[x2,hb],[x2,y2],[x1,y2],[x1,py+pr]],S=cum(P);
+  const sV=S[3],sVe=S[4],sH=S[6],sE=S[9];
+  const p=s=>s<=sV?m.dp-m.dP*s/sV:s<=sVe?m.dp-m.dP-m.dV*(s-sV)/(sVe-sV):s<=sH?m.dp-m.dP-m.dV-m.dH*(s-sVe)/(sH-sVe):m.dP*(1-(s-sH)/(sE-sH));
+  const ow=S5.bad?11:19,iw=S5.bad?6:13;
+  let defs='',w='',o='';
+  for(let i=1;i<P.length;i++){const [ax,ay]=P[i-1],[bx,by]=P[i],id='hz'+i;
+    defs+=`<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}"><stop offset="0" stop-color="${pcol(p(S[i-1])/200)}"/><stop offset="1" stop-color="${pcol(p(S[i])/200)}"/></linearGradient>`;
+    o+=`<line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" stroke="#455a64" stroke-width="${ow}" stroke-linecap="round"/>`;
+    w+=`<line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" stroke="url(#${id})" stroke-width="${iw}" stroke-linecap="round"/>`;}
+  let dots='';
+  if(m.V>0){const sp=28;for(let s=((S5.ph%sp)+sp)%sp;s<sE;s+=sp){const pt=pathAt(P,S,s);dots+=`<circle cx="${q(pt[0])}" cy="${q(pt[1])}" r="${S5.bad?2.2:3.3}" fill="#fff"/>`;}}
+  let s=`<defs>${defs}</defs>`+o+w+dots;
+  s+=`<polygon points="${x2-14},${vt} ${x2+14},${vt} ${x2},${(vt+vb)/2} ${x2-14},${vb} ${x2+14},${vb} ${x2},${(vt+vb)/2}" fill="#cfd8dc" stroke="#263238" stroke-width="2.5" stroke-linejoin="round"/>`;
+  s+=`<line x1="${x2}" y1="${(vt+vb)/2}" x2="${x2+30}" y2="${(vt+vb)/2}" stroke="#263238" stroke-width="3"/><rect x="${x2+30}" y="${(vt+vb)/2-13}" width="30" height="26" rx="7" fill="#eceff1" stroke="#263238" stroke-width="2"/>`;
+  s+=`<text x="${x2+68}" y="${(vt+vb)/2-2}" class="lbl">Thermostatventil</text><text x="${x2+68}" y="${(vt+vb)/2+20}" class="lbl" fill="${m.closed?C_A:C_L}">${VN[S5.valve]}</text>`;
+  const wf=clamp(m.V/220,0,1),rc=`rgb(${Math.round(lerp(225,255,wf))},${Math.round(lerp(232,167,wf))},${Math.round(lerp(238,64,wf))})`;
+  s+=`<rect x="${x2-58}" y="${ht}" width="116" height="${hb-ht}" rx="5" fill="${rc}" stroke="#607d8b" stroke-width="2.5"/>`;
+  for(let x=x2-46;x<=x2+46;x+=12)s+=`<line x1="${x}" y1="${ht+6}" x2="${x}" y2="${hb-6}" stroke="#90a4ae" stroke-width="2"/>`;
+  s+=`<text x="${x2+68}" y="${(ht+hb)/2+6}" class="lbl">Heizkörper</text>`;
+  s+=`<circle cx="${x1}" cy="${py}" r="${pr}" fill="#eceff1" stroke="#263238" stroke-width="3"/><polygon points="${x1},${py-pr} ${x1-20},${py+17} ${x1+20},${py+17}" fill="#90a4ae" stroke="#263238" stroke-width="2"/>`;
+  s+=`<text x="${x1-38}" y="${py-4}" text-anchor="end" class="lbl">Pumpe</text><text x="${x1-38}" y="${py+18}" text-anchor="end" class="lbl" fill="${C_A}">${fmt(m.dp)} mbar</text>`;
+  const mano=(x,y,sAt,yP)=>{const v=p(sAt),f=clamp(v/200,0,1),a=(-135+270*f)*Math.PI/180;let t='';
+    for(let i=0;i<=4;i++){const b=(-135+67.5*i)*Math.PI/180;t+=`<line x1="${q(x+Math.sin(b)*14)}" y1="${q(y-Math.cos(b)*14)}" x2="${q(x+Math.sin(b)*19)}" y2="${q(y-Math.cos(b)*19)}" stroke="#263238" stroke-width="1.8"/>`;}
+    return `<line x1="${x}" y1="${y}" x2="${x}" y2="${yP}" stroke="#607d8b" stroke-width="4"/><circle cx="${x}" cy="${y}" r="21" fill="#fff" stroke="#263238" stroke-width="2.5"/>${t}<line x1="${x}" y1="${y}" x2="${q(x+Math.sin(a)*14)}" y2="${q(y-Math.cos(a)*14)}" stroke="${C_A}" stroke-width="3" stroke-linecap="round"/><circle cx="${x}" cy="${y}" r="3" fill="#263238"/><text x="${x+28}" y="${y+7}" class="lbl" fill="${pcol(f)}">${fmt(v)} mbar</text>`;};
+  s+=mano(x1+70,y1-44,(py-pr-y1)+70,y1)+mano(x2-110,y1-44,(py-pr-y1)+(x2-110-x1),y1);
+  s+=mano(x2-110,y2+44,S[7]+110,y2)+mano(x1+70,y2+44,S[7]+(x2-x1-70),y2);
+  s+=`<text x="${(x1+x2)/2}" y="${y1-14}" text-anchor="middle" class="sm" font-weight="700" fill="#56606e">Vorlauf →</text><text x="${(x1+x2)/2}" y="${y2+30}" text-anchor="middle" class="sm" font-weight="700" fill="#56606e">← Rücklauf</text>`;
+  s+=`<text x="${(x1+x2)/2-30}" y="${py}" text-anchor="middle" class="big" fill="${C_F}">V̇ = ${fmt(m.V)} l/h</text><text x="${(x1+x2)/2-30}" y="${py+26}" text-anchor="middle" class="sm" fill="#333">Volumenstrom – überall im Kreis gleich</text>`;
+  return svg(770,370,s);
+}
+function chart5(m){
+  return chart({x:[0,1],y:[0,200],yt:[0,50,100,150,200],xt:[[.16,'Vorlauf',false],[.41,'Ventil',false],[.59,'Heizkörper',false],[.84,'Rücklauf',false]],xlab:'Weg durch den Heizkreis: Pumpe → … → Pumpe',ylab:'Druck in mbar',content:(sx,sy)=>{
+    let s=`<rect x="${q(sx(.32))}" y="${q(sy(200))}" width="${q(sx(.5)-sx(.32))}" height="${q(sy(0)-sy(200))}" fill="#fff0e0"/>`;
+    const a=m.dp,P=[[0,a],[.32,a-m.dP],[.5,a-m.dP-m.dV],[.68,m.dP],[1,0]].map(v=>[sx(v[0]),sy(v[1])]);
+    s+=poly([P[0],P[1]],C_G,5)+poly([P[1],P[2]],C_L,6)+poly([P[2],P[3]],'#f9a825',5)+poly([P[3],P[4]],C_G,5);
+    for(const v of P)s+=`<circle cx="${q(v[0])}" cy="${q(v[1])}" r="6" fill="#263238" stroke="#fff" stroke-width="2"/>`;
+    s+=`<text x="${q(sx(.16))}" y="${q(sy(a-m.dP/2)+26)}" text-anchor="middle" class="clab" fill="${C_G}">−${fmt(m.dP)} mbar</text>`;
+    s+=`<text x="${q(sx(.5)+8)}" y="${q(sy(a*.5)+4)}" class="clab" fill="${C_L}">Ventil −${fmt(m.dV)} mbar</text>`;
+    s+=`<text x="${q(sx(.84))}" y="${q(sy(m.dP/2)-14)}" text-anchor="middle" class="clab" fill="${C_G}">−${fmt(m.dP)} mbar</text>`;
+    return s;}});
+}
+function vals5(m){
+  let s=`<div class="row"><span><i class="dot" style="background:${C_A}"></i>Pumpe (Antrieb)</span><b>${fmt(m.dp)} mbar</b></div>
+<div class="row"><span><i class="dot" style="background:${C_F}"></i>Volumenstrom V̇ (überall gleich)</span><b>${fmt(m.V)} l/h</b></div>
+<div class="row"><span>Druckabfall Vorlauf (Rohrreibung)</span><b>${fmt(m.dP)} mbar</b></div>
+<div class="row"><span>Druckabfall Thermostatventil</span><b>${fmt(m.dV)} mbar</b></div>
+<div class="row"><span>Druckabfall Heizkörper</span><b>${fmt(m.dH)} mbar</b></div>
+<div class="row"><span>Druckabfall Rücklauf (Rohrreibung)</span><b>${fmt(m.dP)} mbar</b></div>
+<div class="row"><span>Alle Druckabfälle zusammen</span><b>= Pumpendruck ${fmt(m.dp)} mbar</b></div>`;
+  if(m.closed)s+=`<div class="warnbox">Ventil zu: Es fließt nichts. Ohne Durchfluss gibt es keine Rohrreibung – der ganze Pumpendruck (${fmt(m.dp)} mbar) liegt am Ventil an. Beim Strom ist es genauso: Am offenen Schalter liegt die ganze Spannung.</div>`;
+  return s;}
+
+/* =====================================================================
+   Schritte
+   ===================================================================== */
+const TR=(rows,h)=>`<table class="tr"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table>`;
+const STEPS=[
+{tab:'1 Kurze & lange Reihe',title:'1 · Spannung ist Antrieb – Spannungsabfall ist Verlust',
+ lead:'A schiebt eine Reihe Bücher immer gleich fest an: 100 N. B hält am anderen Ende dagegen. Unterwegs bremst die Reibung jedes Buch. Wie fest muss B noch dagegenhalten, wenn die Reihe länger wird?',
+ html:`<div class="card stage" id="stage"></div>
+<div class="controls"><button class="btn" id="b1m">− Buch</button><button class="btn" id="b1p">+ Buch</button><button class="btn primary" id="b1a">▶ Ablauf: 1 bis 6 Bücher</button><button class="btn" id="b1r">↺ Zurücksetzen</button></div>
+<div class="grid3"><div class="card chart" id="chart"></div><div class="card vals" id="vals"></div>
+<div class="card"><div class="merk"><b>Merksatz</b>Die Spannung ist der Antrieb im Stromkreis – wie der Druck von A. Ein Widerstand bremst – wie die Reibung der Bücher. Je länger die Leitung, desto größer ihr Widerstand und desto mehr Spannung fällt auf ihr ab. Beim Verbraucher kommt dann weniger an.</div>
+${TR([['A drückt','Spannungsquelle: Quellenspannung U₁ in Volt (V)'],['Reibung der Bücher','Widerstand der Leitung'],['Reibungsverlust','Spannungsabfall auf der Leitung'],['was B noch spürt','Spannung am Verbraucher U₂']],['Bücher','Stromkreis'])}</div></div>`,
+ init(){on('b1m',()=>{S1.auto=false;if(!S1.anim&&S1.n>1)S1.n--;});on('b1p',()=>{S1.auto=false;s1add();});
+   on('b1a',()=>{S1.anim=null;S1.n=1;S1.auto=true;S1.next=now()+1;});on('b1r',()=>{S1.anim=null;S1.n=1;S1.auto=false;});},
+ frame(t){if(S1.auto&&!S1.anim&&t>=S1.next){if(S1.n<6){s1add();S1.next=t+2.6;}else S1.auto=false;}
+   put('stage',stage1(t));put('chart',chart1(S1.n));put('vals',vals1(S1.n));}},
+
+{tab:'2 Druckverlauf',title:'2 · Wo geht der Druck verloren?',
+ lead:'Wir messen den Druck zwischen den Büchern – Schritt für Schritt von A nach B. Klicke auf „Messen“.',
+ html:`<div class="card stage" id="stage"></div>
+<div class="controls"><button class="btn primary" id="b2m">▶ Messen</button><button class="btn" id="b2a">Alle Werte zeigen</button><button class="btn" id="b2r">↺ Zurücksetzen</button></div>
+<div class="grid3"><div class="card chart" id="chart"></div><div class="card vals" id="vals"></div>
+<div class="card"><div class="merk"><b>Merksatz</b>Jedes Buch nimmt ein gleich großes Stück vom Druck weg (15 N). Darum fällt der Druck gleichmäßig über die ganze Strecke – wie die Spannung entlang einer langen Leitung.</div>
+${TR([['Unterschied zwischen zwei Messstellen','Spannung (Spannungsabfall) in V','Druckdifferenz (Druckverlust) in mbar'],['gleichmäßig über die Strecke','lange Leitung','langes Rohr: Rohrreibung, auf jedem Meter etwas']],['Bücher','Strom','Wasser'])}</div></div>`,
+ init(){on('b2m',()=>{S2.play=true;S2.t0=now();S2.rev=-1;S2.gx=J2[0];});on('b2a',()=>{S2.play=false;S2.rev=6;S2.gx=J2[6];});on('b2r',()=>{S2.play=false;S2.rev=-1;S2.gx=null;});},
+ frame(t){put('stage',stage2(t));put('chart',chart2(S2.rev));put('vals',vals2(S2.rev));}},
+
+{tab:'3 Rollen – Stapel – Rollen',title:'3 · Rollen – Stapel – Rollen: so ist es im Stromkreis',
+ lead:'Leitungen sind wie Bücher auf Rollen: Sie bremsen kaum. Die Lampe ist wie ein schwerer Bücherstapel: Hier geht fast der ganze Druck verloren. Am Ende ist nichts mehr übrig – wie am Minuspol.',
+ html:`<div class="card stage" id="stage"></div>
+<div class="controls"><button class="btn primary" id="b3m">▶ Messen</button><button class="btn" id="b3a">Alle Werte zeigen</button><button class="btn" id="b3r">↺ Zurücksetzen</button><span class="hint">100 N bei den Büchern entsprechen hier 12 V im Stromkreis.</span></div>
+<div class="grid3"><div class="card"><div class="chart" id="chart"></div></div><div class="card"><div class="circ" id="circ"></div><p class="hint" style="margin:4px 0 0">Fachbuch: „Ursache von Spannungsabfällen sind Widerstände in den Leitungen und anderen Verbrauchern.“ (Grundkenntnisse SHK, 6. Aufl., S. 239)</p></div>
+<div class="card"><div class="merk"><b>Merksatz</b>In der Leitung fällt fast keine Spannung ab, in der Lampe fast die ganze. Alle Spannungsabfälle zusammen ergeben wieder die Quellenspannung: 0,36 V + 11,28 V + 0,36 V = 12 V.</div>
+${TR([['A','Spannungsquelle (12 V)'],['Bücher auf Rollen','Hin- und Rückleiter: kleiner Widerstand'],['Bücherstapel','Lampe: großer Widerstand'],['Ende der Reihe','Minuspol (0 V)']],['Bücher','Stromkreis'])}</div></div>`,
+ init(){on('b3m',()=>{S3.play=true;S3.t0=now();S3.rev=-1;S3.gx=J3[0];});on('b3a',()=>{S3.play=false;S3.rev=7;S3.gx=J3[7];});on('b3r',()=>{S3.play=false;S3.rev=-1;S3.gx=null;});},
+ frame(t){put('stage',stage3(t));put('chart',chart3(S3.rev));put('circ',circuitSVG({id:'c3',U:12,Uh:.36,Ul:11.28,Ur:.36,I:0,ph:0,glow:.8,amps:false}));}},
+
+{tab:'4 Durchfluss = Strom',title:'4 · Jetzt fließt etwas: Durchfluss = Strom',
+ lead:'A schiebt dauernd nach. Die Bücher rollen zum festen Stapel (der Lampe), werden darunter durchgeschoben, rollen weiter und laufen im Kreis zurück. Wie viele Bücher pro Minute an einer Stelle vorbeikommen, ist der Durchfluss – im Stromkreis die Stromstärke I in Ampere (A).',
+ html:`<div class="card stage" id="stage"></div>
+<div class="controls"><label class="ctl">Antrieb <input type="range" id="r4d" min="0" max="100" step="5" value="100"><b id="o4d"></b></label>
+<label class="ctl">Stapel = Lampe <input type="range" id="r4h" min="1" max="5" step="1" value="3"><b id="o4h"></b></label>
+<span class="ctl">Leitung: <button class="btn on" id="b4g">gute Rollen</button><button class="btn" id="b4b">schwergängige Rollen</button></span>
+<button class="btn primary" id="b4run">⏸ Pause</button><button class="btn" id="b4r">↺ Zurücksetzen</button></div>
+<div class="grid3"><div class="card"><div class="circ" id="circ"></div><ul class="probe hint"><li>Stapel höher: Was passiert mit dem Durchfluss und der Lampe?</li><li>Schwergängige Rollen (= lange, dünne Leitung): Wie viel Spannung bleibt für die Lampe?</li><li>Fachbuch: Bohrhammer an langer Leitung – 6,98 V Spannungsabfall, am Gerät nur noch 223 V (Grundkenntnisse SHK, 6. Aufl., S. 249).</li></ul></div>
+<div class="card"><div class="chart" id="chart"></div></div>
+<div class="card"><div class="vals" id="vals"></div><div class="merk" style="margin-top:8px"><b>Merksatz</b>Die Spannung (der Druck) wird unterwegs abgebaut – der Strom (der Durchfluss) nicht. Er ist überall im Kreis gleich groß, vor der Lampe genauso wie dahinter. Mehr Spannung → mehr Strom. Mehr Widerstand → weniger Strom: I = U ÷ R.</div></div></div>`,
+ init(){const upd=()=>{const m=m4();document.getElementById('o4d').textContent=`${fmt(m.F)} N ≙ ${fmt(m.U,1)} V`;document.getElementById('o4h').textContent=`${S4.h} ${S4.h===1?'Buch':'Bücher'} ≙ ${8*S4.h} Ω`;
+     document.getElementById('b4g').classList.toggle('on',!S4.bad);document.getElementById('b4b').classList.toggle('on',S4.bad);document.getElementById('b4run').textContent=S4.run?'⏸ Pause':'▶ Start';
+     document.getElementById('r4d').value=S4.drive*100;document.getElementById('r4h').value=S4.h;};
+   on('r4d',e=>{S4.drive=e.target.value/100;upd();},'input');on('r4h',e=>{S4.h=+e.target.value;upd();},'input');
+   on('b4g',()=>{S4.bad=false;upd();});on('b4b',()=>{S4.bad=true;upd();});on('b4run',()=>{S4.run=!S4.run;upd();});
+   on('b4r',()=>{Object.assign(S4,{drive:1,h:3,bad:false,run:true,o:30});upd();});upd();},
+ frame(t,dt){const m=m4(),v=m.bpm/60*G4.P;if(S4.run){S4.o+=v*dt;S4.rot+=v*dt/8;S4.ph+=v*dt;while(S4.o>=G4.P){S4.o-=G4.P;S4.fall.push(t);}}
+   S4.fall=S4.fall.filter(t0=>t-t0<.9);
+   put('stage',stage4(t,m));put('circ',circuitSVG({id:'c4',U:m.U,Uh:m.Uh,Ul:m.Ul,Ur:m.Ur,I:m.I,ph:S4.ph,glow:m.P/16,amps:true}));put('chart',chart4(m));put('vals',vals4(m));}},
+
+{tab:'5 Heizkreis (SHK)',title:'5 · Übertragung auf SHK: der Heizkreis',
+ lead:'Die Pumpe ist der Antrieb – wie A, wie die Spannungsquelle. Die Rohre bremsen etwas (Rohrreibung), das Thermostatventil bremst viel. Die Manometer zeigen, wie viel Druck an jeder Stelle noch übrig ist.',
+ html:`<div class="controls"><label class="ctl">Pumpe (Antrieb) <input type="range" id="r5p" min="0" max="100" step="5" value="100"><b id="o5p"></b></label>
+<label class="ctl">Thermostatventil <input type="range" id="r5v" min="0" max="5" step="1" value="3"><b id="o5v"></b></label>
+<span class="ctl">Rohr: <button class="btn on" id="b5g">kurz und weit</button><button class="btn" id="b5b">lang und eng</button></span>
+<button class="btn primary" id="b5run">⏸ Pause</button><button class="btn" id="b5r">↺ Zurücksetzen</button></div>
+<div class="grid2"><div class="card heiz" id="heiz"></div>
+<div class="stack"><div class="card chart" id="chart"></div>
+<div class="card"><div class="vals" id="vals"></div><div class="merk" style="margin-top:8px"><b>Merksatz</b>Im Heizkreis fällt der Druck vor allem am Ventil ab, in den Rohren nur wenig. Der Volumenstrom ist überall im Kreis gleich. Schließt das Ventil weiter, sinkt der Volumenstrom. Ist es zu, fließt nichts mehr – dann liegt der ganze Pumpendruck am Ventil an.</div>
+<div class="info"><b>Gut zu wissen:</b> Beim Wasser wächst der Druckverlust mit dem Quadrat des Volumenstroms: doppelter Volumenstrom → vierfacher Druckverlust (Fachkenntnisse 1, S. 226). Beim Strom wächst der Spannungsabfall gleichmäßig: doppelter Strom → doppelter Spannungsabfall.</div></div></div></div>`,
+ init(){const upd=()=>{const m=m5();document.getElementById('o5p').textContent=`${fmt(m.dp)} mbar`;document.getElementById('o5v').textContent=VN[S5.valve];
+     document.getElementById('b5g').classList.toggle('on',!S5.bad);document.getElementById('b5b').classList.toggle('on',S5.bad);document.getElementById('b5run').textContent=S5.run?'⏸ Pause':'▶ Start';
+     document.getElementById('r5p').value=S5.pump*100;document.getElementById('r5v').value=S5.valve;};
+   on('r5p',e=>{S5.pump=e.target.value/100;upd();},'input');on('r5v',e=>{S5.valve=+e.target.value;upd();},'input');
+   on('b5g',()=>{S5.bad=false;upd();});on('b5b',()=>{S5.bad=true;upd();});on('b5run',()=>{S5.run=!S5.run;upd();});
+   on('b5r',()=>{Object.assign(S5,{pump:1,valve:3,bad:false,run:true});upd();});upd();},
+ frame(t,dt){const m=m5();if(S5.run)S5.ph+=m.V*.55*dt;put('heiz',heizSVG(m));put('chart',chart5(m));put('vals',vals5(m));}},
+
+{tab:'6 Übersicht',title:'6 · Ein Prinzip – drei Welten',
+ lead:'Bücher, Strom und Wasser folgen derselben Idee: Ein Antrieb schiebt, Widerstände bremsen, der Druck wird unterwegs abgebaut – der Durchfluss bleibt überall gleich.',
+ html:`<table class="ov"><thead><tr><th></th><th>Bücher-Modell</th><th>Stromkreis</th><th>Heizkreis (SHK)</th></tr></thead><tbody>
+<tr><th>Antrieb</th><td>A drückt (Kraft in N)</td><td>Spannungsquelle: Spannung U in Volt (V)</td><td>Pumpe: Pumpendruck Δp in mbar oder Pa</td></tr>
+<tr><th>Was fließt</th><td>Bücher (Bücher pro Minute)</td><td>Strom: Stromstärke I in Ampere (A)</td><td>Wasser: Volumenstrom V̇ in l/h</td></tr>
+<tr><th>Leitung</th><td>Bücher auf Rollen – kaum Reibung</td><td>Kupferleitung – kleiner Widerstand</td><td>Rohr – Rohrreibung (R-Wert × Länge)</td></tr>
+<tr><th>Verbraucher</th><td>Bücherstapel – große Reibung</td><td>Lampe – großer Widerstand R in Ohm (Ω)</td><td>Thermostatventil, Heizkörper – großer Durchflusswiderstand</td></tr>
+<tr><th>Verlust</th><td>Reibungsverlust (es wird warm)</td><td>Spannungsabfall</td><td>Druckabfall (Druckverlust)</td></tr>
+<tr><th>Bleibt gleich</th><td>alle Bücher gleich schnell</td><td>Strom überall gleich groß</td><td>Volumenstrom überall gleich groß</td></tr>
+<tr><th>Zusammenhang</th><td>mehr Druck → schneller, mehr Reibung → langsamer</td><td>I = U ÷ R: doppelter Strom → doppelter Spannungsabfall</td><td>doppelter Volumenstrom → vierfacher Druckverlust</td></tr>
+<tr><th>Unterbrechung</th><td>Reihe blockiert: nichts bewegt sich</td><td>Schalter offen: I = 0, die ganze Spannung liegt am Schalter</td><td>Ventil zu: V̇ = 0, der ganze Pumpendruck liegt am Ventil</td></tr>
+</tbody></table>
+<div class="grid3" style="margin-top:10px">
+<div class="merk"><b>1. Antrieb</b>Spannung (Strom) und Pumpendruck (Wasser) sind der Antrieb – wie A, der die Bücher schiebt.</div>
+<div class="merk"><b>2. Abfall</b>Jeder Widerstand „verbraucht“ ein Stück vom Antrieb. Wo der Widerstand groß ist, fällt viel ab: in der Lampe, am Ventil. In guten Leitungen und Rohren fällt wenig ab.</div>
+<div class="merk"><b>3. Durchfluss</b>Strom und Volumenstrom werden nicht verbraucht. Sie sind überall im Kreis gleich groß.</div></div>
+<p class="quelle">Quellen: Grundkenntnisse SHK, 6. Auflage, S. 238 f. (Stromkreis, Spannung, Spannungsabfall) und S. 249 (Bohrhammer an langer Leitung) · Fachkenntnisse 1, S. 19 f. (Druckverluste in Rohren) und S. 226 (Rohrnetzkennlinie).</p>`,
+ init(){},frame(){}}
+];
+
+/* ---------- Navigation ---------- */
+let cur=0;
+function show(i){cur=clamp(i,0,STEPS.length-1);const st=STEPS[cur];
+  document.getElementById('ttl').textContent=st.title;document.getElementById('lead').textContent=st.lead;
+  document.getElementById('content').innerHTML=st.html;st.init();
+  document.querySelectorAll('#tabs button').forEach((b,k)=>b.classList.toggle('on',k===cur));
+  document.getElementById('pos').textContent=`Schritt ${cur+1} von ${STEPS.length} · Tasten ← → blättern · F = Vollbild`;
+  document.getElementById('prev').disabled=cur===0;document.getElementById('next').disabled=cur===STEPS.length-1;
+  try{history.replaceState(null,'','#'+(cur+1));}catch(e){}}
+document.getElementById('tabs').innerHTML=STEPS.map((s,k)=>`<button data-k="${k}">${s.tab}</button>`).join('');
+document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(+b.dataset.k);});
+on('prev',()=>show(cur-1));on('next',()=>show(cur+1));
+const fs=()=>{try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen();}catch(e){}};
+on('fs',fs);
+document.addEventListener('keydown',e=>{if(e.target&&e.target.tagName==='INPUT')return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'){show(cur+1);e.preventDefault();}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){show(cur-1);e.preventDefault();}
+  else if(e.key==='f'||e.key==='F'){fs();}});
+let last=performance.now();
+function loop(ts){const dt=Math.min(.05,(ts-last)/1000);last=ts;try{STEPS[cur].frame(ts/1000,dt);}catch(err){console.error(err);}requestAnimationFrame(loop);}
+const h=parseInt((location.hash||'').slice(1),10);show(h>=1&&h<=STEPS.length?h-1:0);
+requestAnimationFrame(loop);
+})();
+</script>
+<script>
+/* Zurück in den Moodle-Kurs (Wunsch des Lehrers 22.11.2026: „… eingesperrt … wieder im Moodle-Kurs ankommen“).
+   Nur sichtbar, wenn die Datei aus Moodle kommt (pluginfile.php). Ziel: Kurs zum Kontext der Datei, sonst die Moodle-Seite,
+   von der man kam, sonst „Meine Kurse“. Liegt die Datei in einem weiteren Kurs: Kontext der Datei → Kurs-ID eintragen. */
+(function () {
+  var m = (location.pathname || '').match(/\/pluginfile\.php\/(\d+)\//), a = document.getElementById('zumKurs');
+  if (!m || !a) return;
+  var KURS_JE_KONTEXT = { '131415': 3190, '131416': 3190, '131417': 3190 }, k = KURS_JE_KONTEXT[m[1]], ziel = '';
+  if (k) ziel = location.origin + '/course/view.php?id=' + k;
+  else { try { var r = document.referrer ? new URL(document.referrer) : null; if (r && r.host === location.host && !/\/pluginfile\.php\//.test(r.pathname)) ziel = r.href; } catch (e) {} }
+  a.href = ziel || location.origin + '/my/courses.php'; a.hidden = false;
+})();
+</script>
+</body>
+</html>
