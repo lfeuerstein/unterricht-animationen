@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>2.4 Im Keller: Die Gasleitung planen – Haus Kessler</title>
+<style>
+:root{--papier:#f4f1ea;--tinte:#22303a;--leise:#5d6b75;--linie:#d5cfc2;--karte:#fff;--akzent:#0b6b7d;--akzent-hell:#e1f0f2;--gold:#d99a1b;
+  --vl:#d0342c;--rl:#2f6fb7;--ring:#b0408a;--gut:#2e7d4f;--gut-hell:#e4f3e3;--schlecht:#c8371f;--schlecht-hell:#fde3df;--merk:#fffbe9;--merk-rand:#ecd9a0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation}
+body{margin:0;background:var(--papier);color:var(--tinte);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+.kopf{position:sticky;top:0;z-index:5;background:var(--papier);border-bottom:1px solid var(--linie);padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.kopf .titel{flex:1 1 360px;min-width:0}
+.kopf .ober{margin:0;font-size:13px;color:var(--leise)}
+.kopf h1{margin:0;font-size:20px;line-height:1.25}
+.kopf .stand{font-size:16px;white-space:nowrap;text-align:right}
+.kopf .stand small{display:block;font-size:12px;color:var(--leise)}
+.kurs{min-height:44px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--akzent);background:#fff;color:var(--akzent);font-weight:600;cursor:pointer;touch-action:manipulation}
+main{max-width:1040px;margin:0 auto;padding:14px 16px 60px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+h2{font-size:20px;margin:0 0 8px;line-height:1.25}
+h3{font-size:17px;margin:14px 0 6px}
+p{margin:0 0 10px}
+.klein{font-size:14px;color:var(--leise)}
+.sprech{border-left:5px solid var(--akzent);background:var(--akzent-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:0 0 12px}
+.sprech b.wer{display:block;font-size:13px;color:var(--akzent);letter-spacing:.3px;margin-bottom:2px}
+.merk{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 12px;margin:10px 0 0}
+.wahl{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.knopf,.wahl button{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;touch-action:manipulation}
+.wahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.knopf.haupt{background:var(--akzent);border-color:var(--akzent);color:#fff}
+.knopf:disabled,.wahl button:disabled{opacity:.45;cursor:default}
+svg{display:block;width:100%;height:auto}
+.rollen{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--leise);font-weight:600}
+.balken{height:12px;border-radius:6px;background:var(--akzent)}
+.balkenreihe{display:flex;min-width:60px}
+.zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.zwei{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}}
+/* Animation */
+.wegbild{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.messung{min-height:48px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--akzent-hell);font-size:17px}
+.messung b{font-size:19px}
+.hk-knopf{cursor:pointer}
+.lupe-ruf{cursor:pointer}
+.lupe{border:2px solid var(--tinte);border-radius:14px;padding:12px 14px;margin-top:12px;background:#fff}
+.lupe h3{margin:0 0 6px}
+.lupe ol{margin:8px 0 0;padding-left:22px}
+.lupe li{margin:3px 0}
+/* Aufgaben */
+.aufgabe{border:1px solid var(--linie);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:#fff}
+.aufgabe h3{margin:0 0 6px}
+.aufgabe .pkt{float:right;margin-left:10px;font-size:14px;color:var(--leise);font-weight:600}
+.aufgabe.fertig{border-color:var(--gut);box-shadow:0 0 0 2px var(--gut-hell)}
+.feld{display:inline-flex;align-items:center;gap:6px;margin:4px 16px 4px 0;font-size:17px}
+input.zahl{font:inherit;width:5.2em;min-height:44px;padding:6px 8px;border:1px solid var(--linie);border-radius:8px;background:#fff;color:var(--tinte)}
+input.zahl.ok{border-color:var(--gut);background:var(--gut-hell)}
+input.zahl.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+input.zahl:disabled{opacity:1;color:var(--tinte)}
+.rueck{display:block;margin-top:8px;font-size:15px}
+.rueck.ok{color:var(--gut);font-weight:600}
+.rueck.nein{color:var(--schlecht)}
+.satz{border:1px solid var(--linie);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+.satz p{margin:0 0 6px;font-style:italic}
+.satz.ok{border-color:var(--gut);background:var(--gut-hell)}
+.satz.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+.satz .wahl{margin:0}
+/* Zeichnen */
+svg.zeichnen{min-width:680px;touch-action:manipulation;background:#eef1ea;border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.gruppe{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 8px}
+.gruppe button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.gruppe .gname{font-size:14px;color:var(--leise);font-weight:600;min-width:110px}
+.pruefliste{list-style:none;padding:0;margin:10px 0 0;font-size:15px}
+.pruefliste li{padding:3px 0 3px 26px;position:relative}
+.pruefliste li::before{position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;text-align:center;line-height:18px}
+.pruefliste li.ok::before{content:"✓";background:var(--gut)}
+.pruefliste li.nein::before{content:"✗";background:var(--schlecht)}
+/* Team */
+.tablet{border:2px solid var(--tinte);border-radius:16px;padding:14px;background:#fff;margin-top:6px}
+.tablet h3{margin:0 0 6px}
+.phase{border-top:1px solid var(--linie);padding-top:10px;margin-top:12px}
+.phase.zu{opacity:.45}
+.phase label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.grosswahl{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}
+.grosswahl button{min-width:150px;min-height:96px;border-radius:16px;border:2px solid var(--tinte);background:#fff;cursor:pointer;font-size:18px;padding:10px 14px;touch-action:manipulation}
+.grosswahl button b{display:block;font-size:34px;line-height:1.1}
+.ok-text{color:var(--gut);font-weight:600}
+.hinweis-gruen{display:inline-block;background:var(--gut-hell);border:1px solid var(--gut);border-radius:8px;padding:2px 8px}
+.hinweis-orange{display:inline-block;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:2px 8px}
+@media (max-width:820px){body{font-size:16px}.kopf h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Haus Kessler 2.4 – Ergänzungen zu basis.css (unverändert eingebunden): Kellerplan, Plan des Kollegen, Auswahl, Plan für den Chef, Baustein „Strang legen“ */
+.lage{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:860px){.lage{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:start}}
+figure.bild{margin:0;background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;padding:8px 10px 10px}
+figure.bild figcaption{font-size:14px;font-weight:600;margin:0 0 6px}
+svg.kellerplan{max-width:470px;margin:0 auto}
+.wissen{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;padding:10px 12px;font-size:15px}
+.wissen h4{margin:0 0 6px;font-size:15px}
+.wissen ul{margin:0;padding-left:18px}
+.wissen li{margin:3px 0}
+.kollege{border:1px solid var(--linie);border-radius:12px;padding:10px 12px;margin:12px 0 0;background:#fcfbf8}
+.kollege h4{margin:0 0 6px;font-size:16px}
+table.kplan{min-width:520px}
+table.kplan td,table.kplan th{vertical-align:top}
+table.kplan tr.dein td{background:#fff0d9}
+table.kplan tr.verdeckt td{color:var(--leise)}
+.frage{margin:12px 0 6px}
+.zeile{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:6px 0}
+.zeile .was{font-size:15px;color:var(--leise);min-width:92px}
+.knopf.vz{font-size:15px}
+.satzwahl{display:flex;flex-direction:column;gap:8px;margin:0 0 6px}
+.satzwahl button{min-height:44px;padding:9px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;text-align:left;line-height:1.35;touch-action:manipulation}
+.satzwahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.satzwahl button:disabled{opacity:.45;cursor:default}
+.wahl button.ok[aria-pressed],.satzwahl button.ok[aria-pressed]{background:var(--gut-hell);border:2px solid var(--gut);color:var(--tinte);opacity:1}
+.wahl button.nein[aria-pressed],.satzwahl button.nein[aria-pressed]{background:var(--schlecht-hell);border:2px solid var(--schlecht);color:var(--tinte)}
+.wahl button.ok::after,.satzwahl button.ok::after{content:" ✓";color:var(--gut);font-weight:700}
+.wahl button.nein::after,.satzwahl button.nein::after{content:" ✗";color:var(--schlecht);font-weight:700}
+input.zahl{width:5.6em}
+.ringfrage{border:1px solid var(--linie);border-radius:12px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+table.chefplan{min-width:540px}
+table.chefplan td,table.chefplan th{vertical-align:top}
+.gross{font-size:20px;font-weight:700}
+.grosswahl button small{display:block;font-size:13px;color:var(--leise);margin-top:2px}
+.merk b{font-weight:700}
+/* Baustein „Strang legen“ */
+.strang{border:1px solid var(--linie);border-radius:12px;padding:10px 12px;background:#fcfbf8;margin:6px 0 0}
+.sk-name{font-size:14px;font-weight:600;color:var(--leise);margin:0 0 6px}
+.sk-teile,.sk-chips{display:flex;flex-wrap:wrap;gap:8px}
+.sk-teil{min-height:44px;padding:7px 12px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:15px;touch-action:manipulation}
+.sk-teil:disabled{opacity:.4;cursor:default}
+.sk-folge{margin:10px 0 8px;font-size:15px;line-height:1.6}
+.sk-bild{margin:6px 0 10px;border:1px solid var(--linie);border-radius:10px;overflow:hidden;background:#fbfaf6}
+.sk-bild svg{display:block;width:100%;height:auto;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:crosshair}
+.sk-bild.sk-zu svg{cursor:default}
+.sk-zu{opacity:.92}
+.sk-wert{min-height:44px;min-width:70px;padding:7px 14px;border-radius:999px;border:2px solid var(--tinte);background:#fff;color:var(--tinte);cursor:grab;font-size:16px;font-weight:700;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.sk-wert[aria-pressed="true"]{background:#e07a10;border-color:#e07a10;color:#fff}
+.sk-wert:disabled{opacity:.4;cursor:default}
+.sk-geist{position:fixed;left:0;top:0;z-index:50;transform:translate(-50%,-130%);pointer-events:none;padding:7px 14px;border-radius:999px;border:2px solid #e07a10;background:#fff;color:var(--tinte);font-size:16px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.sk-ziel{cursor:pointer}
+.sk-ziel rect{fill:#fff;stroke:#7a8790;stroke-width:1.5;stroke-dasharray:4 3}
+.sk-ziel.voll rect{stroke:#1d2a33;stroke-dasharray:none}
+.sk-ziel.bereit rect{stroke:#e07a10;stroke-width:2.5;stroke-dasharray:none}
+.sk-ziel.drueber rect{fill:#fff0d9;stroke:#e07a10;stroke-width:3;stroke-dasharray:none}
+.sk-ziel.ok rect{fill:var(--gut-hell);stroke:var(--gut);stroke-width:2.2;stroke-dasharray:none}
+.sk-ziel.nein rect{fill:var(--schlecht-hell);stroke:var(--schlecht);stroke-width:2.2;stroke-dasharray:none}
+.sk-knoepfe{margin:0 0 6px}
+.sk-status{margin:4px 0 0;font-size:15px;min-height:1.5em}
+.strang .pruefliste{margin-top:8px}
+
+.leise{color:var(--leise);font-size:14px}
+.kennz{font-weight:700;color:var(--akzent);margin:0 0 2px}
+a.zurueck{color:var(--akzent)}
+h1{font-size:24px;margin:0 0 4px;line-height:1.2}
+.sprung{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.sprung a{display:inline-block;padding:9px 14px;border-radius:999px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-decoration:none;font-size:15px}
+section.karte{scroll-margin-top:10px}
+.videoplatz{border:2px dashed var(--linie);border-radius:10px;padding:12px 14px;background:#fcfbf8;color:var(--leise)}
+.videoplatz a{color:var(--akzent);font-weight:600}
+footer{margin-top:28px;font-size:13px;color:var(--leise);border-top:1px solid var(--linie);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+  <p class="leise"><a class="zurueck" href="index.html">← Haus Kessler: alle Stationen</a></p>
+  <p class="kennz">3195 · 2.4</p>
+  <h1>Haus Kessler – Station 2.4 Im Keller: Die Gasleitung planen</h1>
+  <p class="leise">Haus Kessler – Auftrag 2: Planung. Video und Team-Übung zum Arbeitsblatt 2.4, ohne Anmeldung und ohne Punkte.</p>
+  <div class="sprung"><a href="#video">Video 2.4.1</a><a href="#team-uebung">2.4.2 Dreier-Team</a></div>
+
+  <section class="karte" id="video">
+    <h2>Video 2.4.1: Thermisch auslösende Absperreinrichtung und Gasströmungswächter</h2>
+    <div class="videoplatz"><!--VIDEO-2-4-1--><p><a href="https://youtu.be/V5L8AMKWxqs" target="_blank" rel="noopener"><b>Video bei YouTube öffnen</b> (4:27 Minuten)</a></p><p>Ein Ausbilder erklärt an der Tafel die thermisch auslösende Absperreinrichtung (TAE) und den Gasströmungswächter (GS) – beide sitzen auch in der Leitung von Herrn Kessler. Die Aufnahme ist hallig: Nimm Kopfhörer. Es gilt dein Tabellenbuch (S. 368–369).</p><p class="leise">Quelle: YouTube, Kanal „Bildungsakademie Handwerkskammer Karlsruhe“, „Sanitär- Heizungs- und Klimatechnik (SHK): Therm. auslösende Absperreinrichtung/Gasströmungswächter“. Der Link öffnet YouTube; dort gelten die Datenschutzregeln von YouTube.</p></div>
+  </section>
+
+  <section class="karte" id="team-uebung">
+    <h2>2.4.2 Dreier-Team: Drei Prüfer, ein Strang</h2>
+    <div class="sprech"><b class="wer">DEIN CHEF</b>„Der Kollege hat die Leitung schon gerechnet. Bevor ich das Material bestelle, prüft ihr drei seinen Plan – jeder einen Teil. Und dann will ich von jedem von euch den Strang mit allen Werten.“</div>
+    <p><b>So geht es:</b> Teil 1 – du prüfst deinen Teil im Plan des Kollegen: Fehler finden, begründen, richtig rechnen. Teil 2 – du fragst das nächste Tablet nach seinem Fehler und seiner Teilsumme und rechnest im eigenen Tabellenbuch nach (Tablet 1 fragt Tablet 2, Tablet 2 fragt Tablet 3, Tablet 3 fragt Tablet 1). Teil 3 – ihr setzt euch zusammen, rechnet Σ Δp für den ganzen Strang, und jeder legt den Strang für den Chef selbst.</p>
+    <p class="leise">Du brauchst dein Tabellenbuch (S. 371, 372, 373) und den Taschenrechner. Für den Strang hältst du das iPad am besten quer.</p>
+    <div id="team"></div>
+  </section>
+
+  <footer>Diese Seite setzt keine Cookies, speichert nichts auf dem Gerät und lädt nichts von anderen Servern. Beim Aufruf verarbeitet der Anbieter GitHub technisch die IP-Adresse des Geräts.</footer>
+</main>
+<script>
+// ---------------------------------------------------------------- Baustein „Strang legen“ (Haus Kessler, Station 2.4, Dreier-Team 2.4.2, Teil 3)
+// Neu geschrieben für 2.4. Bedienidee aus zwei Vorbildern (beide nur gelesen, nicht geändert):
+//  · Elektro-Verdrahtung Haus Neumann (LF1.1 …\Rohbau-Begehung\verdrahten.js): Anfang antippen, Ecken auf der freien Fläche antippen, nur
+//    gerade Stücke; „Prüfen“ zeigt eine Liste, was stimmt und was noch fehlt.
+//  · Rohr-Zeichenübung Haus Röhringer (lernpakete\quelle\rz-ui.js): ein Tipp zählt erst beim Loslassen und nur, wenn der Finger kaum gewandert
+//    ist – so setzt Rollen der Seite keine Rohrstücke; Hinweis „iPad quer halten“.
+// So geht es: (1) In der Teilekiste die Bauteile in Gasrichtung antippen – sie hängen sich der Reihe nach an den Strang. (2) Ist das Rohr dran,
+// legt jeder Tipp ins Raster ein gerades Rohrstück bis zu diesem Punkt (Strangschema in Isometrie wie das Leitungsschema in T S. 371, selbst
+// gezeichnet; ein Rasterschritt = 0,5 m). Jede Ecke ist ein Winkel 90°. (3) Die Δp-Werte auf ihre Kästchen ziehen – oder Wert antippen, dann
+// Kästchen antippen. Geprüft wird wie bei der Verdrahtung: Reihenfolge, richtige Bauteile, Zahl der Winkel, Lage der Steigung, Längen nach dem
+// Kellerplan (2,5 + 3,5 + 1,5 + 0,5 = 8,0 m), Werte (15 · 45 · 89 · −6 · 25 Pa).
+// Teil ohne Bildschirm: STRANG (für die Probe ohne Browser). Bild und Bedienung: bauStrang(wurzel,o).
+// Ein Tipp auf ein Kästchen legt nie Rohr. Ein Wert wird beim Loslassen gewählt (nicht über „click“, den der Browser bei Fingern mit
+// touch-action:none nicht immer schickt); „click“ zählt nur ohne Zeiger davor (Tastatur).
+// Spielstand st = {t:[Bauteile in Gasrichtung], r:'x5y7z3y1' (Rohr: Richtung + Rasterschritte; x nach hinten rechts, y nach vorn rechts, z nach
+// oben, Großbuchstabe = Gegenrichtung), w:{Kästchen: Wert}}.
+const STRANG=(()=>{
+ const W=760,H=440,RAND=14,ST=36,SX=ST*Math.cos(Math.PI/6),SY=ST/2,SCHRITT=0.5,ZB=88,ZH=26;// ZB × ZH = Kästchen für die Werte
+ const E3={x:[1,0,0],X:[-1,0,0],y:[0,1,0],Y:[0,-1,0],z:[0,0,1],Z:[0,0,-1]};
+ const GEGEN={x:'X',X:'x',y:'Y',Y:'y',z:'Z',Z:'z'};
+ // Leitungsanfang S (Ausgang des Zählers) liegt fest; die Bauteile vor dem Rohr teilen sich die Strecke A–S (4,5 Rasterschritte)
+ const S0=[215,215],STRECKE=4.5,MAXTEILE=8,MAXSTUECK=8,MAXN=24;
+ const A=[S0[0]-STRECKE*SX,S0[1]+STRECKE*SY];
+ const zu2d=p=>[(p[0]+p[1])*SX,(p[1]-p[0])*SY-p[2]*ST];
+ const pkt=p=>{const o=zu2d(p);return [S0[0]+o[0],S0[1]+o[1]];};
+ const imBild=q=>q[0]>=RAND&&q[0]<=W-RAND&&q[1]>=RAND&&q[1]<=H-RAND;
+ // Teilekiste: richtige Bauteile und Ablenker (Fehler des Kollegen, zu kleines/zu großes Rohr, Hahn ohne TAE)
+ const TEILE={
+  dr:{n:'Gas-Druckregelgerät',kurz:'Druckregler',rolle:'dr'},
+  gs25:{n:'Strömungswächter GS 2,5 K',kurz:'GS 2,5 K',rolle:'gs'},
+  gs4:{n:'Strömungswächter GS 4 K',kurz:'GS 4 K',rolle:'gs'},
+  g4:{n:'Gaszähler G4',kurz:'Zähler G4',rolle:'zg'},
+  cu15:{n:'Kupferrohr dₐ 15',kurz:'dₐ 15',rolle:'rohr'},
+  cu18:{n:'Kupferrohr dₐ 18',kurz:'dₐ 18',rolle:'rohr'},
+  cu22:{n:'Kupferrohr dₐ 22',kurz:'dₐ 22',rolle:'rohr'},
+  ga15d:{n:'Armatur 15 D mit TAE',kurz:'15 D mit TAE',rolle:'ga'},
+  ah15:{n:'Absperrhahn DN 15 ohne TAE',kurz:'Hahn ohne TAE',rolle:'ae'},
+  geraet:{n:'Gerät (Brennwertkessel 20 kW)',kurz:'Gerät',rolle:'geraet'}};
+ const KISTE=['g4','cu22','ga15d','dr','gs25','cu18','geraet','ah15','gs4','cu15'];
+ const SOLL=['dr','gs4','g4','cu18','ga15d','geraet'];
+ const ROLLEN_SOLL=['dr','gs','zg','rohr','ga','geraet'];
+ const ROHR_SOLL='x5y7z3y1';
+ // Werte zum Ziehen: die fünf richtigen und zwei Werte aus dem Plan des Kollegen (80 Pa ohne Längenzuschläge, +6 Pa mit falschem Vorzeichen)
+ const WERTE={v15:'15 Pa',v45:'45 Pa',v89:'89 Pa',vm6:'−6 Pa',v25:'25 Pa',v80:'80 Pa',vp6:'+6 Pa'};
+ const WERTE_REIHE=['v45','vm6','v89','v80','v25','vp6','v15'];
+ const SOLLWERT={gs:'v15',zg:'v45',R:'v89',H:'vm6',ga:'v25'};
+ const ZIELNAME={gs:'GS',zg:'ZG',ga:'GA',ae:'AE',R:'R',H:'H'};
+ const fmt=x=>(Math.round(x*10)/10).toFixed(1).replace('.',',');
+ const rolle=k=>TEILE[k]?TEILE[k].rolle:'';
+ const leer=()=>({t:[],r:'',w:{}});
+ const kopie=st=>({t:st.t.slice(),r:st.r,w:Object.assign({},st.w)});
+ const horiz=d=>d!=='z'&&d!=='Z';
+ const rohrIndex=t=>t.findIndex(k=>rolle(k)==='rohr');
+ // Rohr lesen (gleiche Richtung hintereinander wird zusammengefasst)
+ function stuecke(r){const o=[];String(r||'').replace(/([xXyYzZ])(\d{1,2})/g,(_,d,n)=>{n=+n;if(n>0){const l=o[o.length-1];if(l&&l.d===d)l.n+=n;else o.push({d,n});}return '';});return o;}
+ const alsText=s=>s.map(x=>x.d+x.n).join('');
+ // Lage aller Dinge im Bild (Zeichenfläche 760 × 440)
+ function geo(st){
+  const t=st.t,ri=rohrIndex(t),nv=ri<0?t.length:ri,slot=nv?STRECKE/nv:STRECKE;
+  const vor=t.slice(0,nv).map((k,j)=>({k,i:j,pos:[A[0]+(j+0.5)*slot*SX,A[1]-(j+0.5)*slot*SY],nach:-1}));
+  const sg=[];let p3=[0,0,0];
+  if(ri>=0)for(const x of stuecke(st.r)){const v=E3[x.d],b=[p3[0]+v[0]*x.n,p3[1]+v[1]*x.n,p3[2]+v[2]*x.n];sg.push({d:x.d,n:x.n,a3:p3,b3:b,a:pkt(p3),b:pkt(b)});p3=b;}
+  const E=pkt(p3),ud=sg.length?sg[sg.length-1].d:'x',u=zu2d(E3[ud]);
+  const nach=ri<0?[]:t.slice(ri+1).map((k,j)=>{const f=0.75+1.5*j;return {k,i:ri+1+j,pos:[E[0]+u[0]*f,E[1]+u[1]*f],nach:j};});
+  // Winkel: jede Ecke ab dem Zähler (auch am Leitungsanfang, wenn das erste Stück nicht gerade aus dem Zähler läuft)
+  const ecken=[];let vorher='x';
+  sg.forEach((x,j)=>{if(x.d!==vorher){const a=zu2d(E3[vorher]),b=zu2d(E3[x.d]);let ax=a[0]-b[0],ay=a[1]-b[1];const l=Math.hypot(ax,ay)||1;ecken.push({pos:x.a,vor:j,nr:ecken.length+1,aussen:[ax/l,ay/l]});}vorher=x.d;});
+  // Kästchen für die Werte
+  const ziele=[],mitZiel=r=>r==='gs'||r==='zg'||r==='ga'||r==='ae';
+  vor.forEach(p=>{const r=rolle(p.k);if(mitZiel(r))ziele.push({id:'i'+p.i,rolle:r,pos:[p.pos[0]+20,p.pos[1]+36],an:p.pos});});
+  nach.forEach(p=>{const r=rolle(p.k);if(mitZiel(r))ziele.push({id:'i'+p.i,rolle:r,pos:[p.pos[0],p.pos[1]-(p.nach%2?92:64)],an:p.pos,oben:true});});
+  if(ri>=0){const h=sg.find(x=>horiz(x.d)),m=h?[(h.a[0]+h.b[0])/2,(h.a[1]+h.b[1])/2]:S0,nr=h&&(h.d==='y'||h.d==='Y')?[0.5,-0.866]:[-0.5,-0.866];
+   ziele.push({id:'R',rolle:'R',pos:[m[0]+nr[0]*36,m[1]+nr[1]*36],an:m});}
+  const v=sg.find(x=>!horiz(x.d));
+  if(v){const m=[(v.a[0]+v.b[0])/2,(v.a[1]+v.b[1])/2];ziele.push({id:'H',rolle:'H',pos:[m[0]-72,m[1]-30],an:m});}
+  return {t,ri,nv,slot,vor,sg,E,ud,nach,ecken,ziele,S:S0,A};
+ }
+ // Tipp ins Bild → Rohrstück vom Rohrende aus: die nächste der sechs Richtungen, Länge auf ganze Rasterschritte gerundet
+ function ausTipp(st,x,y){const E=geo(st).E,v=[x-E[0],y-E[1]];let best=null,bd=-Infinity;
+  for(const d of Object.keys(E3)){const u=zu2d(E3[d]),p=(v[0]*u[0]+v[1]*u[1])/ST;if(p>bd){bd=p;best=d;}}
+  const n=Math.round(bd/ST);return n>=1?{d:best,n}:null;}
+ // ein Rohrstück anhängen; Gründe für ein Nein: kein Rohr in der Kiste gewählt, zurück auf sich selbst, kreuzt, Rand, zu viele Stücke, zu lang
+ function anhaengen(st,d,n){
+  if(rohrIndex(st.t)<0)return {grund:'keinrohr'};
+  if(!E3[d]||!(n>=1))return {grund:'kurz'};
+  const s=stuecke(st.r),l=s[s.length-1];
+  if((l&&l.d===GEGEN[d])||(!l&&d==='X'))return {grund:'zurueck'};
+  const neu=s.map(x=>({d:x.d,n:x.n}));
+  if(l&&l.d===d)neu[neu.length-1].n+=n;else neu.push({d,n});
+  if(neu.length>MAXSTUECK)return {grund:'zuviel'};
+  if(neu.some(x=>x.n>MAXN))return {grund:'lang'};
+  const besucht=new Set(['0,0,0','-1,0,0','-2,0,0','-3,0,0','-4,0,0']);let p=[0,0,0];
+  for(const x of neu){const v=E3[x.d];for(let k=0;k<x.n;k++){p=[p[0]+v[0],p[1]+v[1],p[2]+v[2]];const key=p.join();if(besucht.has(key))return {grund:'kreuzt'};besucht.add(key);}
+   if(!imBild(pkt(p)))return {grund:'rand'};}
+  return {st:aufraeumen({t:st.t.slice(),r:alsText(neu),w:Object.assign({},st.w)})};
+ }
+ function teilDazu(st,k){if(!TEILE[k])return {grund:'unbekannt'};if(st.t.includes(k))return {grund:'doppelt'};if(st.t.length>=MAXTEILE)return {grund:'voll'};
+  return {st:aufraeumen({t:st.t.concat([k]),r:st.r,w:Object.assign({},st.w)})};}
+ const zielIds=st=>geo(st).ziele.map(z=>z.id);
+ // Werte auf Kästchen, die es nicht (mehr) gibt, fallen weg; das Rohr gilt nur mit einem Rohr in der Kette
+ function aufraeumen(st){const ids=zielIds(st),w={},frei=new Set(Object.keys(WERTE));
+  for(const id of ids){const v=st.w[id];if(v&&frei.has(v)){w[id]=v;frei.delete(v);}}
+  return {t:st.t,r:rohrIndex(st.t)<0?'':st.r,w};}
+ function wertSetzen(st,ziel,wert){if(!WERTE[wert]||!zielIds(st).includes(ziel))return st;const w=Object.assign({},st.w);
+  for(const k of Object.keys(w))if(w[k]===wert)delete w[k];w[ziel]=wert;return {t:st.t.slice(),r:st.r,w};}
+ function wertWeg(st,ziel){const w=Object.assign({},st.w);delete w[ziel];return {t:st.t.slice(),r:st.r,w};}
+ // Spielstand aus Moodle prüfen: nur bekannte Bauteile, ein Rohr, das sich Stück für Stück so hätte legen lassen, bekannte Werte
+ function saeubere(z){if(!z||typeof z!=='object')return leer();
+  const t=[];if(Array.isArray(z.t))for(const k of z.t.slice(0,40))if(typeof k==='string'&&TEILE[k]&&!t.includes(k)&&t.length<MAXTEILE)t.push(k);
+  let st={t,r:'',w:{}};
+  if(rohrIndex(t)>=0&&typeof z.r==='string'&&z.r.length<=40)for(const x of stuecke(z.r)){const r=anhaengen(st,x.d,x.n);if(!r.st)break;st=r.st;}
+  if(z.w&&typeof z.w==='object'){const ids=zielIds(st),w={};for(const id of ids){const v=z.w[id];if(typeof v==='string'&&WERTE[v]&&!Object.values(w).includes(v))w[id]=v;}st.w=w;}
+  return st;}
+ function richtig(){return saeubere({t:SOLL.slice(),r:ROHR_SOLL,w:{i1:'v15',i2:'v45',R:'v89',H:'vm6',i4:'v25'}});}
+ const m=n=>fmt(n*SCHRITT);
+ // Prüfen wie bei der Verdrahtung: eine Zeile je Punkt, ok nur, wenn alle Zeilen stimmen
+ function pruefe(st){
+  st=st||leer();const g=geo(st),t=st.t,ro=t.map(rolle),s=g.sg,zeilen=[];
+  // 1 Reihenfolge (ein Hahn ohne TAE steht an der Stelle der Armatur – ob er richtig ist, sagt Zeile 2)
+  const ord=ro.map(r=>r==='ae'?'ga':r),reihe=ord.length===ROLLEN_SOLL.length&&ord.every((r,i)=>r===ROLLEN_SOLL[i]);
+  const fehlt=ROLLEN_SOLL.some(r=>!ord.includes(r));
+  zeilen.push(['reihe',reihe,reihe?'Reihenfolge in Gasrichtung: Druckregelgerät → Strömungswächter → Zähler → Rohr → Armatur mit TAE → Gerät':
+   !t.length?'Noch kein Bauteil im Strang: Tipp die Bauteile in der Teilekiste in Gasrichtung an.':
+   fehlt?'Im Strang fehlt noch ein Bauteil: Er reicht vom Druckregelgerät bis zum Gerät.':
+   ord.length>ROLLEN_SOLL.length?'Im Strang sitzt ein Bauteil zu viel.':'Die Reihenfolge stimmt noch nicht: Geh den Weg des Gases ab – durch welches Bauteil strömt es zuerst, durch welches danach?']);
+  // 2 richtige Bauteile
+  let tx='die richtigen Bauteile: GS 4 K, Zähler G4, Kupferrohr dₐ 18, Armatur 15 D mit TAE';
+  const falsch=t.includes('gs25')?'GS 2,5 K passt nicht: Tab. 372.1 erlaubt ihn bei einem Gerät nur bis 17 kW.':
+   t.includes('cu15')?'Kupferrohr dₐ 15 reicht für 20 kW nicht (Tab. 373.1).':
+   t.includes('cu22')?'Kupferrohr dₐ 22 ginge auch, ist aber nicht das kleinste Rohr, das reicht – geplant ist dₐ 18 (Erstauswahl, Tab. 373.5).':
+   t.includes('ah15')?'Vor das Gerät gehört eine Armatur mit TAE – ein Hahn ohne TAE sperrt bei einem Brand nicht von selbst ab.':'';
+  const alle=['gs4','g4','cu18','ga15d'].every(k=>t.includes(k));
+  zeilen.push(['teile',!falsch&&alle,falsch||(alle?tx:'Ein Bauteil, das in den Plan gehört, fehlt noch im Strang.')]);
+  // 3 Winkel
+  const nw=g.ecken.length,rohr=g.ri>=0&&s.length>0;
+  zeilen.push(['winkel',rohr&&nw===3,!rohr?'Das Rohr fehlt noch: Nimm das Rohr aus der Teilekiste und tipp ins Raster.':
+   nw===3?'drei Winkel 90° (W1, W2, W3)':`Dein Rohr hat ${nw} ${nw===1?'Winkel':'Winkel'} – im Kellerplan sind es 3.`]);
+  // 4 Steigung: genau ein senkrechtes Stück, 1,5 m nach oben, zwischen Winkel 2 und Winkel 3
+  const senk=s.map((x,j)=>({x,j})).filter(o=>!horiz(o.x.d));
+  let st4=false,t4;
+  if(!rohr)t4='Die Steigung fehlt noch.';
+  else if(!senk.length)t4='Die Steigung fehlt: Das Gerät hängt 1,5 m höher als der Leitungsanfang.';
+  else if(senk.some(o=>o.x.d==='Z'))t4='Dein Rohr läuft nach unten – das Gerät hängt aber höher.';
+  else if(senk.length>1)t4='Das Rohr steigt im Kellerplan nur an einer Stelle: an der Wand kurz vor dem Gerät.';
+  else if(senk[0].x.n!==3)t4=`Deine Steigung ist ${m(senk[0].x.n)} m hoch – das Gerät hängt 1,5 m höher.`;
+  else{const e=g.ecken,j=senk[0].j,vorW=e.filter(c=>c.vor<=j).length;
+   st4=vorW===2&&e.length===3&&e[2].vor===j+1;
+   t4=st4?'Steigung 1,5 m nach oben, zwischen Winkel 2 und Winkel 3 – kurz vor dem Gerät':'Die Steigung sitzt an der falschen Stelle: Im Kellerplan steigt die Leitung erst nach den 3,5 m an der Wand – zwischen Winkel 2 und Winkel 3.';}
+  zeilen.push(['steigung',st4,t4]);
+  // 5 Längen und Richtungen nach dem Kellerplan
+  const laengen=s.map(x=>m(x.n)),summe=s.reduce((a,x)=>a+x.n,0);
+  const lOk=s.length===4&&s[0].n===5&&s[1].n===7&&s[2].n===3&&s[3].n===1;
+  const rOk=lOk&&s[0].d==='x'&&horiz(s[1].d)&&s[1].d.toLowerCase()!=='x'&&s[2].d==='z'&&s[3].d===s[1].d;
+  zeilen.push(['laengen',rOk,!rohr?'Die Längen fehlen noch.':rOk?'Längen wie im Kellerplan: 2,5 m + 3,5 m + 1,5 m + 0,5 m = 8,0 m':
+   lOk&&s[0].d!=='x'?'Die Längen stimmen. Das erste Stück läuft aber gerade aus dem Zähler heraus – ohne Winkel am Leitungsanfang.':
+   lOk&&s[2].d==='z'&&s[3].d!==s[1].d?'Die Längen stimmen. Aber das letzte Stück (0,5 m) läuft im Kellerplan in dieselbe Richtung weiter wie das lange Stück (3,5 m).':
+   `Die Längen passen noch nicht zum Kellerplan – dein Rohr: ${laengen.join(' + ')} = ${m(summe)} m.`]);
+  // 6 Werte
+  const zOk={};let richtigeWerte=0,falschGesetzt=false;
+  for(const z of g.ziele){const v=st.w[z.id],soll=SOLLWERT[z.rolle];if(!v)continue;zOk[z.id]=!!soll&&v===soll;if(zOk[z.id])richtigeWerte++;else falschGesetzt=true;}
+  const noetig=['gs','zg','ga','R','H'].every(r=>g.ziele.some(z=>z.rolle===r&&st.w[z.id]===SOLLWERT[r]));
+  const wOk=noetig&&!falschGesetzt;
+  const gesetzt=Object.keys(st.w).length;
+  zeilen.push(['werte',wOk,wOk?'Werte: Δp_GS 15 Pa · Δp_ZG 45 Pa · Δp_R 89 Pa · Δp_H −6 Pa · Δp_GA 25 Pa':
+   !gesetzt?'Die Werte fehlen noch: Zieh die Δp-Werte auf die Kästchen.':`${richtigeWerte} von 5 Werten sitzen richtig${falschGesetzt?' – rote Kästchen prüfen':''}.`]);
+  return {ok:zeilen.every(z=>z[1]),zeilen,zOk,winkel:nw};
+ }
+ return {W,H,RAND,ST,SX,SY,SCHRITT,ZB,ZH,E3,S0,A,TEILE,KISTE,SOLL,ROLLEN_SOLL,ROHR_SOLL,WERTE,WERTE_REIHE,SOLLWERT,ZIELNAME,MAXTEILE,MAXSTUECK,
+  fmt,rolle,leer,kopie,stuecke,alsText,rohrIndex,geo,zu2d,pkt,imBild,ausTipp,anhaengen,teilDazu,wertSetzen,wertWeg,aufraeumen,saeubere,richtig,pruefe};
+})();
+
+// ---------------------------------------------------------------- Bild und Bedienung (braucht STRANG)
+// o: {hole() → aktueller Strang, setze(st) speichert, geprueft() → Strang beim letzten „Prüfen“ oder null, zu: Teil noch nicht offen,
+//     tmp: {} für Kurzlebiges (gewählter Wert, Rückgängig-Liste), die beim Neuzeichnen der Seite erhalten bleiben sollen}
+function bauStrang(wurzel,o){
+ const K=STRANG,tmp=o.tmp||{};tmp.undo=tmp.undo||[];
+ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+ const st=()=>K.saeubere(o.hole());
+ const pst=()=>{const p=o.geprueft&&o.geprueft();return p?K.saeubere(p):null;};
+ const gleich=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+ const pruefStand=()=>{const p=pst(),z=st();return p&&gleich(p,z)?K.pruefe(p):null;};
+ const fertig=()=>{const r=pruefStand();return !!(r&&r.ok);};
+ const gesperrt=()=>!!o.zu||fertig();
+ let zug=null,geist=null,unten=null,zugEnde=0;
+ function merke(neu,text){tmp.undo.push(JSON.stringify(st()));if(tmp.undo.length>40)tmp.undo.shift();o.setze(K.saeubere(neu));tmp.meldung=text||'';male();}
+ const sub=(a,b)=>`${a}<tspan font-size="8" dy="3">${b}</tspan><tspan dy="-3"></tspan>`;
+ function symbol(k,p,klein){const r=K.rolle(k),x=p[0],y=p[1],f=klein?.8:1;
+  if(r==='dr')return `<rect x="${x-13*f}" y="${y-9*f}" width="${26*f}" height="${18*f}" rx="3" fill="#e9ecef" stroke="#1d2a33" stroke-width="1.5"/><path d="M${x-7*f},${y+4*f} L${x-2*f},${y-4*f} L${x+2*f},${y+4*f} L${x+7*f},${y-4*f}" fill="none" stroke="#1d2a33" stroke-width="1.3"/>`;
+  if(r==='gs')return `<rect x="${x-14*f}" y="${y-8*f}" width="${28*f}" height="${16*f}" rx="2" fill="#fff3cd" stroke="#1d2a33" stroke-width="1.5"/><text x="${x}" y="${y+3.5}" text-anchor="middle" font-size="${9*f}" font-weight="700">GS</text>`;
+  if(r==='zg')return `<rect x="${x-14*f}" y="${y-14*f}" width="${28*f}" height="${28*f}" fill="#fff" stroke="#1d2a33" stroke-width="1.8"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="${14*f}" font-weight="700">Z</text>`;
+  if(r==='ga')return `<circle cx="${x}" cy="${y}" r="${9*f}" fill="#fbf2f2" stroke="#c0392b" stroke-width="1.8"/><text x="${x}" y="${y+3.8}" text-anchor="middle" font-size="${10*f}" font-weight="700" fill="#c0392b">T</text>`;
+  if(r==='ae')return `<path d="M${x-10*f},${y-7*f} L${x+10*f},${y+7*f} L${x+10*f},${y-7*f} L${x-10*f},${y+7*f} Z" fill="#fff" stroke="#1d2a33" stroke-width="1.5"/>`;
+  if(r==='geraet')return `<rect x="${x-22}" y="${y-30}" width="44" height="60" rx="4" fill="#eef4fb" stroke="#1f5fbf" stroke-width="2"/><text x="${x}" y="${y-4}" text-anchor="middle" font-size="11" font-weight="700" fill="#1f5fbf">Gerät</text><text x="${x}" y="${y+11}" text-anchor="middle" font-size="10" fill="#1f5fbf">20 kW</text>`;
+  if(r==='rohr')return `<rect x="${x-15*f}" y="${y-5*f}" width="${30*f}" height="${10*f}" rx="3" fill="#cfd6db" stroke="#1d2a33" stroke-width="1.2"/>`;
+  return '';}
+ function bild(){const s=st(),g=K.geo(s),pr=pruefStand(),frei=!gesperrt(),mitRohr=g.ri>=0;
+  let h=`<svg class="sk-svg" viewBox="0 0 ${K.W} ${K.H}" role="img" aria-label="Raster für das Strangschema: ${esc(s.t.map(k=>K.TEILE[k].kurz).join(', ')||'noch leer')}; Rohr ${g.sg.map(x=>K.fmt(x.n*K.SCHRITT)+' m').join(', ')||'noch nicht gelegt'}" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#1d2a33">`;
+  h+=`<rect x="0" y="0" width="${K.W}" height="${K.H}" fill="#fbfaf6"/>`;
+  // Punktraster (Isometrie, 0,5 m)
+  let d='';for(let i=-26;i<=26;i++)for(let j=-26;j<=26;j++){const q=[g.S[0]+(i+j)*K.SX,g.S[1]+(j-i)*K.SY];if(K.imBild(q))d+=`M${q[0].toFixed(1)},${q[1].toFixed(1)}h0`;}
+  h+=`<path d="${d}" stroke="#b5ae9e" stroke-width="3.4" stroke-linecap="round"/>`;
+  h+=`<text x="${K.W-12}" y="${K.H-10}" text-anchor="end" font-size="11" fill="#7a8790">Ein Rasterschritt = 0,5 m</text>`;
+  // vom Hausanschluss bis zum Leitungsanfang
+  const A=g.A,A0=[A[0]-1.3*K.SX,A[1]+1.3*K.SY];
+  h+=`<path d="M${A0[0]},${A0[1]} L${A[0]},${A[1]}" stroke="#7a8790" stroke-width="2.5" stroke-dasharray="5 4"/><text x="${A0[0]-4}" y="${A0[1]+18}" font-size="11" fill="#5b6b77">vom Hausanschluss</text>`;
+  h+=`<path d="M${A[0]},${A[1]} L${g.S[0]},${g.S[1]}" stroke="#4a555d" stroke-width="3.5"/>`;
+  // Rohr, danach die Bauteile hinter dem Rohr
+  if(g.sg.length)h+=`<path d="M${g.S[0]},${g.S[1]} ${g.sg.map(x=>'L'+x.b[0].toFixed(1)+','+x.b[1].toFixed(1)).join(' ')}" fill="none" stroke="#4a555d" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round" data-rohr="1"/>`;
+  if(g.nach.length){const l=g.nach[g.nach.length-1].pos;h+=`<path d="M${g.E[0]},${g.E[1]} L${l[0]},${l[1]}" stroke="#4a555d" stroke-width="3.5"/>`;}
+  h+=`<circle cx="${g.S[0]}" cy="${g.S[1]}" r="3.6" fill="#1d2a33"/><text x="${g.S[0]+12}" y="${g.S[1]+20}" font-size="11" fill="#5b6b77">Leitungsanfang</text>`;
+  // Längen und Winkel
+  g.sg.forEach(x=>{const mx=(x.a[0]+x.b[0])/2,my=(x.a[1]+x.b[1])/2,dd=x.d.toLowerCase(),kurz=dd==='y'&&x.n<=2,n=dd==='x'?[0.5,0.866]:dd==='y'?(kurz?[0.5,-0.866]:[-0.5,0.866]):[-1,0],an=dd==='x'||kurz?'start':'end';
+   h+=`<text x="${(mx+n[0]*16).toFixed(1)}" y="${(my+n[1]*16+4).toFixed(1)}" text-anchor="${an}" font-size="13" font-weight="700" fill="#3d4a54">${K.fmt(x.n*K.SCHRITT)} m</text>`;});
+  g.ecken.forEach(c=>{h+=`<circle cx="${c.pos[0].toFixed(1)}" cy="${c.pos[1].toFixed(1)}" r="4.6" fill="#1d2a33"/><text x="${(c.pos[0]+c.aussen[0]*17).toFixed(1)}" y="${(c.pos[1]+c.aussen[1]*17+4).toFixed(1)}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1d2a33">W${c.nr}</text>`;});
+  // Bauteile mit Namen
+  g.vor.forEach(p=>{h+=symbol(p.k,p.pos,g.slot<1.2)+`<text x="${(p.pos[0]-14).toFixed(1)}" y="${(p.pos[1]-14).toFixed(1)}" text-anchor="end" font-size="12" fill="#3d4a54">${esc(K.TEILE[p.k].kurz)}</text>`;});
+  g.nach.forEach(p=>{h+=symbol(p.k,p.pos,false);const z=g.ziele.find(q=>q.id==='i'+p.i);
+   if(K.rolle(p.k)!=='geraet')h+=`<text x="${p.pos[0].toFixed(1)}" y="${((z?z.pos[1]-18:p.pos[1]-18)).toFixed(1)}" text-anchor="middle" font-size="12" fill="#3d4a54">${esc(K.TEILE[p.k].kurz)}</text>`;});
+  // Kästchen für die Werte
+  g.ziele.forEach(z=>{const v=s.w[z.id],kl=pr&&v?(pr.zOk[z.id]?' ok':' nein'):'',x=z.pos[0],y=z.pos[1];
+   h+=`<g class="sk-ziel${v?' voll':''}${kl}${tmp.gewaehlt&&frei?' bereit':''}" data-ziel="${z.id}"><path d="M${x},${y} L${z.an[0].toFixed(1)},${z.an[1].toFixed(1)}" stroke="#8a8f98" stroke-width="1.2" stroke-dasharray="3 3"/>`+
+    `<rect x="${(x-K.ZB/2).toFixed(1)}" y="${(y-K.ZH/2).toFixed(1)}" width="${K.ZB}" height="${K.ZH}" rx="6"/>`+
+    `<text x="${(x-K.ZB/2+6).toFixed(1)}" y="${(y+4.6).toFixed(1)}" font-size="12.5">${sub('Δp',K.ZIELNAME[z.rolle])}<tspan> = </tspan><tspan font-weight="700">${v?esc(K.WERTE[v]):'…'}</tspan></text></g>`;});
+  // Rohrende (hier geht es weiter)
+  if(frei&&mitRohr&&!g.nach.length)h+=`<circle cx="${g.E[0].toFixed(1)}" cy="${g.E[1].toFixed(1)}" r="11" fill="none" stroke="#e07a10" stroke-width="3" data-ende="1"/>`;
+  return h+'</svg>';}
+ function status(){const s=st(),g=K.geo(s);
+  if(o.zu&&!fertig())return 'Der Strang öffnet sich, sobald Teil 2 stimmt.';
+  if(fertig())return '<b>✓ Der Strang stimmt.</b> So bekommt ihn der Chef – mit allen Werten.';
+  if(tmp.meldung)return tmp.meldung;
+  if(tmp.gewaehlt)return `Wert <b>${esc(K.WERTE[tmp.gewaehlt])}</b> gewählt: Tipp jetzt auf sein Kästchen (Δp = …).`;
+  if(!s.t.length)return 'Tipp in der Teilekiste die Bauteile in der Reihenfolge an, in der das Gas sie durchströmt.';
+  if(g.ri>=0&&!g.sg.length)return 'Jetzt das Rohr: Tipp im Raster auf den Punkt, an dem das erste gerade Stück endet. Ein Rasterschritt = 0,5 m.';
+  if(g.ri>=0&&!Object.keys(s.w).length)return 'Weiter: Tipp den nächsten Punkt im Raster an (dort sitzt ein Winkel) – oder das nächste Bauteil in der Teilekiste. Zum Schluss die Werte auf die Kästchen ziehen.';
+  return 'Zieh die Δp-Werte auf ihre Kästchen – oder tipp erst einen Wert an und dann sein Kästchen. Ein Kästchen antippen nimmt den Wert wieder heraus.';}
+ function male(){const s=st(),pr=pruefStand(),zu=gesperrt(),benutzt=new Set(Object.values(s.w));
+  let h=`<div class="sk-kiste"${fertig()?' hidden':''}><p class="sk-name">Teilekiste – tipp die Bauteile in Gasrichtung an:</p><div class="sk-teile">`+
+   K.KISTE.map(k=>`<button type="button" class="sk-teil" data-teil="${k}"${s.t.includes(k)||zu?' disabled':''}>${esc(K.TEILE[k].n)}</button>`).join('')+`</div></div>`;
+  h+=`<p class="sk-folge"><span class="klein">Dein Strang in Gasrichtung:</span> ${s.t.length?s.t.map(k=>'<b>'+esc(K.TEILE[k].kurz)+'</b>').join(' → '):'<span class="klein">noch leer</span>'}</p>`;
+  h+=`<div class="sk-bild${zu?' sk-zu':''}">${bild()}</div>`;
+  h+=`<div class="sk-werte"${fertig()?' hidden':''}><p class="sk-name">Δp-Werte zum Ziehen (nicht alle gehören in den Strang):</p><div class="sk-chips">`+
+   K.WERTE_REIHE.filter(v=>!benutzt.has(v)).map(v=>`<button type="button" class="sk-wert" data-wert="${v}" aria-pressed="${tmp.gewaehlt===v}"${zu?' disabled':''}>${esc(K.WERTE[v])}</button>`).join('')+
+   (K.WERTE_REIHE.every(v=>benutzt.has(v))?'<span class="klein">alle Werte liegen im Strang</span>':'')+`</div></div>`;
+  h+=`<div class="wahl sk-knoepfe"${fertig()?' hidden':''}><button type="button" class="knopf" data-s="zurueck"${zu||!tmp.undo.length?' disabled':''}>Rückgängig</button><button type="button" class="knopf" data-s="neu"${zu||!s.t.length?' disabled':''}>Strang neu anfangen</button></div>`;
+  h+=`<p class="sk-status" aria-live="polite">${status()}</p>`;
+  const p=pst();
+  if(pr)h+='<ul class="pruefliste">'+pr.zeilen.map(z=>`<li class="${z[1]?'ok':'nein'}" data-zeile="${z[0]}">${esc(z[2]).replace(/Δp_(GS|ZG|R|H|GA)/g,'Δp<sub>$1</sub>')}</li>`).join('')+'</ul>';
+  else if(p&&!o.zu)h+='<p class="klein">Du hast nach dem Prüfen etwas am Strang geändert – tippe unten auf „Prüfen“.</p>';
+  wurzel.innerHTML=h;verbinde();}
+ // ---------------------------------------------------------------- Bedienung
+ const svgEl=()=>wurzel.querySelector('svg.sk-svg');
+ function punktIn(ev){const svg=svgEl();try{const pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const q=pt.matrixTransform(svg.getScreenCTM().inverse());return [q.x,q.y];}
+  catch(_){const r=svg.getBoundingClientRect();return [(ev.clientX-r.left)*K.W/r.width,(ev.clientY-r.top)*K.H/r.height];}}
+ const GRUND={keinrohr:'Nimm zuerst das Rohr aus der Teilekiste – dann legst du es hier ins Raster.',zurueck:'Das Rohr kann nicht auf sich selbst zurücklaufen.',
+  kreuzt:'Dort liegt schon Rohr oder ein Bauteil – das Rohr darf nicht durch sich selbst laufen.',rand:'Da ist das Blatt zu Ende – leg das Stück in die andere Richtung.',zuviel:'Mehr als 8 gerade Stücke braucht dieser Strang nicht.',
+  lang:'So lang ist im Keller kein Stück.',kurz:'Tipp einen Rasterpunkt an, der weiter vom Rohrende weg ist – ein Rasterschritt ist 0,5 m.',voll:'Mehr Bauteile passen nicht in den Strang.',doppelt:'Dieses Bauteil sitzt schon im Strang.'};
+ function rohrTipp(q){const s=st();if(K.rohrIndex(s.t)<0){tmp.meldung=GRUND.keinrohr;male();return;}
+  const a=K.ausTipp(s,q[0],q[1]);if(!a){tmp.meldung=GRUND.kurz;male();return;}
+  const r=K.anhaengen(s,a.d,a.n);if(!r.st){tmp.meldung=GRUND[r.grund]||'';male();return;}
+  merke(r.st);}
+ function zielTipp(id){const s=st();
+  if(tmp.gewaehlt){const v=tmp.gewaehlt;tmp.gewaehlt=null;merke(K.wertSetzen(s,id,v));return;}
+  if(s.w[id])merke(K.wertWeg(s,id));}
+ function legeAb(id,v){tmp.gewaehlt=null;merke(K.wertSetzen(st(),id,v));}
+ function vorschau(ev){const svg=svgEl();if(!svg)return;const alt=svg.querySelector('[data-vorschau]');if(alt)alt.remove();
+  if(gesperrt()||tmp.gewaehlt)return;const s=st();if(K.rohrIndex(s.t)<0)return;const q=punktIn(ev),a=K.ausTipp(s,q[0],q[1]);if(!a)return;
+  const r=K.anhaengen(s,a.d,a.n);if(!r.st)return;const E=K.geo(s).E,u=K.zu2d(K.E3[a.d]),B=[E[0]+u[0]*a.n,E[1]+u[1]*a.n];
+  const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d',`M${E[0]},${E[1]} L${B[0]},${B[1]}`);p.setAttribute('stroke','#e07a10');
+  p.setAttribute('stroke-width','4');p.setAttribute('stroke-dasharray','7 6');p.setAttribute('fill','none');p.setAttribute('pointer-events','none');p.setAttribute('data-vorschau','1');svg.appendChild(p);}
+ function zielUnter(x,y){const e=document.elementFromPoint(x,y),g=e&&e.closest?e.closest('[data-ziel]'):null;return g&&wurzel.contains(g)?g.getAttribute('data-ziel'):null;}
+ function markiere(id){wurzel.querySelectorAll('[data-ziel]').forEach(g=>g.classList.toggle('drueber',g.getAttribute('data-ziel')===id));}
+ function verbinde(){
+  wurzel.querySelectorAll('[data-teil]').forEach(b=>b.onclick=()=>{if(gesperrt())return;tmp.gewaehlt=null;const r=K.teilDazu(st(),b.dataset.teil);if(!r.st){tmp.meldung=GRUND[r.grund]||'';male();return;}merke(r.st);});
+  const zk=wurzel.querySelector('[data-s="zurueck"]');if(zk)zk.onclick=()=>{if(gesperrt()||!tmp.undo.length)return;const alt=JSON.parse(tmp.undo.pop());tmp.gewaehlt=null;tmp.meldung='';o.setze(K.saeubere(alt));male();};
+  const nu=wurzel.querySelector('[data-s="neu"]');if(nu)nu.onclick=()=>{if(gesperrt())return;tmp.gewaehlt=null;merke(K.leer(),'Neu angefangen. Mit „Rückgängig“ holst du den alten Strang zurück.');};
+  // Werte: antippen wählt (dann Kästchen antippen) – ziehen legt direkt ab
+  wurzel.querySelectorAll('[data-wert]').forEach(b=>{
+   const waehle=()=>{if(gesperrt())return;const v=b.dataset.wert;tmp.gewaehlt=tmp.gewaehlt===v?null:v;tmp.meldung='';male();};
+   // Tipp = beim Loslassen (siehe „ende“); „click“ nur noch für die Tastatur – am Tablet schickt der Browser ihn nicht immer
+   b.addEventListener('click',()=>{if(Date.now()-zugEnde<600)return;waehle();});
+   b.addEventListener('pointerdown',ev=>{if(gesperrt())return;zug={v:b.dataset.wert,x0:ev.clientX,y0:ev.clientY,id:ev.pointerId,aktiv:false};try{b.setPointerCapture(ev.pointerId);}catch(_){}});
+   b.addEventListener('pointermove',ev=>{if(!zug||ev.pointerId!==zug.id)return;
+    if(!zug.aktiv&&Math.hypot(ev.clientX-zug.x0,ev.clientY-zug.y0)>8){zug.aktiv=true;geist=document.createElement('div');geist.className='sk-geist';geist.textContent=K.WERTE[zug.v];document.body.appendChild(geist);}
+    if(zug.aktiv){geist.style.left=ev.clientX+'px';geist.style.top=ev.clientY+'px';markiere(zielUnter(ev.clientX,ev.clientY));ev.preventDefault();}});
+   const ende=ev=>{if(!zug||ev.pointerId!==zug.id)return;const z=zug;zug=null;zugEnde=Date.now();if(!z.aktiv){if(ev.type==='pointerup')waehle();return;}
+    if(geist){geist.remove();geist=null;}const id=ev.type==='pointercancel'?null:zielUnter(ev.clientX,ev.clientY);markiere(null);
+    if(id)legeAb(id,z.v);else{tmp.meldung='Lass den Wert genau über einem Kästchen (Δp = …) los.';male();}};
+   b.addEventListener('pointerup',ende);b.addEventListener('pointercancel',ende);});
+  // Raster: Tipp = Rohrstück (oder Kästchen, wenn ein Wert gewählt ist oder das Kästchen voll ist)
+  const svg=svgEl();if(!svg)return;
+  svg.addEventListener('pointerdown',ev=>{if(gesperrt())return;unten={x:ev.clientX,y:ev.clientY,ziel:ev.target&&ev.target.closest?ev.target.closest('[data-ziel]'):null};if(ev.pointerType==='mouse')ev.preventDefault();vorschau(ev);});
+  svg.addEventListener('pointermove',ev=>{if(ev.pointerType==='mouse'&&!unten)vorschau(ev);});
+  svg.addEventListener('pointerleave',ev=>{if(ev.pointerType==='mouse'){const a=svg.querySelector('[data-vorschau]');if(a)a.remove();}});
+  svg.addEventListener('pointercancel',()=>{unten=null;const a=svg.querySelector('[data-vorschau]');if(a)a.remove();});
+  svg.addEventListener('pointerup',ev=>{if(!unten)return;const u=unten;unten=null;const a=svg.querySelector('[data-vorschau]');if(a)a.remove();
+   if(gesperrt()||Math.hypot(ev.clientX-u.x,ev.clientY-u.y)>14)return;
+   const s=st(),zid=u.ziel?u.ziel.getAttribute('data-ziel'):null;
+   if(zid&&(tmp.gewaehlt||s.w[zid])){zielTipp(zid);return;}
+   // ein leeres Kästchen antippen legt nie Rohr (sonst entstünde bei einem verfehlten Wert ein Rohrstück)
+   if(zid){tmp.meldung='Zieh einen Δp-Wert auf dieses Kästchen – oder tipp erst einen Wert an und dann das Kästchen.';male();return;}
+   if(tmp.gewaehlt){tmp.meldung='Tipp genau auf ein Kästchen (Δp = …), um den Wert abzulegen – oder tipp den Wert noch einmal an, dann ist er abgewählt.';male();return;}
+   rohrTipp(punktIn(ev));});
+ }
+ male();
+ return {male,zustand:()=>({st:st(),tmp:{gewaehlt:tmp.gewaehlt||null,meldung:tmp.meldung||'',undo:tmp.undo.length},fertig:fertig(),zu:gesperrt()})};
+}
+
+// ---------------------------------------------------------------- Dreier-Team 2.4.2 „Drei Prüfer, ein Strang“ (ohne DOM; braucht STRANG aus strang-2-4.js)
+// Haus Kessler, Station 2.4 „Im Keller: Die Gasleitung planen“ (Kurs 3195 „Haus Kessler A2“). Feinplan: VORSCHAU-Kessler-Station-2-4.html (Element
+// „2.4.2 Dreier-Team: Drei Prüfer, ein Strang“, entschieden am 25.11.2026 07:49), Hauswerte aus BAUPLAN-Auftrag-2-Planung-25-11.md (A: Neue Gasleitung;
+// D: Station 2.4). Regel des Lehrers (K20, Weg A): Die Übung fragt „Welches Tablet bist du? 1 · 2 · 3“. Ring: 1 fragt 2, 2 fragt 3, 3 fragt 1.
+// Ein Kollege hat die Leitung schon gerechnet; jedes Tablet prüft einen Teil – in jedem Teil steckt ein typischer Fehler:
+//  Tablet 1 Zählerseite: GS 2,5 K (Tab. 372.1: bei einem Gerät nur bis 17 kW) → GS 4 K, 15 Pa · Teilsumme 15 + 45 = 60 Pa
+//  Tablet 2 Rohr: l_R = 8,0 m (Längenzuschläge vergessen) → 8,0 + 3 · 0,3 = 8,9 m · Teilsumme Δp_R = 10 · 8,9 = 89 Pa
+//  Tablet 3 Geräteseite: Δp_H = +6 Pa (Vorzeichen) → (−4 Pa/m) · 1,5 m = −6 Pa · Teilsumme −6 + 25 = 19 Pa
+//  Σ Δp des Kollegen 201 Pa · richtig 60 + 89 + 19 = 168 Pa ≤ 300 Pa.
+// Punkte (Feinplan): Teil 1 viermal 10 (Fehler, Grund, richtiger Wert, Teilsumme) · Teil 2 Ringtausch: Fehler und Teilsumme des Mitspielers (10) +
+// im eigenen Buch nachgeprüft „stimmt“ (10), zählt erst, wenn Teil 1 stimmt und nachgeprüft ist · Teil 3: Teilsumme des dritten Teils (5),
+// Σ Δp (10), Bedingung erfüllt (5), gemeinsame Frage (10), Strang selbst legen (10), zählt erst, wenn Teil 2 stimmt. 100 nur, wenn alles stimmt.
+// Tabellenbuch = neue Ausgabe (6. Auflage 2026): Tab. 372.1–372.4, 373.1, 373.4, S. 371 (Werte am Bild geprüft, siehe probe-logik-2-4.mjs).
+// Toleranzen (Feinplan Übung 2.4.2): Tabellenwerte ± 0, l_R ± 0,05 m, Δp_R und Summen mit Δp_R ± 1 Pa.
+const T24=(()=>{
+ const QNB=20.0,SUMME=168,KOLLEGE_SUMME=201,GRENZE=300;
+ const TEILE=[
+  {name:'Zählerseite',klein:'Strömungswächter und Zähler',
+   kollege:[{k:'gs',t:'Strömungswächter GS 2,5 K'},{k:'dgs',t:'Δp<sub>GS</sub> = 45 Pa (Tab. 372.2)'},{k:'zg',t:'Zähler G4'},{k:'dzg',t:'Δp<sub>ZG</sub> = 45 Pa (Tab. 372.3)'}],
+   kollegeSumme:90,fehler:'gs',
+   gruende:[{k:'keinwert',t:'In Tab. 372.2 steht für den GS 2,5 kein Wert bei 20 kW.'},
+    {k:'bis17',t:'Tab. 372.1 erlaubt den GS 2,5 bei einem Gerät nur bis 17 kW – das Gerät hat 20 kW.'},
+    {k:'wiezaehler',t:'Der Strömungswächter muss immer so heißen wie der Zähler: G4 → GS 4.'},
+    {k:'zuviel',t:'45 Pa sind für einen Strömungswächter zu viel – erlaubt sind höchstens 20 Pa.'}],
+   grund:'bis17',
+   frage3:'Welcher Strömungswächter ist richtig – und welcher Druckverlust Δp<sub>GS</sub> gehört dazu?',
+   wert:{art:'gs',gs:'gs4',w:15,tol:0,einheit:'Pa',name:'Δp<sub>GS</sub>'},
+   frage4:'Wie groß ist die richtige Teilsumme deines Teils (Δp<sub>GS</sub> + Δp<sub>ZG</sub>)?',
+   summe:60,tolS:0,ringK:'gs',tabellen:'Tab. 372.1, 372.2 und 372.3',
+   richtigText:'GS 4 K · Δp<sub>GS</sub> 15 Pa',kollegeText:'GS 2,5 K · Δp<sub>GS</sub> 45 Pa'},
+  {name:'Rohr',klein:'Kupferrohr und Berechnungslänge',
+   kollege:[{k:'da',t:'Kupferrohr d<sub>a</sub> 18'},{k:'r',t:'R = 10 Pa/m (Tab. 373.1)'},{k:'lr',t:'l<sub>R</sub> = 8,0 m'},{k:'dr',t:'Δp<sub>R</sub> = R · l<sub>R</sub> = 10 · 8,0 = 80 Pa'}],
+   kollegeSumme:80,fehler:'lr',
+   gruende:[{k:'zuklein',t:'Das Rohr d<sub>a</sub> 18 ist zu klein – bei 20 kW braucht man d<sub>a</sub> 22.'},
+    {k:'r9',t:'Für 20 kW gilt bei d<sub>a</sub> 18 R = 9 Pa/m.'},
+    {k:'zuschlag',t:'Er hat die Längenzuschläge für die 3 Winkel vergessen (Tab. 373.4).'},
+    {k:'steig',t:'Die 1,5 m Steigung fehlen in der Rohrlänge.'}],
+   grund:'zuschlag',
+   frage3:'Wie groß ist die richtige Berechnungslänge l<sub>R</sub>?',
+   wert:{art:'zahl',w:8.9,tol:0.05,einheit:'m',name:'l<sub>R</sub>'},
+   frage4:'Wie groß ist die richtige Teilsumme deines Teils (Δp<sub>R</sub> = R · l<sub>R</sub>)?',
+   summe:89,tolS:1,ringK:'zuschlag',tabellen:'Tab. 373.1 und 373.4',
+   richtigText:'l<sub>R</sub> 8,9 m · Δp<sub>R</sub> 89 Pa',kollegeText:'l<sub>R</sub> 8,0 m · Δp<sub>R</sub> 80 Pa'},
+  {name:'Geräteseite',klein:'Höhe und Armatur',
+   kollege:[{k:'h',t:'H = +1,5 m (die Leitung steigt zum Gerät)'},{k:'dh',t:'Δp<sub>H</sub> = +6 Pa'},{k:'ga',t:'Armatur 15 D mit TAE'},{k:'dga',t:'Δp<sub>GA</sub> = 25 Pa (Tab. 372.4)'}],
+   kollegeSumme:31,fehler:'dh',
+   gruende:[{k:'mehr',t:'In einer steigenden Leitung verliert man Druck – Δp<sub>H</sub> müsste noch größer sein.'},
+    {k:'ga20',t:'Die Armatur 15 D hat bei 20 kW nur 20 Pa.'},
+    {k:'sechs',t:'Δp<sub>H</sub> rechnet man mit 6 Pa je Meter, nicht mit 4 Pa je Meter.'},
+    {k:'minus',t:'Die Leitung steigt: Erdgas ist leichter als Luft, man gewinnt Druck – Δp<sub>H</sub> ist negativ.'}],
+   grund:'minus',
+   frage3:'Wie groß ist Δp<sub>H</sub> richtig?',
+   wert:{art:'zahl',w:-6,tol:0,einheit:'Pa',name:'Δp<sub>H</sub>',minus:true},
+   frage4:'Wie groß ist die richtige Teilsumme deines Teils (Δp<sub>H</sub> + Δp<sub>GA</sub>)?',
+   summe:19,tolS:0,ringK:'vorzeichen',tabellen:'S. 371 und Tab. 372.4',
+   richtigText:'Δp<sub>H</sub> −6 Pa',kollegeText:'Δp<sub>H</sub> +6 Pa'}];
+ const GS_WAHL=[{k:'gs25',t:'GS 2,5 K'},{k:'gs4',t:'GS 4 K'},{k:'gs6',t:'GS 6 K'},{k:'gs10',t:'GS 10 K'}];
+ // Ring: Tablet i fragt Tablet „von“: „Welcher Fehler steckte bei dir, und wie groß ist deine richtige Teilsumme?“
+ const TAB=[{von:1},{von:2},{von:0}];
+ const RING_FEHLER=[{k:'gs',t:'Strömungswächter zu klein gewählt'},{k:'zuschlag',t:'Längenzuschläge der Winkel vergessen'},
+  {k:'vorzeichen',t:'Vorzeichen von Δp<sub>H</sub> falsch'},{k:'zaehler',t:'Zähler falsch abgelesen'}];
+ // gemeinsame Frage (Lösung und zwei Ablenker wörtlich aus dem Feinplan, dazu ein dritter)
+ const SCHLUSS=[
+  {k:'gut',t:'Muss er nicht – unter 300 Pa ist alles gut.'},
+  {k:'knapp',t:'Weil 201 Pa zu nah an der Grenze von 300 Pa liegen.'},
+  {k:'gs',t:'Die 300-Pa-Grenze prüft nicht, ob der Strömungswächter richtig gewählt ist; ein GS 2,5 ist für 20 kW nicht zugelassen.'},
+  {k:'genau',t:'Weil die Summe genau 168 Pa sein muss.'}];
+ const SCHLUSS_RICHTIG='gs';
+ const fmt=x=>{const r=Math.round(x*10)/10;return (Number.isInteger(r)?String(r):r.toFixed(1).replace('.',',')).replace('-','−');};
+ // Zahl lesen: Komma oder Punkt, Vorzeichen (−, -, –, +, „minus“), „Pa“ oder „m“ dahinter, „ca.“ davor; sonst nichts (keine Rechnung wie „15+45“)
+ function zahl(s){let t=String(s==null?'':s).trim().toLowerCase();
+  t=t.replace(/\s*(pa|m)\.?$/,'').replace(/^(ca\.?|circa|etwa|ungefähr|≈|~)\s*/,'').replace(/^minus\s*/,'-').replace(/^[−–—]/,'-').replace(/^([+-])\s+/,'$1').trim();
+  if(!/^[+-]?\d{1,3}(?:[.,]\d{0,3})?$/.test(t))return NaN;return parseFloat(t.replace(',','.'));}
+ const nahe=(v,soll,tol)=>Number.isFinite(v)&&Math.abs(v-soll)<=tol+1e-9;
+ const leer=()=>({f:'',g:'',gs:'',w:'',s:'',rf:'',rs:'',rc:'',d:'',sum:'',erf:'',e:'',st:STRANG.leer()});
+ const andere=i=>[0,1,2].filter(j=>j!==i);
+ const ring=i=>{const j=TAB[i].von,L=TEILE[j];return {von:j,k:L.ringK,summe:L.summe,tol:L.tolS};};
+ const dritter=i=>andere(i).find(j=>j!==TAB[i].von);
+ function stand(i,z){z=z||leer();const L=TEILE[i];
+  const f1=z.f===L.fehler,g1=z.g===L.grund;
+  const w1=(L.wert.art!=='gs'||z.gs===L.wert.gs)&&nahe(zahl(z.w),L.wert.w,L.wert.tol);
+  const s1=nahe(zahl(z.s),L.summe,L.tolS);
+  const p1=f1&&g1&&w1&&s1;
+  const R=ring(i),ringF=z.rf===R.k,ringS=nahe(zahl(z.rs),R.summe,R.tol),ringA=ringF&&ringS;
+  const ringB=z.rc!==''&&z.rc===(ringA?'stimmt':'nicht');// richtig nachgeprüft (auch „stimmt nicht“, wenn es wirklich nicht stimmt)
+  const p2=p1&&ringA&&z.rc==='stimmt';
+  const D=dritter(i),drei=nahe(zahl(z.d),TEILE[D].summe,TEILE[D].tolS);
+  const summe=nahe(zahl(z.sum),SUMME,1),erf=z.erf==='ja',schluss=z.e===SCHLUSS_RICHTIG;
+  const sp=STRANG.pruefe(z.st),strang=sp.ok;
+  const p3=p2&&drei&&summe&&erf&&schluss&&strang;
+  const teil1=(f1?10:0)+(g1?10:0)+(w1?10:0)+(s1?10:0);
+  // Teil 2 zählt erst, wenn Teil 1 stimmt und der Schüler selbst nachgeprüft hat („stimmt“ / „stimmt nicht“ angetippt)
+  const teil2=p1&&z.rc!==''?(ringA?10:0)+(ringA&&z.rc==='stimmt'?10:0):0;
+  const teil3=p2?(drei?5:0)+(summe?10:0)+(erf?5:0)+(schluss?10:0)+(strang?10:0):0;
+  return {f1,g1,w1,s1,p1,ringF,ringS,ringA,ringB,p2,drei,summe,erf,schluss,strang,strangPruef:sp,p3,teil1,teil2,teil3,punkte:teil1+teil2+teil3};}
+ // richtig ausgefüllt (für Proben und die Lösung der Lehrkraft)
+ function richtig(i){const z=leer(),L=TEILE[i],R=ring(i),D=dritter(i);
+  z.f=L.fehler;z.g=L.grund;if(L.wert.art==='gs')z.gs=L.wert.gs;z.w=fmt(L.wert.w);z.s=fmt(L.summe);
+  z.rf=R.k;z.rs=fmt(R.summe);z.rc='stimmt';z.d=fmt(TEILE[D].summe);z.sum=fmt(SUMME);z.erf='ja';z.e=SCHLUSS_RICHTIG;z.st=STRANG.richtig();return z;}
+ // Spielstand prüfen (aus Moodle geladen): nur bekannte Felder und Werte, Text kurz
+ function saeubere(z,i){const o=leer();if(!z||typeof z!=='object')return o;
+  const txt=v=>typeof v==='string'?v.slice(0,12):'',eins=(v,erl)=>erl.includes(v)?v:'';
+  const L=TEILE[[0,1,2].includes(i)?i:0],alleK=[].concat(...TEILE.map(x=>x.kollege.map(y=>y.k))),alleG=[].concat(...TEILE.map(x=>x.gruende.map(y=>y.k)));
+  o.f=eins(z.f,alleK);o.g=eins(z.g,alleG);o.gs=eins(z.gs,GS_WAHL.map(x=>x.k));o.w=txt(z.w);o.s=txt(z.s);
+  o.rf=eins(z.rf,RING_FEHLER.map(x=>x.k));o.rs=txt(z.rs);o.rc=eins(z.rc,['stimmt','nicht']);
+  o.d=txt(z.d);o.sum=txt(z.sum);o.erf=eins(z.erf,['ja','nein']);o.e=eins(z.e,SCHLUSS.map(x=>x.k));o.st=STRANG.saeubere(z.st);
+  if(L&&o.f&&!L.kollege.some(x=>x.k===o.f))o.f='';if(L&&o.g&&!L.gruende.some(x=>x.k===o.g))o.g='';return o;}
+ return {QNB,SUMME,KOLLEGE_SUMME,GRENZE,TEILE,GS_WAHL,TAB,RING_FEHLER,SCHLUSS,SCHLUSS_RICHTIG,fmt,zahl,nahe,leer,andere,ring,dritter,stand,richtig,saeubere};
+})();
+
+// ---------------------------------------------------------------- Kellerplan Haus Kessler (selbst gezeichnet, keine Buchskizze), Station 2.4
+// Geometrie wie der Kellerplan im Feinplan (VORSCHAU-Kessler-Station-2-4.html, Arbeitsblatt Block 2.4.2): Heizraum 6,0 × 5,5 m, 1 m = 50 px;
+// Hausanschluss mit HAE und Gas-Druckregelgerät, zwei Zähler mit Strömungswächtern (Mietwohnung OG, Herr Kessler EG), neue Leitung ab dem
+// Zähler G4: 2,5 m – Winkel 1 – 3,5 m – Steigung 1,5 m an der Wand (Winkel 2 unten, Winkel 3 oben) – 0,5 m – neues Gerät; Zug 1, alter Kessel.
+// Jedes Tablet zeigt seinen Teil orange umrandet (1 Zählerseite · 2 Rohr · 3 Geräteseite). Werte der Bemessung stehen nicht im Bild (das ist die Frage).
+const T24BILD=(()=>{
+ const FONT='font-family="Arial, Helvetica, sans-serif"';
+ const OR='#e07a10';
+ function kellerplan(i){
+  const teil=i>=0?T24.TEILE[i]:null;
+  const titel='Kellerplan Haus Kessler: Heizraum mit Hausanschluss, Gas-Druckregelgerät, zwei Zählern mit Strömungswächtern, altem Kessel, Zug 1 und dem neuen Gerät; neue Leitung ab dem Zähler G4: 2,5 m, Winkel 1, 3,5 m, Steigung 1,5 m an der Wand, 0,5 m'+(teil?'; orange umrandet: Teil '+(i+1)+' '+teil.name:'');
+  let s=`<svg class="kellerplan" viewBox="0 0 440 440" role="img" aria-label="${titel}" ${FONT} font-size="11" fill="#1d2a33">`;
+  // Markierung des eigenen Teils (unter allem anderen)
+  if(i===0)s+=`<rect x="36" y="100" width="40" height="104" rx="8" fill="#fff0d9" stroke="${OR}" stroke-width="3" data-teil="1"/>`;
+  if(i===1)s+=`<path d="M52,198 L52,312 L227,312 L252,312" fill="none" stroke="${OR}" stroke-width="14" stroke-opacity=".45" stroke-linejoin="round" data-teil="2"/>`;
+  if(i===2)s+=`<rect x="212" y="290" width="88" height="40" rx="8" fill="#fff0d9" stroke="${OR}" stroke-width="3" data-teil="3"/>`;
+  s+=`<rect x="40" y="50" width="300" height="275" fill="none" stroke="#1d2a33" stroke-width="4"/>`;
+  s+=`<text x="40" y="20" fill="#5b6b77">Keller, Heizraum · Haus Kessler · Skizze, Maße der Leitung eingetragen</text>`;
+  // Hausanschluss, HAE, Druckregler
+  s+=`<path d="M80,28 L80,52" stroke="#4a555d" stroke-width="2" stroke-dasharray="4 3"/><text x="86" y="40" font-size="10" fill="#5b6b77">Hausanschlussleitung</text>`;
+  s+=`<polygon points="72,58 88,70 88,58 72,70" fill="#fff" stroke="#1d2a33" stroke-width="1.2"/><text x="94" y="68" font-size="10">HAE</text>`;
+  s+=`<rect x="70" y="76" width="20" height="16" fill="#e9ecef" stroke="#1d2a33"/><text x="94" y="88" font-size="10">Gas-Druckregelgerät</text>`;
+  // Verteilung zu den Zählern
+  s+=`<path d="M80,92 L80,170 M80,112 L66,112 M80,166 L66,166" stroke="#4a555d" stroke-width="2.5" fill="none"/>`;
+  s+=`<rect x="58" y="106" width="10" height="12" fill="#fff3cd" stroke="#1d2a33"/><rect x="58" y="160" width="10" height="12" fill="#fff3cd" stroke="#1d2a33"/>`;
+  s+=`<text x="96" y="114" font-size="10">GS, Zähler Mietwohnung (OG)</text><text x="96" y="168" font-size="10" font-weight="700">GS, Zähler G4 Herr Kessler (EG)</text>`;
+  s+=`<rect x="44" y="120" width="22" height="24" fill="#fff" stroke="#1d2a33"/><text x="50" y="136" font-weight="700">Z</text>`;
+  s+=`<rect x="44" y="174" width="22" height="24" fill="#fff" stroke="#1d2a33" stroke-width="2"/><text x="50" y="190" font-weight="700">Z</text>`;
+  s+=`<path d="M55,120 L55,100" stroke="#4a555d" stroke-width="2"/><text x="96" y="100" font-size="9" fill="#5b6b77">↑ zur Mietwohnung</text>`;
+  // neue Leitung ab dem Zähler G4
+  s+=`<path d="M52,198 L52,312 L227,312 M227,312 L252,312" fill="none" stroke="#1d2a33" stroke-width="3"/><circle cx="52" cy="198" r="3" fill="#1d2a33"/>`;
+  s+=`<text x="58" y="214" font-size="10">Leitungsanfang</text><text x="58" y="262" font-weight="700" font-size="12">2,5 m</text>`;
+  s+=`<text x="40" y="344" font-size="10">Winkel 1</text>`;
+  s+=`<circle cx="227" cy="312" r="6" fill="#fff" stroke="#1d2a33" stroke-width="1.5"/><circle cx="227" cy="312" r="1.8" fill="#1d2a33"/>`;
+  s+=`<text x="118" y="304" font-weight="700" font-size="12">3,5 m</text>`;
+  s+=`<text x="98" y="268" font-size="10">steigt hier 1,5 m an der Wand ↘</text><text x="98" y="281" font-size="10">(Winkel 2 unten, Winkel 3 oben)</text>`;
+  s+=`<text x="229" y="305" font-weight="700" font-size="10">0,5 m</text>`;
+  // neues Gerät, Zug 1, alter Kessel
+  s+=`<rect x="250" y="300" width="44" height="22" fill="#eef4fb" stroke="#1f5fbf" stroke-width="2"/><text x="244" y="342" font-size="11" fill="#1f5fbf" font-weight="700">neues Gerät</text>`;
+  s+=`<rect x="312" y="298" width="26" height="25" fill="#d9dee2" stroke="#1d2a33"/><text x="310" y="292" font-size="10">Zug 1</text><path d="M294,311 L312,311" stroke="#4a555d" stroke-width="3"/>`;
+  s+=`<rect x="284" y="190" width="54" height="56" fill="#f1f3f5" stroke="#5b6b77" stroke-dasharray="4 3"/><text x="288" y="212" font-size="10">alter</text><text x="288" y="225" font-size="10">Kessel</text><text x="288" y="238" font-size="9" fill="#5b6b77">kommt raus</text>`;
+  s+=`<text x="150" y="150" font-size="13" font-weight="700" fill="#5b6b77">Heizraum</text>`;
+  // Legende
+  s+=`<text x="10" y="368">Neue Leitung: Kupfer, ab dem Ausgang des Zählers G4 (Herr Kessler)</text>`;
+  s+=`<text x="10" y="383">Rohrlänge 8,0 m · 3 Winkel 90° · Strömungswächter Typ K</text>`;
+  s+=`<text x="10" y="398">Gerät: Gas-Brennwertkessel, Q̇<tspan font-size="8" dy="3">NB</tspan><tspan dy="-3"> = 20,0 kW</tspan></text>`;
+  s+=`<text x="10" y="413">Armatur DN 15 Durchgangsform mit TAE (15 D)</text>`;
+  s+=`<text x="10" y="428">Das Gerät hängt 1,5 m höher als der Leitungsanfang.</text>`;
+  if(teil)s+=`<rect x="350" y="58" width="24" height="14" rx="4" fill="#fff0d9" stroke="${OR}" stroke-width="2.5"/><text x="380" y="69" font-size="10">dein Teil</text>`;
+  return s+'</svg>';}
+ return {kellerplan};
+})();
+
+// ---------------------------------------------------------------- Dreier-Team 2.4.2: Bild und Bedienung (braucht T24, T24BILD, STRANG, bauStrang)
+// Start: „Welches Tablet bist du? 1 · 2 · 3“. Danach zeigt das Tablet den Kellerplan (eigener Teil orange umrandet), das Wissen aus der Übung, den
+// Plan des Kollegen (nur der eigene Teil offen) und die drei Teile. Z = aktuelle Eingabe, P = Stand beim letzten „Prüfen“. Grün/rot, Punkte und das
+// Öffnen des nächsten Teils richten sich nur nach P – wer nach dem Prüfen etwas ändert, sieht erst beim nächsten Prüfen, ob es stimmt. Richtige
+// Antworten bleiben stehen (gesperrt). Teil 2: Fehler und Teilsumme des Mitspielers werden erst gefärbt, wenn „stimmt“ / „stimmt nicht“ angetippt ist.
+// Teil 3 enthält den Baustein „Strang legen“ (strang-2-4.js); er hat keinen eigenen Prüfen-Knopf – es gilt das gemeinsame „Prüfen“ unten.
+// o: {stand:{t,Z,P}|null, mitPunkten, beiAenderung(), beiPunkte(p)}
+function bauPruefTeam(wurzel,o){
+ o=Object.assign({stand:null,mitPunkten:true,beiAenderung:null,beiPunkte:null},o||{});
+ const R=T24,TE=R.TEILE,fmt=R.fmt,mitP=!!o.mitPunkten;
+ let t=-1,rueck=null;
+ const Z=[R.leer(),R.leer(),R.leer()],P=[null,null,null],stmp=[{},{},{}];
+ const st=o.stand;
+ if(st&&typeof st==='object'){if([0,1,2].includes(st.t))t=st.t;
+  if(Array.isArray(st.Z))st.Z.slice(0,3).forEach((z,i)=>{Z[i]=R.saeubere(z,i);});
+  if(Array.isArray(st.P))st.P.slice(0,3).forEach((z,i)=>{P[i]=z?R.saeubere(z,i):null;if(z&&!Array.isArray(st.Z))Z[i]=R.saeubere(z,i);});}
+ const kopie=z=>JSON.parse(JSON.stringify(z)),e=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+ const gs=i=>R.stand(i,P[i]||R.leer());
+ const besterStand=()=>Math.max(...[0,1,2].map(i=>gs(i).punkte));
+ const aenderung=()=>{o.beiAenderung&&o.beiAenderung();};
+ const zahlText=v=>{const x=R.zahl(v);return Number.isFinite(x)?fmt(x):e(v);};
+ function startbild(){rueck=null;
+  wurzel.innerHTML='<div class="karte"><h2>Welches Tablet bist du?</h2>'+
+   '<p>Setzt euch zu dritt zusammen. Jeder von euch nimmt eine andere Nummer. Jedes Tablet prüft einen anderen Teil im Plan des Kollegen – am Ende braucht jeder die Ergebnisse der beiden anderen und legt den ganzen Strang.</p>'+
+   '<div class="grosswahl">'+TE.map((m,i)=>`<button type="button" data-t="${i}"><b>${i+1}</b>${m.name}<small>${m.klein}</small></button>`).join('')+'</div>'+
+   '<p class="klein">Ihr seid nur zu zweit? Dann übernimmt einer von euch das dritte Tablet mit: Er wählt später unten „anderes Tablet wählen“.</p></div>';
+  wurzel.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>waehleTablet(+b.dataset.t));}
+ function waehleTablet(i){t=i;rueck=null;aenderung();tablet();zumAnfang();}
+ // an den Anfang des Tablets rollen – unter die feste Kopfzeile (sonst verdeckt sie die Überschrift)
+ function zumAnfang(){try{const k=document.querySelector('.kopf'),ab=k?k.getBoundingClientRect().height+8:8;window.scrollTo(0,Math.max(0,wurzel.getBoundingClientRect().top+window.pageYOffset-ab));}catch(_){}}
+ function kollegenPlan(){
+  return `<div class="kollege"><h4>Plan des Kollegen</h4><div class="rollen"><table class="kplan"><tr><th>Teil</th><th>Angaben des Kollegen</th><th>Teilsumme</th></tr>`+
+   TE.map((m,j)=>j===t?`<tr class="dein" data-kteil="${j}"><td><b>${j+1} · ${m.name}</b><br><span class="klein">dein Teil</span></td><td>${m.kollege.map(x=>x.t).join(' · ')}</td><td>${m.kollegeSumme} Pa</td></tr>`:
+    `<tr class="verdeckt" data-kteil="${j}"><td>${j+1} · ${m.name}</td><td><span class="klein">verdeckt – prüft Tablet ${j+1}</span></td><td>…</td></tr>`).join('')+
+   `<tr><td colspan="2"><b>Σ Δp des Kollegen</b></td><td><b>${R.KOLLEGE_SUMME} Pa</b> ≤ 300 Pa</td></tr></table></div></div>`;}
+ function tablet(){const m=TE[t];
+  wurzel.innerHTML=`<div class="tablet"><h3>Tablet ${t+1} – du prüfst: ${m.name} (${m.klein})</h3>
+   <p class="klein" style="margin:0 0 8px">Dein Team: ${TE.map((x,i)=>`Tablet ${i+1} ${x.name}`).join(' · ')}. Jeder prüft einen Teil – den Strang legt am Ende jeder selbst.</p>
+   <div class="lage"><figure class="bild"><figcaption>Kellerplan – orange umrandet: dein Teil</figcaption>${T24BILD.kellerplan(t)}</figure>
+   <div class="wissen"><h4>Das weißt du schon aus der Übung 2.4.2</h4><ul>
+    <li>Ein Gerät: Gas-Brennwertkessel, Q̇<sub>NB</sub> = 20,0 kW → Spitzenbelastung Q̇ = 0,5 · (20 + 20) = <b>20 kW</b></li>
+    <li>Zähler <b>G4</b> · Strömungswächter Typ K am Anfang der Zählerleitung</li>
+    <li>Kupferrohr <b>8,0 m</b> mit <b>3 Winkeln 90°</b></li>
+    <li>Das Gerät hängt <b>1,5 m höher</b> als der Leitungsanfang.</li>
+    <li>Armatur DN 15 Durchgangsform mit TAE (<b>15 D</b>)</li>
+    <li>Bedingung: Σ Δp ≤ <b>300 Pa</b> (T S. 371)</li></ul>
+    <p class="klein" style="margin:8px 0 0">Du brauchst dein Tabellenbuch (S. 371, 372, 373) und den Taschenrechner. In jeder Tabelle gilt: der erste Wert, der reicht.</p></div></div>
+   ${kollegenPlan()}
+   <div data-r="teile"></div>
+   <p class="klein" style="margin-top:14px">Falsches Tablet gewählt oder nur zu zweit? <button type="button" class="knopf" data-r="wechsel">anderes Tablet wählen</button></p></div>`;
+  wurzel.querySelector('[data-r="wechsel"]').onclick=()=>{lies();t=-1;aenderung();startbild();};
+  teile();}
+ // Auswahlknopf: gedrückt = aktuelle Auswahl; grün/rot nur, wenn genau dieser Wert geprüft wurde; richtig geprüft = gesperrt
+ function knopf(attr,v,text,zv,pv,ok,zu,sperre,farbe){const an=zv===v,gep=farbe!==false&&pv!=null&&pv!==''&&zv===pv,kl=an&&gep?(ok?'ok':'nein'):'';
+  if(sperre===undefined)sperre=ok;
+  return `<button type="button" ${attr} data-v="${v}" aria-pressed="${an}"${kl?` class="${kl}"`:''}${zu||(gep&&sperre)?' disabled':''}>${text}</button>`;}
+ // Zahlenfeld: grün/rot nur, wenn genau diese Eingabe geprüft wurde; richtig geprüft = gesperrt
+ function feld(attr,zv,pv,ok,zu,farbe,sperre){const gep=farbe!==false&&pv!=null&&pv!==''&&zv===pv,kl=gep?(ok?' ok':' nein'):'';
+  if(sperre===undefined)sperre=ok;
+  return `<input type="text" class="zahl${kl}" ${attr} inputmode="decimal" maxlength="12" autocomplete="off" autocorrect="off" spellcheck="false" value="${e(zv)}"${zu||(gep&&sperre)?' disabled':''}>`;}
+ const pkt=(txt,zu)=>mitP?`<span class="klein">(${txt}${zu?' · erst wenn '+zu+' stimmt':''})</span>`:zu?`<span class="klein">(erst wenn ${zu} stimmt)</span>`:'';
+ function teile(){
+  const z=Z[t],p=P[t],s=gs(t),m=TE[t],RG=R.ring(t),vm=TE[RG.von],D=R.dritter(t),dm=TE[D];
+  // ---- Teil 1
+  let h=`<div class="phase"><b>1 · Dein Teil: ${m.name}</b> ${pkt('viermal 10 Punkte')}
+   <p class="frage">In deinem Teil im Plan des Kollegen steckt ein Fehler. Prüf jede Angabe mit deinem Tabellenbuch (${m.tabellen}).</p>
+   <p class="frage"><b>(1)</b> Welche Angabe ist der Fehler? <span class="klein">Nur eine Angabe ist falsch gewählt oder falsch angesetzt – was daraus folgt, rechnest du in (3) und (4) neu.</span></p>
+   <div class="satzwahl">${m.kollege.map(x=>knopf('data-f="f"',x.k,x.t,z.f,p&&p.f,s.f1,false)).join('')}</div>
+   <p class="frage"><b>(2)</b> Warum ist das falsch?</p>
+   <div class="satzwahl">${m.gruende.map(x=>knopf('data-f="g"',x.k,x.t,z.g,p&&p.g,s.g1,false)).join('')}</div>
+   <p class="frage"><b>(3)</b> ${m.frage3}</p>`;
+  // GS-Wahl: grün, sobald der geprüfte GS stimmt; gesperrt erst, wenn auch Δp_GS stimmt
+  if(m.wert.art==='gs')h+=`<div class="wahl">${R.GS_WAHL.map(x=>knopf('data-f="gs"',x.k,x.t,z.gs,p&&p.gs,!!(p&&p.gs===m.wert.gs),false,s.w1)).join('')}</div>`;
+  h+=`<div class="zeile"><span class="was">${m.wert.name}</span>${feld(`data-f="w" aria-label="richtiger Wert ${m.wert.einheit==='m'?'in m':'in Pa'}"`,z.w,p&&p.w,!!(p&&R.nahe(R.zahl(p.w),m.wert.w,m.wert.tol)),false,undefined,s.w1)}<span>${m.wert.einheit}</span>`+
+   (m.wert.minus?`<button type="button" class="knopf vz" data-r="vz" aria-label="Vorzeichen minus setzen oder wegnehmen"${p&&p.w===z.w&&s.w1?' disabled':''}>± Vorzeichen</button>`:'')+`</div>
+   <p class="frage"><b>(4)</b> ${m.frage4}</p>
+   <div class="zeile"><span class="was">Teilsumme</span>${feld('data-f="s" aria-label="richtige Teilsumme in Pa"',z.s,p&&p.s,s.s1,false)}<span>Pa</span></div>`+
+   (s.p1?`<div class="merk"><b>Für den Ringtausch – sag es nachher deinen Mitspielern:</b><br>Tablet ${t+1} (${m.name}): Fehler – <b>${R.RING_FEHLER.find(x=>x.k===m.ringK).t}</b> · richtige Teilsumme <b>${zahlText(p.s)} Pa</b></div>`:'')+`</div>`;
+  // ---- Teil 2
+  const ringFarbe=!!(p&&p.rc);
+  h+=`<div class="phase ${s.p1?'':'zu'}"><b>2 · Frag Tablet ${RG.von+1}</b> ${pkt('zweimal 10 Punkte',s.p1?'':'Teil 1')}
+   <p class="frage">Tablet ${RG.von+1} prüft: <b>${vm.name}</b> (${vm.klein}). Diese Antwort kennt nur dein Mitspieler. Geh hin und frag: <b>„Welcher Fehler steckte bei dir, und wie groß ist deine richtige Teilsumme?“</b></p>
+   <div class="ringfrage"><p class="klein" style="margin:0 0 6px">Fehler bei Tablet ${RG.von+1}:</p>
+   <div class="satzwahl">${R.RING_FEHLER.map(x=>knopf('data-f="rf"',x.k,x.t,z.rf,p&&p.rf,s.ringF,!s.p1,undefined,ringFarbe)).join('')}</div>
+   <div class="zeile"><span class="was">Teilsumme</span>${feld(`data-f="rs" aria-label="Teilsumme von Tablet ${RG.von+1} in Pa"`,z.rs,p&&p.rs,s.ringS,!s.p1,ringFarbe)}<span>Pa</span></div></div>
+   <p class="frage">Jetzt prüfst du nach – wie das Gegenzeichnen auf der Baustelle: Rechne den Teil von Tablet ${RG.von+1} selbst nach (${vm.tabellen}). Stimmen Fehler und Teilsumme?</p>
+   <div class="wahl">${[['stimmt','stimmt'],['nicht','stimmt nicht']].map(([v,tx])=>knopf('data-f="rc"',v,tx,z.rc,p&&p.rc,s.ringB,!s.p1,s.ringB&&s.ringA)).join('')}</div></div>`;
+  // ---- Teil 3
+  h+=`<div class="phase ${s.p2?'':'zu'}"><b>3 · Der Strang für den Chef</b> ${pkt('5 + 10 + 5 + 10 + 10 Punkte',s.p2?'':'Teil 2')}
+   <p class="frage">Setzt euch zu dritt zusammen.</p>
+   <p class="frage"><b>(1)</b> Wie groß ist die richtige Teilsumme von Tablet ${D+1} (${dm.name})? <span class="klein">Frag nach und rechne selbst nach (${dm.tabellen}).</span></p>
+   <div class="zeile"><span class="was">Teilsumme</span>${feld(`data-f="d" aria-label="Teilsumme von Tablet ${D+1} in Pa"`,z.d,p&&p.d,s.drei,!s.p2)}<span>Pa</span></div>
+   <p class="frage"><b>(2)</b> Wie groß ist Σ Δp für den ganzen Strang?</p>
+   <div class="zeile"><span class="was">Σ Δp</span>${feld('data-f="sum" aria-label="Summe der Druckverluste in Pa"',z.sum,p&&p.sum,s.summe,!s.p2)}<span>Pa</span></div>
+   <p class="frage"><b>(3)</b> Ist die Bedingung Σ Δp ≤ 300 Pa erfüllt?</p>
+   <div class="wahl">${[['ja','ja, erfüllt'],['nein','nein, nicht erfüllt']].map(([v,tx])=>knopf('data-f="erf"',v,tx,z.erf,p&&p.erf,s.erf,!s.p2)).join('')}</div>
+   <p class="frage"><b>(4) Gemeinsame Frage:</b> Der Kollege kam auch unter 300 Pa. Warum muss der Plan trotzdem geändert werden?</p>
+   <div class="satzwahl">${R.SCHLUSS.map(x=>knopf('data-f="e"',x.k,x.t,z.e,p&&p.e,s.schluss,!s.p2)).join('')}</div>
+   <p class="frage"><b>(5) Leg den Strang für den Chef selbst</b> – wie das Leitungsschema in deinem Tabellenbuch (S. 371), nur mit dem Finger. <span class="klein">Halte das iPad dafür am besten quer.</span></p>
+   <div class="strang" data-r="strang"></div></div>`;
+  // ---- Plan für den Chef
+  const bekannt=j=>j===t?s.p1:j===RG.von?s.p2:s.p2&&s.drei;
+  const zeileWert=j=>j===t?(p&&p.s):j===RG.von?(p&&p.rs):(p&&p.d);
+  const fehlerText=j=>j===t?`${m.kollegeText} → ${m.richtigText}`:j===RG.von?R.RING_FEHLER.find(x=>x.k===TE[j].ringK).t:'<span class="klein">(von Tablet '+(j+1)+')</span>';
+  h+=`<div class="phase"><b>Plan für den Chef</b> ${s.p3?'<span class="hinweis-gruen">vollständig</span>':'<span class="klein">(füllt sich, sobald eure Antworten stimmen)</span>'}
+   <div class="rollen"><table class="chefplan"><tr><th>Teil</th><th>Fehler im Plan des Kollegen</th><th>Teilsumme richtig</th></tr>`+
+   [0,1,2].map(j=>`<tr data-zeile="${j}"><td><b>${j+1}</b> ${TE[j].name}${j===t?' <span class="klein">(deins)</span>':''}</td><td>${bekannt(j)?fehlerText(j):'–'}</td><td>${bekannt(j)?zahlText(zeileWert(j))+' Pa':'–'}</td></tr>`).join('')+
+   `<tr data-zeile="summe"><td><b>Σ Δp</b></td><td>Kollege: 201 Pa</td><td>${s.p2&&s.summe&&s.erf?'<b>'+zahlText(p.sum)+' Pa</b> ≤ 300 Pa ✓':'–'}</td></tr></table></div>`+
+   (s.p3?'<p class="klein" style="margin:8px 0 0">Der berichtigte Plan und dein Strang kommen später in die Planungsmappe (2.6: „Strangschema mit Bemessung“).</p>':'')+`</div>
+   <div class="phase">${mitP?`<span class="gross">${Math.round(s.punkte)} von 100 Punkten</span> `:''}${s.p3?'<span class="hinweis-gruen">Alles richtig</span>':`<span class="klein">${mitP?'Die volle Punktzahl gibt es erst, wenn alles stimmt – auch die Ergebnisse deiner Mitspieler und dein Strang.':'Fertig ist der Plan, wenn alle Antworten und der Strang stimmen.'}</span>`}
+   <div class="wahl" style="margin:10px 0 0"><button type="button" class="knopf haupt" data-r="pruefen">Prüfen</button></div>
+   <p class="rueck${rueck&&rueck.k?' '+rueck.k:''}" data-r="rueck">${rueck?rueck.t:''}</p></div>`;
+  const c=wurzel.querySelector('[data-r="teile"]');c.innerHTML=h;
+  c.querySelectorAll('button[data-f]').forEach(b=>b.onclick=()=>{lies();Z[t][b.dataset.f]=b.dataset.v;aenderung();teile();});
+  c.querySelectorAll('input[data-f]').forEach(inp=>inp.addEventListener('input',()=>{schreibFeld(inp);inp.classList.remove('ok','nein');aenderung();}));
+  const vz=c.querySelector('[data-r="vz"]');if(vz)vz.onclick=()=>{lies();const w=String(Z[t].w).trim();Z[t].w=/^[-−–]/.test(w)?w.replace(/^[-−–]\s*/,''):'−'+w.replace(/^\+\s*/,'');aenderung();teile();};
+  c.querySelector('[data-r="pruefen"]').onclick=()=>pruefen();
+  bauStrang(c.querySelector('[data-r="strang"]'),{hole:()=>Z[t].st,setze:x=>{Z[t].st=x;aenderung();},geprueft:()=>P[t]?P[t].st:null,zu:!s.p2,tmp:stmp[t]});}
+ function schreibFeld(inp){if(t<0)return;Z[t][inp.dataset.f]=String(inp.value).slice(0,12);}
+ function lies(){if(t<0)return;wurzel.querySelectorAll('[data-r="teile"] input[data-f]').forEach(schreibFeld);}
+ // Hinweise nach dem Prüfen (immer nur der erste offene Punkt; rot zeigt alles, was noch nicht stimmt)
+ function hinweisTeil1(z,s){const i=t,L=TE[i],wv=R.zahl(z.w),sv=R.zahl(z.s);
+  if(!z.f&&!z.g&&!z.gs&&!String(z.w).trim()&&!String(z.s).trim())return {k:'',x:'Prüf zuerst die Angaben des Kollegen in deinem Teil und tipp bei (1) die Angabe an, die der Fehler ist.'};
+  if(!s.f1){if(!z.f)return {k:'nein',x:'Bei (1) fehlt noch die Angabe, die der Fehler ist.'};
+   const H={dgs:'Für einen GS 2,5 bei 20 kW steht in Tab. 372.2 wirklich 45 Pa – abgelesen hat der Kollege richtig. Passt der GS 2,5 überhaupt zu 20 kW (Tab. 372.1)?',
+    zg:'Der Zähler stimmt: G4 mit 45 Pa (Tab. 372.3). Der Fehler steckt woanders in deinem Teil.',dzg:'Der Zähler stimmt: G4 mit 45 Pa (Tab. 372.3). Der Fehler steckt woanders in deinem Teil.',
+    dr:'R · l<sub>R</sub> = 10 · 8,0 = 80 – gerechnet hat der Kollege richtig. Aber stimmt die Länge, mit der er rechnet?',
+    da:'d<sub>a</sub> 18 mit R = 10 Pa/m stimmt (Tab. 373.1: 10 Pa/m → 20 kW). Der Fehler steckt woanders in deinem Teil.',r:'d<sub>a</sub> 18 mit R = 10 Pa/m stimmt (Tab. 373.1: 10 Pa/m → 20 kW). Der Fehler steckt woanders in deinem Teil.',
+    h:'H = +1,5 m stimmt: Das Gerät hängt 1,5 m höher. Was macht der Kollege daraus?',
+    ga:'Die Armatur stimmt: 15 D bei 20 kW → 25 Pa (Tab. 372.4). Der Fehler steckt woanders in deinem Teil.',dga:'Die Armatur stimmt: 15 D bei 20 kW → 25 Pa (Tab. 372.4). Der Fehler steckt woanders in deinem Teil.'};
+   return {k:'nein',x:H[z.f]||'Die Angabe bei (1) ist nicht der Fehler.'};}
+  if(!s.g1)return {k:'nein',x:'Den Fehler hast du gefunden. Der Grund passt noch nicht – lies nach: '+['Tab. 372.1 (GS-Auswahl und Mindestnennweiten).','Tab. 373.4 (Längenzuschlag für Formteile).','S. 371 (Formel für Δp<sub>H</sub>).'][i]};
+  if(!s.w1){if(L.wert.art==='gs'&&z.gs!==L.wert.gs)return {k:'nein',x:'Welcher Strömungswächter passt nach Tab. 372.1 zu einem Gerät mit 20 kW?'};
+   if(!String(z.w).trim())return {k:'nein',x:'Bei (3) fehlt noch der richtige Wert.'};
+   if(!Number.isFinite(wv))return {k:'nein',x:'Tipp bei (3) nur eine Zahl ein, zum Beispiel '+(i===2?'−4':i===1?'7,3':'20')+'.'};
+   if(i===0)return {k:'nein',x:'Der GS stimmt. Jetzt Tab. 372.2: In seiner Spalte den ersten Wert suchen, der reicht (mindestens 20 kW), dann links Δp<sub>GS</sub> ablesen.'};
+   if(i===1)return {k:'nein',x:Math.abs(wv-8)<1e-9?'Die Winkel bremsen auch – rechne die Längenzuschläge dazu (Tab. 373.4).':'l<sub>R</sub> = gemessene Länge + Zahl der Winkel · Zuschlag (Tab. 373.4).'};
+   return {k:'nein',x:Math.abs(Math.abs(wv)-6)<1e-9&&wv>0?'Die Leitung steigt – Erdgas ist leichter als Luft, du gewinnst Druck: Das Vorzeichen ist minus. (Am iPad hilft der Knopf „± Vorzeichen“.)':'Δp<sub>H</sub> = (−4 Pa/m) · H (T S. 371).'};}
+  if(!String(z.s).trim())return {k:'nein',x:'Bei (4) fehlt noch die Teilsumme.'};
+  if(Number.isFinite(sv)&&Math.abs(sv-L.kollegeSumme)<1e-9)return {k:'nein',x:'Das ist die Teilsumme des Kollegen. Rechne mit deinem richtigen Wert neu.'};
+  return {k:'nein',x:['Teilsumme = Δp<sub>GS</sub> + Δp<sub>ZG</sub> – mit deinem richtigen Δp<sub>GS</sub>.','Teilsumme = Δp<sub>R</sub> = R · l<sub>R</sub> – mit deinem richtigen l<sub>R</sub>.','Teilsumme = Δp<sub>H</sub> + Δp<sub>GA</sub> – mit deinem richtigen Δp<sub>H</sub>.'][i]};}
+ function pruefen(){if(t<0)return null;lies();P[t]=kopie(Z[t]);const s=gs(t),z=Z[t],RG=R.ring(t),n=RG.von+1,D=R.dritter(t);let k='nein',x;
+  if(s.p3){k='ok';x=mitP?'Alles richtig – 100 Punkte. Der Plan und der Strang für den Chef sind fertig.':'Alles richtig – der Plan und der Strang für den Chef sind fertig.';}
+  else if(!s.p1){const r=hinweisTeil1(z,s);k=r.k;x=r.x;}
+  else if(!s.p2){
+   if(!z.rf&&!String(z.rs).trim()&&!z.rc){k='';x=`Teil 1 stimmt. Jetzt frag Tablet ${n}: „Welcher Fehler steckte bei dir, und wie groß ist deine richtige Teilsumme?“`;}
+   else if(!z.rc){k='';x=`Prüf zuerst selbst nach: Rechne den Teil von Tablet ${n} mit deinem Tabellenbuch nach (${TE[RG.von].tabellen}) und tipp „stimmt“ oder „stimmt nicht“ an. Dann wieder „Prüfen“.`;}
+   else if(s.ringA)x='Rechne noch einmal nach: Fehler und Teilsumme deines Mitspielers stimmen doch.';
+   else if(z.rc==='nicht'){k='';x=`Gut nachgeprüft: Da stimmt wirklich etwas nicht. Klärt es mit Tablet ${n} zusammen, verbessert ${s.ringF?'die Teilsumme':'den Fehler'} und prüft noch einmal.`;}
+   else if(!s.ringF)x=z.rf===TE[t].ringK?`Du hast „stimmt“ angetippt – aber das ist der Fehler aus deinem eigenen Teil. Bei Tablet ${n} steckte ein anderer. Frag noch einmal nach.`:
+    `Du hast „stimmt“ angetippt – aber der Fehler passt nicht zum Teil von Tablet ${n}. Frag noch einmal nach und rechne selbst nach.`;
+   else x=`Du hast „stimmt“ angetippt – aber die Teilsumme passt nicht. Rechne den Teil von Tablet ${n} selbst nach (${TE[RG.von].tabellen}) und klärt es zusammen.`;}
+  else if(!String(z.d).trim()&&!String(z.sum).trim()&&!z.erf&&!z.e&&!z.st.t.length){k='';x=`Teil 2 stimmt. Jetzt setzt euch zu dritt zusammen: Teilsumme von Tablet ${D+1}, Σ Δp, Bedingung, gemeinsame Frage – und jeder legt den Strang.`;}
+  else if(!s.drei)x=`Die Teilsumme von Tablet ${D+1} stimmt noch nicht – frag nach und rechne selbst nach (${TE[D].tabellen}).`;
+  else if(!s.summe){const v=R.zahl(z.sum);x=Number.isFinite(v)&&Math.abs(v-R.KOLLEGE_SUMME)<1e-9?'201 Pa ist die Summe des Kollegen. Zähl die drei richtigen Teilsummen zusammen.':'Σ Δp = Teilsumme Zählerseite + Teilsumme Rohr + Teilsumme Geräteseite.';}
+  else if(!s.erf)x='Vergleiche Σ Δp mit der Bedingung: höchstens 300 Pa (T S. 371).';
+  else if(!s.schluss)x='Die gemeinsame Frage stimmt noch nicht. Überlegt: Was prüft die 300-Pa-Grenze – und was prüft sie nicht?';
+  else if(!s.strang)x='Der Strang stimmt noch nicht – die Liste unter dem Strang zeigt, was noch fehlt.';
+  else x='Noch nicht alles richtig – rot ist, was noch nicht stimmt.';
+  rueck={k,t:x};teile();aenderung();o.beiPunkte&&o.beiPunkte(besterStand());return s;}
+ if(t<0)startbild();else tablet();
+ return {waehleTablet,pruefen,tablet:()=>t,
+  setze:(i,f)=>{f(Z[i]);if(i===t&&t>=0)teile();aenderung();},
+  fuellen:i=>{Z[i]=R.richtig(i);if(i===t&&t>=0)teile();aenderung();},
+  stand:i=>gs(i),besterStand,zumAnfang,eingabe:i=>kopie(Z[i]),
+  exportiere:()=>{lies();return {t,Z:kopie(Z),P:kopie(P)};},
+  wechsel:()=>{lies();t=-1;aenderung();startbild();}};
+}
+
+const TM=bauPruefTeam(document.getElementById('team'),{mitPunkten:false});
+window.__seite={TM};
+</script>
+</body>
+</html>
