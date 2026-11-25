@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>2.2 Im Bad oben: Reicht die Luft? – Haus Kessler</title>
+<style>
+:root{--papier:#f4f1ea;--tinte:#22303a;--leise:#5d6b75;--linie:#d5cfc2;--karte:#fff;--akzent:#0b6b7d;--akzent-hell:#e1f0f2;--gold:#d99a1b;
+  --vl:#d0342c;--rl:#2f6fb7;--ring:#b0408a;--gut:#2e7d4f;--gut-hell:#e4f3e3;--schlecht:#c8371f;--schlecht-hell:#fde3df;--merk:#fffbe9;--merk-rand:#ecd9a0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation}
+body{margin:0;background:var(--papier);color:var(--tinte);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+.kopf{position:sticky;top:0;z-index:5;background:var(--papier);border-bottom:1px solid var(--linie);padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.kopf .titel{flex:1 1 360px;min-width:0}
+.kopf .ober{margin:0;font-size:13px;color:var(--leise)}
+.kopf h1{margin:0;font-size:20px;line-height:1.25}
+.kopf .stand{font-size:16px;white-space:nowrap;text-align:right}
+.kopf .stand small{display:block;font-size:12px;color:var(--leise)}
+.kurs{min-height:44px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--akzent);background:#fff;color:var(--akzent);font-weight:600;cursor:pointer;touch-action:manipulation}
+main{max-width:1040px;margin:0 auto;padding:14px 16px 60px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+h2{font-size:20px;margin:0 0 8px;line-height:1.25}
+h3{font-size:17px;margin:14px 0 6px}
+p{margin:0 0 10px}
+.klein{font-size:14px;color:var(--leise)}
+.sprech{border-left:5px solid var(--akzent);background:var(--akzent-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:0 0 12px}
+.sprech b.wer{display:block;font-size:13px;color:var(--akzent);letter-spacing:.3px;margin-bottom:2px}
+.merk{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 12px;margin:10px 0 0}
+.wahl{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.knopf,.wahl button{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;touch-action:manipulation}
+.wahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.knopf.haupt{background:var(--akzent);border-color:var(--akzent);color:#fff}
+.knopf:disabled,.wahl button:disabled{opacity:.45;cursor:default}
+svg{display:block;width:100%;height:auto}
+.rollen{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--leise);font-weight:600}
+.balken{height:12px;border-radius:6px;background:var(--akzent)}
+.balkenreihe{display:flex;min-width:60px}
+.zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.zwei{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}}
+/* Animation */
+.wegbild{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.messung{min-height:48px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--akzent-hell);font-size:17px}
+.messung b{font-size:19px}
+.hk-knopf{cursor:pointer}
+.lupe-ruf{cursor:pointer}
+.lupe{border:2px solid var(--tinte);border-radius:14px;padding:12px 14px;margin-top:12px;background:#fff}
+.lupe h3{margin:0 0 6px}
+.lupe ol{margin:8px 0 0;padding-left:22px}
+.lupe li{margin:3px 0}
+/* Aufgaben */
+.aufgabe{border:1px solid var(--linie);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:#fff}
+.aufgabe h3{margin:0 0 6px}
+.aufgabe .pkt{float:right;margin-left:10px;font-size:14px;color:var(--leise);font-weight:600}
+.aufgabe.fertig{border-color:var(--gut);box-shadow:0 0 0 2px var(--gut-hell)}
+.feld{display:inline-flex;align-items:center;gap:6px;margin:4px 16px 4px 0;font-size:17px}
+input.zahl{font:inherit;width:5.2em;min-height:44px;padding:6px 8px;border:1px solid var(--linie);border-radius:8px;background:#fff;color:var(--tinte)}
+input.zahl.ok{border-color:var(--gut);background:var(--gut-hell)}
+input.zahl.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+input.zahl:disabled{opacity:1;color:var(--tinte)}
+.rueck{display:block;margin-top:8px;font-size:15px}
+.rueck.ok{color:var(--gut);font-weight:600}
+.rueck.nein{color:var(--schlecht)}
+.satz{border:1px solid var(--linie);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+.satz p{margin:0 0 6px;font-style:italic}
+.satz.ok{border-color:var(--gut);background:var(--gut-hell)}
+.satz.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+.satz .wahl{margin:0}
+/* Zeichnen */
+svg.zeichnen{min-width:680px;touch-action:manipulation;background:#eef1ea;border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.gruppe{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 8px}
+.gruppe button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.gruppe .gname{font-size:14px;color:var(--leise);font-weight:600;min-width:110px}
+.pruefliste{list-style:none;padding:0;margin:10px 0 0;font-size:15px}
+.pruefliste li{padding:3px 0 3px 26px;position:relative}
+.pruefliste li::before{position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;text-align:center;line-height:18px}
+.pruefliste li.ok::before{content:"✓";background:var(--gut)}
+.pruefliste li.nein::before{content:"✗";background:var(--schlecht)}
+/* Team */
+.tablet{border:2px solid var(--tinte);border-radius:16px;padding:14px;background:#fff;margin-top:6px}
+.tablet h3{margin:0 0 6px}
+.phase{border-top:1px solid var(--linie);padding-top:10px;margin-top:12px}
+.phase.zu{opacity:.45}
+.phase label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.grosswahl{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}
+.grosswahl button{min-width:150px;min-height:96px;border-radius:16px;border:2px solid var(--tinte);background:#fff;cursor:pointer;font-size:18px;padding:10px 14px;touch-action:manipulation}
+.grosswahl button b{display:block;font-size:34px;line-height:1.1}
+.ok-text{color:var(--gut);font-weight:600}
+.hinweis-gruen{display:inline-block;background:var(--gut-hell);border:1px solid var(--gut);border-radius:8px;padding:2px 8px}
+.hinweis-orange{display:inline-block;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:2px 8px}
+@media (max-width:820px){body{font-size:16px}.kopf h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Haus Kessler 2.2 – Ergänzungen zu basis.css (Kopie aus Haus Röhringer, unverändert eingebunden): Grundriss, Räume, Kurven, Vergleich */
+.lage{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:860px){.lage{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:start}}
+figure.bild{margin:0;background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;padding:8px 10px 10px}
+figure.bild figcaption{font-size:14px;font-weight:600;margin:0 0 6px}
+svg.grundriss{max-width:460px;margin:0 auto}
+.wissen{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;padding:10px 12px;font-size:15px}
+.wissen h4{margin:0 0 6px;font-size:15px}
+.wissen ul{margin:0;padding-left:18px}
+.wissen li{margin:3px 0}
+.frage{margin:12px 0 6px}
+.raeume{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.raeume{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.raum{border:1px solid var(--linie);border-radius:12px;padding:10px 12px;background:#fcfbf8}
+.raum h4{margin:0 0 2px;font-size:17px}
+.raum .tuer{margin:4px 0 8px;font-size:15px}
+.raum .neu{color:#a85400;font-weight:700}
+.raum.bad{background:#f3f6f8}
+.zeile{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:6px 0}
+.zeile .was{font-size:15px;color:var(--leise);min-width:92px}
+.kurven{display:flex;gap:6px;margin:0}
+.kurven button{min-width:48px;min-height:44px;padding:6px 0;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:17px;font-weight:600;touch-action:manipulation}
+.kurven button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.kurven button:disabled{opacity:.45;cursor:default}
+.satzwahl{display:flex;flex-direction:column;gap:8px;margin:0 0 6px}
+.satzwahl button{min-height:44px;padding:9px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;text-align:left;line-height:1.35;touch-action:manipulation}
+.satzwahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.satzwahl button:disabled{opacity:.45;cursor:default}
+.wahl button.ok[aria-pressed],.satzwahl button.ok[aria-pressed],.kurven button.ok[aria-pressed]{background:var(--gut-hell);border:2px solid var(--gut);color:var(--tinte);opacity:1}
+.wahl button.nein[aria-pressed],.satzwahl button.nein[aria-pressed],.kurven button.nein[aria-pressed]{background:var(--schlecht-hell);border:2px solid var(--schlecht);color:var(--tinte)}
+.wahl button.ok::after,.satzwahl button.ok::after,.kurven button.ok::after{content:" ✓";color:var(--gut);font-weight:700}
+.wahl button.nein::after,.satzwahl button.nein::after,.kurven button.nein::after{content:" ✗";color:var(--schlecht);font-weight:700}
+input.zahl{width:5.6em}
+.summe{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0 4px;font-size:17px}
+.mitspieler{border:1px solid var(--linie);border-radius:12px;padding:10px 12px;margin:10px 0;background:#fcfbf8}
+.mitspieler h4{margin:0 0 4px;font-size:16px}
+.mitspieler .wahl{margin:0}
+.ringfrage{border:1px solid var(--linie);border-radius:12px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+table.vergleich{min-width:560px}
+table.vergleich td,table.vergleich th{vertical-align:top}
+.gross{font-size:20px;font-weight:700}
+.grosswahl button small{display:block;font-size:13px;color:var(--leise);margin-top:2px}
+.merk b{font-weight:700}
+
+.leise{color:var(--leise);font-size:14px}
+.kennz{font-weight:700;color:var(--akzent);margin:0 0 2px}
+a.zurueck{color:var(--akzent)}
+h1{font-size:24px;margin:0 0 4px;line-height:1.2}
+.sprung{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.sprung a{display:inline-block;padding:9px 14px;border-radius:999px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-decoration:none;font-size:15px}
+section.karte{scroll-margin-top:10px}
+.videoplatz{border:2px dashed var(--linie);border-radius:10px;padding:12px 14px;background:#fcfbf8;color:var(--leise)}
+.videoplatz a{color:var(--akzent);font-weight:600}
+footer{margin-top:28px;font-size:13px;color:var(--leise);border-top:1px solid var(--linie);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+  <p class="leise"><a class="zurueck" href="index.html">← Haus Kessler: alle Stationen</a></p>
+  <p class="kennz">3195 · 2.2</p>
+  <h1>Haus Kessler – Station 2.2 Im Bad oben: Reicht die Luft?</h1>
+  <p class="leise">Haus Kessler – Auftrag 2: Planung. Video und Team-Übung zum Arbeitsblatt 2.2, ohne Anmeldung und ohne Punkte.</p>
+  <div class="sprung"><a href="#video">Video 2.2.1</a><a href="#team-uebung">2.2.2 Dreier-Team</a></div>
+
+  <section class="karte" id="video">
+    <h2>Video 2.2.1: Strömungssicherung und Abgassensor am Gaswasserheizer</h2>
+    <div class="videoplatz"><!--VIDEO-2-2-1--><p><a href="https://youtu.be/0-Z0spW6dTo" target="_blank" rel="noopener"><b>Video bei YouTube öffnen</b> (3:48 Minuten)</a></p><p>Ein Ausbilder zeigt die Strömungssicherung an einem offenen Gaswasserheizer und erklärt an der Tafel, was bei Stau und Rückstrom passiert. Er sagt „Kamin“ statt Schornstein. Die Aufnahme ist etwas hallig – nimm Kopfhörer.</p><p class="leise">Quelle: YouTube, Kanal „Bildungsakademie Handwerkskammer Karlsruhe“, „Sanitär- Heizungs- und Klimatechnik (SHK): Gaswasserheizer (GWH) - Strömungssicherung“. Der Link öffnet YouTube; dort gelten die Datenschutzregeln von YouTube.</p></div>
+  </section>
+
+  <section class="karte" id="team-uebung">
+    <h2>2.2.2 Dreier-Team: Drei Türen, drei Rechnungen</h2>
+    <div class="sprech"><b class="wer">DEIN CHEF</b>„Ich will der Mieterin und Herrn Kessler ein Angebot machen. Ihr seid zu dritt: Jeder rechnet mir eine Maßnahme an den Türen durch – reicht danach die Luft für das Gerät im Bad? Am Ende will ich von jedem von euch den Vergleich aller drei Maßnahmen.“</div>
+    <p><b>So geht es:</b> Teil 1 – du rechnest deine Maßnahme: Kurve wählen, im Diagramm 388.1 deines Tabellenbuchs ablesen, zusammenzählen. Teil 2 – du holst dir einen Wert vom nächsten Tablet und prüfst ihn im eigenen Tabellenbuch nach (Tablet 1 fragt Tablet 2, Tablet 2 fragt Tablet 3, Tablet 3 fragt Tablet 1). Teil 3 – ihr setzt euch zusammen, jeder trägt die Ergebnisse der beiden anderen in den Vergleich ein, und ihr beantwortet eine gemeinsame Frage.</p>
+    <div id="team"></div>
+  </section>
+
+  <footer>Diese Seite setzt keine Cookies, speichert nichts auf dem Gerät und lädt nichts von anderen Servern. Beim Aufruf verarbeitet der Anbieter GitHub technisch die IP-Adresse des Geräts.</footer>
+</main>
+<script>
+// ---------------------------------------------------------------- Dreier-Team 2.2.2 „Drei Türen, drei Rechnungen“ (ohne DOM)
+// Haus Kessler, Station 2.2 „Im Bad oben: Reicht die Luft?“ (Kurs 3195 „Haus Kessler A2“). Feinplan: VORSCHAU-Kessler-Station-2-2.html (Element
+// „2.2.2 Dreier-Team: Drei Türen, drei Rechnungen“), Hauswerte aus BAUPLAN-Auftrag-2-Planung-25-11.md (A: Mietwohnung, n50 = 2,5; D: Station 2.2).
+// Regel des Lehrers 24.11.2026 (Weg A, K20): Die Übung fragt „Welches Tablet bist du? 1 · 2 · 3“. Ring: 1 holt von 2, 2 von 3, 3 von 1.
+// Tablet 1: alle drei Türblätter 1,0 cm kürzen (Kurve 2) · Tablet 2: nur die Küchentür bekommt ein Lüftungsgitter (Küche Kurve 4, sonst Kurve 1)
+// · Tablet 3: alle drei Türen bekommen ein Lüftungsgitter (Kurve 4).
+// Punkte (Feinplan): Teil 1 drei Kurven (3 × 5) + drei Ablesewerte (3 × 5) + Summe mit Bad (5) + reicht es? (5) · Teil 2 Ringtausch: Wert und
+// Kurve des Mitspielers (10) + im eigenen Buch nachgeprüft „stimmt“ (10), zählt erst, wenn Teil 1 stimmt und nachgeprüft ist · Teil 3 Summe und „reicht“ der beiden
+// anderen Maßnahmen (4 × 7,5) + gemeinsame Frage (10), zählt erst, wenn Teil 2 stimmt. 100 nur, wenn alles stimmt.
+// Tabellenbuch = neue Ausgabe (6. Auflage 2026), S. 388, Tab. 388.1, Diagr. 388.1. Ablesewerte am Bild T S. 388 (Feinplan, nachgemessen am
+// 25.11.2026: Kurve 1 bei 13,0 → 6,0 und bei 19,5 → 7,3; Kurve 2 bei 13,0 → 10,1 bis 10,5 und bei 19,5 → 14,6; Kurve 4 ist die Gerade V̇anr = V̇S).
+// Toleranz (Feinplan): Kurve 1 ± 0,5 m³/h, Kurven 2 bis 4 ± 1 m³/h, Summe ± 2 m³/h.
+const T22=(()=>{
+ const BEDARF=35.2,QNL=22.0,N=0.325,BAD=5.9;
+ const RAEUME=[{k:'kueche',name:'Küche',vr:40.0,vs:13.0},{k:'wohn',name:'Wohnzimmer',vr:60.0,vs:19.5},{k:'schlaf',name:'Schlafzimmer',vr:40.0,vs:13.0}];
+ const ABLESE={1:{13:6.0,19.5:7.2},2:{13:10.5,19.5:14.5},3:{13:11.5,19.5:17.0},4:{13:13.0,19.5:19.5}};
+ const TOL={1:0.5,2:1,3:1,4:1};
+ // Türen nach der Maßnahme (Wortlaut nah an den Kurventexten neben Diagr. 388.1)
+ const TUER={
+  dicht:{text:'3-seitig umlaufende Dichtung, Türblatt ungekürzt (bleibt wie bisher)',kurz:'Dichtung, ungekürzt',kurve:1},
+  kurz:{text:'3-seitig umlaufende Dichtung, Türblatt 1,0 cm gekürzt',kurz:'1,0 cm gekürzt',kurve:2},
+  gitter:{text:'neues Lüftungsgitter in der Tür, 150 cm² freier Querschnitt',kurz:'Gitter 150 cm²',kurve:4}};
+ const MASSNAHMEN=[
+  {name:'Türen kürzen',titel:'alle drei Türblätter 1,0 cm kürzen',klein:'alle drei Türblätter 1,0 cm',tueren:['kurz','kurz','kurz'],reicht:'ja'},
+  {name:'Ein Gitter',titel:'nur die Küchentür bekommt ein Lüftungsgitter ≥ 150 cm²',klein:'nur in der Küchentür',tueren:['gitter','dicht','dicht'],reicht:'nein'},
+  {name:'Drei Gitter',titel:'alle drei Türen bekommen ein Lüftungsgitter ≥ 150 cm²',klein:'in allen drei Türen',tueren:['gitter','gitter','gitter'],reicht:'ja'}];
+ // Ring: Tablet i fragt Tablet „von“: „Wie viel bringt bei dir das Wohnzimmer – und nach welcher Kurve?“
+ const TAB=[{von:1},{von:2},{von:0}];
+ const RING_RAUM=1;
+ // gemeinsame Frage (Lösung und zwei Ablenker laut Feinplan, dazu „alle drei Türen mit Gitter“)
+ const SCHLUSS=[
+  {k:'kueche',t:'Nur die Küchentür mit Gitter: Das ist am billigsten.'},
+  {k:'freie',t:'Öffnung ins Freie im Bad (150 cm² oder 2 × 75 cm²): Sie hängt nicht von Türen und Dichtheit ab.'},
+  {k:'gitter',t:'Alle drei Türen mit Gitter: Damit kommt am meisten Luft zusammen.'},
+  {k:'fenster',t:'Fenster gekippt lassen: Dann strömt immer genug Luft nach.'}];
+ const SCHLUSS_RICHTIG='freie';
+ const r1=x=>Math.round(x*10)/10;
+ const fmt=x=>r1(x).toFixed(1).replace('.',',');
+ // Lösung je Tablet: Kurven, Ablesewerte, Summe mit Bad, Toleranz der Summe beim Eintragen durch die Mitspieler
+ function loesung(i){const M=MASSNAHMEN[i],kurven=M.tueren.map(t=>TUER[t].kurve),werte=kurven.map((k,r)=>ABLESE[k][RAEUME[r].vs]);
+  const summe=r1(werte[0]+werte[1]+werte[2]+BAD);
+  return {kurven,werte,summe,tolFremd:kurven.reduce((a,k)=>a+TOL[k],0)+0.5,reicht:M.reicht};}
+ function ring(i){const j=TAB[i].von,L=loesung(j);return {von:j,kurve:L.kurven[RING_RAUM],wert:L.werte[RING_RAUM]};}
+ // Zahl lesen: Komma oder Punkt, „ca.“ davor, „m³/h“ dahinter und Leerzeichen außen erlaubt; sonst nichts (keine Rechnung wie „13+7“, kein „1 0“)
+ function zahl(s){let t=String(s==null?'':s).trim().toLowerCase();
+  t=t.replace(/m\s*[³3]\s*\/\s*h/g,'').replace(/m\s*[³3]/g,'').replace(/^(ca\.?|circa|etwa|ungefähr|≈|~)\s*/,'').trim();
+  if(!/^\d{1,3}(?:[.,]\d{0,3})?$/.test(t))return NaN;return parseFloat(t.replace(',','.'));}
+ const nahe=(v,soll,tol)=>Number.isFinite(v)&&Math.abs(v-soll)<=tol+1e-9;
+ const leer=()=>({k:['','',''],w:['','',''],s:'',r:'',rk:'',rw:'',rc:'',f:{},e:''});
+ const andere=i=>[0,1,2].filter(j=>j!==i);
+ function stand(i,z){z=z||leer();const L=loesung(i),M=MASSNAHMEN[i];
+  const kurve=[0,1,2].map(r=>z.k[r]===String(L.kurven[r]));
+  const wv=[0,1,2].map(r=>zahl(z.w[r])),wert=[0,1,2].map(r=>nahe(wv[r],L.werte[r],TOL[L.kurven[r]]));
+  const sv=zahl(z.s),summe=nahe(sv,L.summe,2)||(wert.every(Boolean)&&nahe(sv,wv[0]+wv[1]+wv[2]+BAD,0.3));
+  const reicht=z.r===M.reicht;
+  const p1=kurve.every(Boolean)&&wert.every(Boolean)&&summe&&reicht;
+  const R=ring(i),ringK=z.rk===String(R.kurve),ringW=nahe(zahl(z.rw),R.wert,TOL[R.kurve]),ringA=ringK&&ringW;
+  const ringB=z.rc!==''&&z.rc===(ringA?'stimmt':'nicht');// richtig nachgeprüft (auch „stimmt nicht“, wenn der Wert wirklich nicht stimmt)
+  const p2=p1&&ringA&&z.rc==='stimmt';
+  const fremd=andere(i).map(j=>{const f=z.f[j]||{},L2=loesung(j);return [nahe(zahl(f.s),L2.summe,L2.tolFremd),f.r===L2.reicht];});
+  const schluss=z.e===SCHLUSS_RICHTIG;
+  const p3=p2&&fremd.flat().every(Boolean)&&schluss;
+  const teil1=kurve.filter(Boolean).length*5+wert.filter(Boolean).length*5+(summe?5:0)+(reicht?5:0);
+  // Teil 2 zählt erst, wenn Teil 1 stimmt und der Schüler selbst nachgeprüft hat („stimmt“ / „stimmt nicht“ angetippt) – sonst verrieten
+  // Farben und Punkte, ob der Wert des Mitspielers stimmt, bevor er im eigenen Buch nachgesehen hat
+  const teil2=p1&&z.rc!==''?(ringA?10:0)+(ringA&&z.rc==='stimmt'?10:0):0;
+  const teil3=p2?fremd.flat().filter(Boolean).length*7.5+(schluss?10:0):0;
+  return {kurve,wert,summe,reicht,ringK,ringW,ringA,ringB,fremd,schluss,p1,p2,p3,teil1,teil2,teil3,punkte:teil1+teil2+teil3};}
+ // Hinweis zur eigenen Summe: Bad vergessen · einströmende statt abgelesene Werte addiert
+ function summeHinweis(i,z){const sv=zahl(z.s),wv=[0,1,2].map(r=>zahl(z.w[r]));if(!Number.isFinite(sv))return z.s.trim()?'zahl':'leer';
+  if(wv.every(Number.isFinite)&&nahe(sv,wv[0]+wv[1]+wv[2],0.3))return 'bad';
+  if(nahe(sv,RAEUME[0].vs+RAEUME[1].vs+RAEUME[2].vs+BAD,0.3)&&loesung(i).kurven.some(k=>k!==4))return 'vs';
+  return 'nein';}
+ // richtig ausgefüllt (für Proben und die Lösung der Lehrkraft)
+ function richtig(i){const z=leer(),L=loesung(i),R=ring(i);
+  z.k=L.kurven.map(String);z.w=L.werte.map(fmt);z.s=fmt(L.summe);z.r=L.reicht;
+  z.rk=String(R.kurve);z.rw=fmt(R.wert);z.rc='stimmt';
+  andere(i).forEach(j=>{const L2=loesung(j);z.f[j]={s:fmt(L2.summe),r:L2.reicht};});z.e=SCHLUSS_RICHTIG;return z;}
+ // Spielstand prüfen (aus Moodle geladen): nur bekannte Felder und Werte, Text kurz
+ function saeubere(z){const o=leer();if(!z||typeof z!=='object')return o;
+  const txt=v=>typeof v==='string'?v.slice(0,12):'',eins=(v,erl)=>erl.includes(v)?v:'';
+  if(Array.isArray(z.k))o.k=[0,1,2].map(r=>eins(z.k[r],['1','2','3','4']));
+  if(Array.isArray(z.w))o.w=[0,1,2].map(r=>txt(z.w[r]));
+  o.s=txt(z.s);o.r=eins(z.r,['ja','nein']);o.rk=eins(z.rk,['1','2','3','4']);o.rw=txt(z.rw);o.rc=eins(z.rc,['stimmt','nicht']);
+  if(z.f&&typeof z.f==='object')[0,1,2].forEach(j=>{const f=z.f[j];if(f&&typeof f==='object')o.f[j]={s:txt(f.s),r:eins(f.r,['ja','nein'])};});
+  o.e=SCHLUSS.some(s=>s.k===z.e)?z.e:'';return o;}
+ return {BEDARF,QNL,N,BAD,RAEUME,ABLESE,TOL,TUER,MASSNAHMEN,TAB,RING_RAUM,SCHLUSS,SCHLUSS_RICHTIG,fmt,r1,loesung,ring,zahl,nahe,leer,andere,stand,summeHinweis,richtig,saeubere};
+})();
+
+// ---------------------------------------------------------------- Grundriss der Mietwohnung (selbst gezeichnet, keine Buchskizze), Station 2.2
+// Maße aus dem Bauplan (Abschnitt A): Küche 3,20 × 5,00 · Wohnzimmer 4,80 × 5,00 · Flur 1,50 × 6,00 (ohne Fenster) · Bad 2,40 × 3,00 ·
+// Schlafzimmer 4,00 × 4,00 m, Raumhöhe 2,50 m. Lage der Räume wie im Raumplan des Arbeitsblatts 2.2 (1 m = 44 px). Jedes Tablet zeigt die Türen
+// nach seiner Maßnahme; was die Maßnahme ändert, ist orange umrandet. Ohne Luftpfeile und ohne Kurvennummern (das ist die Frage).
+const T22BILD=(()=>{
+ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+ const FONT='font-family="Arial, Helvetica, sans-serif"';
+ const T=(x,y,s,o)=>`<text x="${x}" y="${y}"${o?' '+o:''}>${esc(s)}</text>`;
+ const VS=(x,y,wert,o)=>`<text x="${x}" y="${y}" font-size="12"${o?' '+o:''}>V̇<tspan font-size="9" dy="3">S</tspan><tspan dy="-3"> ${esc(wert)} m³/h</tspan></text>`;
+ // Tür in einer waagerechten Wand: x, y = Mitte der Wand, b = Breite
+ function tuer(x,y,b,art,neu){const x0=x-b/2;let s='';
+  if(neu)s+=`<rect x="${x0-6}" y="${y-11}" width="${b+12}" height="22" rx="6" fill="none" stroke="#e07a10" stroke-width="3"/>`;
+  if(art==='gitter'){s+=`<rect x="${x0}" y="${y-4}" width="${b}" height="8" fill="#c9a27e" stroke="#1d2a33"/>`+
+   `<rect x="${x+b/2-17}" y="${y-3.2}" width="14" height="6.4" fill="#ffffff" stroke="#1d2a33" stroke-width=".8"/>`+
+   [0,1,2,3].map(n=>`<line x1="${x+b/2-14+n*3}" y1="${y-3}" x2="${x+b/2-14+n*3}" y2="${y+3}" stroke="#1d2a33" stroke-width=".8"/>`).join('');}
+  else if(art==='kurz'){s+=`<rect x="${x0}" y="${y-4}" width="${b}" height="6" fill="#c9a27e" stroke="#1d2a33"/>`+
+   `<line x1="${x0+2}" y1="${y+3.2}" x2="${x0+b-2}" y2="${y+3.2}" stroke="#1f5fbf" stroke-width="1.6" stroke-dasharray="3 2"/>`;}
+  else if(art==='bad'){s+=`<rect x="${x0}" y="${y-4}" width="${b}" height="8" fill="#c9a27e" stroke="#1d2a33"/>`+
+   `<rect x="${x0+5}" y="${y-2.6}" width="7" height="5.2" fill="#fff" stroke="#1d2a33" stroke-width=".8"/><rect x="${x0+b-12}" y="${y-2.6}" width="7" height="5.2" fill="#fff" stroke="#1d2a33" stroke-width=".8"/>`;}
+  else s+=`<rect x="${x0}" y="${y-4}" width="${b}" height="8" fill="#8a5a33" stroke="#1d2a33"/>`;
+  return s;}
+ function grundriss(i){const M=i>=0?T22.MASSNAHMEN[i]:null,tu=M?M.tueren:['dicht','dicht','dicht'],neu=tu.map(t=>t!=='dicht');
+  const fmt=T22.fmt,R=T22.RAEUME,TU=T22.TUER;
+  const titel=M?'Grundriss der Mietwohnung im OG mit den Türen nach der Maßnahme „'+M.titel+'“: Küche '+TU[tu[0]].kurz+', Wohnzimmer '+TU[tu[1]].kurz+', Schlafzimmer '+TU[tu[2]].kurz+'; Badtür mit 2 Öffnungen à 150 cm²'
+   :'Grundriss der Mietwohnung im OG';
+  let s=`<svg class="grundriss" viewBox="0 0 440 600" role="img" aria-label="${esc(titel)}" ${FONT} font-size="12" fill="#1d2a33">`;
+  // Räume
+  s+=`<rect x="30" y="40" width="140.8" height="220" fill="#ffffff" stroke="#1d2a33" stroke-width="3"/>`+
+   `<rect x="170.8" y="40" width="211.2" height="220" fill="#ffffff" stroke="#1d2a33" stroke-width="3"/>`+
+   `<rect x="74" y="260" width="264" height="66" fill="#eceff2" stroke="#1d2a33" stroke-width="3"/>`+
+   `<rect x="74" y="326" width="105.6" height="132" fill="#ffffff" stroke="#1d2a33" stroke-width="3"/>`+
+   `<rect x="179.6" y="326" width="176" height="176" fill="#ffffff" stroke="#1d2a33" stroke-width="3"/>`+
+   `<rect x="338" y="260" width="44" height="66" fill="none" stroke="#7a8790" stroke-dasharray="4 3"/>`;
+  // Fenster (alle 2026 neu)
+  s+=`<rect x="74" y="36" width="52.8" height="8" fill="#dbe8f7" stroke="#1d2a33"/><rect x="250" y="36" width="70.4" height="8" fill="#dbe8f7" stroke="#1d2a33"/>`+
+   `<rect x="70" y="365.6" width="8" height="44" fill="#dbe8f7" stroke="#1d2a33"/><rect x="232.4" y="498" width="70.4" height="8" fill="#dbe8f7" stroke="#1d2a33"/>`;
+  // Türen: Küche, Wohnzimmer (oben am Flur), Bad, Schlafzimmer (unten am Flur), Wohnungstür
+  s+=tuer(120.2,260,39.6,tu[0],neu[0])+tuer(278.6,260,39.6,tu[1],neu[1])+tuer(118,326,35.2,'bad',false)+tuer(261,326,39.6,tu[2],neu[2])+
+   `<rect x="334" y="270" width="8" height="46" fill="#8a5a33" stroke="#1d2a33"/>`;
+  // Gerät und Schornstein im Bad
+  s+=`<rect x="144" y="338" width="28" height="38" fill="#e9ecef" stroke="#1d2a33"/>`+T(148,361,'Gerät','font-size="9"')+
+   `<rect x="166" y="404" width="12" height="12" fill="#9aa4ac" stroke="#1d2a33"/>`+T(128,414,'Zug 2','font-size="9"');
+  // Beschriftung der Räume
+  s+=T(42,92,'Küche','font-weight="700" font-size="15"')+T(42,110,'40,0 m³')+VS(42,128,fmt(R[0].vs));
+  s+=T(186,92,'Wohnzimmer','font-weight="700" font-size="15"')+T(186,110,'60,0 m³')+VS(186,128,fmt(R[1].vs));
+  s+=T(196,420,'Schlafzimmer','font-weight="700" font-size="15"')+T(196,438,'40,0 m³')+VS(196,456,fmt(R[2].vs));
+  s+=T(82,352,'Bad','font-weight="700" font-size="15"')+T(82,436,'18,0 m³','font-size="11"')+
+   `<text x="82" y="451" font-size="11">V̇<tspan font-size="8" dy="3">inf</tspan><tspan dy="-3"> 5,9 m³/h</tspan></text>`;
+  s+=T(90,297,'Flur – ohne Fenster, bringt keine Luft','font-size="12"');
+  s+=T(344,288,'Treppen-','font-size="9" fill="#5b6b77"')+T(344,300,'haus','font-size="9" fill="#5b6b77"');
+  // Türen beschriften (in den Zimmern, an der Tür)
+  const lab=(x,y,t,n)=>T(x,y,TU[t].kurz,`font-size="11" text-anchor="middle"${n?' font-weight="700" fill="#a85400"':' fill="#3d4a54"'}`);
+  s+=lab(100,244,tu[0],neu[0])+lab(278.6,244,tu[1],neu[1])+lab(261,350,tu[2],neu[2])+T(82,392,'Tür 2 × 150 cm²','font-size="10" fill="#3d4a54"');
+  s+=T(30,24,'Mietwohnung OG · Raumhöhe 2,50 m · ohne Maßstab','font-size="11" fill="#5b6b77"');
+  // Legende
+  let y=528;const leg=(art,txt,hell)=>{const r=`<g transform="translate(0,${y})">${tuer(50,0,32,art,false)}${T(76,4,txt,'font-size="11"'+(hell?' font-weight="700" fill="#a85400"':''))}</g>`;y+=17;return r;};
+  const arten=[...new Set(tu)];
+  if(arten.includes('dicht'))s+=leg('dicht','Tür mit 3-seitig umlaufender Dichtung, ungekürzt');
+  if(arten.includes('kurz'))s+=leg('kurz','Türblatt 1,0 cm gekürzt (Spalt unten)',true);
+  if(arten.includes('gitter'))s+=leg('gitter','Lüftungsgitter, 150 cm² freier Querschnitt',true);
+  s+=leg('bad','Badtür: 2 Öffnungen à 150 cm² (schon eingebaut)');
+  if(M)s+=`<rect x="34" y="${y-9}" width="30" height="16" rx="5" fill="none" stroke="#e07a10" stroke-width="2.5"/>`+T(76,y+3,'orange umrandet: das ändert deine Maßnahme','font-size="11"');
+  return s+'</svg>';}
+ return {grundriss};
+})();
+
+// ---------------------------------------------------------------- Dreier-Team 2.2.2: Bild und Bedienung (braucht T22, T22BILD)
+// Start: „Welches Tablet bist du? 1 · 2 · 3“. Danach zeigt das Tablet nur seine Maßnahme (Grundriss mit den Türen, das Wissen aus der Übung)
+// und die drei Teile. Z = aktuelle Eingabe, P = Stand beim letzten „Prüfen“. Grün/rot, Punkte und das Öffnen des nächsten Teils richten sich nur
+// nach P – wer nach dem Prüfen etwas ändert, sieht erst beim nächsten Prüfen, ob es stimmt. Richtige Antworten bleiben stehen (gesperrt).
+// Teil 2: Kurve und Wert des Mitspielers werden erst gefärbt, wenn „stimmt“ / „stimmt nicht“ angetippt war (erst selbst nachprüfen).
+// o: {stand:{t,Z,P}|null, mitPunkten, beiAenderung(), beiPunkte(p)}
+function bauVergleich(wurzel,o){
+ o=Object.assign({stand:null,mitPunkten:true,beiAenderung:null,beiPunkte:null},o||{});
+ const R=T22,M=R.MASSNAHMEN,RA=R.RAEUME,fmt=R.fmt,mitP=!!o.mitPunkten;
+ let t=-1,rueck=null;
+ const Z=[R.leer(),R.leer(),R.leer()],P=[null,null,null];
+ const st=o.stand;
+ if(st&&typeof st==='object'){if([0,1,2].includes(st.t))t=st.t;
+  if(Array.isArray(st.Z))st.Z.slice(0,3).forEach((z,i)=>{Z[i]=R.saeubere(z);});
+  if(Array.isArray(st.P))st.P.slice(0,3).forEach((z,i)=>{P[i]=z?R.saeubere(z):null;if(z&&!Array.isArray(st.Z))Z[i]=R.saeubere(z);});}
+ const kopie=z=>JSON.parse(JSON.stringify(z)),e=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+ const gs=i=>R.stand(i,P[i]||R.leer());
+ const besterStand=()=>Math.max(...[0,1,2].map(i=>gs(i).punkte));
+ const aenderung=()=>{o.beiAenderung&&o.beiAenderung();};
+ const zahlText=v=>{const x=R.zahl(v);return Number.isFinite(x)?fmt(x):e(v);};
+ function startbild(){rueck=null;
+  wurzel.innerHTML='<div class="karte"><h2>Welches Tablet bist du?</h2>'+
+   '<p>Setzt euch zu dritt zusammen. Jeder von euch nimmt eine andere Nummer. Jedes Tablet rechnet eine andere Maßnahme für die Mietwohnung durch – am Ende braucht jeder die Ergebnisse der beiden anderen.</p>'+
+   '<div class="grosswahl">'+M.map((m,i)=>`<button type="button" data-t="${i}"><b>${i+1}</b>${m.name}<small>${m.klein}</small></button>`).join('')+'</div>'+
+   '<p class="klein">Ihr seid nur zu zweit? Dann übernimmt einer von euch das dritte Tablet mit: Er wählt später unten „anderes Tablet wählen“.</p></div>';
+  wurzel.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>waehleTablet(+b.dataset.t));}
+ function waehleTablet(i){t=i;rueck=null;aenderung();tablet();zumAnfang();}
+ // an den Anfang des Tablets rollen – unter die feste Kopfzeile (sonst verdeckt sie die Überschrift)
+ function zumAnfang(){try{const k=document.querySelector('.kopf'),ab=k?k.getBoundingClientRect().height+8:8;window.scrollTo(0,Math.max(0,wurzel.getBoundingClientRect().top+window.pageYOffset-ab));}catch(_){}}
+ function tablet(){const m=M[t];
+  wurzel.innerHTML=`<div class="tablet"><h3>Tablet ${t+1} – deine Maßnahme: ${m.titel}</h3>
+   <p class="klein" style="margin:0 0 8px">Dein Team: ${M.map((x,i)=>`Tablet ${i+1} ${x.titel}`).join(' · ')}. Dein Tablet rechnet nur deine Maßnahme.</p>
+   <div class="lage"><figure class="bild"><figcaption>Mietwohnung im OG – die Türen nach deiner Maßnahme</figcaption>${T22BILD.grundriss(t)}</figure>
+   <div class="wissen"><h4>Das weißt du schon aus der Übung 2.2.2</h4><ul>
+    <li>Gerät im Bad: Art B11BS, Q̇<sub>NL</sub> = 22,0 kW. Bedarf: V̇<sub>VL</sub> = 1,6 · 22,0 = <b>35,2 m³/h</b></li>
+    <li>Luftwechsel nach dem Fenstertausch: n = 0,7 · 2,5 · 0,1857 = 0,325 je Stunde</li>
+    <li>Einströmend V̇<sub>S</sub> = V<sub>R</sub> · n: Küche <b>13,0</b> · Wohnzimmer <b>19,5</b> · Schlafzimmer <b>13,0</b> m³/h</li>
+    <li>Bad (Aufstellraum mit Fenster): <b>5,9 m³/h</b>, voll anrechenbar</li>
+    <li>Der Flur hat kein Fenster und bringt keine Luft.</li>
+    <li>Ohne Maßnahme (alle Türen dicht und ungekürzt): Summe ca. 25 m³/h – reicht nicht.</li></ul>
+    <p class="klein" style="margin:8px 0 0">Du brauchst dein Tabellenbuch (S. 388, Diagramm 388.1 mit den Texten zu Kurve 1 bis 4), ein Lineal und den Taschenrechner.</p></div></div>
+   <div data-r="teile"></div>
+   <p class="klein" style="margin-top:14px">Falsches Tablet gewählt oder nur zu zweit? <button type="button" class="knopf" data-r="wechsel">anderes Tablet wählen</button></p></div>`;
+  wurzel.querySelector('[data-r="wechsel"]').onclick=()=>{lies();t=-1;aenderung();startbild();};
+  teile();}
+ // Auswahlknopf: gedrückt = aktuelle Auswahl; grün/rot nur, wenn genau dieser Wert geprüft wurde; richtig geprüft = gesperrt
+ function knopf(attr,v,text,zv,pv,ok,zu,sperre,farbe){const an=zv===v,gep=farbe!==false&&pv!=null&&pv!==''&&zv===pv,kl=an&&gep?(ok?'ok':'nein'):'';
+  if(sperre===undefined)sperre=ok;
+  return `<button type="button" ${attr} data-v="${v}" aria-pressed="${an}"${kl?` class="${kl}"`:''}${zu||(gep&&sperre)?' disabled':''}>${text}</button>`;}
+ // Zahlenfeld: grün/rot nur, wenn genau diese Eingabe geprüft wurde; richtig geprüft = gesperrt
+ function feld(attr,zv,pv,ok,zu,farbe){const gep=farbe!==false&&pv!=null&&pv!==''&&zv===pv,kl=gep?(ok?' ok':' nein'):'';
+  return `<input type="text" class="zahl${kl}" ${attr} inputmode="decimal" maxlength="12" autocomplete="off" autocorrect="off" spellcheck="false" value="${e(zv)}"${zu||(gep&&ok)?' disabled':''}>`;}
+ const kurven=(attr,zv,pv,ok,zu,farbe)=>`<div class="kurven">${[1,2,3,4].map(n=>knopf(attr+` aria-label="Kurve ${n}"`,String(n),String(n),zv,pv,ok,zu,undefined,farbe)).join('')}</div>`;
+ const pkt=(txt,zu)=>mitP?`<span class="klein">(${txt}${zu?' · erst wenn '+zu+' stimmt':''})</span>`:zu?`<span class="klein">(erst wenn ${zu} stimmt)</span>`:'';
+ function teile(){
+  const z=Z[t],p=P[t],s=gs(t),m=M[t],L=R.loesung(t),RG=R.ring(t),vm=M[RG.von],an=R.andere(t);
+  let h=`<div class="phase"><b>1 · Deine Maßnahme</b> ${pkt('Kurven dreimal 5, Werte dreimal 5, Summe 5, „reicht?“ 5 – zusammen 40 Punkte')}
+   <p class="frage">Welche Kurve im Diagramm 388.1 gilt für jede Tür nach deiner Maßnahme? Lies dann bei V̇<sub>S</sub> ab, wie viel Luft das Zimmer für das Gerät bringt – auf 0,5 m³/h genau.</p>
+   <div class="raeume">`+RA.map((ra,r)=>{const tu=m.tueren[r];
+    return `<div class="raum" data-raum="${ra.k}"><h4>${ra.name}</h4><p class="klein" style="margin:0">V̇<sub>S</sub> = ${fmt(ra.vs)} m³/h</p>
+     <p class="tuer">Tür zum Flur: <span${tu!=='dicht'?' class="neu"':''}>${R.TUER[tu].text}</span></p>
+     <div class="zeile"><span class="was">Kurve</span>${kurven(`data-f="k" data-r="${r}"`,z.k[r],p&&p.k[r],s.kurve[r],false)}</div>
+     <div class="zeile"><span class="was">anrechenbar</span>${feld(`data-f="w" data-r="${r}" aria-label="anrechenbar ${ra.name} in m³/h"`,z.w[r],p&&p.w[r],s.wert[r],false)}<span>m³/h</span></div></div>`;}).join('')+
+   `</div><div class="raum bad" style="margin-top:10px"><b>Bad</b> (Aufstellraum mit Fenster): <b>5,9 m³/h</b>, voll anrechenbar – zählt immer mit.</div>
+   <div class="summe"><span>Summe mit Bad:</span>${feld('data-f="s" aria-label="Summe mit Bad in m³/h"',z.s,p&&p.s,s.summe,false)}<span>m³/h</span></div>
+   <p class="frage">Reicht das für den Bedarf des Geräts von 35,2 m³/h?</p>
+   <div class="wahl">${[['ja','ja, das reicht'],['nein','nein, das reicht nicht']].map(([v,tx])=>knopf('data-f="r"',v,tx,z.r,p&&p.r,s.reicht,false)).join('')}</div>`+
+   (s.p1?`<div class="merk"><b>Für euren Vergleich – sag es nachher deinen Mitspielern:</b><br>Tablet ${t+1} (${m.titel}): Summe mit Bad <b>${zahlText(p.s)} m³/h</b> – <b>${m.reicht==='ja'?'reicht':'reicht nicht'}</b><br>Wohnzimmer: Kurve <b>${L.kurven[1]}</b>, anrechenbar <b>${zahlText(p.w[1])} m³/h</b></div>`:'')+`</div>`;
+  const ringFarbe=!!(p&&p.rc);
+  h+=`<div class="phase ${s.p1?'':'zu'}"><b>2 · Frag Tablet ${RG.von+1}</b> ${pkt('zweimal 10 Punkte',s.p1?'':'Teil 1')}
+   <p class="frage">Tablet ${RG.von+1} rechnet: <b>${vm.titel}</b>. Diese Antwort kennt nur dein Mitspieler. Geh hin und frag: <b>„Wie viel bringt bei dir das Wohnzimmer – und nach welcher Kurve?“</b></p>
+   <div class="ringfrage"><div class="zeile"><span class="was">Kurve</span>${kurven('data-f="rk"',z.rk,p&&p.rk,s.ringK,!s.p1,ringFarbe)}</div>
+   <div class="zeile"><span class="was">anrechenbar</span>${feld(`data-f="rw" aria-label="Wohnzimmer bei Tablet ${RG.von+1} in m³/h"`,z.rw,p&&p.rw,s.ringW,!s.p1,ringFarbe)}<span>m³/h</span></div></div>
+   <p class="frage">Jetzt prüfst du nach – wie das Gegenzeichnen auf der Baustelle: Schlag im eigenen Tabellenbuch nach (Diagr. 388.1, Wohnzimmer V̇<sub>S</sub> = 19,5 m³/h). Stimmen Kurve und Wert deines Mitspielers?</p>
+   <div class="wahl">${[['stimmt','stimmt'],['nicht','stimmt nicht']].map(([v,tx])=>knopf('data-f="rc"',v,tx,z.rc,p&&p.rc,s.ringB,!s.p1,s.ringB&&s.ringA)).join('')}</div></div>`;
+  h+=`<div class="phase ${s.p2?'':'zu'}"><b>3 · Euer Vergleich für den Chef</b> ${pkt('viermal 7,5 und 10 Punkte',s.p2?'':'Teil 2')}
+   <p class="frage">Setzt euch zusammen. Trag ein, was deine beiden Mitspieler herausgefunden haben:</p>`+
+   an.map((j,a)=>{const mj=M[j],f=z.f[j]||{s:'',r:''},pf=(p&&p.f[j])||{},ok=s.fremd[a],at=`data-f="f" data-g="${j}"`;
+    return `<div class="mitspieler"><h4>Tablet ${j+1}: ${mj.titel}</h4>
+     <div class="zeile"><span class="was">Summe mit Bad</span>${feld(at+` data-x="s" aria-label="Summe mit Bad bei Tablet ${j+1} in m³/h"`,f.s,pf.s,ok[0],!s.p2)}<span>m³/h</span></div>
+     <div class="wahl">${[['ja','reicht'],['nein','reicht nicht']].map(([v,tx])=>knopf(at+' data-x="r"',v,tx,f.r,pf.r,ok[1],!s.p2)).join('')}</div></div>`;}).join('')+
+   `<p class="frage"><b>Gemeinsame Frage:</b> Welche Lösung ist die sicherste – auch wenn die Mieterin später neue Türen einbaut?</p>
+   <div class="satzwahl">${R.SCHLUSS.map(x=>knopf('data-f="e"',x.k,x.t,z.e,p&&p.e,s.schluss,!s.p2)).join('')}</div></div>
+   <div class="phase"><b>Vergleich für den Chef</b> ${s.p3?'<span class="hinweis-gruen">vollständig</span>':'<span class="klein">(füllt sich, sobald eure Antworten stimmen)</span>'}
+   <div class="rollen"><table class="vergleich"><tr><th>Tablet</th><th>Maßnahme</th><th>Summe mit Bad</th><th>Bedarf 35,2 m³/h</th></tr>`+
+   [0,1,2].map(j=>{const eig=j===t,a=an.indexOf(j),ok=eig?[s.p1,s.p1]:[s.p2&&s.fremd[a][0],s.p2&&s.fremd[a][1]],wert=eig?(p&&p.s):(p&&p.f[j]&&p.f[j].s);
+    return `<tr data-zeile="${j}"><td><b>${j+1}</b>${eig?' <span class="klein">(deins)</span>':''}</td><td>${M[j].titel}</td><td>${ok[0]?zahlText(wert)+' m³/h':'–'}</td><td>${ok[1]?(M[j].reicht==='ja'?'reicht':'reicht nicht'):'–'}</td></tr>`;}).join('')+
+   `</table></div>${s.p3?'<p class="klein" style="margin:8px 0 0">Am sichersten: eine Öffnung ins Freie im Bad (150 cm² oder 2 × 75 cm²). Den Vergleich brauchst du später für die Planungsmappe (2.6).</p>':''}</div>
+   <div class="phase">${mitP?`<span class="gross">${Math.round(s.punkte)} von 100 Punkten</span> `:''}${s.p3?'<span class="hinweis-gruen">Alles richtig</span>':`<span class="klein">${mitP?'Die volle Punktzahl gibt es erst, wenn auch die Ergebnisse deiner Mitspieler stimmen.':'Fertig ist der Vergleich, wenn alle Antworten stimmen.'}</span>`}
+   <div class="wahl" style="margin:10px 0 0"><button type="button" class="knopf haupt" data-r="pruefen">Prüfen</button></div>
+   <p class="rueck${rueck&&rueck.k?' '+rueck.k:''}" data-r="rueck">${rueck?rueck.t:''}</p></div>`;
+  const c=wurzel.querySelector('[data-r="teile"]');c.innerHTML=h;
+  c.querySelectorAll('button[data-f]').forEach(b=>b.onclick=()=>{lies();const d=b.dataset,zz=Z[t];
+   if(d.f==='k')zz.k[+d.r]=d.v;else if(d.f==='f'){zz.f[d.g]=zz.f[d.g]||{s:'',r:''};zz.f[d.g][d.x]=d.v;}else zz[d.f]=d.v;aenderung();teile();});
+  c.querySelectorAll('input[data-f]').forEach(inp=>inp.addEventListener('input',()=>{schreibFeld(inp);inp.classList.remove('ok','nein');aenderung();}));
+  c.querySelector('[data-r="pruefen"]').onclick=()=>pruefen();}
+ function schreibFeld(inp){if(t<0)return;const d=inp.dataset,v=String(inp.value).slice(0,12),zz=Z[t];
+  if(d.f==='w')zz.w[+d.r]=v;else if(d.f==='f'){zz.f[d.g]=zz.f[d.g]||{s:'',r:''};zz.f[d.g].s=v;}else zz[d.f]=v;}
+ function lies(){if(t<0)return;wurzel.querySelectorAll('[data-r="teile"] input[data-f]').forEach(schreibFeld);}
+ function pruefen(){if(t<0)return null;lies();P[t]=kopie(Z[t]);const s=gs(t),z=Z[t],RG=R.ring(t),n=RG.von+1;let k='nein',x;
+  if(s.p3){k='ok';x=mitP?'Alles richtig – 100 Punkte. Euer Vergleich für den Chef ist fertig.':'Alles richtig – euer Vergleich für den Chef ist fertig.';}
+  else if(!s.p1){
+   if(z.k.every(v=>!v)&&z.w.every(v=>!String(v).trim())){k='';x='Wähl zuerst für jede Tür die Kurve aus und lies dann die Werte ab.';}
+   else if(!s.kurve.every(Boolean))x='Teil 1 stimmt noch nicht: Eine Kurve passt nicht zur Tür. Vergleiche die Tür mit den Texten zu Kurve 1 bis 4 neben Diagr. 388.1.';
+   else if(!s.wert.every(Boolean))x='Die Kurven stimmen. Ein Wert noch nicht: Geh bei V̇S senkrecht hoch bis zu deiner Kurve, dann waagerecht nach links – auf 0,5 m³/h genau. Ein Lineal hilft.';
+   else if(!s.summe){const hw=R.summeHinweis(t,z);
+    x=hw==='bad'?'Fast: Hast du das Bad (5,9 m³/h) dazugezählt?':hw==='vs'?'Zähl die abgelesenen (anrechenbaren) Werte zusammen, nicht die einströmenden V̇S.':
+     hw==='zahl'?'Tipp bei der Summe nur eine Zahl ein, zum Beispiel 30,5.':hw==='leer'?'Jetzt fehlt die Summe: deine drei Werte und das Bad.':'Rechne die Summe noch einmal: deine drei Werte und das Bad (5,9 m³/h).';
+    if(hw==='leer')k='';}
+   else x='Vergleiche deine Summe mit dem Bedarf des Geräts: 35,2 m³/h.';}
+  else if(!s.p2){const eigeneK=String(R.loesung(t).kurven[R.RING_RAUM]);
+   if(!z.rk&&!String(z.rw).trim()&&!z.rc){k='';x=`Teil 1 stimmt. Jetzt frag Tablet ${n}: „Wie viel bringt bei dir das Wohnzimmer – und nach welcher Kurve?“`;}
+   else if(!z.rc){k='';x='Prüf zuerst selbst nach: Schlag im Tabellenbuch nach und tipp „stimmt“ oder „stimmt nicht“ an. Dann wieder „Prüfen“.';}
+   else if(s.ringA)x='Sieh noch einmal im Diagramm 388.1 nach: Kurve und Wert deines Mitspielers stimmen doch.';
+   else if(z.rc==='nicht'){k='';x=`Gut nachgeprüft: Da stimmt wirklich etwas nicht. Klärt es mit Tablet ${n} zusammen, verbessert ${s.ringK?'den Wert':'die Kurve'} und prüft noch einmal.`;}
+   else if(!s.ringK)x=z.rk===eigeneK?`Du hast „stimmt“ angetippt – aber das ist die Kurve von deiner eigenen Maßnahme. Bei Tablet ${n} hat das Wohnzimmer eine andere Tür. Frag noch einmal nach.`:
+    `Du hast „stimmt“ angetippt – aber die Kurve passt nicht zur Wohnzimmertür bei Tablet ${n}. Frag noch einmal nach und schlag selbst nach.`;
+   else x=`Du hast „stimmt“ angetippt – aber der Wert passt nicht zu Kurve ${z.rk} bei V̇S = 19,5 m³/h. Lies selbst nach und klärt es zusammen.`;}
+  else if(!z.e&&R.andere(t).every(j=>{const f=z.f[j];return !f||(!String(f.s).trim()&&!f.r);})){k='';x='Teil 2 stimmt. Jetzt setzt euch zusammen und tragt euren Vergleich ein.';}
+  else if(s.fremd.flat().every(Boolean)&&!s.schluss)x='Die gemeinsame Frage stimmt noch nicht. Überlegt: Was passiert mit eurer Rechnung, wenn die Mieterin später neue, dichte Türen einbaut?';
+  else x='Noch nicht alles richtig. Vergleicht eure Summen noch einmal – rot ist, was noch nicht stimmt.';
+  rueck={k,t:x};teile();aenderung();o.beiPunkte&&o.beiPunkte(besterStand());return s;}
+ if(t<0)startbild();else tablet();
+ return {waehleTablet,pruefen,tablet:()=>t,
+  setze:(i,f)=>{f(Z[i]);if(i===t&&t>=0)teile();aenderung();},
+  fuellen:i=>{Z[i]=R.richtig(i);if(i===t&&t>=0)teile();aenderung();},
+  stand:i=>gs(i),besterStand,zumAnfang,
+  exportiere:()=>{lies();return {t,Z:kopie(Z),P:kopie(P)};},
+  wechsel:()=>{lies();t=-1;aenderung();startbild();}};
+}
+
+const TM=bauVergleich(document.getElementById('team'),{mitPunkten:false});
+window.__seite={TM};
+</script>
+</body>
+</html>
