@@ -63,6 +63,7 @@
   #orte button small{font-weight:400;opacity:.7;margin-left:6px}
   #orte button.zu{opacity:.5;border-style:dashed;cursor:not-allowed}
   #meldung{position:absolute;left:50%;top:18%;transform:translateX(-50%);max-width:calc(100% - 40px);box-sizing:border-box;padding:9px 18px;background:rgba(14,17,22,.8);border:1px solid #e2854a;border-radius:6px;font-size:16px;text-align:center;display:none}
+  html.touch #meldung{top:calc(216px + env(safe-area-inset-top))}   /* iPad: Meldung unter der Knopfleiste (#touch .tbar: ab 156 px, 48 px hoch) – vorher lag sie halb darunter (Sichtprobe Rasen, 25.11.2026) */
   #orte .leer{margin:0 0 10px;font-size:14px;opacity:.65}
   #orteSpeichern{display:none;flex-wrap:wrap;gap:8px;align-items:center}
   #orteSpeichern input{flex:1;min-width:170px;min-height:44px;box-sizing:border-box;padding:0 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,.35);background:rgba(0,0,0,.28);color:#fff;font:15px "Segoe UI",system-ui,-apple-system,sans-serif;user-select:text;-webkit-user-select:text;touch-action:auto}
@@ -255,6 +256,8 @@ const lin=h=>new T.Color(h).convertSRGBToLinear();
 // ---------------------------------------------------------------- Das gemeinsame Dorf (E:\#1_Schule\Claude Unterricht\_Dorf\dorf.js, eingesetzt von quelle.mjs → window.DORF)
 // =====================================================================================================================
 // Lernbaustellen-Dorf – gemeinsam für alle Haus-Spiele (Haus 1 Familie Neumann, Haus 2 Familie Heizler – bis 23.11.2026 „Eberle“, Schlüssel bleibt `eberle` –, später weitere). Version 1, 23.11.2026, Chat „M2AH (5)“.
+// Version 2, 24.11.2026, Hauptchat „Übersicht SHK City (1)“: Bauplatz „Haus 6“ für Haus Röhringer (Wohnstraße Süd, x 33 … 49, z −6,5 … 18) statt des
+// Kulissenhauses x 35 … 45; zwei Bäume an den Rand gerückt (41|−5 → 31,3|−4,8 und 34|15 → 31,3|15,5). Sonst unverändert. Sicherung: dorf-v1-vor-roehringer.js.
 // Wunsch des Lehrers (23.11.2026): „… dass das Dorf immer gleich aussieht und der Schüler immer im selben Dorf herumfährt.“ Beschreibung: LIES-MICH.md.
 // 🔴 Nur HIER ändern. Jedes Spiel bettet diese Datei beim Bauen ein (Platzhalter /*__DORF__*/ in src.html, build.mjs) und lädt sie in probe.mjs vor dem Spiel.
 // Dorf-Koordinaten in Metern: x nach Osten, z nach SÜDEN (Norden = −z), Gelände y = GY. Ursprung = Nordwest-Ecke von Haus 2 (Familie Eberle).
@@ -285,7 +288,9 @@ const KANTEN=[['H','B'],['G0','B'],['B','J1'],['J1','Q1S'],['J1','J2'],['N0','J2
 // Haus 1 (Neumann) liegt 8 m weiter südlich als Haus 2: die Rohbau-Begehung hat 19 m Vorplatz bis zur Straßenmitte (Baustelle x −9 … 19, z −13 … 17
 // um das Haus; Entscheidung des Lehrers 23.11.2026 ~17:10, eingetragen von Chat „Lernbaustelle“). Versatz der Begehung: x −64, z −8.
 const ZIELE={eberle:{knoten:'EB',x:2.9,z:-9.425,th:0,name:'Familie Heizler',haus:[0,0,11.99,10.173]},neumann:{knoten:'NM',x:69,z:-9.425,th:0,name:'Familie Neumann',haus:[64,8,74,16]}};
-const BAUPLAETZE=[{n:'Haus 3',x0:84,z0:-6.5,x1:100,z1:18,schild:[92,-5.8]},{n:'Haus 4',x0:-40,z0:-45,x1:-24,z1:-31,schild:[-32,-45.6]},{n:'Haus 5',x0:-92,z0:14,x1:-78,z1:28,schild:[-91.4,21]}];
+// Bauplätze (Zuordnung im Stadtplan, _Dorf\stadt.json): Haus 3 = Kessler, Haus 4 = Bader, Haus 5 = Luft, Haus 6 = Röhringer (Version 2, 24.11.2026)
+const BAUPLAETZE=[{n:'Haus 3',x0:84,z0:-6.5,x1:100,z1:18,schild:[92,-5.8]},{n:'Haus 4',x0:-40,z0:-45,x1:-24,z1:-31,schild:[-32,-45.6]},{n:'Haus 5',x0:-92,z0:14,x1:-78,z1:28,schild:[-91.4,21]},
+  {n:'Haus 6',x0:33,z0:-6.5,x1:49,z1:18,schild:[41,-5.8]}];
 const imRechteck=(r,x,z,m)=>x>r.x0+m&&x<r.x1-m&&z>r.z0+m&&z<r.z1-m;
 // befahrbar: Punkt liegt auf Fahrbahn, Kreuzung, Platz oder im Wendehammer (m = Abstand zum Rand)
 function befahrbar(x,z,m){m=m||0;for(const r of STRASSEN)if(imRechteck(r,x,z,m))return true;for(const r of KREUZUNGEN)if(imRechteck(r,x,z,m))return true;
@@ -320,9 +325,9 @@ function bauen(a,projekt){
   nachbarhaus(19.5,.5,30,9.5,5.4,0xd8c9a9,0x7a4a3a,true);fensterreihe('x',.47,19.5,30,3,GY+1.0,1.3,1.3,-1);fensterreihe('x',.47,19.5,30,3,GY+3.5,1.3,1.2,-1);fensterreihe('z',19.47,.5,9.5,2,GY+1.0,1.3,1.3,-1);
   fensterreihe('x',.47,21.2,22.2,1,GY,1.0,2.05,-1,F.tuer);
   nachbarhaus(-31,-27,-20,-18,5.6,0xcfd3c8,0x4a4d52,true);fensterreihe('x',-17.97,-31,-20,3,GY+1.0,1.3,1.3,1);
-  nachbarhaus(35,.5,45,9.5,5.6,0xe2d6c2,0x6e4a3a,false);fensterreihe('x',.47,35,45,3,GY+1.0,1.3,1.3,-1);
+  // Version 2: Kulissenhaus x 35 … 45 entfernt – dort liegt jetzt der Bauplatz „Haus 6“ (Haus Röhringer)
   nachbarhaus(-33,.5,-24,9.5,5.2,0xd6cbb8,0x7a4a3a,true);fensterreihe('x',.47,-33,-24,3,GY+1.0,1.3,1.3,-1);
-  for(const q of[[-23,-17.2,1],[9.4,-17.3,1.1],[41,-5,1],[-26,13,1.3],[34,15,1.2],[24,15.5,1],[-12,-4.8,.9]])baum(q[0],q[1],q[2]);
+  for(const q of[[-23,-17.2,1],[9.4,-17.3,1.1],[31.3,-4.8,1],[-26,13,1.3],[31.3,15.5,1.2],[24,15.5,1],[-12,-4.8,.9]])baum(q[0],q[1],q[2]);
   // ---------------------------------------------------------------- Gewerbestraße, Ahornweg, Lindenweg, Nordring: Kulisse
   nachbarhaus(-118,-28,-104,-19,6.0,0xd8d2c4,0x6e4a3a,true);fensterreihe('x',-18.97,-118,-104,4,GY+1.0,1.3,1.3,1);fensterreihe('x',-18.97,-118,-104,4,GY+3.6,1.3,1.2,1);
   nachbarhaus(-92,-28,-81,-19,5.6,0xe2d6c2,0x4a4d52,false);fensterreihe('x',-18.97,-92,-81,3,GY+1.0,1.3,1.3,1);
@@ -410,7 +415,147 @@ function bauen(a,projekt){
   stelle(['Telefon'],-129.2,GY+1.08,12.58,.05,{weit:4});stelle(['Aufträge heute','Familie Heizler: neue Heizung'],-126.7,GY+2.45,14.9,.07,{weit:8,fg2:'#f3b086'});
 }
 
-window.DORF={version:1,BT,STRASSEN,KREUZUNGEN,PLAETZE,UEBERGAENGE,KREISE,KNOTEN,KANTEN,ZIELE,BAUPLAETZE,befahrbar,strasseAn,bauen};
+window.DORF={version:2,BT,STRASSEN,KREUZUNGEN,PLAETZE,UEBERGAENGE,KREISE,KNOTEN,KANTEN,ZIELE,BAUPLAETZE,befahrbar,strasseAn,bauen};
+})();
+
+// ---------------------------------------------------------------- Die gemeinsame Firma (E:\#1_Schule\Claude Unterricht\_Dorf\firma.js, Version 2, eingesetzt von quelle.mjs → window.FIRMA)
+// Seit 24.11.2026 eingebettet, aber vorerst NUR für das Fahren über den Rasen benutzt (FIRMA.FAHREN.RASEN, untergrund, hoppeln, MELDUNGEN.rasen).
+// Chef, Sätze, Firmenwagen, Schranke und Navi bleiben die eigenen Kopien dieser Begehung (volle Umstellung später in einem eigenen Schritt).
+// Steht hier im selben Skriptblock direkt nach dem Dorf (das Dorf steckt in diesem Spiel im Hauptskript; die Proben lesen nur diesen Block).
+// =====================================================================================================================
+// SHK City – gemeinsame FIRMA (Ausbildungsbetrieb) für alle Haus-Spiele. Version 2, 24.11.2026, Hauptchat „Übersicht SHK City“.
+// Version 2 (24.11.2026 ~23:50, „Übersicht SHK City (3)“): Der Firmenwagen darf neben der Fahrbahn über den Rasen – langsamer und hoppelnd
+//    (FAHREN.RASEN, untergrund(), fahrbahnAbstand(), hoppeln(), MELDUNGEN.rasen). Wunsch des Lehrers: „… dass er dann auch über den Rasen fahren
+//    kann, nur eben langsamer, sodass er sich da nicht festsetzt, wenn er die Kurve nicht richtig kriegt. Vielleicht kann es auch ein bisschen
+//    hoppeln, aber dass er wieder runterfahren kann, wieder auf die Straße, dann geht es wieder schneller.“ Alles aus v1 ist unverändert.
+//    Sicherung v1: _Dorf\alt\firma-v1-vor-rasen-24-11.js
+// Wunsch des Lehrers (24.11.2026): „Ja, im ganzen SHK-City ist er jetzt der Chef für alle Projekte. Falls wir die Frau vom Chef brauchen, die im Büro
+// sitzt, die kann dann die Chefin sein. die macht dann die Buchhaltung und vielleicht auch die Sekretärin. und der Chef macht dann die Einteilung und
+// [geht] mit auf der Baustelle usw.“ · Stimme: „Nimm Sönke als Chef.“ · Regeln: _Dorf\HAUPTCHAT-UND-NEBENCHATS.md, Abschnitt 2.
+// 🔴 Nur HIER ändern (nur der Hauptchat). Jedes Spiel bettet diese Datei beim Bauen ein – Platzhalter /*__FIRMA__*/ als eigener Skriptblock direkt
+//    NACH /*__DORF__*/ (sie liest DORF.BT) – und lädt sie in probe.mjs nach dorf.js. Beim Ändern Version hochzählen, im Steckbrief „Firma v…“ vermerken.
+// Stand v1: Neue Häuser (zuerst Röhringer) nutzen sie von Anfang an. Neumann und Heizler bauen ihre Firma noch selbst (Kopien, aus denen diese Datei
+//    stammt) und stellen um, wenn sie ohnehin neu gebaut werden. Alle Sätze sind WORTGLEICH mit Neumann → dieselben Tondateien (Schlüssel „rolle|text“).
+// Inhalt: PERSONEN (Anzeige, Ton-Rolle, Stimme, Platz, Aussehen) · ORTE · FAHREN · SAETZE · MELDUNGEN · navi(ziel) · Ton-Werkzeuge ·
+//    Baupläne als DATEN: chefTeile(), figurTeile(aussehen), wagenTeile(), schranke() – jedes Spiel zeichnet sie mit seinen eigenen Bausteinen über
+//    FIRMA.zeichne(teile, api). Koordinaten wie dorf.js (Meter, x nach Osten, z nach Süden); Teile in Körper-Koordinaten (Füße bzw. Boden = 0).
+// Teil-Arten (t.a = Werte, t.c = Farbe):
+//    box     a=[x0,y0,z0,x1,y1,z1]          t.f = Flächenfarben wie {cBot,cZp,cZm,cXm} (falls gesetzt)
+//    rumpf   a=[rOben,rUnten,hoehe,[x,y,z]]  senkrechter Kegelstumpf um die Mitte [x,y,z], t.seg Segmente
+//    zyl     a=[[x,y,z],[x,y,z],r]          Zylinder zwischen zwei Punkten, t.seg Segmente
+//    kugel   a=[[x,y,z],r]                  t.sy = Streckung in y
+//    flaeche a=[[4 Punkte],[nx,ny,nz]]       ebene Fläche mit Normale
+//    ring    a=[R,r,[x,y,z],[ax,ay,az]]     Torus (Lenkrad): Mitte, Achse; t.seg=[rohr,umfang]
+// Muster-Anpassung für die d-Bausteine der Rohbau-Begehung (Haus Neumann):
+//    FIRMA.zeichne(teile,{box:t=>dbox(...t.a,Object.assign({c:t.c,ao:1},t.f)),rumpf:t=>dprim(new T.CylinderGeometry(t.a[0],t.a[1],t.a[2],t.seg),
+//      new T.Matrix4().makeTranslation(...t.a[3]),t.c,0,1),zyl:t=>dzyl(t.a[0],t.a[1],t.a[2],t.c,0,t.seg,1),kugel:t=>dkugel(t.a[0],t.a[1],t.c,0,t.sy,1),
+//      flaeche:t=>dface(t.a[0],t.a[1],t.c,0,1),ring:t=>dprim(new T.TorusGeometry(t.a[0],t.a[1],t.seg[0],t.seg[1]),new T.Matrix4().compose(
+//      new T.Vector3(...t.a[2]),new T.Quaternion().setFromUnitVectors(new T.Vector3(0,0,1),new T.Vector3(...t.a[3]).normalize()),new T.Vector3(1,1,1)),t.c,0,1)});
+// =====================================================================================================================
+(function(){
+'use strict';
+const FARBEN={orange:0xe2854a,haut:0xe9bf9d};
+// Personen. rolle = Ton-Rolle (Schlüssel der Tondatei), stimme = ElevenLabs-Stimme (Tabelle STIMMEN in Haus-Eberle-Spiel\sprechfassung.mjs).
+const PERSONEN={
+  chef:{anzeige:'Dein Chef',handy:'Dein Chef (Handy)',rolle:'chef',stimme:'Sönke',aufgabe:'gibt die Aufträge, teilt ein, kommt mit auf die Baustelle',
+    platz:{x:-129.7,z:13.75,dreh:Math.PI},schildHoehe:2.0,
+    aussehen:{hose:0x2b2f3a,jacke:0x2f5f8f,haut:FARBEN.haut,haar:0x3b3430,lang:false,krawatte:0x8e2a2a}},
+  // Nur falls gebraucht: die Frau des Chefs im Büro (Buchhaltung, Sekretariat) – sie gibt KEINE Aufträge. Platz am zweiten Tisch setzt das Haus.
+  chefin:{anzeige:'Die Chefin',rolle:'chefin',stimme:'Irene',aufgabe:'Büro: Buchhaltung, Sekretariat (nur falls gebraucht)',platz:null,schildHoehe:2.0,
+    aussehen:{hose:0x2b2f3a,jacke:0x2f5f8f,haut:FARBEN.haut,haar:0x5a3a24,lang:true,krawatte:null}},
+  du:{anzeige:'Du',rolle:'du',stimme:'Leon'},
+  navi:{anzeige:'Navi',rolle:'navi',stimme:'Maria'},
+  erzaehler:{anzeige:'',rolle:'erzaehler',stimme:'Andrew'}};
+// Orte im Betrieb (Dorf-Koordinaten). blick = Blickrichtung (yaw) beim Start in der Werkstatt.
+const ORTE={werkstatt:{x:-141.3,z:11.2,blick:-Math.PI/2+.25},hof:{x:-136.4,z:.6},wagen:{x:-133.5,z:1.0,th:Math.PI/2},
+  betriebZiel:{knoten:'H',x:-133.5,z:.5,th:-Math.PI/2,radius:4,name:'Betrieb'}};
+// Fahrwerte des Firmenwagens und Augenpunkt am Fahrersitz (in Wagenmaßen, links vorn) – wie in beiden Spielen.
+// kollision: halbe Länge/Breite und Höhe des geparkten Wagens (Quader je nach Drehung th: hx = 2,72·|cos| + 0,99·|sin|, hz = 2,72·|sin| + 0,99·|cos|)
+const FAHREN={FZ:{vmax:11,vrueck:3,beschl:2.4,brems:6,roll:.6,rmin:4.2,rand:.45},SITZ:{x:1.1,z:-.45,y:1.62},kollision:{halbLang:2.72,halbBreit:.99,hoch:2.3},schildHoehe:2.75,
+  // Version 2: Rasen neben der Fahrbahn. vmax = Höchstgeschwindigkeit auf dem Rasen (2,8 m/s ≈ 10 km/h, Straße 11 m/s ≈ 40 km/h; vorwärts und
+  // rückwärts), abbremsen = wie stark der Wagen beim Auffahren auf den Rasen auf vmax herunterbremst (m/s²), weit = so viele Meter neben dem Rand der
+  // befahrbaren Fläche darf er fahren (weiter weg: „Hier geht es nicht weiter“ wie bisher), hoppel = Höhe (m), Neigung (rad) und Wellenlänge (m) des Hoppelns.
+  RASEN:{vmax:2.8,abbremsen:5,weit:8,hoppel:{hoehe:.05,neigung:.035,welle:1.3}}};
+// Abstand (m) eines Punkts zum Rand der befahrbaren Fläche des Dorfs (Fahrbahnen, Kreuzungen, Plätze, Übergänge, Wendehämmer); 0 = auf ihr.
+function fahrbahnAbstand(x,z){const D=window.DORF;if(!D)return 0;let d=1e9;
+  for(const r of D.STRASSEN.concat(D.KREUZUNGEN,D.PLAETZE,D.UEBERGAENGE||[])){const dx=Math.max(r.x0-x,0,x-r.x1),dz=Math.max(r.z0-z,0,z-r.z1);d=Math.min(d,Math.hypot(dx,dz));}
+  for(const c of D.KREISE)d=Math.min(d,Math.max(0,Math.hypot(x-c.x,z-c.z)-c.r));return d;}
+// Untergrund an einem Punkt (Dorf-Koordinaten): 'strasse' = befahrbar wie bisher (DORF.befahrbar mit Randabstand m, z. B. FZ.rand), 'rasen' = daneben,
+// höchstens RASEN.weit vom Rand und – falls angegeben – innerhalb des Geländes des Spiels (gelaende = {x0,z0,x1,z1} in Dorf-Koordinaten, dort ist Boden),
+// null = gesperrt. Häuser, Zäune, Bäume, Schranke prüft weiter jedes Spiel selbst (colliders).
+function untergrund(x,z,m,gelaende){const D=window.DORF;if(!D||D.befahrbar(x,z,m))return'strasse';
+  if(gelaende&&!(x>gelaende.x0&&x<gelaende.x1&&z>gelaende.z0&&z<gelaende.z1))return null;
+  return fahrbahnAbstand(x,z)<=FAHREN.RASEN.weit?'rasen':null;}
+// Hoppeln auf dem Rasen: s = gefahrene Meter auf dem Rasen (fortlaufend), k = Stärke 0…1 (zum weichen Ein- und Ausblenden).
+// Ergebnis: dy = Anheben (m), nick = Neigen um die Querachse (rad), roll = Kippen um die Längsachse (rad) – für Wagen UND Blick.
+function hoppeln(s,k){const h=FAHREN.RASEN.hoppel,w=Math.PI*2*s/h.welle;k=k===undefined?1:Math.max(0,Math.min(1,k));
+  return{dy:k*h.hoehe*Math.abs(Math.sin(w*.5)),nick:k*h.neigung*Math.sin(w*.8+.6),roll:k*h.neigung*.7*Math.sin(w*.55+1.9)};}
+// Die immer gleichen Sätze (Sprecher: PERSONEN.chef.anzeige). Die Sätze zum Auftrag selbst schreibt jedes Haus.
+const SAETZE={
+  ruf:'Kommst du bitte mal ins Büro?',rufAntwort:'Ich komme!',
+  losfahren:'Nimm den Firmenwagen im Hof, die Adresse ist schon im Navi. Ruf mich an, wenn du etwas brauchst – ich bin auf dem Handy erreichbar.',
+  losfahrenAntwort:'Alles klar, ich fahre los.',
+  guteFahrt:'Der Firmenwagen steht im Hof. Gute Fahrt!',
+  warten:'Einen Moment bitte – ich warte auf einen Anruf.',
+  rueck:'Komm mit dem Firmenwagen zurück in den Betrieb und melde dich bei mir.',
+  wiederDa:'Da bist du ja wieder!',   // Anfang der Rückkehr-Zeile; das Haus hängt in derselben Zeile seinen Satz an (eigene Tondatei je Haus)
+  feierabend:'Gute Arbeit! Für heute ist Feierabend.',feierabendAntwort:'Danke, bis morgen!'};
+// Hinweise am Bildschirm (nicht gesprochen)
+const MELDUNGEN={gruss:'Du bist in der Werkstatt deines Betriebs – sieh dich ruhig um.',zumChef:'Geh ins Büro zu deinem Chef.',
+  ruftDich:'Dein Chef ruft dich ins Büro.',erstAuftrag:'Erst holst du dir im Büro den Auftrag bei deinem Chef.',einsteigen:'Steig in den Firmenwagen im Hof.',
+  erstMelden:'Melde dich erst im Büro bei deinem Chef.',wagenBleibt:'Feierabend – der Firmenwagen bleibt heute im Hof.',
+  zurBaustelle:ziel=>'Fahr nach Navi zur Baustelle von '+ziel+'.',
+  // Version 2: einmal je Ausflug auf den Rasen (nicht gesprochen)
+  rasen:'Du fährst über den Rasen – hier geht es nur langsam. Zurück auf der Straße wird der Wagen wieder schneller.'};
+// Navi (Rolle „navi“): [Pfeil, Anzeige, gesprochener Satz]; ziel z. B. 'Familie Röhringer'. Bis auf die Route wortgleich in allen Häusern.
+function navi(ziel){return{route:['↑','Route zu '+ziel,'Die Route zu '+ziel+' wird berechnet. Bitte fahren Sie los.'],rechts:['↱','Jetzt rechts abbiegen','Biegen Sie jetzt rechts ab.'],
+  links:['↰','Jetzt links abbiegen','Biegen Sie jetzt links ab.'],gleichRechts:['↱','Gleich rechts abbiegen','Gleich rechts abbiegen.'],gleichLinks:['↰','Gleich links abbiegen','Gleich links abbiegen.'],
+  gerade:['↑','Geradeaus weiter','Fahren Sie geradeaus weiter.'],wenden:['↩','Bitte wenden','Bitte wenden.'],neu:['↻','Route wird neu berechnet','Die Route wird neu berechnet.'],
+  folgen:['↑','Der Straße folgen','Folgen Sie dem Straßenverlauf.'],bald:['↑','Gleich am Ziel','In 50 Metern haben Sie Ihr Ziel erreicht.'],
+  ziel:['⚑','Ziel erreicht – rechts','Sie haben Ihr Ziel erreicht. Das Ziel befindet sich auf der rechten Seite.'],zielLinks:['⚑','Ziel erreicht – links','Sie haben Ihr Ziel erreicht. Das Ziel befindet sich auf der linken Seite.'],
+  routeBetrieb:['↑','Route zum Betrieb','Die Route zum Betrieb wird berechnet. Bitte fahren Sie los.'],zielBetrieb:['⚑','Ziel erreicht – Betrieb','Sie haben Ihr Ziel erreicht.']};}
+// Ton: Datei ton/<schlüssel>.mp3, schlüssel = FNV-1a (8 Hex) über „rolle|text“ – zeichengleich mit Neumann und Heizler.
+const TON_ROLLEN=[[/^Dein Chef/,'chef'],[/^(Die|Deine) Chefin/,'chefin'],[/^Navi/,'navi'],[/^Du$/,'du']];
+function tonRolle(wer,eigene){for(const[m,r]of(eigene||[]).concat(TON_ROLLEN))if(m.test(wer||''))return r;return'erzaehler';}
+const tonText=q=>String(q.text||String(q.html||'').replace(/<\/(li|p|div|h\d|tr)>/gi,'. ').replace(/<br\s*\/?>/gi,' ').replace(/<[^>]+>/g,' '))
+  .replace(/&nbsp;/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/\s+/g,' ')
+  .replace(/\s+([.,!?;:])/g,'$1').replace(/([.!?:;])(\s*\.)+/g,'$1').replace(/^[\s.]+/,'').trim();
+const tonSchluessel=(rolle,text)=>{const s=rolle+'|'+text;let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}return('0000000'+h.toString(16)).slice(-8);};
+// Bauplan einer Person (aus der Rohbau-Begehung, dort aus „Haus Eberle“): o = PERSONEN.x.aussehen
+function figurTeile(o){const t=[],B=(a,c)=>t.push({art:'box',a,c}),K=(p,r,c,sy)=>t.push({art:'kugel',a:[p,r],c,sy}),Z=(p,q,r,c)=>t.push({art:'zyl',a:[p,q,r],c,seg:8});
+  B([-.17,0,-.09,-.03,.84,.09],o.hose);B([.03,0,-.09,.17,.84,.09],o.hose);B([-.18,0,-.1,-.02,.07,.16],0x2a2a2a);B([.02,0,-.1,.18,.07,.16],0x2a2a2a);
+  t.push({art:'rumpf',a:[.2,.23,.62,[0,1.13,0]],c:o.jacke,seg:10});
+  for(const s of[-1,1]){Z([s*.27,1.38,0],[s*.31,.84,.03],.055,o.jacke);K([s*.31,.8,.03],.06,o.haut,1);}
+  Z([0,1.42,0],[0,1.52,0],.06,o.haut);K([0,1.62,0],.125,o.haut,1.1);K([0,1.655,-.03],.132,o.haar,1);
+  if(o.lang)B([-.12,1.42,-.15,.12,1.64,-.07],o.haar);
+  if(o.krawatte){B([-.035,1.36,.2,.035,1.43,.235],o.krawatte);B([-.028,1.08,.208,.028,1.37,.236],o.krawatte);}   // Knoten und Krawatte vorn auf der Jacke
+  K([-.045,1.63,.118],.015,0x222222,1);K([.045,1.63,.118],.015,0x222222,1);
+  return t;}
+const chefTeile=()=>figurTeile(PERSONEN.chef.aussehen);
+// Bauplan Firmenwagen (weiß, oranger Streifen; vorn = +x, Mitte = 0, Boden = 0; innen offen, Scheiben nur von außen dunkel; Navi-Bildschirm am Armaturenbrett)
+function wagenTeile(){const t=[],w=0xf2f2ee,dk=0x2c3a48,gr=0x3a3d42,B=(a,c,f)=>t.push(f?{art:'box',a,c,f}:{art:'box',a,c}),
+    F=(p,n,c)=>t.push({art:'flaeche',a:[p,n],c}),Z=(p,q,r,c,seg)=>t.push({art:'zyl',a:[p,q,r],c,seg});
+  B([-2.7,.32,-.975,.8,2.27,.975],w);B([-2.7,1.07,.975,.8,1.27,.987],FARBEN.orange);B([-2.7,1.07,-.987,.8,1.27,-.975],FARBEN.orange);
+  B([-1.3,.42,.975,0,2.12,.989],0xe2e2dc);B([.8,.32,-.975,2.15,.45,.975],gr);B([.8,2.0,-.975,2.15,2.05,.975],w,{cBot:0xd9dad6});
+  for(const s of[-1,1]){B([.8,.45,s<0?-.975:.925,2.15,1.25,s<0?-.925:.975],w,s<0?{cZp:0x6b7078}:{cZm:0x6b7078});B([2.09,1.25,s<0?-.975:.93,2.15,2.0,s<0?-.93:.975],w);
+    F([[.8,1.25,s*.976],[2.09,1.25,s*.976],[2.09,2.0,s*.976],[.8,2.0,s*.976]],[0,0,s],dk);B([1.97,1.32,s<0?-1.1:.975,2.02,1.45,s<0?-.975:1.1],gr);}
+  B([2.15,.32,-.975,2.7,1.17,.975],w);F([[2.152,1.17,-.93],[2.152,1.17,.93],[2.152,2.0,.93],[2.152,2.0,-.93]],[1,0,0],dk);
+  B([2.7,.42,-.95,2.76,.68,.95],gr);B([2.7,.85,-.86,2.72,1.0,-.56],0xfff6d0);B([2.7,.85,.56,2.72,1.0,.86],0xfff6d0);
+  B([-2.72,.9,-.95,-2.7,1.25,-.78],0xc0392b);B([-2.72,.9,.78,-2.7,1.25,.95],0xc0392b);
+  for(const x of[-1.9,1.7])for(const s of[-1,1])Z([x,.34,s*.955],[x,.34,s*.715],.34,0x1c1c1e,12);
+  B([1.84,.95,-.925,2.15,1.2,.925],0x2b2e33);B([1.9,1.2,-.11,1.93,1.33,.11],0x1d232b,{cXm:0x6fb4f0});   // Armaturenbrett, Navi-Bildschirm
+  t.push({art:'ring',a:[.17,.022,[1.52,1.08,-.45],[-.85,.53,0]],c:0x1c1c1e,seg:[6,18]});Z([1.54,1.07,-.45],[1.86,.98,-.45],.028,0x1c1c1e,8);   // Lenkrad, Lenksäule
+  for(const zc of[-.47,.47]){B([1.0,.45,zc-.27,1.45,.86,zc+.27],0x3c4048);B([.86,.86,zc-.27,1.0,1.6,zc+.27],0x3c4048);}   // Sitze
+  return t;}
+// Schranke an der Einfahrt: Arm (Teile relativ zum Drehpunkt), Drehpunkt und Kollisionsquader (geschlossen) in Dorf-Koordinaten (y relativ zum Gelände).
+// Öffnen: Arm um z drehen, rotation.z = −e·1,45 mit e = t²(3−2t), t von 0 (zu) bis 1 (offen).
+function schranke(){const BT=(window.DORF&&window.DORF.BT)||null,t=[{art:'box',a:[-8.25,-.05,-.04,0,.05,.04],c:0xf4f4f0}];
+  for(let i=0;i<4;i++)t.push({art:'box',a:[-7.9+i*2.05,-.053,-.043,-7.0+i*2.05,.053,.043],c:0xd0281e});
+  return{teile:t,drehpunkt:BT?{x:BT.tor1+.16,y:1.0,z:BT.z0}:null,kollision:BT?[BT.tor0-.15,0,BT.z0-.12,BT.tor1,1.25,BT.z0+.12]:null,winkel:1.45};}
+// Zeichnet Teile mit den Bausteinen des Spiels: api = {box, rumpf, zyl, kugel, flaeche, ring} – jede Funktion bekommt das ganze Teil.
+function zeichne(teile,api){for(const t of teile){const f=api&&api[t.art];if(typeof f!=='function')throw new Error('FIRMA.zeichne: Baustein „'+t.art+'“ fehlt');f(t);}}
+window.FIRMA={version:2,FARBEN,PERSONEN,ORTE,FAHREN,SAETZE,MELDUNGEN,navi,TON_ROLLEN,tonRolle,tonText,tonSchluessel,figurTeile,chefTeile,wagenTeile,schranke,zeichne,
+  fahrbahnAbstand,untergrund,hoppeln};
 })();
 
 
@@ -2824,10 +2969,29 @@ const NAVI={route:['↑','Route zu Familie Neumann','Die Route zu Familie Neuman
 const NAVI_SCHL=new Set(Object.keys(NAVI).map(k=>tonSchluessel('navi',tonText({text:NAVI[k][2]}))));
 const SITZ={x:1.1,z:-.45,y:1.62};   // Augen der Fahrerin oder des Fahrers in Wagenmaßen (links vorn)
 function sitzen(p){const c=Math.cos(p.th),s=Math.sin(p.th);P.x=p.x+SITZ.x*c+SITZ.z*s+DV.x;P.z=p.z-SITZ.x*s+SITZ.z*c+DV.z;P.feet=GY;P.camY=GY+SITZ.y;P.vy=0;P.ground=true;}
-function fahrFrei(x,z,th){const c=Math.cos(th),s=Math.sin(th);
-  for(const p of[[x,z],[x+2.25*c,z-2.25*s],[x-2.25*c,z+2.25*s]]){if(!DORF.befahrbar(p[0],p[1],FZ.rand))return false;const bx=p[0]+DV.x,bz=p[1]+DV.z;
+// Rasen neben der Fahrbahn (Wunsch des Lehrers 24.11.2026: „… dass er dann auch über den Rasen fahren kann, nur eben langsamer, sodass er sich da nicht
+// festsetzt, wenn er die Kurve nicht richtig kriegt. Vielleicht kann es auch ein bisschen hoppeln, aber dass er wieder runterfahren kann, wieder auf die
+// Straße, dann geht es wieder schneller.“) – Werte und Regeln aus der gemeinsamen Firma (FIRMA.FAHREN.RASEN, FIRMA.untergrund, FIRMA.hoppeln).
+// Jeder der drei Wagenpunkte: 'strasse' wie bisher, 'rasen' = höchstens RASEN.weit neben der Fahrbahn, null = gesperrt („Rumms!“ wie bisher).
+const RASEN=FIRMA.FAHREN.RASEN;
+// Gelände = die Wiese der Begehung (Abschnitt GELÄNDE: x −600 … 420, z −420 … 420 in Koordinaten der Begehung), in Dorf-Koordinaten, 0,5 m nach innen
+const GELAENDE={x0:-600-DV.x+.5,z0:-420-DV.z+.5,x1:420-DV.x-.5,z1:420-DV.z-.5};
+// Für den Wagen zu, auch wenn es dort Boden gibt (vorher hielt ihn schon der Bordstein ab): die Baustelle hinter dem Bauzaun (das Tor ist nur zu Fuß)
+// und die Halle des Betriebs (offenes Rolltor). Koordinaten der Begehung; wirken wie Hindernisse (0,9 m Abstand), nur für Punkte auf dem Rasen.
+const WAGEN_ZU=[{x0:SITE.x0+.3,x1:SITE.x1-.3,z0:SITE.z0+.3,z1:SITE.z1-.3},{x0:BT.hx0+DV.x,x1:BT.hx1+DV.x,z0:BT.hz0+DV.z,z1:BT.hz1+DV.z}];
+const fahrNah=(b,bx,bz)=>{const dx=bx-Math.max(b.x0,Math.min(bx,b.x1)),dz=bz-Math.max(b.z0,Math.min(bz,b.z1));return dx*dx+dz*dz<.81;};
+const fahrGrund=(x,z)=>FIRMA.untergrund(x,z,FZ.rand,GELAENDE);   // Dorf-Koordinaten → 'strasse' | 'rasen' | null
+// Ergebnis: false = gesperrt, sonst 'strasse' oder 'rasen' (mindestens ein Punkt auf dem Rasen)
+function fahrFrei(x,z,th){const c=Math.cos(th),s=Math.sin(th);let auf='strasse';
+  for(const p of[[x,z],[x+2.25*c,z-2.25*s],[x-2.25*c,z+2.25*s]]){const u=fahrGrund(p[0],p[1]);if(!u)return false;const bx=p[0]+DV.x,bz=p[1]+DV.z;
+    if(u==='rasen'){auf='rasen';for(const b of WAGEN_ZU)if(fahrNah(b,bx,bz))return false;}
     for(let i=0;i<colliders.length;i++){const b=colliders[i];if(b.rand||b.y1<=GY+.35||b.y0>=GY+2.2)continue;
-      const dx=bx-Math.max(b.x0,Math.min(bx,b.x1)),dz=bz-Math.max(b.z0,Math.min(bz,b.z1));if(dx*dx+dz*dz<.81)return false;}}return true;}
+      if(fahrNah(b,bx,bz))return false;}}return auf;}
+// Hoppeln für den Blick (nur anheben und leicht nicken, nie kippen); 0 auf der Straße
+const BLICK={dy:0,nick:0};
+// Wagen und Blick nach Stärke k (weich ein- und ausgeblendet) und gefahrenen Metern auf dem Rasen; k = 0 → ruhig wie bisher
+function hoppelStellen(f){const k=f.hk*f.hk*(3-2*f.hk),h=FIRMA.hoppeln(f.rs,k),m=FW.netz;f.hop=h;
+  m.position.y=GY+h.dy;m.rotation.set(h.roll,f.th,h.nick,'YZX');BLICK.dy=h.dy;BLICK.nick=h.nick*.5;}
 function kantePos(k,x,z){const A=NETZ.K[k.a],t=clamp((x-A.x)*k.ux+(z-A.z)*k.uz,0,k.l);return{t,d:Math.hypot(x-(A.x+k.ux*t),z-(A.z+k.uz*t))};}
 function naviOrt(){const f=FAHRT,n=f.nav,hx=Math.cos(f.th),hz=-Math.sin(f.th);let best=-1,bd=1e9;
   NETZ.kanten.forEach((k,i)=>{const q=kantePos(k,f.x,f.z);if(q.d>7.5)return;const sc=q.d+(1-Math.abs(hx*k.ux+hz*k.uz))*3;if(sc<bd){bd=sc;best=i;}});
@@ -2899,7 +3063,8 @@ function autoSteuer(){const f=FAHRT,a=f.auto,L=a.linie||[];if(L.length<2||!a.r)r
   const g=vt>f.v+.15?clamp((vt-f.v)*.7,0,1):f.v>vt+.15?-clamp((f.v-vt)*.45,0,1):0;return{g,l};}
 function einsteigen(){const zurueck=AUF.an&&AUF.schritt>=4&&AUF.rueck===1;NZ=zurueck?BETRIEB_ZIEL:ZIEL;   // Rückfahrt: Start am Wagen vor dem Tor
   FAHRT={t:0,x:FW.x,z:FW.z,th:FW.th,v:0,lenk:0,stoss:0,stossT:-9,angekommen:false,hilfe:false,navi:[],route:null,auto:null,
-    nav:{kante:0,dir:1,dk:null,erwartet:null,vor:null,gesagt:new Set(),takt:0}};
+    nav:{kante:0,dir:1,dk:null,erwartet:null,vor:null,gesagt:new Set(),takt:0},
+    rasen:false,rs:0,hk:0,hop:null,rasenAus:false,rasenN:0,strT:9};   // Rasen: auf dem Rasen?, Meter dort, Stärke des Hoppelns, Ausflug gemeldet, Zahl der Meldungen, Zeit auf der Straße
   if(AUF.an){if(zurueck)AUF.rueck=2;else AUF.anreise=2;sichereAuftrag();}releaseTouch();LEITER=null;document.documentElement.classList.add('fahrt');FW.schild.versteckt=true;wagenStellen(FAHRT.x,FAHRT.z,FAHRT.th,false);
   P.yaw=FAHRT.th-Math.PI/2;P.pitch=-.08;sitzen(FAHRT);actKind='-';setHint('','');bAct.style.display='none';joyLabel('ziehen = fahren und lenken');
   naviSag(zurueck?'routeBetrieb':'route');naviTakt();naviZeichnen();lastRoom='';
@@ -2910,16 +3075,22 @@ function fahrtSchritt(dt){const f=FAHRT;f.t+=dt;if(f.t>.8)SCHRANKE.ziel=1;let g=
     if(joy.id!==null&&Math.hypot(joy.dx,joy.dy)>JR*.12){g-=joy.dy/JR;l-=joy.dx/JR;}}
   g=clamp(g,-1,1);l=clamp(l,-1,1);if(f.t<1.4)g=Math.min(g,0);   // erst geht die Schranke auf
   f.lenk+=(l-f.lenk)*Math.min(1,dt*(f.auto?8:5));
+  const vor=f.v;
   if(g>0)f.v+=(f.v<-.05?FZ.brems:FZ.beschl)*g*dt;else if(g<0)f.v-=(f.v>.05?FZ.brems:FZ.beschl*.6)*(-g)*dt;else{const r=FZ.roll*dt;f.v=Math.abs(f.v)<=r?0:f.v-Math.sign(f.v)*r;}
   f.v=clamp(f.v,-FZ.vrueck,FZ.vmax);
+  if(f.rasen){if(f.v>RASEN.vmax)f.v=Math.max(RASEN.vmax,Math.min(f.v,vor-RASEN.abbremsen*dt));else if(f.v<-RASEN.vmax)f.v=Math.min(-RASEN.vmax,Math.max(f.v,vor+RASEN.abbremsen*dt));}   // Rasen: höchstens RASEN.vmax (vor und zurück), zu schnell → weich herunterbremsen
   const kr=f.lenk/(FZ.rmin*(1+f.v*f.v/60)),n=Math.max(1,Math.ceil(Math.abs(f.v)*dt/.25)),alt=f.th;
-  for(let i=0;i<n;i++){const s=f.v*dt/n,th=f.th+kr*s,x=f.x+Math.cos(th)*s,z=f.z-Math.sin(th)*s;
-    if(fahrFrei(x,z,th)){f.x=x;f.z=z;f.th=th;}
+  // Das Navi (Autopilot) bleibt auf der Straße wie bisher: neu auf den Rasen fährt nur, wer selbst fährt; vom Rasen zurück auf die Straße darf auch das Navi
+  for(let i=0;i<n;i++){const s=f.v*dt/n,th=f.th+kr*s,x=f.x+Math.cos(th)*s,z=f.z-Math.sin(th)*s,u=fahrFrei(x,z,th);
+    if(u&&!(f.auto&&u==='rasen'&&!f.rasen)){f.x=x;f.z=z;f.th=th;f.rasen=u==='rasen';if(f.rasen)f.rs+=Math.abs(s);}
     else{if(Math.abs(f.v)>.8){f.stoss++;if(f.t-f.stossT>2){f.stossT=f.t;melde('Rumms! Hier geht es nicht weiter – '+(TOUCH?'Daumen nach hinten':'S')+' = zurücksetzen.');}}if(f.auto)f.auto.zurueck=f.v>0?1.1:0;f.v=-f.v*.15;break;}}
-  wagenStellen(f.x,f.z,f.th,false);P.yaw+=f.th-alt;sitzen(f);   // der Blick dreht mit dem Wagen mit
+  // Rasen: Hoppeln weich ein- und ausblenden (0,3 s); Hinweis einmal je Ausflug (erst wieder nach 2 s auf der Straße; nicht, wenn das Navi fährt)
+  f.hk=clamp(f.hk+(f.rasen?dt:-dt)/.3,0,1);
+  if(f.rasen){f.strT=0;if(!f.rasenAus){f.rasenAus=true;f.rasenN++;if(!f.auto){melde(FIRMA.MELDUNGEN.rasen);meldT=5;}}}else{f.strT+=dt;if(f.strT>=2)f.rasenAus=false;}
+  wagenStellen(f.x,f.z,f.th,false);hoppelStellen(f);P.yaw+=f.th-alt;sitzen(f);   // der Blick dreht mit dem Wagen mit
   f.nav.takt-=dt;if(f.nav.takt<=0){f.nav.takt=.15;naviTakt();}naviZeichnen();}
 function naviFaehrt(){const f=FAHRT;if(!f||f.auto||!f.hilfe)return;f.auto={linie:null,r:null};f.auto.linie=autoLinie();actKind='-';melde('Das Navi fährt jetzt für dich.');}
-function fahrtEnde(){FAHRT=null;document.documentElement.classList.remove('fahrt');joyLabel('ziehen = gehen');FW.schild.versteckt=false;SCHRANKE.ziel=0;actKind='-';setHint('','');bAct.style.display='none';lastRoom='';}
+function fahrtEnde(){FAHRT=null;FW.netz.position.y=GY;FW.netz.rotation.set(0,FW.th,0);BLICK.dy=BLICK.nick=0;document.documentElement.classList.remove('fahrt');joyLabel('ziehen = gehen');FW.schild.versteckt=false;SCHRANKE.ziel=0;actKind='-';setHint('','');bAct.style.display='none';lastRoom='';}
 function aussteigen(){if(!FAHRT||!FAHRT.angekommen)return;
   if(NZ===BETRIEB_ZIEL){fahrtEnde();NZ=ZIEL;wagenStellen(HOF.x,HOF.z,HOF.th,true);if(AUF.an){AUF.rueck=3;sichereAuftrag();}springe(HOFSTART);
     melde('Zurück im Betrieb. Melde dich im Büro bei deinem Chef.');meldT=5;return;}
@@ -2959,7 +3130,7 @@ function frame(now){requestAnimationFrame(frame);
     const e=DOOR.t*DOOR.t*(3-2*DOOR.t);DOOR.pivot.rotation.y=-e*1.55;
     const c=DOOR.col;if(DOOR.t<.5){c.x0=5.06;c.x1=6.075;c.z0=.085;c.z1=.135;}else{c.x0=5.06;c.x1=5.13;c.z0=.1;c.z1=1.1;}
     renderer.shadowMap.needsUpdate=true;}
-  camera.position.set(P.x,P.camY+Math.sin(P.bob*6.2)*.022,P.z);camera.rotation.set(P.pitch,P.yaw,0);HIMMEL.position.copy(camera.position);
+  camera.position.set(P.x,P.camY+Math.sin(P.bob*6.2)*.022+BLICK.dy,P.z);camera.rotation.set(P.pitch+BLICK.nick,P.yaw,0);HIMMEL.position.copy(camera.position);   // BLICK: Hoppeln auf dem Rasen (sonst 0)
   const inside=P.x>0&&P.x<HX&&P.z>0&&P.z<HZ&&P.feet<DACH.ab,ex=!inside?1:P.feet<-.7?1.7:1.3;
   renderer.toneMappingExposure+=(ex-renderer.toneMappingExposure)*Math.min(1,dt*2.5);
   {const s=1+.08*Math.sin(now*.004);for(const st of STATIONEN)st.zeichen.scale.setScalar(s);} // Info-Zeichen pulsiert leicht
@@ -2994,10 +3165,15 @@ window.__sim={P,DOOR,colliders,start,pause:()=>pause(),joy,touch:()=>TOUCH,pr:()
     fahrt:FAHRT?{t:FAHRT.t,x:FAHRT.x,z:FAHRT.z,th:FAHRT.th,v:FAHRT.v,stoss:FAHRT.stoss,angekommen:FAHRT.angekommen,hilfe:FAHRT.hilfe,auto:!!FAHRT.auto,
       kante:DORF.KANTEN[FAHRT.nav.kante].join('-'),dir:FAHRT.nav.dir,route:FAHRT.route?FAHRT.route.knoten.slice():null,navi:FAHRT.navi.slice()}:null}),
   dlgWeiter:w=>dlgWeiter(w===undefined?-1:w),anreiseStart:()=>anreiseStart(),freiBegehen:()=>freiBegehen(),einsteigen:()=>{einsteigen();return !!FAHRT;},aussteigen:()=>{aussteigen();return !FAHRT;},
-  bild:()=>{camera.position.set(P.x,P.camY,P.z);camera.rotation.set(P.pitch,P.yaw,0);renderer.render(scene,camera);return true;},   // Prüfhilfe: genau ein Bild rechnen (Browser im Hintergrund)
+  bild:()=>{camera.position.set(P.x,P.camY+BLICK.dy,P.z);camera.rotation.set(P.pitch+BLICK.nick,P.yaw,0);renderer.render(scene,camera);return true;},   // Prüfhilfe: genau ein Bild rechnen (Browser im Hintergrund)
   fahrtSetze:(x,zz,th)=>{if(!FAHRT)return false;const alt=FAHRT.th;Object.assign(FAHRT,{x,z:zz,th});wagenStellen(x,zz,th,false);P.yaw+=th-alt;sitzen(FAHRT);naviTakt();naviZeichnen();hud();return true;},   // Prüfhilfe (Bilder ohne laufende Schleife)
   autopilot:o=>{if(!FAHRT)return false;FAHRT.auto=o===false?null:Object.assign({linie:null,r:null},o||{});if(FAHRT.auto)FAHRT.auto.linie=autoLinie();return true;},
   fahrFrei:(x,zz,th)=>fahrFrei(x,zz,th||0),befahrbar:(x,zz)=>DORF.befahrbar(x,zz,0),route:(von,ueber)=>wegSuche(von,ueber,0),
+  // Rasen-Fahren (24.11.2026, Firma v2): Untergrund eines Punkts (Dorf-Koordinaten), Zustand der Fahrt auf dem Rasen, Hoppeln von Wagen und Blick
+  untergrund:(x,zz)=>fahrGrund(x,zz),
+  rasen:()=>{const f=FAHRT,m=FW.netz;return{firma:FIRMA.version,werte:RASEN,fz:FZ,meldung:FIRMA.MELDUNGEN.rasen,gelaende:GELAENDE,zu:WAGEN_ZU,auf:!!(f&&f.rasen),meter:f?f.rs:0,k:f?f.hk:0,
+    meldungen:f?f.rasenN:0,aufStrasse:f?f.strT:0,hop:f&&f.hop?Object.assign({},f.hop):{dy:0,nick:0,roll:0},blick:{dy:BLICK.dy,nick:BLICK.nick},wagen:{dy:m.position.y-GY,nick:m.rotation.z,roll:m.rotation.x},
+    kamera:{y:camera.position.y,pitch:camera.rotation.x,roll:camera.rotation.z}};},
   ton:()=>({an:TON.an,verlangt:TON.verlangt.slice()}),tonSchluessel,tonText,
   tonListe:()=>{const aus=new Map(),neu=(wer,text)=>{const r=tonRolle(wer),t=tonText({text});if(!t)return;const k=tonSchluessel(r,t),da=aus.get(k);
       if(!da)aus.set(k,{schluessel:k,rolle:r,wer,text:t});else if(da.text!==t||da.rolle!==r)throw new Error('Ton-Schlüssel doppelt: '+k);};
