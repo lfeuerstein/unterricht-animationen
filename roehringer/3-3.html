@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>3.3 Bekommt jeder Heizkörper sein Wasser? Durchfluss und Ventil-Voreinstellung – Haus Röhringer</title>
+<style>
+:root{--papier:#f4f1ea;--tinte:#22303a;--leise:#5d6b75;--linie:#d5cfc2;--karte:#fff;--akzent:#0b6b7d;--akzent-hell:#e1f0f2;--gold:#d99a1b;
+  --vl:#d0342c;--rl:#2f6fb7;--ring:#b0408a;--gut:#2e7d4f;--gut-hell:#e4f3e3;--schlecht:#c8371f;--schlecht-hell:#fde3df;--merk:#fffbe9;--merk-rand:#ecd9a0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation}
+body{margin:0;background:var(--papier);color:var(--tinte);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+.kopf{position:sticky;top:0;z-index:5;background:var(--papier);border-bottom:1px solid var(--linie);padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.kopf .titel{flex:1 1 360px;min-width:0}
+.kopf .ober{margin:0;font-size:13px;color:var(--leise)}
+.kopf h1{margin:0;font-size:20px;line-height:1.25}
+.kopf .stand{font-size:16px;white-space:nowrap;text-align:right}
+.kopf .stand small{display:block;font-size:12px;color:var(--leise)}
+.kurs{min-height:44px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--akzent);background:#fff;color:var(--akzent);font-weight:600;cursor:pointer;touch-action:manipulation}
+main{max-width:1040px;margin:0 auto;padding:14px 16px 60px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+h2{font-size:20px;margin:0 0 8px;line-height:1.25}
+h3{font-size:17px;margin:14px 0 6px}
+p{margin:0 0 10px}
+.klein{font-size:14px;color:var(--leise)}
+.sprech{border-left:5px solid var(--akzent);background:var(--akzent-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:0 0 12px}
+.sprech b.wer{display:block;font-size:13px;color:var(--akzent);letter-spacing:.3px;margin-bottom:2px}
+.merk{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 12px;margin:10px 0 0}
+.wahl{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.knopf,.wahl button{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;touch-action:manipulation}
+.wahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.knopf.haupt{background:var(--akzent);border-color:var(--akzent);color:#fff}
+.knopf:disabled,.wahl button:disabled{opacity:.45;cursor:default}
+svg{display:block;width:100%;height:auto}
+.rollen{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--leise);font-weight:600}
+.balken{height:12px;border-radius:6px;background:var(--akzent)}
+.balkenreihe{display:flex;min-width:60px}
+.zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.zwei{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}}
+/* Animation */
+.wegbild{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.messung{min-height:48px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--akzent-hell);font-size:17px}
+.messung b{font-size:19px}
+.hk-knopf{cursor:pointer}
+.lupe-ruf{cursor:pointer}
+.lupe{border:2px solid var(--tinte);border-radius:14px;padding:12px 14px;margin-top:12px;background:#fff}
+.lupe h3{margin:0 0 6px}
+.lupe ol{margin:8px 0 0;padding-left:22px}
+.lupe li{margin:3px 0}
+/* Aufgaben */
+.aufgabe{border:1px solid var(--linie);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:#fff}
+.aufgabe h3{margin:0 0 6px}
+.aufgabe .pkt{float:right;margin-left:10px;font-size:14px;color:var(--leise);font-weight:600}
+.aufgabe.fertig{border-color:var(--gut);box-shadow:0 0 0 2px var(--gut-hell)}
+.feld{display:inline-flex;align-items:center;gap:6px;margin:4px 16px 4px 0;font-size:17px}
+input.zahl{font:inherit;width:5.2em;min-height:44px;padding:6px 8px;border:1px solid var(--linie);border-radius:8px;background:#fff;color:var(--tinte)}
+input.zahl.ok{border-color:var(--gut);background:var(--gut-hell)}
+input.zahl.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+input.zahl:disabled{opacity:1;color:var(--tinte)}
+.rueck{display:block;margin-top:8px;font-size:15px}
+.rueck.ok{color:var(--gut);font-weight:600}
+.rueck.nein{color:var(--schlecht)}
+.satz{border:1px solid var(--linie);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+.satz p{margin:0 0 6px;font-style:italic}
+.satz.ok{border-color:var(--gut);background:var(--gut-hell)}
+.satz.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+.satz .wahl{margin:0}
+/* Zeichnen */
+svg.zeichnen{min-width:680px;touch-action:manipulation;background:#eef1ea;border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.gruppe{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 8px}
+.gruppe button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.gruppe .gname{font-size:14px;color:var(--leise);font-weight:600;min-width:110px}
+.pruefliste{list-style:none;padding:0;margin:10px 0 0;font-size:15px}
+.pruefliste li{padding:3px 0 3px 26px;position:relative}
+.pruefliste li::before{position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;text-align:center;line-height:18px}
+.pruefliste li.ok::before{content:"✓";background:var(--gut)}
+.pruefliste li.nein::before{content:"✗";background:var(--schlecht)}
+/* Team */
+.tablet{border:2px solid var(--tinte);border-radius:16px;padding:14px;background:#fff;margin-top:6px}
+.tablet h3{margin:0 0 6px}
+.phase{border-top:1px solid var(--linie);padding-top:10px;margin-top:12px}
+.phase.zu{opacity:.45}
+.phase label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.grosswahl{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}
+.grosswahl button{min-width:150px;min-height:96px;border-radius:16px;border:2px solid var(--tinte);background:#fff;cursor:pointer;font-size:18px;padding:10px 14px;touch-action:manipulation}
+.grosswahl button b{display:block;font-size:34px;line-height:1.1}
+.ok-text{color:var(--gut);font-weight:600}
+.hinweis-gruen{display:inline-block;background:var(--gut-hell);border:1px solid var(--gut);border-radius:8px;padding:2px 8px}
+.hinweis-orange{display:inline-block;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:2px 8px}
+@media (max-width:820px){body{font-size:16px}.kopf h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Station 3.2 – Ergänzungen zu basis.css (Reiter, Animation, Auswahl, Rechentrainer, Strangliste) */
+.reiter{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.reiter button{min-height:48px;padding:6px 16px;border-radius:12px;border:1.5px solid var(--linie);background:#fff;color:var(--tinte);font-size:16px;font-weight:600;cursor:pointer;touch-action:manipulation;text-align:left}
+.reiter button[aria-selected="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.reiter button small{display:block;font-size:12px;font-weight:400;opacity:.85}
+.dr-zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.dr-zwei{grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);align-items:start}}
+.dr-bild{margin:0}
+.dr-gruppe{align-items:center;margin:0 0 8px}
+.gname{font-size:14px;color:var(--leise);font-weight:600;margin-right:2px}
+.dr-svg{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.dr-info{margin:8px 0 0}
+.dr-fuss{margin:8px 0 0}
+.dr-rechts .karte{margin:0}
+/* Sprechblase des Chefs: hochkant oben, quer in der rechten Spalte (damit Regler und Bild ganz auf den Schirm passen) */
+.chef-rechts{margin:0 0 12px}
+@media (min-width:900px){.chef-oben{display:none}}
+@media (max-width:899px){.chef-rechts{display:none}}
+/* Auswahlantworten */
+.optionen{display:flex;flex-direction:column;gap:8px;margin:6px 0 8px}
+.optionen button{min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-align:left;font-size:16px;cursor:pointer;touch-action:manipulation}
+.optionen.quer{flex-direction:row;flex-wrap:wrap}
+.optionen button[aria-pressed="true"]{border-color:var(--tinte);box-shadow:inset 0 0 0 2px var(--tinte)}
+.optionen button.ok{background:var(--gut-hell);border-color:var(--gut);box-shadow:inset 0 0 0 2px var(--gut)}
+.optionen button.nein{background:var(--schlecht-hell);border-color:var(--schlecht);box-shadow:inset 0 0 0 2px var(--schlecht)}
+.optionen button:disabled{cursor:default}
+.optionen button:disabled:not(.ok){opacity:.5}
+.aufgabe.gesperrt .optionen,.aufgabe.gesperrt .feld,.aufgabe.gesperrt .wahl{opacity:.45}
+.sperre{display:block;font-size:15px;color:#7a4d00;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:6px 10px;margin:6px 0}
+.lsatz{font-style:italic;line-height:2;margin:4px 0 8px}
+.lluecke{display:inline-block;min-width:7em;padding:0 8px;border-bottom:2px solid var(--tinte);font-style:normal;font-weight:700;text-align:center}
+.lluecke.ok{color:var(--gut);border-color:var(--gut)}
+.lluecke.nein{color:var(--schlecht);border-color:var(--schlecht)}
+.weiter{margin:4px 0 0}
+/* Rechentrainer */
+.rt-leiste{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.rt-leiste .reiter{margin:0}
+.rt-karten{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.rt-karten .aufgabe{margin:0}
+.rt-karten .breit{grid-column:1/-1}
+.feldzeile{margin:6px 0}
+.feldzeile .optionen{margin:6px 0 0}
+.aufgabe .nr{display:inline-block;min-width:2.2em;font-weight:700;color:var(--akzent)}
+.aufgabe .gegeben{font-size:18px}
+.rt-skizze{max-width:640px;margin:6px 0 10px;border:1px solid var(--linie);border-radius:10px;overflow:hidden;background:#fffef9}
+.merkzeile{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 14px;margin:0 0 12px;font-size:17px}
+.merkzeile p{margin:2px 0}
+.geuebt{font-size:13px;color:var(--gut);font-weight:600;margin-left:6px}
+/* Strangliste (Dreier-Team) */
+.strangliste td,.strangliste th{padding:6px 6px}
+.strangliste td.zahl{text-align:right;white-space:nowrap}
+.strangliste tr.eigen td{background:#fff8d6}
+.strangliste tr.chef td{color:var(--leise)}
+.skizze-chef svg{border:1px solid var(--linie);border-radius:10px}
+@media (min-width:900px){.tablet .dr-zwei>div:first-child{position:sticky;top:104px}}
+a.kurs{display:inline-flex;align-items:center;text-decoration:none}
+.merksatz{font-size:19px;line-height:1.45}
+.meldung{border-left:5px solid var(--gut);background:var(--gut-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0 0}
+
+/* Station 3.3 – Ergänzungen zu basis.css und s32.css (Ventildiagramm mit Ziehlinien, Planungsskizze, Einstellwert ablesen, Hersteller-Team) */
+/* Ventildiagramm */
+.vd-flaeche{position:relative}
+.vd-svg{background:#fff;border:1px solid var(--linie);border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.vd-griff{position:absolute;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;z-index:2}
+.vd-griff-y{left:0;top:12.34%;width:12.8%;height:69.8%;cursor:ns-resize}
+.vd-griff-x{left:10.94%;width:78.13%;top:79.57%;height:14.04%;cursor:ew-resize}
+.vd-gross .vd-griff{display:none}
+.vd-gross .vd-svg{border-color:var(--tinte);border-width:2px}
+.vd-knoepfe{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:8px 0 0}
+.vd-paar{display:inline-flex;align-items:center;gap:6px}
+.vd-name{font-weight:700;color:var(--leise);min-width:1.6em}
+.vd-k{min-width:52px;font-size:22px;font-weight:700;padding:2px 0;line-height:1}
+.vd-wert{display:inline-block;min-width:6.4em;text-align:center;font-size:17px}
+.vd-lupe{min-width:96px}
+.vd-quelle{margin:6px 0 0}
+/* linke Spalte bleibt quer stehen, während rechts gearbeitet wird */
+@media (min-width:900px){.ea-links,.pz-links,.ht-links{position:sticky;top:calc(var(--kopf,0px) + 8px)}}
+/* Einstellwert ablesen */
+.ea-bild{margin:0}
+.ea-leiste{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:0 0 8px}
+.ea-leiste .wahl{margin:0}
+.ea-info{margin:0 0 8px}
+.ea-merk{margin:0 0 12px}
+.ea-merk summary{cursor:pointer;min-height:44px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;list-style:revert}
+.ea-hk{border:1px solid var(--linie);border-radius:10px;padding:8px 10px;margin:8px 0;background:#fcfbf8}
+.ea-hk.aktiv{border-color:var(--akzent);box-shadow:0 0 0 2px var(--akzent-hell);background:#fff}
+.ea-hk.fertig{border-color:var(--gut);background:var(--gut-hell)}
+.ea-hk-kopf{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
+.ea-werte{font-size:16px}
+.ea-hk label{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 12px 4px 0}
+/* Planungsskizze */
+.pz-bild{margin:0}
+.pz-legende{margin:6px 0 0}
+.pz-gelb{background:#fff59d;padding:0 4px;border-radius:3px;font-weight:700}
+.pz-saeulen{margin:12px 0 0;padding:8px 10px}
+.pz-formel{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:6px 0}
+.pz-mdot{font-size:24px;font-weight:700}
+.pz-bruch{display:flex;flex-direction:column;min-width:230px}
+.pz-zone{min-height:60px;border:2px dashed #b9c3cc;border-radius:10px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;padding:4px 8px;background:#fcfbf8}
+.pz-zone.ok{border-style:solid;border-color:var(--gut);background:var(--gut-hell)}
+.pz-zone.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+.pz-strich{height:3px;background:var(--tinte);margin:5px 0;border-radius:2px}
+.pz-ablage{margin:8px 0 0;justify-content:flex-start;min-height:64px}
+.pz-mal{font-size:24px;font-weight:700}
+.pz-kachel{min-width:60px;min-height:50px;font-size:24px;font-weight:700;border:2px solid var(--tinte);border-radius:10px;background:#fff;color:var(--tinte);cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.pz-kachel.gewaehlt{background:var(--akzent-hell);border-color:var(--akzent);box-shadow:0 0 0 3px var(--akzent-hell)}
+.pz-kachel.zieht{position:relative;z-index:30;box-shadow:0 8px 18px rgba(0,0,0,.25);cursor:grabbing}
+.pz-kachel:disabled{cursor:default;opacity:1}
+input.zahl.breit{width:6.4em}
+.aufgabe.gesperrt h3{color:var(--leise)}
+/* Hersteller-Team */
+.ht-klein{display:block;font-size:13px;color:var(--leise);font-weight:400;margin-top:4px}
+.ht-werkzeug{margin:0}
+.ht-kv td,.ht-kv th{padding:3px 6px;font-size:14px}
+.ht-anbau td,.ht-anbau th{font-size:14px}
+.tablet .phase label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+/* Beamer */
+.bm-reiter{margin:0 0 10px}
+.bm-tabelle td,.bm-tabelle th{font-size:17px}
+/* breitere Bildspalte quer (Skizze und Diagramm brauchen Platz) */
+@media (min-width:900px){.dr-zwei.ea,.dr-zwei.pz{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}.ht-zwei{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+ .tablet .dr-zwei>.ht-links{top:calc(var(--kopf,0px) + 8px)}}
+
+.leise{color:var(--leise);font-size:14px}
+.kennz{font-weight:700;color:var(--akzent);margin:0 0 2px}
+a.zurueck{color:var(--akzent)}
+h1{font-size:24px;margin:0 0 4px;line-height:1.2}
+.sprung{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.sprung a{display:inline-block;padding:9px 14px;border-radius:999px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-decoration:none;font-size:15px}
+section.abschnitt{scroll-margin-top:10px;margin:0 0 22px}
+section.abschnitt>h2{margin:8px 0 6px}
+footer{margin-top:28px;font-size:13px;color:var(--leise);border-top:1px solid var(--linie);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+  <p class="leise"><a class="zurueck" href="index.html">← Haus Röhringer: alle Stationen</a></p>
+  <p class="kennz">3194 · 3.3</p>
+  <h1>3.3 Bekommt jeder Heizkörper sein Wasser? Durchfluss und Ventil-Voreinstellung</h1>
+  <p class="leise">Haus Röhringer – Der Anbau kommt ans Netz. Planungsskizze und „Einstellwert ablesen“ zum Arbeitsblatt 3.3, ohne Anmeldung und ohne Punkte.</p>
+  <div class="sprung"><a href="#planungsskizze">3.3.2 Planungsskizze</a><a href="#einstellwert-ablesen">3.3.2 Einstellwert ablesen</a></div>
+
+  <section class="abschnitt" id="planungsskizze">
+    <h2>3.3.2 Übung: Planungsskizze – vom Wärmebedarf zum Ventil-Druckverlust</h2>
+    <p>Schritt für Schritt: Formel finden, Durchfluss je Heizkörper, ungünstigster Strang, Ventilautorität 50 % und der Druckverlust an jedem Ventil. Jeder richtige Wert erscheint in der Skizze. Damit löst du die Aufgaben 1, 2, 4, 5 und 6 auf deinem Arbeitsblatt.</p>
+    <div id="planung"></div>
+  </section>
+
+  <section class="abschnitt" id="einstellwert-ablesen">
+    <h2>3.3.2 Übung: Einstellwert ablesen – das Ventildiagramm</h2>
+    <p>Zieh die rote waagrechte Linie auf den Druckverlust am Ventil und die rote senkrechte auf den Durchfluss. Wo sie sich treffen, liest du den Einstellwert ab (Aufgabe 7 auf dem Arbeitsblatt). Im Ablesetrainer gibt es immer neue Zahlen.</p>
+    <div id="einstellwert"></div>
+  </section>
+
+  <footer>Diese Seite setzt keine Cookies, speichert nichts auf dem Gerät und lädt nichts von anderen Servern. Beim Aufruf verarbeitet der Anbieter GitHub technisch die IP-Adresse des Geräts.</footer>
+</main>
+<script>
+// ---------------------------------------------------------------- Zahlen lesen und schreiben (deutsch), für Station 3.2 (ohne DOM)
+// Eingaben dürfen Komma oder Punkt haben, mit oder ohne Einheit, mit Leerzeichen als Tausendertrenner („10 000“).
+// „2.700“ ist doppeldeutig (Tausenderpunkt oder Dezimalpunkt): Dann gilt die Lesart, die näher am erwarteten Wert liegt.
+const ZAHL=(()=>{
+ const EINHEIT=/\s*(mws|m\s*ws|meter|m|bar|mbar|hpa|kpa|pa\/m|pa|kg\/h|m\/s|°c|°|%)\.?$/i;
+ function lies(s,soll){
+  let t=String(s==null?'':s).trim().toLowerCase();
+  for(let i=0;i<2;i++)t=t.replace(EINHEIT,'');
+  t=t.replace(/[\s  ']/g,'');
+  if(!t)return NaN;
+  let m;
+  if((m=/^(-?)(\d{1,3}(?:\.\d{3})+),(\d+)$/.exec(t)))return parseFloat(m[1]+m[2].replace(/\./g,'')+'.'+m[3]);   // 2.700,5
+  if(/^-?\d{1,3}(\.\d{3})+$/.test(t)){const dez=parseFloat(t),tau=parseFloat(t.replace(/\./g,''));                // 2.700 → 2,7 oder 2700
+   if(soll===undefined||!isFinite(soll)||soll===0)return dez;
+   const ab=x=>Math.abs(Math.log(Math.abs(x)||1e-12)-Math.log(Math.abs(soll)));return ab(tau)<ab(dez)?tau:dez;}
+  t=t.replace(',','.');
+  if(!/^-?(\d+(\.\d+)?|\.\d+)$/.test(t))return NaN;
+  return parseFloat(t);}
+ // deutsch schreiben: n Nachkommastellen (ohne n: so wenige wie nötig, höchstens 3), ab 10 000 mit schmalem Leerzeichen
+ function text(x,n){if(!isFinite(x))return '';let s;
+  if(n===undefined){s=String(Math.round(x*1000)/1000);}else s=(+x).toFixed(n);
+  let [g,k]=s.split('.');const neg=g.startsWith('-');if(neg)g=g.slice(1);
+  if(g.length>4)g=g.replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+  return (neg?'-':'')+g+(k?','+k:'');}
+ const gleich=(a,b,rel)=>Math.abs(a-b)<=Math.max(1e-9,Math.abs(b)*(rel||1e-9));
+ return {lies,text,gleich};
+})();
+
+// ---------------------------------------------------------------- SVG-Helfer (für Animation und Zeichenübungen)
+const SVGNS='http://www.w3.org/2000/svg';
+function svgEl(n,a,t){const e=document.createElementNS(SVGNS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!==undefined)e.textContent=t;return e;}
+const dstr=p=>p.map((q,i)=>(i?'L':'M')+q[0]+' '+q[1]).join(' ');
+
+// erzeugt von bauen-3-2.mjs aus material/skizze-chef/skizze-chef-anbau.svg – nicht von Hand ändern
+const SKIZZE_CHEF_SVG="\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1000 680\" font-family=\"Segoe Print, Chalkboard SE, Comic Sans MS, sans-serif\">\n  \u003crect x=\"0\" y=\"0\" width=\"1000\" height=\"680\" fill=\"#fffef9\"/>\n  \u003ctext x=\"30\" y=\"40\" font-size=\"24\" fill=\"#1d2a33\" font-weight=\"bold\">Skizze vom Chef · Anbau Familie Röhringer\u003c/text>\n  \u003ctext x=\"30\" y=\"66\" font-size=\"15\" fill=\"#4a555d\">Schnitt, nicht maßstäblich · Heizlast vom Büro gerechnet · 60/50 °C (Spreizung 10 K)\u003c/text>\n  \u003cline x1=\"20\" y1=\"500\" x2=\"980\" y2=\"500\" stroke=\"#8d6e63\" stroke-width=\"3\"/>\n  \u003cg stroke=\"#bcaaa4\" stroke-width=\"1.5\">\n    \u003cline x1=\"350\" y1=\"512\" x2=\"365\" y2=\"527\"/>\u003cline x1=\"420\" y1=\"512\" x2=\"435\" y2=\"527\"/>\u003cline x1=\"490\" y1=\"512\" x2=\"505\" y2=\"527\"/>\n    \u003cline x1=\"560\" y1=\"512\" x2=\"575\" y2=\"527\"/>\u003cline x1=\"700\" y1=\"512\" x2=\"715\" y2=\"527\"/>\u003cline x1=\"770\" y1=\"512\" x2=\"785\" y2=\"527\"/>\n    \u003cline x1=\"840\" y1=\"512\" x2=\"855\" y2=\"527\"/>\u003cline x1=\"910\" y1=\"512\" x2=\"925\" y2=\"527\"/>\n  \u003c/g>\n  \u003cg stroke=\"#8a959e\" stroke-width=\"2.5\" fill=\"none\">\n    \u003cpolyline points=\"60,500 60,220 340,220\"/>\n    \u003cpolyline points=\"60,220 200,130 340,220\"/>\n    \u003cline x1=\"60\" y1=\"360\" x2=\"340\" y2=\"360\" stroke-dasharray=\"8 6\"/>\n    \u003cpolyline points=\"60,500 60,600 340,600 340,500\"/>\n  \u003c/g>\n  \u003ctext x=\"200\" y=\"200\" font-size=\"18\" fill=\"#8a959e\" text-anchor=\"middle\">Bestand\u003c/text>\n  \u003ctext x=\"200\" y=\"300\" font-size=\"15\" fill=\"#8a959e\" text-anchor=\"middle\">Wohnhaus\u003c/text>\n  \u003ctext x=\"75\" y=\"592\" font-size=\"15\" fill=\"#4a555d\">Heizraum (Keller)\u003c/text>\n  \u003cg stroke=\"#1d2a33\" stroke-width=\"3\" fill=\"none\">\n    \u003cpolyline points=\"340,500 340,220 900,220 900,500\"/>\n    \u003cpolyline points=\"340,220 620,110 900,220\"/>\n    \u003cline x1=\"340\" y1=\"360\" x2=\"900\" y2=\"360\" stroke-dasharray=\"10 7\" stroke-width=\"2\"/>\n    \u003cline x1=\"340\" y1=\"500\" x2=\"900\" y2=\"500\" stroke-width=\"4\"/>\n  \u003c/g>\n  \u003cline x1=\"630\" y1=\"230\" x2=\"630\" y2=\"350\" stroke=\"#9aa7b1\" stroke-width=\"2\" stroke-dasharray=\"4 5\"/>\n  \u003cline x1=\"630\" y1=\"370\" x2=\"630\" y2=\"490\" stroke=\"#9aa7b1\" stroke-width=\"2\" stroke-dasharray=\"4 5\"/>\n  \u003ctext x=\"620\" y=\"190\" font-size=\"20\" fill=\"#1d2a33\" text-anchor=\"middle\" font-weight=\"bold\">Anbau\u003c/text>\n  \u003ctext x=\"920\" y=\"300\" font-size=\"15\" fill=\"#4a555d\">OG\u003c/text>\n  \u003ctext x=\"920\" y=\"440\" font-size=\"15\" fill=\"#4a555d\">EG\u003c/text>\n  \u003crect x=\"85\" y=\"515\" width=\"60\" height=\"62\" fill=\"#fff\" stroke=\"#1d2a33\" stroke-width=\"2.5\"/>\n  \u003ctext x=\"115\" y=\"553\" font-size=\"18\" text-anchor=\"middle\" fill=\"#1d2a33\" font-weight=\"bold\">WE\u003c/text>\n  \u003cg stroke=\"#d32f2f\" stroke-width=\"3.5\" fill=\"none\" stroke-linejoin=\"round\">\n    \u003cpolyline points=\"145,530 320,530 320,486 792,486 792,464\"/>\n    \u003cline x1=\"392\" y1=\"486\" x2=\"392\" y2=\"464\"/>\n    \u003cpolyline points=\"620,486 620,346\"/>\n    \u003cpolyline points=\"392,324 392,346 792,346 792,324\"/>\n  \u003c/g>\n  \u003cg fill=\"none\" stroke-linejoin=\"round\">\n    \u003cg stroke=\"#fffef9\" stroke-width=\"9\">\n      \u003cline x1=\"448\" y1=\"476\" x2=\"448\" y2=\"494\"/>\n      \u003cline x1=\"640\" y1=\"478\" x2=\"640\" y2=\"494\"/>\n      \u003cline x1=\"448\" y1=\"336\" x2=\"448\" y2=\"354\"/>\n      \u003cline x1=\"620\" y1=\"350\" x2=\"620\" y2=\"358\" stroke=\"#fffef9\"/>\n    \u003c/g>\n    \u003cg stroke=\"#1565c0\" stroke-width=\"3.5\">\n      \u003cpolyline points=\"145,565 335,565 335,494 848,494 848,464\"/>\n      \u003cline x1=\"448\" y1=\"464\" x2=\"448\" y2=\"494\"/>\n      \u003cpolyline points=\"640,494 640,354\"/>\n      \u003cpolyline points=\"448,324 448,354 848,354 848,324\"/>\n    \u003c/g>\n  \u003c/g>\n  \u003cline x1=\"620\" y1=\"346\" x2=\"620\" y2=\"366\" stroke=\"#d32f2f\" stroke-width=\"3.5\"/>\n  \u003ccircle cx=\"230\" cy=\"530\" r=\"13\" fill=\"#fff\" stroke=\"#1d2a33\" stroke-width=\"2.5\"/>\n  \u003cpolygon points=\"224,522 224,538 239,530\" fill=\"#1d2a33\"/>\n  \u003ctext x=\"230\" y=\"512\" font-size=\"14\" text-anchor=\"middle\" fill=\"#1d2a33\">Pumpe\u003c/text>\n  \u003cg fill=\"#fff\" stroke=\"#1d2a33\" stroke-width=\"2.5\">\n    \u003crect x=\"380\" y=\"428\" width=\"80\" height=\"36\"/>\n    \u003crect x=\"780\" y=\"428\" width=\"80\" height=\"36\"/>\n    \u003crect x=\"380\" y=\"288\" width=\"80\" height=\"36\"/>\n    \u003crect x=\"780\" y=\"288\" width=\"80\" height=\"36\"/>\n  \u003c/g>\n  \u003cg stroke=\"#1d2a33\" stroke-width=\"1.2\">\n    \u003cline x1=\"395\" y1=\"432\" x2=\"395\" y2=\"460\"/>\u003cline x1=\"410\" y1=\"432\" x2=\"410\" y2=\"460\"/>\u003cline x1=\"425\" y1=\"432\" x2=\"425\" y2=\"460\"/>\u003cline x1=\"440\" y1=\"432\" x2=\"440\" y2=\"460\"/>\n    \u003cline x1=\"795\" y1=\"432\" x2=\"795\" y2=\"460\"/>\u003cline x1=\"810\" y1=\"432\" x2=\"810\" y2=\"460\"/>\u003cline x1=\"825\" y1=\"432\" x2=\"825\" y2=\"460\"/>\u003cline x1=\"840\" y1=\"432\" x2=\"840\" y2=\"460\"/>\n    \u003cline x1=\"395\" y1=\"292\" x2=\"395\" y2=\"320\"/>\u003cline x1=\"410\" y1=\"292\" x2=\"410\" y2=\"320\"/>\u003cline x1=\"425\" y1=\"292\" x2=\"425\" y2=\"320\"/>\u003cline x1=\"440\" y1=\"292\" x2=\"440\" y2=\"320\"/>\n    \u003cline x1=\"795\" y1=\"292\" x2=\"795\" y2=\"320\"/>\u003cline x1=\"810\" y1=\"292\" x2=\"810\" y2=\"320\"/>\u003cline x1=\"825\" y1=\"292\" x2=\"825\" y2=\"320\"/>\u003cline x1=\"840\" y1=\"292\" x2=\"840\" y2=\"320\"/>\n  \u003c/g>\n  \u003cg fill=\"#fff\" stroke=\"#1d2a33\" stroke-width=\"2\">\n    \u003cpolygon points=\"384,468 400,468 392,476\"/>\u003cpolygon points=\"384,484 400,484 392,476\"/>\n    \u003cpolygon points=\"784,468 800,468 792,476\"/>\u003cpolygon points=\"784,484 800,484 792,476\"/>\n    \u003cpolygon points=\"384,328 400,328 392,336\"/>\u003cpolygon points=\"384,344 400,344 392,336\"/>\n    \u003cpolygon points=\"784,328 800,328 792,336\"/>\u003cpolygon points=\"784,344 800,344 792,336\"/>\n  \u003c/g>\n  \u003cg font-size=\"15\" fill=\"#1d2a33\">\n    \u003ctext x=\"355\" y=\"384\" font-weight=\"bold\">1.1 Arbeitszimmer\u003c/text>\n    \u003ctext x=\"355\" y=\"403\">Heizlast 965 W\u003c/text>\n    \u003ctext x=\"490\" y=\"440\">Rohr VL + RL:\u003c/text>\u003ctext x=\"490\" y=\"458\" font-weight=\"bold\">18 m\u003c/text>\n    \u003ctext x=\"655\" y=\"384\" font-weight=\"bold\">1.2 Gästezimmer\u003c/text>\n    \u003ctext x=\"655\" y=\"403\">Heizlast 605 W\u003c/text>\n    \u003ctext x=\"655\" y=\"440\">Rohr VL + RL:\u003c/text>\u003ctext x=\"655\" y=\"458\" font-weight=\"bold\">20 m\u003c/text>\n    \u003ctext x=\"355\" y=\"244\" font-weight=\"bold\">2.1 Zimmer 1\u003c/text>\n    \u003ctext x=\"355\" y=\"263\">Heizlast 907 W\u003c/text>\n    \u003ctext x=\"490\" y=\"300\">Rohr VL + RL:\u003c/text>\u003ctext x=\"490\" y=\"318\" font-weight=\"bold\">30 m\u003c/text>\n    \u003ctext x=\"655\" y=\"244\" font-weight=\"bold\">2.2 Zimmer 2\u003c/text>\n    \u003ctext x=\"655\" y=\"263\">Heizlast 1419 W\u003c/text>\n    \u003ctext x=\"655\" y=\"300\">Rohr VL + RL:\u003c/text>\u003ctext x=\"655\" y=\"318\" font-weight=\"bold\">34 m\u003c/text>\n  \u003c/g>\n  \u003cg font-size=\"15\" fill=\"#1d2a33\">\n    \u003cline x1=\"400\" y1=\"630\" x2=\"440\" y2=\"630\" stroke=\"#d32f2f\" stroke-width=\"3.5\"/>\u003ctext x=\"448\" y=\"635\">Vorlauf\u003c/text>\n    \u003cline x1=\"530\" y1=\"630\" x2=\"570\" y2=\"630\" stroke=\"#1565c0\" stroke-width=\"3.5\"/>\u003ctext x=\"578\" y=\"635\">Rücklauf\u003c/text>\n    \u003cg fill=\"#fff\" stroke=\"#1d2a33\" stroke-width=\"2\">\u003cpolygon points=\"684,622 684,638 692,630\"/>\u003cpolygon points=\"700,622 700,638 692,630\"/>\u003c/g>\n    \u003ctext x=\"708\" y=\"635\">Thermostatventil\u003c/text>\n    \u003ctext x=\"400\" y=\"662\" font-size=\"14\" fill=\"#4a555d\">„Rohr VL + RL“ = Weg des Wassers vom Heizraum zum Heizkörper und zurück\u003c/text>\n  \u003c/g>\n\u003c/svg>";
+
+// ---------------------------------------------------------------- Skizze vom Chef (Anbau Röhringer) mit markiertem Heizkörper (braucht SKIZZE_CHEF_SVG, svgEl, dstr)
+// Dieselbe Zeichnung wie in Abschnitt 1 des Kurses. Markieren: Heizkörper gelb umrandet, sein Weg (Vorlauf und Rücklauf) hellblau nachgezogen.
+// Koordinaten aus skizze-chef-anbau.svg (viewBox 0 0 1000 680). Die Wege stehen in der Skizze („Rohr VL + RL“): 18 / 20 / 30 / 34 m.
+const SKIZZE=(()=>{
+ const HK={'1.1':[380,428],'1.2':[780,428],'2.1':[380,288],'2.2':[780,288]};
+ const VL0=[[145,530],[320,530],[320,486]],RL0=[[335,494],[335,565],[145,565]];
+ const WEG={
+  '1.1':[...VL0,[392,486],[392,464],[448,464],[448,494],...RL0],
+  '1.2':[...VL0,[792,486],[792,464],[848,464],[848,494],...RL0],
+  '2.1':[...VL0,[620,486],[620,346],[392,346],[392,324],[448,324],[448,354],[640,354],[640,494],...RL0],
+  '2.2':[...VL0,[620,486],[620,346],[792,346],[792,324],[848,324],[848,354],[640,354],[640,494],...RL0]};
+ const NAME={'1.1':'HK 1.1 Arbeitszimmer','1.2':'HK 1.2 Gästezimmer','2.1':'HK 2.1 Zimmer 1','2.2':'HK 2.2 Zimmer 2'};
+ function zeige(el,o){o=o||{};el.innerHTML=SKIZZE_CHEF_SVG;const s=el.querySelector('svg');if(!s)return null;
+  s.setAttribute('role','img');s.setAttribute('aria-label','Skizze vom Chef: Anbau Familie Röhringer mit vier Heizkörpern'+(o.hk?', markiert '+NAME[o.hk]:''));
+  if(o.hk&&WEG[o.hk]){const g=svgEl('g',{'data-markierung':o.hk});
+   g.appendChild(svgEl('path',{d:dstr(WEG[o.hk]),fill:'none',stroke:'#4fc3f7','stroke-width':16,'stroke-linejoin':'round','stroke-linecap':'round',opacity:.55}));
+   s.insertBefore(g,s.children[1]||null);
+   const [x,y]=HK[o.hk];s.appendChild(svgEl('rect',{x:x-9,y:y-9,width:98,height:54,rx:7,fill:'none',stroke:'#f2b705','stroke-width':6,'data-markierung':o.hk}));}
+  return s;}
+ return {zeige,HK,WEG,NAME};
+})();
+
+// ---------------------------------------------------------------- Station 3.3: Anbau, Ventile und Diagramme (ohne DOM)
+// Zahlen des Lehrbeispiels (Skizze vom Chef): Heizlast 965 / 605 / 907 / 1419 W, Wege 18 / 20 / 30 / 34 m, 60/50 °C → Spreizung 10 K,
+// c = 1,163 Wh/(kg·K), 1 kg Wasser ≙ 1 Liter. Rohr aus Station 3.2: Δp = l · R · 1,5 mit R = 100 Pa/m → 2,7 / 3,0 / 4,5 / 5,1 kPa.
+// Ventilautorität 50 % am ungünstigsten Strang (HK 2.2): 5,1 + 5,1 = 10,2 kPa; jedes Ventil baut 10,2 kPa − Rohr ab (7,5 / 7,2 / 5,7 / 5,1).
+// kv-Werte der Datenblätter (Regeldifferenz 2 K): Heimeier V-exact II 1–8, Danfoss RTD-N 15 1–7 und N, Oventrop AV 9 1–9; Heimeier auch 1 K.
+// kv = V̇ / √Δp (V̇ in m³/h, Δp in bar). „Lage“ = Stelle zwischen zwei Linien im doppelt-logarithmischen Diagramm (logarithmisch geteilt).
+// Einstellregel: stufenlos (Heimeier, Oventrop) → Zwischenwert auf eine Stelle; feste Linien (Danfoss) → nächsthöhere Linie, über N: „reicht knapp nicht“.
+const VK=(()=>{
+ const C=1.163,SPREIZUNG=10,R=100,ZU=1.5;
+ const REIHE=['1.1','1.2','2.1','2.2'];
+ const HK={'1.1':{n:'HK 1.1 Arbeitszimmer',raum:'Arbeitszimmer',q:965,l:18},'1.2':{n:'HK 1.2 Gästezimmer',raum:'Gästezimmer',q:605,l:20},
+  '2.1':{n:'HK 2.1 Zimmer 1',raum:'Zimmer 1',q:907,l:30},'2.2':{n:'HK 2.2 Zimmer 2',raum:'Zimmer 2',q:1419,l:34}};
+ const r1=x=>Math.round(x*10+1e-9)/10,r2=x=>Math.round(x*100+1e-9)/100,r3=x=>Math.round(x*1000+1e-9)/1000;
+ const lhExakt=k=>HK[k].q/(C*SPREIZUNG),lh=k=>Math.round(lhExakt(k));
+ const rohrPa=k=>HK[k].l*R*ZU,rohrKpa=k=>rohrPa(k)/1000;
+ const SCHLECHT=REIHE.reduce((m,k)=>rohrPa(k)>rohrPa(m)?k:m,REIHE[0]);
+ const GESAMT_PA=2*rohrPa(SCHLECHT),GESAMT=GESAMT_PA/1000;
+ const ventilPa=k=>GESAMT_PA-rohrPa(k),ventilKpa=k=>ventilPa(k)/1000;
+ const SUMME=REIHE.reduce((s,k)=>s+lh(k),0);
+ // Zahl lesen wie ZAHL.lies, dazu die Einheiten der Station 3.3 (l/h, l/s, m³/h, Wh/(kg·K), W)
+ const zahl=(s,soll)=>{let t=String(s==null?'':s).trim();for(let i=0;i<2;i++)t=t.replace(/\s*(l\/h|l\/s|m³\/h|m3\/h|kg\/h|wh\/\(kg\s*[·*.]?\s*k\)|wh\/kgk|kpa|mbar|bar|pa|w)\.?$/i,'');return ZAHL.lies(t,soll);};
+ const kvAus=(q,kpa)=>q/1000/Math.sqrt(kpa/100);           // q in l/h, Δp in kPa → kv in m³/h
+ const kv=k=>kvAus(lh(k),ventilKpa(k));
+ const ls=q=>q/3600;
+ const STUFEN=n=>Array.from({length:n},(_,i)=>String(i+1));
+ const VENTIL={
+  heimeier2:{name:'Heimeier V-exact II',kurz:'Heimeier',xp:'2 K',stufenlos:true,stufen:STUFEN(8),kv:[0.049,0.090,0.150,0.265,0.330,0.470,0.590,0.670]},
+  heimeier1:{name:'Heimeier V-exact II',kurz:'Heimeier',xp:'1 K',stufenlos:true,stufen:STUFEN(8),kv:[0.049,0.082,0.130,0.215,0.246,0.303,0.335,0.343]},
+  danfoss:{name:'Danfoss RTD-N 15',kurz:'Danfoss',xp:'2 K',stufenlos:false,stufen:[...STUFEN(7),'N'],kv:[0.04,0.08,0.12,0.18,0.25,0.32,0.38,0.53]},
+  oventrop:{name:'Oventrop AV 9',kurz:'Oventrop',xp:'2 K',stufenlos:true,stufen:STUFEN(9),kv:[0.05,0.09,0.14,0.20,0.26,0.32,0.43,0.57,0.67]}};
+ // Lage: 1 = Linie 1 … n = letzte Linie (Danfoss: 8 = N); zwischen zwei Linien logarithmisch, an den Enden verlängert
+ function lage(v,k){const a=VENTIL[v].kv,n=a.length;let i=0;while(i<n-2&&k>a[i+1])i++;return i+1+Math.log(k/a[i])/Math.log(a[i+1]/a[i]);}
+ const lageHK=(v,k)=>lage(v,kv(k));
+ // Einstellwert nach der Regel des Kurses
+ function einstellwert(v,k){const V=VENTIL[v];
+  if(V.stufenlos)return {wert:r1(lage(v,k)),text:r1(lage(v,k)).toFixed(1).replace('.',',')};
+  const i=V.kv.findIndex(x=>x>=k-1e-12);return i<0?{wert:'knapp',text:'N, reicht knapp nicht'}:{wert:V.stufen[i],text:V.stufen[i]};}
+ const durchflussBei=(v,i,kpa)=>VENTIL[v].kv[i]*1000*Math.sqrt(kpa/100);   // l/h, die Stufe i (0 = Linie 1) bei Δp lässt durch
+ const druckFuer=(v,i,q)=>Math.pow(q/1000/VENTIL[v].kv[i],2)*100;          // kPa, die Stufe i braucht für q l/h
+ // zwischen welchen Linien liegt kv? → [untere, obere] als Index (−1 = unter Linie 1, n = über der letzten)
+ function zwischen(v,k){const a=VENTIL[v].kv;let i=a.findIndex(x=>x>=k-1e-12);if(i<0)return [a.length-1,a.length];return [i-1,i];}
+
+ // -------------------------------------------------------------- Diagramme (viewBox 0 0 640 470, Zeichenfläche 70…570 × 58…386, beide Achsen logarithmisch)
+ // x: Durchfluss in der Einheit des Herstellers (f = Faktor von l/h), y: Δp links in der Einheit des Herstellers (f = Faktor von kPa), y2: rechte Achse (Faktor von links)
+ const RAHMEN={x0:70,x1:570,y0:58,y1:386,b:640,h:470};
+ const DIAGRAMM={
+  heimeier2:{ventil:'heimeier2',titel:'Heimeier V-exact II · Regeldifferenz 2 K',untertitel:'Einstellwerte 1–8 · gestrichelt: Zwischenmarkierungen 1,5 … 7,5',zwischen:true,
+   x:{min:10,max:500,f:1,einheit:'kg/h',schritt:1,stellen:0,name:'ṁ',text:'Massenstrom ṁ in kg/h (1 kg ≙ 1 l)',marken:[10,20,50,100,200,500]},
+   y:{min:1,max:50,f:1,einheit:'kPa',schritt:0.1,stellen:1,text:'Druckverlust am Ventil Δp in kPa',marken:[1,2,5,10,20,50]},
+   y2:{f:10,einheit:'mbar',text:'Δp in mbar'},
+   quelle:'Neu gezeichnet aus den kv-Werten (2 K) des Datenblatts IMI Heimeier „V-exact II“, Technische Daten. Gestrichelt: Zwischenmarkierungen 1,5 … 7,5 (Annahme: geometrisches Mittel der Nachbarstufen).'},
+  heimeier1:{ventil:'heimeier1',titel:'Heimeier V-exact II · Regeldifferenz 1 K',untertitel:'Einstellwerte 1–8',zwischen:false,
+   x:{min:10,max:500,f:1,einheit:'kg/h',schritt:1,stellen:0,name:'ṁ',text:'Massenstrom ṁ in kg/h (1 kg ≙ 1 l)',marken:[10,20,50,100,200,500]},
+   y:{min:1,max:50,f:1,einheit:'kPa',schritt:0.1,stellen:1,text:'Druckverlust am Ventil Δp in kPa',marken:[1,2,5,10,20,50]},
+   y2:{f:10,einheit:'mbar',text:'Δp in mbar'},
+   quelle:'Neu gezeichnet aus den kv-Werten (1 K) des Datenblatts IMI Heimeier „V-exact II“, Technische Daten.'},
+  danfoss:{ventil:'danfoss',titel:'Danfoss RTD-N 15',untertitel:'Linien 1–7 und N (ganz offen) – Linien nur für ganze Stufen',zwischen:false,
+   x:{min:10,max:1000,f:1,einheit:'l/h',schritt:1,stellen:0,name:'Q',text:'Durchfluss Q in l/h',marken:[10,20,50,100,200,500,1000]},
+   y:{min:1,max:100,f:1,einheit:'kPa',schritt:0.1,stellen:1,text:'Druckverlust am Ventil Δp in kPa',marken:[1,2,5,10,20,50,100]},
+   y2:{f:0.01,einheit:'bar',text:'Δp in bar'},
+   quelle:'Neu gezeichnet aus den kv-Werten des Datenblatts Danfoss „Presetting valves type RTD-N“ (12/2001).'},
+  oventrop:{ventil:'oventrop',titel:'Oventrop AV 9 · Regeldifferenz 2 K',untertitel:'Einstellwerte 1–9 · Durchfluss in Liter je SEKUNDE',zwischen:false,
+   x:{min:0.002,max:0.2,f:1/3600,einheit:'l/s',schritt:0.001,stellen:3,name:'V̇',text:'Durchfluss V̇ in l/s – Liter je SEKUNDE',marken:[0.002,0.005,0.01,0.02,0.05,0.1,0.2]},
+   y:{min:10,max:1000,f:10,einheit:'mbar',schritt:1,stellen:0,text:'Druckverlust am Ventil Δp in mbar',marken:[10,20,50,100,200,500,1000]},
+   y2:{f:0.1,einheit:'kPa',text:'Δp in kPa'},
+   quelle:'Neu gezeichnet aus den kv-Werten (2 K) des Datenblatts Oventrop „Thermostatic radiator valves“, Chart 5 (2018).'}};
+ const lg=Math.log10;
+ const px=(d,X)=>RAHMEN.x0+(RAHMEN.x1-RAHMEN.x0)*lg(X/d.x.min)/lg(d.x.max/d.x.min);
+ const py=(d,Y)=>RAHMEN.y1-(RAHMEN.y1-RAHMEN.y0)*lg(Y/d.y.min)/lg(d.y.max/d.y.min);
+ const xAus=(d,p)=>d.x.min*Math.pow(d.x.max/d.x.min,(p-RAHMEN.x0)/(RAHMEN.x1-RAHMEN.x0));
+ const yAus=(d,p)=>d.y.min*Math.pow(d.y.max/d.y.min,(RAHMEN.y1-p)/(RAHMEN.y1-RAHMEN.y0));
+ // Achswert ↔ Physik: X = l/h · f, Y = kPa · f
+ const zuX=(d,q)=>q*d.x.f,zuY=(d,kpa)=>kpa*d.y.f,ausX=(d,X)=>X/d.x.f,ausY=(d,Y)=>Y/d.y.f;
+ const rasten=(a,w)=>{const s=a.schritt;const r=Math.round(w/s)*s;return Math.min(a.max,Math.max(a.min,+r.toFixed(a.stellen)));};
+ // Linien gesetzt, wie verlangt? Je eine Rasterstufe Spielraum (Δp ±0,1 kPa bzw. ±1 mbar, Durchfluss ±1 kg/h bzw. l/h, Oventrop ±0,001 l/s)
+ const linienOk=(d,Y,X,kpa,q)=>Y!=null&&X!=null&&Math.abs(Y-zuY(d,kpa))<=d.y.schritt+1e-9&&Math.abs(X-zuX(d,q))<=d.x.schritt+1e-9;
+ // Kennlinie für kv: von Δp = y.min bis y.max (gerade im doppelt-logarithmischen Netz), ungeclippt in Bildpunkten
+ function linie(d,k){const p=Y=>{const kpa=ausY(d,Y);return [px(d,zuX(d,k*1000*Math.sqrt(kpa/100))),py(d,Y)];};const [a,b]=[p(d.y.min),p(d.y.max)];return {x1:a[0],y1:a[1],x2:b[0],y2:b[1]};}
+ function linien(d){const V=VENTIL[d.ventil],o=V.kv.map((k,i)=>({kv:k,name:V.stufen[i],voll:true}));
+  if(d.zwischen)for(let i=0;i<V.kv.length-1;i++)o.push({kv:Math.sqrt(V.kv[i]*V.kv[i+1]),name:String(i+1)+',5',voll:false});
+  return o.map(l=>Object.assign(l,linie(d,l.kv)));}
+ // Gitter: 1…9 je Zehnerstufe
+ function gitter(a){const o=[];for(let e=Math.floor(lg(a.min))-1;e<=Math.ceil(lg(a.max));e++)for(let m=1;m<=9;m++){const v=+(m*Math.pow(10,e)).toPrecision(6);if(v>=a.min*0.9999&&v<=a.max*1.0001)o.push(v);}return o;}
+ return {C,SPREIZUNG,R,ZU,REIHE,HK,r1,r2,r3,zahl,lhExakt,lh,rohrPa,rohrKpa,SCHLECHT,GESAMT_PA,GESAMT,ventilPa,ventilKpa,SUMME,kvAus,kv,ls,
+  VENTIL,lage,lageHK,einstellwert,durchflussBei,druckFuer,zwischen,RAHMEN,DIAGRAMM,px,py,xAus,yAus,zuX,zuY,ausX,ausY,rasten,linienOk,linie,linien,gitter};
+})();
+
+// ---------------------------------------------------------------- 3.3.2 Planungsskizze: Schritte, Prüfung, Hinweise, Säulenbild (ohne DOM, braucht VK, ZAHL)
+// Die neun Schritte des Lehrers (Lehrbeispiel), in einem Zug: 1 Formel finden (3 × 5) · 2 Durchfluss (3 × 5) · 3 Eintragen (Werte erscheinen in der Skizze) ·
+// 4/5 Rohr aus Station 3.2 (2 × 5) · 6 Ventilautorität 50 % (4 × 5) · 7 Ventil je Heizkörper (3 × 10) · Schlussfrage (10) = 100 Punkte.
+// Ein Schritt öffnet sich erst, wenn der vorige stimmt. Prüfregeln: Durchfluss ±0,5 l/h, Pa auf 0,5 %, kPa auf eine Stelle (±0,05).
+const PZ=(()=>{
+ const T=ZAHL.text,H=VK.HK;
+ const FORMEL_OPT=[['lr15','Δp = l · R · 1,5'],['rl100','R = l · 100 · 1,5'],['l15','Δp = l · 1,5']];
+ const STRANG_OPT=VK.REIHE.map(k=>[k,'HK '+k]);
+ const SCHLUSS_OPT=[['rohr','Sein Rohr hat schon den größten Druckverlust – zusammen müssen alle auf 10,2 kPa kommen.'],['klein','Er ist der kleinste Heizkörper.'],['hoch','Er liegt am höchsten.']];
+ const SOLL={formel45:'lr15',strang:VK.SCHLECHT,schluss:'rohr'};
+ const KACHELN=[['Q','Q̇'],['c','c'],['dT','ΔT']];
+ const SCHRITTE=[
+  {id:'s1',nr:'1',titel:'Formel finden',felder:['seite','c','formel'],tipp:'Stichwortverzeichnis: „Wärmeleistung“. Die Tabelle mit c für Wasser steht auf derselben Seite.'},
+  {id:'s2',nr:'2',titel:'Wie viel Wasser braucht jeder Heizkörper?',felder:['q12','q21','q22'],tipp:'Tabellenbuch S. 39 (Wärmeleistung) – oder S. 423 „Massenstrom des Heizmittels“: Dort steht die Formel schon nach ṁ umgestellt.'},
+  {id:'s45',nr:'4 und 5',titel:'Rohr-Druckverlust und ungünstigster Strang',felder:['formel45','strang'],tipp:'Tabellenbuch S. 423 („R · l“) und S. 425: R ist das Druckgefälle in Pa je Meter Rohr.'},
+  {id:'s6',nr:'6',titel:'Ventilautorität 50 %',felder:['rohr','ventil','summe','summekpa'],tipp:'Tabellenbuch S. 429 „Ventilautorität“: a = Δp am Ventil / Δp gesamt.'},
+  {id:'s7',nr:'7',titel:'Wie viel Druck muss jedes Ventil abbauen?',felder:['v12','v21','v22'],tipp:'Tabellenbuch S. 423, Rechengang j): Druckverlust am Ventil = Druck für den ganzen Strang − Druckverlust im Rohr.'},
+  {id:'s8',nr:'',titel:'Zum Schluss',felder:['schluss'],tipp:''}];
+ const PUNKTE={seite:5,c:5,formel:5,q12:5,q21:5,q22:5,formel45:5,strang:5,rohr:5,ventil:5,summe:5,summekpa:5,v12:10,v21:10,v22:10,schluss:10};
+ const FELDER=Object.keys(PUNKTE);
+ const punkte=g=>FELDER.reduce((s,k)=>s+(g[k]?PUNKTE[k]:0),0);
+ const schrittPunkte=(g,s)=>s.felder.reduce((a,k)=>a+(g[k]?PUNKTE[k]:0),0),schrittMax=s=>s.felder.reduce((a,k)=>a+PUNKTE[k],0);
+ const offen=(ok,i)=>SCHRITTE.slice(0,i).every(s=>s.felder.every(f=>ok[f]));
+ const hkVon=f=>({q12:'1.2',q21:'2.1',q22:'2.2',v12:'1.2',v21:'2.1',v22:'2.2'})[f];
+ const n=(s,soll)=>VK.zahl(String(s==null?'':s).replace(/^\s*(s\.|seite)\s*/i,''),soll);
+ const um=(x,s,rel,abs)=>isFinite(x)&&Math.abs(x-s)<=Math.max(abs||0,Math.abs(s)*(rel||0))+1e-9;
+ const leer=s=>s==null||(typeof s==='string'&&s.trim()==='')||(typeof s==='object'&&!Object.keys(s).length);
+ // Prüfen eines Feldes → {ok, leer, tipp, text (bei ok mit Zusatz)}
+ function pruefe(f,e){
+  if(f==='formel')return pruefeFormel(e);
+  if(f==='formel45'||f==='strang'||f==='schluss'){if(!e)return {ok:false,leer:true,tipp:'Wähl eine Antwort aus.'};if(e===SOLL[f])return {ok:true};
+   if(f==='formel45')return {ok:false,tipp:'In 3.2 hast du so gerechnet: Druckverlust = Weg · Druckgefälle R (100 Pa/m) · 1,5 für Fittings und Formstücke.'};
+   if(f==='strang')return {ok:false,tipp:'Ungünstig ist der Strang mit dem größten Rohr-Druckverlust. Schau in die Skizze (blaue Werte).'};
+   return {ok:false,tipp:e==='klein'?'HK 2.2 ist der größte Heizkörper (1419 W). Schau ins Säulenbild: Was ist bei HK 2.2 schon hoch?':'Im geschlossenen Kreis spielt die Höhe keine Rolle (Station 3.2). Schau ins Säulenbild: Was ist bei HK 2.2 schon hoch?'};}
+  if(leer(e))return {ok:false,leer:true,tipp:'Füll noch alle Felder aus.'};
+  if(f==='seite'){const x=n(e,39);if(x===39)return {ok:true};if(x===423)return {ok:true,text:'Stimmt – dort steht sie schon umgestellt.'};
+   return {ok:false,tipp:'Such im Stichwortverzeichnis unter „Wärmeleistung“. Gemeint ist die Seite mit Q̇ = ṁ · c · ΔT.'};}
+  if(f==='c'){const x=n(e,VK.C);if(um(x,VK.C,0,0.0005))return {ok:true};
+   if(um(x,4.2,0,0.02)||um(x,4200,0,20)||um(x,4.187,0,0.001))return {ok:false,tipp:'Das ist c in kJ/(kg·K). Gefragt ist Wh/(kg·K) – das steht in derselben Tabelle daneben.'};
+   if(um(x,1163,0,1))return {ok:false,tipp:'Das Komma fehlt: c ist etwas mehr als 1 Wh/(kg·K).'};
+   if(um(x,1.16,0,0.005)||um(x,1.2,0,0.001))return {ok:false,tipp:'Genau ablesen: drei Stellen nach dem Komma.'};
+   return {ok:false,tipp:'Schau in die Tabelle bei der Formel: spezifische Wärmekapazität c von Wasser, in Wh/(kg·K).'};}
+  if(/^q/.test(f)){const k=hkVon(f),s=VK.lhExakt(k),q=H[k].q,x=n(e,s);if(!isFinite(x))return {ok:false,tipp:'Gib eine Zahl ein, zum Beispiel 83.'};
+   if(um(x,s,0,0.5))return {ok:true};
+   if(um(x,q/VK.C,0.01))return {ok:false,tipp:'Die Spreizung fehlt: Hast du durch die 10 K geteilt?'};
+   if(um(x,q*VK.C*VK.SPREIZUNG,0.01))return {ok:false,tipp:'Umstellen: Q̇ wird geteilt, nicht malgenommen.'};
+   if(um(x,q/VK.SPREIZUNG,0.01))return {ok:false,tipp:'c fehlt: Teil auch durch 1,163 Wh/(kg·K).'};
+   if(um(x,q*VK.C/VK.SPREIZUNG,0.01)||um(x,q*VK.SPREIZUNG/VK.C,0.01))return {ok:false,tipp:'Umstellen: ṁ = Q̇ / (c · ΔT) – c und ΔT stehen beide unter dem Bruchstrich.'};
+   if(um(x,s/1000,0.02)||um(x,s/3600,0.02))return {ok:false,tipp:'Gefragt ist l/h – 1 kg Wasser ≙ 1 Liter, also kg/h = l/h.'};
+   const and=VK.REIHE.find(j=>j!==k&&um(x,VK.lhExakt(j),0,0.5));if(and)return {ok:false,tipp:`Das ist der Wert von HK ${and}. Nimm die Heizlast von HK ${k}: ${q} W.`};
+   return {ok:false,tipp:`Rechne ṁ = Q̇ / (c · ΔT) = ${q} W / (1,163 Wh/(kg·K) · 10 K).`};}
+  const rs=VK.rohrPa(VK.SCHLECHT);
+  if(f==='rohr'||f==='ventil'){const x=n(e,rs);if(um(x,rs,0.005))return {ok:true};
+   if(um(x,rs/1000,0,0.05))return {ok:false,tipp:'Das sind kPa. Gefragt ist Pa: 1 kPa = 1000 Pa.'};
+   if(f==='rohr'){if(VK.REIHE.some(k=>k!==VK.SCHLECHT&&um(x,VK.rohrPa(k),0.005)))return {ok:false,tipp:`Nimm den ungünstigsten Strang: HK ${VK.SCHLECHT}.`};
+    if(um(x,H[VK.SCHLECHT].l*VK.R,0.005))return {ok:false,tipp:'Der Zuschlag 1,5 fehlt. Nimm den Wert aus der Skizze.'};
+    return {ok:false,tipp:`Nimm den Rohr-Druckverlust von HK ${VK.SCHLECHT} aus der Skizze – in Pa.`};}
+   return {ok:false,tipp:'Ventilautorität 50 %: Das Ventil baut genauso viel Druck ab wie das Rohr.'};}
+  if(f==='summe'){const s=VK.GESAMT_PA,x=n(e,s);if(um(x,s,0.005))return {ok:true};
+   if(um(x,s/1000,0,0.05))return {ok:false,tipp:'Das sind kPa. Gefragt ist Pa: 1 kPa = 1000 Pa.'};
+   if(um(x,rs,0.005))return {ok:false,tipp:'Rohr plus Ventil – beide zusammen.'};
+   return {ok:false,tipp:'Zähl Rohr und Ventil zusammen (in Pa).'};}
+  if(f==='summekpa'){const s=VK.GESAMT,x=n(e,s);if(um(x,s,0,0.05))return {ok:true};
+   if(um(x,s*1000,0.005))return {ok:false,tipp:'Das sind Pa. Gefragt ist kPa: 1 kPa = 1000 Pa.'};
+   if(um(x,s*10,0,0.5))return {ok:false,tipp:'Das sind mbar. Gefragt ist kPa: 1 kPa = 10 mbar.'};
+   if(um(x,s/10,0,0.005)||um(x,s/100,0,0.0005))return {ok:false,tipp:'Das Komma ist verrutscht: 1 kPa = 1000 Pa.'};
+   return {ok:false,tipp:'Rechne deine Pa in kPa um: 1 kPa = 1000 Pa.'};}
+  if(/^v/.test(f)){const k=hkVon(f),s=VK.ventilKpa(k),r=VK.rohrKpa(k),x=n(e,s);if(!isFinite(x))return {ok:false,tipp:'Gib eine Zahl ein, zum Beispiel 7,5.'};
+   if(um(x,s,0,0.05))return {ok:true};
+   if(um(x,VK.ventilPa(k),0.005))return {ok:false,tipp:'Das sind Pa. Gefragt ist kPa: 1 kPa = 1000 Pa.'};
+   if(um(x,r,0,0.05))return {ok:false,tipp:'Gesamt minus Rohr!'};
+   if(um(x,VK.GESAMT+r,0,0.05))return {ok:false,tipp:'Minus, nicht plus: 10,2 kPa − Rohr.'};
+   if(um(x,VK.GESAMT,0,0.05))return {ok:false,tipp:'Zieh den Rohr-Druckverlust ab: 10,2 kPa − Rohr.'};
+   const and=VK.REIHE.find(j=>j!==k&&um(x,VK.ventilKpa(j),0,0.05));if(and)return {ok:false,tipp:`Das ist der Wert von HK ${and}. Nimm das Rohr von HK ${k}: ${T(r,1)} kPa.`};
+   return {ok:false,tipp:`Rechne 10,2 kPa − Rohr-Druckverlust von HK ${k}.`};}
+  return {ok:false,tipp:''};}
+ // Formel aus Kacheln: {Q:'oben'|'unten'|'', c:…, dT:…}
+ function pruefeFormel(e){const z=e&&typeof e==='object'?e:{};const lage=k=>z[k]==='oben'||z[k]==='unten'?z[k]:'';
+  if(!KACHELN.some(([k])=>lage(k)))return {ok:false,leer:true,tipp:'Zieh die drei Kacheln über oder unter den Bruchstrich.'};
+  if(lage('Q')==='oben'&&lage('c')==='unten'&&lage('dT')==='unten')return {ok:true};
+  if(!KACHELN.every(([k])=>lage(k)))return {ok:false,tipp:'Leg alle drei Kacheln ab – über oder unter den Bruchstrich.'};
+  if(lage('Q')==='unten')return {ok:false,tipp:'Q̇ gehört über den Bruchstrich: Je mehr Wärme der Heizkörper abgeben soll, desto mehr Wasser braucht er.'};
+  return {ok:false,tipp:'Umstellen: Q̇ wird geteilt, nicht malgenommen – c und ΔT kommen unter den Bruchstrich.'};}
+ // Anzeige eines gelösten Feldes
+ function anzeige(f){if(f==='seite')return '39';if(f==='c')return '1,163';if(/^q/.test(f))return String(VK.lh(hkVon(f)));
+  if(f==='rohr'||f==='ventil')return String(VK.rohrPa(VK.SCHLECHT));if(f==='summe')return T(VK.GESAMT_PA);if(f==='summekpa')return T(VK.GESAMT,1);
+  if(/^v/.test(f))return T(VK.ventilKpa(hkVon(f)),1);return '';}
+ // Was steht in der Skizze und im Säulenbild? (aus den gelösten Feldern)
+ function bild(ok){const s2=offen(ok,1),s7=offen(ok,4),o={};
+  VK.REIHE.forEach(k=>{const qf='q'+k.replace('.',''),vf='v'+k.replace('.','');
+   o[k]={q:k==='1.1'?(s2?VK.lh(k):null):ok[qf]?VK.lh(k):null,qChef:k==='1.1',rohr:VK.rohrKpa(k),
+    ventil:k==='1.1'?(s7?VK.ventilKpa(k):null):k===VK.SCHLECHT?(ok.ventil||ok[vf]?VK.ventilKpa(k):null):ok[vf]?VK.ventilKpa(k):null,vChef:k==='1.1'};});
+  return {hk:o,schlecht:ok.strang?VK.SCHLECHT:null,gesamt:SCHRITTE[3].felder.every(f=>ok[f])?VK.GESAMT:null};}
+ const saeulen=ok=>{const b=bild(ok);return VK.REIHE.map(k=>({hk:k,rohr:b.hk[k].rohr,ventil:b.hk[k].ventil,summe:b.hk[k].ventil==null?null:b.hk[k].rohr+b.hk[k].ventil}));};
+ function richtig(f){if(f==='formel')return {Q:'oben',c:'unten',dT:'unten'};if(SOLL[f])return SOLL[f];if(f==='seite')return '39';if(f==='c')return '1,163';
+  if(/^q/.test(f))return String(VK.lh(hkVon(f)));if(f==='rohr'||f==='ventil')return '5100';if(f==='summe')return '10200';if(f==='summekpa')return '10,2';if(/^v/.test(f))return T(VK.ventilKpa(hkVon(f)),1);return '';}
+ return {FORMEL_OPT,STRANG_OPT,SCHLUSS_OPT,SOLL,KACHELN,SCHRITTE,PUNKTE,FELDER,punkte,schrittPunkte,schrittMax,offen,hkVon,pruefe,pruefeFormel,anzeige,bild,saeulen,richtig};
+})();
+
+// ---------------------------------------------------------------- 3.3.2 Planungsskizze: Bild und Bedienung (braucht PZ, VK, ZAHL, SKIZZE, SKIZZE_CHEF_SVG, svgEl, dstr)
+// Links die Skizze vom Chef (Abschnitt 1 des Kurses): Raumbeschriftung neu gesetzt, je Raum eine Feldgruppe Durchfluss · Rohr · Ventil,
+// Heizlasten gelb markiert, Weg zu HK 1.1 hellblau nachgezogen (Tafelbild), über dem Dach „Rohr + Ventil am ungünstigsten Strang“.
+// Darunter (quer) bzw. unter den Karten (hochkant) das Säulenbild. Rechts die Schritte als Karten; eine Karte öffnet sich erst, wenn die vorige stimmt.
+// Gelöste Felder werden grün und gesperrt. Gespeichert werden nur die gelösten Felder.
+// o: {gespeichert:[Feldkennungen], mitPunkten, beiAenderung(), beiPunkte(p), kennung}
+function bauPlanung(wurzel,o){
+ o=Object.assign({gespeichert:[],mitPunkten:true,beiAenderung:null,beiPunkte:null,kennung:'pz'},o||{});
+ const P=PZ,T=ZAHL.text,esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+ const G={},OK={},EIN={formel:{}},RUECK={},TIPP={};let gewaehlt=null;
+ (o.gespeichert||[]).forEach(k=>{if(P.FELDER.includes(k)){G[k]=1;OK[k]=true;}});
+ const mische=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+ const OPT={formel45:mische(P.FORMEL_OPT),strang:P.STRANG_OPT,schluss:mische(P.SCHLUSS_OPT)};
+ const punkte=()=>P.punkte(G);
+ wurzel.innerHTML=`<div class="dr-zwei pz"><div class="pz-links"><div class="karte pz-bild"><div class="skizze-chef" data-r="skizze"></div>
+   <p class="klein pz-legende"><span class="pz-gelb">gelb</span> Heizlast · <span style="color:#1565c0;font-weight:700">blau</span> Rohr aus Station 3.2 · <span style="color:#2e7d32;font-weight:700">grün</span> von dir gerechnet · schwarz: vom Chef vorgerechnet · hellblau: Weg zu HK 1.1 · 18 m = Weg des Wassers (Vor- und Rücklauf)</p></div>
+   <div data-r="saeulen-quer"></div></div>
+  <div class="pz-rechts" data-r="karten"></div></div><div data-r="saeulen-hoch"></div>`;
+ // -------------------------------------------------------------- Skizze (Ausschnitt Anbau, damit die Werte groß genug lesbar sind)
+ const skEl=wurzel.querySelector('[data-r="skizze"]');
+ const svg=SKIZZE.zeige(skEl,{});
+ const A=(p,n,a,t)=>{const e=svgEl(n,a,t);p.appendChild(e);return e;};
+ const RAUM={'1.1':{x:340,y:360,l:true},'1.2':{x:630,y:360,l:false},'2.1':{x:340,y:220,l:true},'2.2':{x:630,y:220,l:false}};
+ const SPALTE=R=>R.l?[R.x+10,R.x+100,R.x+186]:[R.x+18,R.x+104,R.x+186];
+ const breite=(t,n,f)=>{let b=0;try{b=t.getBBox().width;}catch(_){}return b||n*f;};
+ let werteG=null;
+ if(svg){svg.setAttribute('aria-label','Planungsskizze: Ausschnitt der Skizze vom Chef (Anbau) mit Durchfluss, Rohr- und Ventil-Druckverlust je Heizkörper');
+  svg.setAttribute('viewBox','330 72 620 440');
+  const alt=[...svg.querySelectorAll('g')].find(g=>/Arbeitszimmer/.test(g.textContent)&&/Rohr VL \+ RL:/.test(g.textContent));if(alt)alt.remove();
+  const weg=svgEl('g',{'data-r':'weg11'});weg.appendChild(svgEl('path',{d:dstr(SKIZZE.WEG['1.1']),fill:'none',stroke:'#4fc3f7','stroke-width':16,'stroke-linejoin':'round','stroke-linecap':'round',opacity:.5}));
+  svg.insertBefore(weg,svg.children[1]||null);
+  const kopf=A(svg,'g',{'data-r':'raeume'});
+  A(kopf,'text',{x:338,y:92,'font-size':15,'font-weight':700,fill:'#1d2a33'},'Skizze vom Chef');
+  A(kopf,'text',{x:338,y:110,'font-size':12.5,fill:'#4a555d'},'Anbau, Schnitt');
+  VK.REIHE.forEach(k=>{const R=RAUM[k],x=SPALTE(R)[0],h=VK.HK[k],y=R.y+19;
+   const t1=A(kopf,'text',{x,y,'font-size':15,'font-weight':700,fill:'#1d2a33'},k+' ·');
+   const x2=x+breite(t1,5,8.4)+6,t2=A(kopf,'text',{x:x2,y,'font-size':14.5,fill:'#1d2a33','data-heizlast':k});
+   t2.appendChild(svgEl('tspan',{},'Heizlast '));t2.appendChild(svgEl('tspan',{'font-weight':700},h.q+' W'));
+   const b=breite(t2,8+String(h.q).length+2,8.2);
+   kopf.insertBefore(svgEl('rect',{x:x2-3,y:y-14,width:b+6,height:19,rx:3,fill:'#fff59d','data-gelb':k}),t2);
+   A(kopf,'text',{x:x2+b+7,y,'font-size':14.5,fill:'#4a555d'},'· '+h.l+' m');
+   SPALTE(R).forEach((sx,j)=>A(kopf,'text',{x:sx,y:R.y+36,'font-size':11.5,fill:'#5b6b77'},['Durchfluss','Rohr','Ventil'][j]));});
+  werteG=A(svg,'g',{'data-r':'werte','font-family':'system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif'});}
+ function skizzeWerte(){if(!werteG)return;werteG.innerHTML='';const b=P.bild(OK);
+  const wert=(g,x,y,v,einheit,farbe,fett)=>{if(v==null){A(g,'rect',{x,y:y-15,width:36,height:19,rx:3,fill:'#f4f6f8',stroke:'#9aa7b1','stroke-dasharray':'3 2'});
+    A(g,'text',{x:x+41,y,'font-size':14,fill:'#5b6b77'},einheit);}
+   else A(g,'text',{x,y,'font-size':16,'font-weight':fett?700:600,fill:farbe},v+' '+einheit);};
+  VK.REIHE.forEach(k=>{const R=RAUM[k],S=SPALTE(R),y=R.y+57,v=b.hk[k],schlecht=b.schlecht===k;
+   const g=A(werteG,'g',{'data-feldgruppe':k});
+   if(schlecht){A(g,'rect',{x:S[0]-6,y:R.y+3,width:R.l?272:258,height:61,rx:7,fill:'none',stroke:'#e65100','stroke-width':2.5});
+    A(g,'text',{x:R.x+18,y:R.y+92,'font-size':13.5,'font-weight':700,fill:'#e65100'},'ungünstigster');A(g,'text',{x:R.x+18,y:R.y+108,'font-size':13.5,'font-weight':700,fill:'#e65100'},'Strang');}
+   wert(g,S[0],y,v.q,'l/h',v.qChef?'#1d2a33':'#2e7d32',!v.qChef);
+   wert(g,S[1],y,T(v.rohr,1),'kPa','#1565c0',true);
+   wert(g,S[2],y,v.ventil==null?null:T(v.ventil,1),'kPa',v.vChef?'#1d2a33':'#2e7d32',!v.vChef);});
+  const d=A(werteG,'g',{'data-r':'dach'});const x0=480,w=330;
+  A(d,'rect',{x:x0,y:76,width:w,height:32,rx:6,fill:'#fff8e1',stroke:'#b26a00','stroke-width':1.5});
+  A(d,'text',{x:x0+8,y:97,'font-size':13,fill:'#1d2a33'},'Rohr + Ventil am ungünstigsten Strang =');
+  if(b.gesamt==null){A(d,'rect',{x:x0+w-76,y:83,width:36,height:19,rx:3,fill:'#f4f6f8',stroke:'#9aa7b1','stroke-dasharray':'3 2'});A(d,'text',{x:x0+w-8,y:97,'font-size':13,'text-anchor':'end',fill:'#5b6b77'},'kPa');}
+  else A(d,'text',{x:x0+w-8,y:98,'font-size':16,'text-anchor':'end','font-weight':700,fill:'#2e7d32'},T(b.gesamt,1)+' kPa');}
+ // -------------------------------------------------------------- Säulenbild (Tafelbild „Gleichberechtigung“)
+ const sae=document.createElement('div');sae.className='karte pz-saeulen';
+ function saeulen(){const s=P.saeulen(OK),b=P.bild(OK),Y0=188,PRO=12.5,ys=v=>Y0-v*PRO;
+  let h=`<svg viewBox="0 0 640 214" role="img" aria-label="Säulenbild: Rohr- und Ventil-Druckverlust je Heizkörper"><rect width="640" height="214" fill="#fff"/>`+
+   `<text x="12" y="20" font-size="16" font-weight="700" fill="#1d2a33">Säulenbild: Rohr (blau, aus 3.2) + Ventil (grün)</text><line x1="70" y1="${Y0}" x2="610" y2="${Y0}" stroke="#1d2a33" stroke-width="1.5"/>`;
+  for(let v=0;v<=12;v+=4)h+=`<line x1="66" y1="${ys(v)}" x2="70" y2="${ys(v)}" stroke="#1d2a33"/><text x="62" y="${ys(v)+4.5}" font-size="13" text-anchor="end">${v}</text>`;
+  h+=`<text x="22" y="${ys(6)}" font-size="13" text-anchor="middle" transform="rotate(-90 22 ${ys(6)})">kPa</text>`;
+  if(b.gesamt!=null)h+=`<line x1="70" y1="${ys(b.gesamt)}" x2="610" y2="${ys(b.gesamt)}" stroke="#b26a00" stroke-width="2" stroke-dasharray="7 4" data-r="linie102"/><text x="608" y="${ys(b.gesamt)-6}" font-size="14" text-anchor="end" font-weight="700" fill="#b26a00">10,2 kPa = Förderdruck für den Anbau</text>`;
+  s.forEach((q,i)=>{const x=100+i*130,w=78;
+   h+=`<rect x="${x}" y="${ys(q.rohr)}" width="${w}" height="${q.rohr*PRO}" fill="#64b5f6" stroke="#1d2a33" data-saeule="${q.hk}" data-teil="rohr" data-wert="${q.rohr}"/><text x="${x+w/2}" y="${ys(q.rohr/2)+5}" font-size="14" text-anchor="middle">${T(q.rohr,1)}</text>`;
+   if(q.ventil!=null)h+=`<rect x="${x}" y="${ys(q.summe)}" width="${w}" height="${q.ventil*PRO}" fill="#a5d6a7" stroke="#1d2a33" data-saeule="${q.hk}" data-teil="ventil" data-wert="${q.ventil}"/><text x="${x+w/2}" y="${ys(q.rohr+q.ventil/2)+5}" font-size="14" text-anchor="middle">${T(q.ventil,1)}</text>`;
+   else h+=`<text x="${x+w/2}" y="${ys(q.rohr)-8}" font-size="18" font-weight="700" text-anchor="middle" fill="#5b6b77">?</text>`;
+   h+=`<text x="${x+w/2}" y="${Y0+18}" font-size="14" text-anchor="middle" font-weight="700">HK ${q.hk}</text>`;});
+  h+=`</svg>`;
+  sae.innerHTML=h;}
+ const quer=(()=>{try{return matchMedia('(min-width: 900px)');}catch(_){return null;}})();
+ function saeulenOrt(){const z=wurzel.querySelector(quer&&quer.matches?'[data-r="saeulen-quer"]':'[data-r="saeulen-hoch"]');if(z&&sae.parentNode!==z)z.appendChild(sae);}
+ if(quer){try{quer.addEventListener('change',saeulenOrt);}catch(_){try{quer.addListener(saeulenOrt);}catch(__){}}}
+ // -------------------------------------------------------------- Karten
+ const pkTxt=s=>o.mitPunkten?`<span class="pkt">${P.schrittPunkte(G,s)} von ${P.schrittMax(s)} Punkten</span>`:'';
+ const fertigS=s=>s.felder.every(f=>OK[f]);
+ function eingabe(f,vor,einheit,breit){const ok=OK[f],r=RUECK[f],v=ok?(EIN[f]!==undefined&&EIN[f]!==''?EIN[f]:P.anzeige(f)):(EIN[f]||'');
+  return `<label class="feld">${vor} <input type="text" class="zahl${breit?' breit':''}${ok?' ok':r&&!r.ok?' nein':''}" inputmode="decimal" autocomplete="off" data-f="${f}" value="${esc(v)}"${ok?' disabled':''} aria-label="${esc((vor||f).replace(/<[^>]+>/g,'')+' '+einheit)}"> ${einheit}</label>`;}
+ function wahl(f){const ok=OK[f],w=ok?P.SOLL[f]:EIN[f],r=RUECK[f];
+  return `<div class="optionen${f==='strang'?' quer':''}">`+OPT[f].map(([v,t])=>`<button type="button" data-f="${f}" data-w="${v}" aria-pressed="${w===v}" class="${ok&&v===P.SOLL[f]?'ok':r&&!r.ok&&w===v?'nein':''}"${ok?' disabled':''}>${t}</button>`).join('')+'</div>';}
+ function kacheln(){const ok=OK.formel,z=ok?P.richtig('formel'):EIN.formel,r=RUECK.formel;
+  const kachel=([k,t])=>`<button type="button" class="pz-kachel${gewaehlt===k?' gewaehlt':''}" data-kachel="${k}" aria-pressed="${gewaehlt===k}"${ok?' disabled':''}>${t}</button>`;
+  const zone=(n,titel)=>`<div class="pz-zone${ok?' ok':r&&!r.ok?' nein':''}" data-zone="${n}" aria-label="${titel}">`+P.KACHELN.filter(([k])=>z[k]===n).map(kachel).join(n==='ablage'?'':'<span class="pz-mal">·</span>')+'</div>';
+  const ablage=P.KACHELN.filter(([k])=>z[k]!=='oben'&&z[k]!=='unten');
+  return `<div class="pz-formel"><span class="pz-mdot">ṁ =</span><div class="pz-bruch">${zone('oben','über dem Bruchstrich')}<div class="pz-strich"></div>${zone('unten','unter dem Bruchstrich')}</div></div>`+
+   (ok?'':`<div class="pz-zone pz-ablage" data-zone="ablage" aria-label="Ablage">${ablage.map(kachel).join('')}${ablage.length?'':'<span class="klein">Ablage (leer)</span>'}</div>`+
+   `<p class="klein" style="margin:4px 0 0">Zieh eine Kachel mit dem Finger – oder tipp sie an und dann auf ihren Platz. Zurück: in die Ablage.</p>`);}
+ function inhalt(s){if(s.id==='s1')return `<p>Such im Tabellenbuch die Formel für die Wärmeleistung mit dem Massenstrom.</p>
+   ${eingabe('seite','Die Formel steht auf Seite','')}<br>${eingabe('c','c für Wasser =','Wh/(kg·K)')}
+   <p style="margin:8px 0 4px">Stell <b>Q̇ = ṁ · c · ΔT</b> nach ṁ um:</p>${kacheln()}`;
+  if(s.id==='s2')return `<div class="sprech"><b class="wer">DEIN CHEF</b>„HK 1.1 rechne ich dir vor: ṁ = 965 W / (1,163 Wh/(kg·K) · 10 K) = 82,98 kg/h, also rund 83 kg/h. 1 kg Wasser ≙ 1 Liter – das sind 83 l/h.“</div>
+   <p>Jetzt du – in l/h (Spreizung 10 K):</p>${['1.2','2.1','2.2'].map(k=>eingabe('q'+k.replace('.',''),`HK ${k} (${VK.HK[k].q} W):`,'l/h')).join('<br>')}
+   ${fertigS(s)?`<p class="hinweis-gruen" style="margin:8px 0 0">Alle vier zusammen: ${VK.SUMME} l/h. Schritt 3: Deine Werte stehen jetzt in der Skizze.</p>`:'<p class="klein" style="margin:6px 0 0">Schritt 3: Jeder richtige Wert erscheint sofort in der Skizze.</p>'}`;
+  if(s.id==='s45')return `<p>Die Rohr-Druckverluste hast du in Station 3.2 gerechnet. Die Werte stehen schon in der Skizze (blau).</p>
+   <p style="margin:6px 0 2px"><b>Welche Formel hast du in 3.2 benutzt?</b> (R = 100 Pa/m)</p>${wahl('formel45')}
+   <p style="margin:8px 0 2px"><b>Welcher Strang ist der ungünstigste?</b></p>${wahl('strang')}`;
+  if(s.id==='s6')return `<p>Am ungünstigsten Strang soll das Ventil genauso viel Druck abbauen wie das Rohr (Ventilautorität 50 %).</p>
+   ${eingabe('rohr','Rohr','Pa',true)} ${eingabe('ventil','+ Ventil','Pa',true)}<br>${eingabe('summe','=','Pa',true)} ${eingabe('summekpa','=','kPa')}
+   ${fertigS(s)?'<p class="hinweis-gruen" style="margin:8px 0 0">Diesen Druck muss die Pumpe für den Anbau schaffen: 10,2 kPa. Ventilautorität a = 5,1 / 10,2 = 0,5.</p>':''}`;
+  if(s.id==='s7')return `<div class="sprech"><b class="wer">DEIN CHEF</b>„Jeder Strang braucht zusammen 10,2 kPa. Was das Rohr nicht abbaut, muss das Ventil abbauen. HK 1.1: 10,2 kPa − 2,7 kPa = 7,5 kPa.“</div>
+   <p>Jetzt du – Druckverlust am Ventil in kPa:</p>${['1.2','2.1','2.2'].map(k=>eingabe('v'+k.replace('.',''),`HK ${k} (Rohr ${T(VK.rohrKpa(k),1)} kPa):`,'kPa')).join('<br>')}`;
+  return `<p><b>Warum bekommt HK 2.2 den kleinsten Ventil-Druckverlust?</b></p>${wahl('schluss')}`;}
+ function karte(s,i){const auf=P.offen(OK,i),fe=fertigS(s),r=RUECK[s.id];
+  let h=`<div class="aufgabe${fe?' fertig':''}${auf?'':' gesperrt'}" id="${o.kennung}-${s.id}" data-schritt="${s.id}">${pkTxt(s)}<h3>${s.nr?'Schritt '+s.nr+' · ':''}${s.titel}</h3>`;
+  if(!auf)return h+`<span class="sperre">Noch gesperrt – erst ${i===1?'Schritt 1':'den Schritt davor'} lösen.</span></div>`;
+  h+=inhalt(s);
+  h+='<div class="wahl" style="margin:8px 0 0">'+(fe?'':`<button type="button" class="knopf haupt" data-p="${s.id}">Prüfen</button>`)+(s.tipp?`<button type="button" class="knopf" data-tipp="${s.id}" aria-expanded="${!!TIPP[s.id]}">Tabellenbuch-Tipp</button>`:'')+'</div>';
+  if(TIPP[s.id])h+=`<p class="merkzeile" style="margin:8px 0 0">${s.tipp}</p>`;
+  if(r)h+=`<span class="rueck ${r.ok?'ok':'nein'}">${r.text}</span>`;
+  return h+'</div>';}
+ function karten(){const c=wurzel.querySelector('[data-r="karten"]');
+  let h=P.SCHRITTE.map(karte).join('');
+  if(punkte()>=100||P.SCHRITTE.every(fertigS))h+=`<div class="meldung"><b>Fertig:</b> Bei allen vier Heizkörpern sind Rohr und Ventil zusammen 10,2 kPa – das Säulenbild zeigt es. Mit diesen Werten liest du in „Einstellwert ablesen“ die Einstellwerte ab.${o.mitPunkten?' 100 von 100 Punkten.':''}</div>`;
+  c.innerHTML=h;binde(c);}
+ function binde(c){
+  c.querySelectorAll('input[data-f]').forEach(e=>{e.addEventListener('input',()=>{EIN[e.dataset.f]=e.value;e.classList.remove('nein');});
+   e.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();const k=e.closest('[data-schritt]');if(k)pruefe(k.dataset.schritt);}});});
+  c.querySelectorAll('button[data-w]').forEach(b=>b.onclick=()=>{lies();EIN[b.dataset.f]=b.dataset.w;delete RUECK[b.dataset.f];const k=b.closest('[data-schritt]').dataset.schritt;if(RUECK[k]&&!RUECK[k].ok)delete RUECK[k];karten();});
+  c.querySelectorAll('button[data-p]').forEach(b=>b.onclick=()=>pruefe(b.dataset.p));
+  c.querySelectorAll('button[data-tipp]').forEach(b=>b.onclick=()=>{lies();TIPP[b.dataset.tipp]=!TIPP[b.dataset.tipp];karten();});
+  // Kacheln: antippen und Platz antippen – oder ziehen
+  c.querySelectorAll('[data-kachel]').forEach(b=>{let start=null,zieht=false;
+   b.addEventListener('pointerdown',ev=>{if(OK.formel)return;start={x:ev.clientX,y:ev.clientY,id:ev.pointerId};zieht=false;try{b.setPointerCapture(ev.pointerId);}catch(_){}});
+   b.addEventListener('pointermove',ev=>{if(!start||start.id!==ev.pointerId)return;const dx=ev.clientX-start.x,dy=ev.clientY-start.y;
+    if(!zieht&&Math.hypot(dx,dy)>8){zieht=true;b.classList.add('zieht');}if(zieht){ev.preventDefault();b.style.transform=`translate(${dx}px,${dy}px)`;}});
+   const los=ev=>{if(!start||start.id!==ev.pointerId)return;const war=zieht;start=null;zieht=false;b.classList.remove('zieht');b.style.transform='';
+    if(war){b.style.visibility='hidden';const el=document.elementFromPoint(ev.clientX,ev.clientY);b.style.visibility='';const zo=el&&el.closest?el.closest('[data-zone]'):null;
+     b.dataset.gezogen='1';try{b.releasePointerCapture(ev.pointerId);}catch(_){}
+     // erst nach dem Loslassen neu zeichnen – sonst verliert das Gerät das Ende der Berührung und der nächste Tipp zählt nicht
+     if(zo){const k=b.dataset.kachel,n=zo.dataset.zone;setTimeout(()=>lege(k,n),60);}}};
+   b.addEventListener('pointerup',los);b.addEventListener('pointercancel',ev=>{if(start&&start.id===ev.pointerId){start=null;zieht=false;b.classList.remove('zieht');b.style.transform='';}});
+   // Tipp auf eine Kachel: ist schon eine andere gewählt und liegt diese hier über oder unter dem Bruchstrich, kommt die gewählte dazu; sonst wählen
+   b.addEventListener('click',ev=>{ev.stopPropagation();if(b.dataset.gezogen){delete b.dataset.gezogen;return;}const zo=b.closest('[data-zone]'),n=zo?zo.dataset.zone:'ablage';
+    if(gewaehlt&&gewaehlt!==b.dataset.kachel&&n!=='ablage'){lege(gewaehlt,n);return;}lies();gewaehlt=gewaehlt===b.dataset.kachel?null:b.dataset.kachel;karten();});});
+  c.querySelectorAll('[data-zone]').forEach(zo=>zo.addEventListener('click',()=>{if(gewaehlt&&!OK.formel)lege(gewaehlt,zo.dataset.zone);}));}
+ function lege(k,zone){lies();EIN.formel=Object.assign({},EIN.formel);if(zone==='ablage')delete EIN.formel[k];else EIN.formel[k]=zone;gewaehlt=null;delete RUECK.formel;if(RUECK.s1&&!RUECK.s1.ok)delete RUECK.s1;karten();}
+ function lies(){wurzel.querySelectorAll('[data-r="karten"] input[data-f]').forEach(e=>{EIN[e.dataset.f]=e.value;});}
+ function pruefe(id){lies();const i=P.SCHRITTE.findIndex(s=>s.id===id),s=P.SCHRITTE[i];if(!s||!P.offen(OK,i))return punkte();
+  const offenF=s.felder.filter(f=>!OK[f]);if(!offenF.length)return punkte();
+  const erg=offenF.map(f=>[f,P.pruefe(f,EIN[f])]);let neu=false,zusatz='';
+  if(erg.every(([,r])=>r.leer)){RUECK[id]={ok:false,text:erg[0][1].tipp};karten();return punkte();}
+  erg.forEach(([f,r])=>{if(r.ok){OK[f]=true;delete RUECK[f];if(r.text)zusatz=r.text+' ';if(!G[f]){G[f]=1;neu=true;}}else RUECK[f]={ok:false,text:r.tipp};});
+  const falsch=erg.filter(([,r])=>!r.ok);
+  RUECK[id]=falsch.length?{ok:false,text:zusatz+(falsch.find(([,r])=>!r.leer)||falsch[0])[1].tipp}:{ok:true,text:zusatz+(i<P.SCHRITTE.length-1?'Richtig! Der nächste Schritt ist offen.':'Richtig!')};
+  if(neu){o.beiPunkte&&o.beiPunkte(punkte());o.beiAenderung&&o.beiAenderung();}
+  skizzeWerte();saeulen();karten();return punkte();}
+ skizzeWerte();saeulen();saeulenOrt();karten();
+ return {pruefe,punkte,geloest:()=>P.FELDER.filter(k=>G[k]),ok:()=>Object.assign({},OK),eingabe:(f,v)=>{EIN[f]=v;karten();},lege,rueck:k=>RUECK[k],
+  fuellen:()=>{P.FELDER.forEach(f=>{EIN[f]=P.richtig(f);});P.SCHRITTE.forEach(s=>pruefe(s.id));}};
+}
+
+// ---------------------------------------------------------------- Ventildiagramm mit zwei Ziehlinien (braucht VK, ZAHL, svgEl)
+// Neu gezeichnet aus den kv-Werten (VK.DIAGRAMM). Zwei Griffe an den Achsen: links die waagrechte Linie (Δp), unten die senkrechte (Durchfluss).
+// Die Griffe sind durchsichtige HTML-Streifen über den Achsen (touch-action: none) – so rollt die Seite beim Wischen über das Bild weiter.
+// Feinknöpfe − / + je Linie (gedrückt halten = weiterzählen). Sind beide Linien gesetzt, erscheint der Schnittpunkt.
+// „Lupe“: dasselbe Bild viermal vergrößert um den Schnittpunkt (ohne Zusatzskala, nur die Liniennummern am oberen Rand).
+// o: {diagramm, kennung, punkte:[{name,q,kpa}], beiLinien(z,ende), lupe:true, knoepfe:true, griffe:true}
+function bauVentilDiagramm(wurzel,o){
+ o=Object.assign({diagramm:'heimeier2',kennung:'vd',punkte:[],beiLinien:null,lupe:true,knoepfe:true,griffe:true},o||{});
+ const RA=VK.RAHMEN,ROT='#d32f2f',T=ZAHL.text;
+ let d=VK.DIAGRAMM[o.diagramm],Y=null,X=null,lupe=false,punkte=(o.punkte||[]).slice(),anim=null;
+ const reduziert=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(_){return false;}})();
+ wurzel.innerHTML=`<div class="vd" data-vd="${o.kennung}"><div class="vd-flaeche"><svg viewBox="0 0 640 470" class="vd-svg" role="img" data-r="svg"></svg>`+
+  (o.griffe?'<div class="vd-griff vd-griff-y" data-griff="y" aria-hidden="true"></div><div class="vd-griff vd-griff-x" data-griff="x" aria-hidden="true"></div>':'')+'</div>'+
+  (o.knoepfe?`<div class="vd-knoepfe"><span class="vd-paar"><span class="vd-name">Δp</span><button type="button" class="knopf vd-k" data-s="y" data-d="-1" aria-label="waagrechte Linie tiefer">−</button><b class="vd-wert" data-r="ywert" aria-live="polite">–</b><button type="button" class="knopf vd-k" data-s="y" data-d="1" aria-label="waagrechte Linie höher">+</button></span>`+
+   `<span class="vd-paar"><span class="vd-name" data-r="xname">ṁ</span><button type="button" class="knopf vd-k" data-s="x" data-d="-1" aria-label="senkrechte Linie nach links">−</button><b class="vd-wert" data-r="xwert" aria-live="polite">–</b><button type="button" class="knopf vd-k" data-s="x" data-d="1" aria-label="senkrechte Linie nach rechts">+</button></span>`+
+   (o.lupe?'<button type="button" class="knopf vd-lupe" data-r="lupe" aria-pressed="false">Lupe</button>':'')+'</div>':'')+
+  '<p class="klein vd-quelle" data-r="quelle"></p></div>';
+ const svg=wurzel.querySelector('[data-r="svg"]'),fl=wurzel.querySelector('.vd-flaeche');
+ const A=(p,n,a,t)=>{const e=svgEl(n,a,t);p.appendChild(e);return e;};
+ const zahl=(v,n)=>T(v,n);
+ const ytxt=v=>zahl(v,d.y.stellen)+' '+d.y.einheit,xtxt=v=>zahl(v,d.x.stellen)+' '+d.x.einheit;
+ const markeText=v=>T(v);
+ let fest=null,beweglich=null,lupenText=null;
+ function zeichneFest(){svg.innerHTML='';svg.setAttribute('aria-label',d.titel+' (neu gezeichnet aus den kv-Werten des Datenblatts)');
+  const id=o.kennung+'-clip';
+  A(svg,'rect',{x:0,y:0,width:640,height:470,fill:'#fff'});
+  A(svg,'text',{x:70,y:22,'font-size':17,'font-weight':700,fill:'#1d2a33'},d.titel);
+  A(svg,'text',{x:70,y:40,'font-size':13,fill:'#5b6b77'},d.untertitel||'');
+  const g=A(svg,'g',{'data-r':'gitter'});
+  const deka=v=>Math.abs(Math.log10(v)-Math.round(Math.log10(v)))<1e-9;
+  VK.gitter(d.x).forEach(v=>{const x=VK.px(d,v);A(g,'line',{x1:x,y1:RA.y0,x2:x,y2:RA.y1,stroke:deka(v)?'#9aa7b1':'#dde3e8','stroke-width':deka(v)?1.2:0.7,'vector-effect':'non-scaling-stroke'});});
+  VK.gitter(d.y).forEach(v=>{const y=VK.py(d,v);A(g,'line',{x1:RA.x0,y1:y,x2:RA.x1,y2:y,stroke:deka(v)?'#9aa7b1':'#dde3e8','stroke-width':deka(v)?1.2:0.7,'vector-effect':'non-scaling-stroke'});});
+  A(svg,'rect',{x:RA.x0,y:RA.y0,width:RA.x1-RA.x0,height:RA.y1-RA.y0,fill:'none',stroke:'#1d2a33','stroke-width':1.5,'vector-effect':'non-scaling-stroke'});
+  d.x.marken.forEach(v=>A(svg,'text',{x:VK.px(d,v),y:RA.y1+18,'font-size':13,'text-anchor':'middle',fill:'#1d2a33'},markeText(v)));
+  d.y.marken.forEach(v=>{const y=VK.py(d,v);A(svg,'text',{x:RA.x0-5,y:y+4.5,'font-size':13,'text-anchor':'end',fill:'#1d2a33'},markeText(v));
+   A(svg,'text',{x:RA.x1+5,y:y+4.5,'font-size':13,fill:'#1d2a33'},markeText(+(v*d.y2.f).toPrecision(6)));});
+  A(svg,'text',{x:(RA.x0+RA.x1)/2,y:RA.y1+40,'font-size':14,'text-anchor':'middle',fill:'#1d2a33'},d.x.text);
+  const ym=(RA.y0+RA.y1)/2;
+  A(svg,'text',{x:15,y:ym,'font-size':13.5,'text-anchor':'middle',fill:'#1d2a33',transform:`rotate(-90 15 ${ym})`},d.y.text);
+  A(svg,'text',{x:630,y:ym,'font-size':13.5,'text-anchor':'middle',fill:'#1d2a33',transform:`rotate(90 630 ${ym})`},d.y2.text);
+  const cp=A(A(svg,'defs',{}),'clipPath',{id});A(cp,'rect',{x:RA.x0,y:RA.y0,width:RA.x1-RA.x0,height:RA.y1-RA.y0});
+  const kl=A(svg,'g',{'clip-path':`url(#${id})`,'data-r':'kennlinien'});
+  const L=VK.linien(d);
+  L.filter(l=>!l.voll).forEach(l=>A(kl,'line',{x1:l.x1,y1:l.y1,x2:l.x2,y2:l.y2,stroke:'#7d8b96','stroke-width':1,'stroke-dasharray':'5 4','vector-effect':'non-scaling-stroke','data-stufe':l.name,'data-kv':l.kv}));
+  L.filter(l=>l.voll).forEach(l=>A(kl,'line',{x1:l.x1,y1:l.y1,x2:l.x2,y2:l.y2,stroke:'#0f5f8a','stroke-width':2,'vector-effect':'non-scaling-stroke','data-stufe':l.name,'data-kv':l.kv}));
+  // Nummern oben über den Linien (zu dicht → ein Stück nach rechts)
+  let vor=-99;L.filter(l=>l.voll).forEach(l=>{const t=(RA.y0-l.y1)/(l.y2-l.y1),x=l.x1+t*(l.x2-l.x1),xl=Math.max(x,vor+15);vor=xl;
+   A(svg,'text',{x:xl,y:RA.y0-5,'font-size':15,'font-weight':700,'text-anchor':'middle',fill:'#0f5f8a','data-nummer':l.name},l.name);});
+  beweglich=A(svg,'g',{'data-r':'beweglich'});lupenText=A(svg,'g',{'data-r':'lupentext'});
+  const q=wurzel.querySelector('[data-r="quelle"]');if(q)q.textContent=d.quelle;
+  const xn=wurzel.querySelector('[data-r="xname"]');if(xn)xn.textContent=d.x.name;}
+ const sx=()=>X==null?null:VK.px(d,X),sy=()=>Y==null?null:VK.py(d,Y);
+ function zeichneBeweglich(){if(!beweglich)return;beweglich.innerHTML='';
+  const m=lupe?0.27:1;
+  punkte.forEach(p=>{const x=VK.px(d,VK.zuX(d,p.q)),y=VK.py(d,VK.zuY(d,p.kpa));
+   A(beweglich,'circle',{cx:x,cy:y,r:4.5*m,fill:p.farbe||'#7b1fa2',stroke:'#fff','stroke-width':1.2,'vector-effect':'non-scaling-stroke','data-punkt':p.name});
+   A(beweglich,'text',{x:x+7*m,y:y-6*m,'font-size':14*m,'font-weight':700,fill:p.farbe||'#7b1fa2','data-punktname':p.name},p.name);});
+  const x=sx(),y=sy();
+  if(y!=null)A(beweglich,'line',{x1:RA.x0,y1:y,x2:x!=null?x:RA.x1,y2:y,stroke:ROT,'stroke-width':1.8,'stroke-dasharray':'6 4','vector-effect':'non-scaling-stroke','data-linie':'y'});
+  if(x!=null)A(beweglich,'line',{x1:x,y1:RA.y1,x2:x,y2:y!=null?y:RA.y0,stroke:ROT,'stroke-width':1.8,'stroke-dasharray':'6 4','vector-effect':'non-scaling-stroke','data-linie':'x'});
+  if(x!=null&&y!=null)A(beweglich,'circle',{cx:x,cy:y,r:5*m,fill:ROT,stroke:'#fff','stroke-width':1.2,'vector-effect':'non-scaling-stroke','data-r':'schnitt'});
+  if(o.griffe&&!lupe){const gy=y!=null?y:(RA.y0+RA.y1)/2,gx=x!=null?x:(RA.x0+RA.x1)/2,an=c=>c!=null;
+   A(beweglich,'polygon',{points:`${RA.x0-1},${gy} ${RA.x0-15},${gy-9} ${RA.x0-15},${gy+9}`,fill:an(y)?ROT:'#fff',stroke:ROT,'stroke-width':2,'data-r':'griff-y'});
+   A(beweglich,'polygon',{points:`${gx},${RA.y1+1} ${gx-9},${RA.y1+15} ${gx+9},${RA.y1+15}`,fill:an(x)?ROT:'#fff',stroke:ROT,'stroke-width':2,'data-r':'griff-x'});
+   if(!an(y))A(beweglich,'text',{x:RA.x0+6,y:gy+5,'font-size':14,fill:ROT,'font-weight':700},'◂ ziehen');
+   if(!an(x))A(beweglich,'text',{x:gx,y:RA.y1-8,'font-size':14,fill:ROT,'font-weight':700,'text-anchor':'middle'},'ziehen ▾');}
+  const yw=wurzel.querySelector('[data-r="ywert"]'),xw=wurzel.querySelector('[data-r="xwert"]');
+  if(yw){const t=Y==null?'? '+d.y.einheit:ytxt(Y);if(yw.textContent!==t)yw.textContent=t;}
+  if(xw){const t=X==null?'? '+d.x.einheit:xtxt(X);if(xw.textContent!==t)xw.textContent=t;}
+  const lb=wurzel.querySelector('[data-r="lupe"]');if(lb){lb.disabled=X==null||Y==null;lb.setAttribute('aria-pressed',String(lupe));lb.textContent=lupe?'Lupe aus':'Lupe';}
+  if(lupe)lupeAusrichten();}
+ // Lupe: viewBox ein Viertel so groß um den Schnittpunkt, Liniennummern am oberen Rand des Ausschnitts
+ function lupeAusrichten(){const x=sx(),y=sy();if(x==null||y==null){lupe=false;svg.setAttribute('viewBox','0 0 640 470');lupenText.innerHTML='';fl.classList.remove('vd-gross');return;}
+  const w=160,h=117.5,vx=x-w/2,vy=y-h/2;svg.setAttribute('viewBox',`${vx} ${vy} ${w} ${h}`);fl.classList.add('vd-gross');lupenText.innerHTML='';
+  const ty=Math.max(vy+5,y-12);let vor=-1e9;
+  VK.linien(d).map(l=>({l,x:l.x1+(ty-l.y1)/(l.y2-l.y1)*(l.x2-l.x1)})).filter(z=>z.x>vx+2&&z.x<vx+w-2&&z.x>=RA.x0&&z.x<=RA.x1&&ty>=RA.y0&&ty<=RA.y1).sort((a,b)=>a.x-b.x).forEach(z=>{
+   const xl=Math.max(z.x+0.8,vor+4.5);vor=xl;
+   A(lupenText,'text',{x:xl,y:ty,'font-size':z.l.voll?4:3.4,'font-weight':z.l.voll?700:400,fill:z.l.voll?'#0f5f8a':'#5b6b77','data-lupe':z.l.name},z.l.name);});}
+ function melde(ende){o.beiLinien&&o.beiLinien(zustand(),ende);}
+ function setze(y,x,ende){if(y!==undefined)Y=y==null?null:VK.rasten(d.y,y);if(x!==undefined)X=x==null?null:VK.rasten(d.x,x);zeichneBeweglich();melde(ende!==false);}
+ // Ziehen an den Achsen
+ const ausBild=(ev,ach)=>{const r=svg.getBoundingClientRect();if(ach==='y'){const vy=Math.min(RA.y1,Math.max(RA.y0,(ev.clientY-r.top)/r.height*470));return VK.yAus(d,vy);}
+  const vx=Math.min(RA.x1,Math.max(RA.x0,(ev.clientX-r.left)/r.width*640));return VK.xAus(d,vx);};
+ wurzel.querySelectorAll('[data-griff]').forEach(st=>{let zug=null;const ach=st.dataset.griff;
+  const schieb=ev=>{stopAnim();const w=ausBild(ev,ach);if(ach==='y')setze(w,undefined,false);else setze(undefined,w,false);};
+  st.addEventListener('pointerdown',ev=>{if(lupe)return;ev.preventDefault();zug=ev.pointerId;try{st.setPointerCapture(ev.pointerId);}catch(_){}schieb(ev);});
+  st.addEventListener('pointermove',ev=>{if(zug!==ev.pointerId)return;ev.preventDefault();schieb(ev);});
+  const los=ev=>{if(zug!==ev.pointerId)return;zug=null;melde(true);};
+  st.addEventListener('pointerup',los);st.addEventListener('pointercancel',los);});
+ // Feinknöpfe: Tipp = ein Rasterschritt, gedrückt halten = weiterzählen
+ const START={y:()=>Math.sqrt(d.y.min*d.y.max),x:()=>Math.sqrt(d.x.min*d.x.max)};
+ function schritt(ach,r){stopAnim();const a=ach==='y'?d.y:d.x,alt=ach==='y'?Y:X;const neu=alt==null?VK.rasten(a,START[ach]()):VK.rasten(a,alt+r*a.schritt);
+  if(ach==='y')setze(neu,undefined,false);else setze(undefined,neu,false);}
+ wurzel.querySelectorAll('.vd-k').forEach(b=>{let t1=null,t2=null,wdh=false;const ach=b.dataset.s,r=+b.dataset.d;
+  const halt=()=>{if(t1)clearTimeout(t1);if(t2)clearInterval(t2);const war=!!t2;t1=t2=null;if(war)melde(true);};
+  b.addEventListener('pointerdown',()=>{wdh=false;halt();t1=setTimeout(()=>{t2=setInterval(()=>{wdh=true;schritt(ach,r);},70);},450);});
+  ['pointerup','pointercancel','pointerleave'].forEach(n=>b.addEventListener(n,halt));
+  b.addEventListener('click',()=>{if(wdh){wdh=false;return;}schritt(ach,r);melde(true);});});
+ const lb=wurzel.querySelector('[data-r="lupe"]');if(lb)lb.onclick=()=>{lupe=!lupe&&X!=null&&Y!=null;if(!lupe){svg.setAttribute('viewBox','0 0 640 470');lupenText.innerHTML='';fl.classList.remove('vd-gross');}zeichneBeweglich();};
+ // Der Chef zeigt: Linien wandern auf die Werte (bei „Bewegung reduzieren“ sofort)
+ function stopAnim(){if(anim){cancelAnimationFrame(anim.id);const f=anim.fertig;anim=null;f&&f(false);}}
+ function animiere(kpa,q,fertig){stopAnim();const ziel=[VK.rasten(d.y,VK.zuY(d,kpa)),VK.rasten(d.x,VK.zuX(d,q))];
+  if(reduziert){setze(ziel[0],ziel[1]);fertig&&fertig(true);return;}
+  const von=[Y==null?d.y.min:Y,X==null?d.x.min:X],t0=performance.now(),dauer=1300,lgv=(a,b,f)=>Math.exp(Math.log(a)+(Math.log(b)-Math.log(a))*f);
+  anim={fertig,id:0};const takt=t=>{if(!anim)return;const f=Math.min(1,(t-t0)/dauer),e=f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+   Y=lgv(von[0],ziel[0],e);X=lgv(von[1],ziel[1],e);if(f>=1){Y=ziel[0];X=ziel[1];}zeichneBeweglich();
+   if(f>=1){const fe=anim.fertig;anim=null;melde(true);fe&&fe(true);}else anim.id=requestAnimationFrame(takt);};
+  anim.id=requestAnimationFrame(takt);}
+ function zustand(){return {diagramm:o.diagramm,Y,X,kpa:Y==null?null:VK.ausY(d,Y),q:X==null?null:VK.ausX(d,X),gesetzt:X!=null&&Y!=null,lupe};}
+ function wechsle(name){if(!VK.DIAGRAMM[name]||name===o.diagramm)return;
+  const kpa=Y==null?null:VK.ausY(d,Y),q=X==null?null:VK.ausX(d,X);o.diagramm=name;d=VK.DIAGRAMM[name];
+  Y=kpa==null?null:VK.rasten(d.y,VK.zuY(d,kpa));X=q==null?null:VK.rasten(d.x,VK.zuX(d,q));
+  lupe=false;svg.setAttribute('viewBox','0 0 640 470');fl.classList.remove('vd-gross');zeichneFest();zeichneBeweglich();melde(true);}
+ zeichneFest();zeichneBeweglich();
+ return {setze:(y,x)=>setze(y,x),setzePhysik:(kpa,q)=>setze(kpa==null?null:VK.zuY(d,kpa),q==null?null:VK.zuX(d,q)),animiere,zustand,wechsle,
+  diagramm:()=>o.diagramm,d:()=>d,punkte:p=>{if(p){punkte=p.slice();zeichneBeweglich();}return punkte.slice();},
+  lupe:an=>{if(an!==undefined){lupe=!!an&&X!=null&&Y!=null;if(!lupe){svg.setAttribute('viewBox','0 0 640 470');lupenText.innerHTML='';fl.classList.remove('vd-gross');}zeichneBeweglich();}return lupe;},
+  stimmt:(kpa,q)=>VK.linienOk(d,Y,X,kpa,q),svg,stopAnim};
+}
+
+// ---------------------------------------------------------------- 3.3.2 Einstellwert ablesen: Aufgaben, Prüfung, Hinweise, Ablesetrainer (ohne DOM, braucht VK, ZAHL)
+// Heimeier V-exact II, Regeldifferenz 2 K (stufenlos). Teil A: der Chef zeigt HK 1.1 (Punkt zwischen 4,5 und 5 → 4,6), 10 Punkte.
+// Teil B: HK 1.2, 2.1, 2.2 – je Linien (5, Δp ±0,1 kPa, ṁ ±1 kg/h) und Einstellwert (10, ±0,2 um den Wert aus dem kv-Wert) → 3,5 · 5,0 · 6,6.
+// Teil C: Diagramm 1 K, HK 2.2 liegt rechts von Linie 8 (10) · „Regeldifferenz 2 K“ (5). Teil D: Ablesetrainer, drei Punkte je 10.
+// Die Eingabe öffnet sich erst, wenn beide Linien stimmen. Trainer: Δp 3,0–15,0 kPa, ṁ 20–200 kg/h, Lage zwischen 1,2 und 7,8; nie die Zahlen
+// des Anbaus, des Probe-Tests und des Kapiteltests (auch nicht aus Wiederholung und Bonus), nie ein Einstellwert näher als 0,3 an der kPa-Zahl.
+const EA=(()=>{
+ const V='heimeier2',T=ZAHL.text,TOL=0.2;
+ const B_HK=['1.2','2.1','2.2'];
+ const lageHK=k=>VK.lageHK(V,k);
+ const A_OPT=[['45_5','zwischen 4,5 und 5'],['4_45','zwischen 4 und 4,5'],['5_55','zwischen 5 und 5,5']];
+ const C1_OPT=[['rechts','Der Punkt liegt rechts von Linie 8 – bei 1 K schafft das Ventil 122 kg/h nicht.'],['vier','Der Punkt liegt auf Linie 4.'],['danfoss','Das 1-K-Diagramm gilt nur für Danfoss.']];
+ const C2_OPT=[['zu','Das Ventil ist erst zu, wenn der Raum 2 °C wärmer ist als eingestellt.'],['kuehlt','Das Wasser kühlt im Heizkörper um 2 K ab.'],['warm','Das Ventil darf 2 °C warm werden.']];
+ const SOLL={a:'45_5',c1:'rechts',c2:'zu'};
+ const PUNKTE={a:10,b12l:5,b12:10,b21l:5,b21:10,b22l:5,b22:10,c1:10,c2:5,d1:10,d2:10,d3:10};
+ const FELDER=Object.keys(PUNKTE);
+ const TEIL={A:['a'],B:['b12l','b12','b21l','b21','b22l','b22'],C:['c1','c2'],D:['d1','d2','d3']};
+ const punkte=g=>FELDER.reduce((s,k)=>s+(g[k]?PUNKTE[k]:0),0);
+ const teilPunkte=(g,t)=>TEIL[t].reduce((s,k)=>s+(g[k]?PUNKTE[k]:0),0),teilMax=t=>TEIL[t].reduce((s,k)=>s+PUNKTE[k],0);
+ const bk=k=>'b'+k.replace('.','');
+ const MERKSATZ='Liegt dein Punkt zwischen zwei Linien: Lässt sich das Ventil stufenlos einstellen (Heimeier, Oventrop), stellst du den Zwischenwert ein – auf eine Stelle nach dem Komma. Hat es feste Stufen (Danfoss im Diagramm), nimmst du die nächsthöhere Stufe. Mit der niedrigeren kommt zu wenig Wasser an.';
+ const INFO_K='Regeldifferenz 2 K heißt: Das Ventil ist erst ganz zu, wenn der Raum 2 °C wärmer ist als eingestellt. Die Hersteller legen ihre Diagramme für 2 K aus.';
+ // Einstellwert prüfen (stufenlos, eine Stelle nach dem Komma, ±0,2 um die Lage)
+ function pruefeWert(lage,eingabe){const s=String(eingabe==null?'':eingabe).trim();if(!s)return {ok:false,leer:true,tipp:'Gib den Einstellwert ein, auf eine Stelle nach dem Komma (z. B. 4,6).'};
+  const x=VK.zahl(s.replace(/^(stufe|einstellwert|wert)\s*/i,''),lage);if(!isFinite(x))return {ok:false,tipp:'Gib eine Zahl ein, zum Beispiel 4,6.'};
+  if(Math.abs(x-lage)<=TOL+1e-9)return {ok:true};
+  if(Number.isInteger(x)&&(x===Math.floor(lage)||x===Math.ceil(lage)))return {ok:false,tipp:'Heimeier ist stufenlos – stell den Zwischenwert ein, auf eine Stelle nach dem Komma.'};
+  if(x<lage)return {ok:false,tipp:'Liegt dein Punkt rechts von dieser Linie? Dann reicht die Stufe nicht. Schau mit der Lupe genau hin.'};
+  return {ok:false,tipp:'Dein Wert ist zu groß. Schau mit der Lupe, zwischen welchen Linien der Punkt liegt – und welcher Linie er näher ist.'};}
+ // Hinweis zu den Linien (Achsen in der Einheit des Diagramms)
+ function tippLinien(d,Y,X,kpa,q){if(Y==null||X==null)return 'Setz beide Linien: die waagrechte am linken Griff, die senkrechte am unteren Griff.';
+  const ty=VK.zuY(d,kpa),tx=VK.zuX(d,q),yOk=Math.abs(Y-ty)<=d.y.schritt+1e-9,xOk=Math.abs(X-tx)<=d.x.schritt+1e-9;
+  if(!yOk&&Math.abs(Y-10*ty)<=10*d.y.schritt+1e-9&&d.y.einheit==='kPa')return 'Links steht kPa, rechts mbar. Deine waagrechte Linie liegt zehnmal zu hoch.';
+  if(!yOk)return `Die waagrechte Linie gehört auf ${T(ty,d.y.stellen)} ${d.y.einheit} – lies an der linken Achse ab.`;
+  if(!xOk)return `Die senkrechte Linie gehört auf ${T(tx,d.x.stellen)} ${d.x.einheit} – lies an der unteren Achse ab.`;
+  return '';}
+ // Ablesetrainer
+ const DP_VERBOTEN=[8.6,9.4,3.6,11,5.6,2.4,3.9,4.6,2.1,4.2,5.7,3.3,4.8,4.4,2.9,3.5,6.8,6.3,8.1,5.3,9.2,8.4,11.4,8.8,   // Probe-Test, Kapiteltest
+  2.7,3,4.5,5.1,7.5,7.2,10.2,10.4,7.7,7.4,5.9,                                                                         // Anbau
+  9.6,3.1,6.5,5.4,2.25,10.8,6,8.55,4.05,3.75,6.15,6.45,12,7.95,9.3];                                                   // Wiederholung, Bonus
+ const Q_VERBOTEN=[40,72,64,150,95,70,43,120,75,83,52,78,122,335,60,90,110,130,80,50,135,25];
+ const LAGE_VERBOTEN=[4.9,2.7,5.4,3.4,7.6,4.6,3.5,5,6.6,5.7,3.9,6.1,7.8,6.9,6.7,3.3];
+ const nahAn=(x,arr)=>arr.some(v=>Math.abs(x-v)<1e-9);
+ function erlaubt(kpa,q){const l=VK.lage(V,VK.kvAus(q,kpa));
+  return kpa>=3-1e-9&&kpa<=15+1e-9&&q>=20&&q<=200&&Number.isInteger(q)&&Math.abs(kpa*10-Math.round(kpa*10))<1e-9&&l>=1.2&&l<=7.8&&!nahAn(kpa,DP_VERBOTEN)&&!nahAn(q,Q_VERBOTEN)&&!nahAn(VK.r1(l),LAGE_VERBOTEN)&&Math.abs(l-kpa)>=0.3;}
+ let LISTE=null;
+ const liste=()=>{if(!LISTE){LISTE=[];for(let z=30;z<=150;z++)for(let q=20;q<=200;q++){const kpa=z/10;if(erlaubt(kpa,q))LISTE.push([kpa,q]);}}return LISTE;};
+ function zufall(seed){let a=(seed>>>0)||1;return ()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return ((t^(t>>>14))>>>0)/4294967296;};}
+ // ein neuer Punkt, der sich von den anderen unterscheidet (anderes Δp, anderer Durchfluss, Lage mindestens 0,5 entfernt)
+ function trainerPunkt(z,andere){const L=liste();for(let n=0;n<500;n++){const [kpa,q]=L[Math.floor(z()*L.length)],l=VK.lage(V,VK.kvAus(q,kpa));
+   if((andere||[]).every(a=>a&&Math.abs(a.kpa-kpa)>0.45&&Math.abs(a.q-q)>4&&Math.abs(a.lage-l)>=0.5))return {kpa,q,lage:l};}
+  const [kpa,q]=L[0];return {kpa,q,lage:VK.lage(V,VK.kvAus(q,kpa))};}
+ const sauberPunkt=p=>p&&typeof p==='object'&&erlaubt(+p.kpa,+p.q)?{kpa:+p.kpa,q:+p.q,lage:VK.lage(V,VK.kvAus(+p.q,+p.kpa))}:null;
+ const chefSatz='„Etwas über 4,5 – ich stelle 4,6 ein.“';
+ return {V,TOL,B_HK,lageHK,A_OPT,C1_OPT,C2_OPT,SOLL,PUNKTE,FELDER,TEIL,punkte,teilPunkte,teilMax,bk,MERKSATZ,INFO_K,pruefeWert,tippLinien,
+  DP_VERBOTEN,Q_VERBOTEN,LAGE_VERBOTEN,erlaubt,liste,zufall,trainerPunkt,sauberPunkt,chefSatz};
+})();
+
+// ---------------------------------------------------------------- 3.3.2 Einstellwert ablesen: Bedienung (braucht EA, VK, ZAHL, bauVentilDiagramm)
+// Links das Heimeier-Diagramm mit Umschalter 2 K | 1 K, rechts Merksatz zum Aufklappen und die Teile A–D als Reiter.
+// B, C und D öffnen sich, wenn A stimmt. In B und D öffnet sich die Eingabe erst, wenn beide Linien stimmen. Richtige Felder werden grün und gesperrt.
+// Gespeichert werden nur die gelösten Felder und die Zahlen gelöster Trainer-Aufgaben.
+// o: {gespeichert:{g:[…], d:[…]}, mitPunkten, beiAenderung(), beiPunkte(p), seed, kennung, chefHtml}
+function bauEinstellwert(wurzel,o){
+ o=Object.assign({gespeichert:null,mitPunkten:true,beiAenderung:null,beiPunkte:null,seed:null,kennung:'ea',chefHtml:''},o||{});
+ const E=EA,T=ZAHL.text,esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+ const G={},OK={},EIN={},RUECK={},LIN={},WAHL={};
+ let reiter='A',aktivB=E.B_HK[0],aktivD=0,infoAuf=false,aFrei=false,cFrei=false;
+ const sp=o.gespeichert&&typeof o.gespeichert==='object'?o.gespeichert:{};
+ (Array.isArray(sp.g)?sp.g:[]).forEach(k=>{if(E.FELDER.includes(k)){G[k]=1;OK[k]=true;}});
+ const z=E.zufall(o.seed!=null?o.seed:(Math.random()*4294967296)>>>0);
+ const D=[0,1,2].map(i=>G['d'+(i+1)]&&Array.isArray(sp.d)?E.sauberPunkt(sp.d[i]):null);
+ [0,1,2].forEach(i=>{if(G['d'+(i+1)]&&!D[i])OK['d'+(i+1)]=false;});
+ [0,1,2].forEach(i=>{if(!D[i])D[i]=E.trainerPunkt(z,D.filter(Boolean));});
+ const mische=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+ const OPT={a:mische(E.A_OPT),c1:mische(E.C1_OPT),c2:mische(E.C2_OPT)};
+ const punkte=()=>E.punkte(G);
+ aktivB=E.B_HK.find(k=>!OK[E.bk(k)])||E.B_HK[0];aktivD=[0,1,2].find(i=>!OK['d'+(i+1)]);if(aktivD===undefined)aktivD=0;
+ wurzel.innerHTML=`<div class="dr-zwei ea"><div class="ea-links"><div class="karte ea-bild">
+  <div class="ea-leiste"><span class="gname">Regeldifferenz</span><div class="wahl ea-k" role="group" aria-label="Diagramm"><button type="button" data-k="heimeier2" aria-pressed="true">2 K</button><button type="button" data-k="heimeier1" aria-pressed="false">1 K</button></div>
+  <button type="button" class="knopf" data-r="info" aria-expanded="false">Was heißt 1 K und 2 K?</button></div>
+  <div class="merk ea-info" data-r="infotext" hidden>${E.INFO_K}</div><div data-r="diagramm"></div></div></div>
+  <div class="ea-rechts">${o.chefHtml||''}<details class="merk ea-merk"><summary><b>Merksatz: Zwischen zwei Linien</b> <span class="klein">(antippen)</span></summary><p style="margin:8px 0 0">${E.MERKSATZ}</p></details>
+  <div class="reiter" role="tablist" aria-label="Teile" data-r="reiter"></div><div data-r="teil"></div></div></div>`;
+ const W=bauVentilDiagramm(wurzel.querySelector('[data-r="diagramm"]'),{diagramm:'heimeier2',kennung:o.kennung,beiLinien:(s,ende)=>{if(ende)linien();}});
+ const aendern=()=>{o.beiAenderung&&o.beiAenderung();};
+ const melde=neu=>{if(neu){o.beiPunkte&&o.beiPunkte(punkte());aendern();}};
+ const istK=k=>W.diagramm()===k;
+ function punkteImBild(){const p=[];if(istK('heimeier2')){if(OK.a)p.push({name:'1.1',q:VK.lh('1.1'),kpa:VK.ventilKpa('1.1')});
+   E.B_HK.forEach(k=>{if(OK[E.bk(k)])p.push({name:k,q:VK.lh(k),kpa:VK.ventilKpa(k)});});}W.punkte(p);}
+ // Linien losgelassen: passt es zu einer Aufgabe?
+ function linien(){let neu=false;
+  if(aOffen())aFrei=true;if(c1Offen())cFrei=true;
+  if(reiter==='B'&&istK('heimeier2')){const k=E.B_HK.find(x=>!OK[E.bk(x)]&&W.stimmt(VK.ventilKpa(x),VK.lh(x)));
+   if(k){aktivB=k;LIN[k]=true;const f=E.bk(k)+'l';if(!G[f]){G[f]=1;neu=true;}OK[f]=true;delete RUECK['B'+k];}
+   else if(!OK[E.bk(aktivB)]&&!LIN[aktivB]&&W.zustand().gesetzt)RUECK['B'+aktivB]={ok:false,text:E.tippLinien(W.d(),W.zustand().Y,W.zustand().X,VK.ventilKpa(aktivB),VK.lh(aktivB))};}
+  if(reiter==='D'&&istK('heimeier2')){const i=[0,1,2].find(j=>!OK['d'+(j+1)]&&W.stimmt(D[j].kpa,D[j].q));
+   if(i!==undefined){aktivD=i;LIN['d'+i]=true;delete RUECK['D'+i];}
+   else if(!OK['d'+(aktivD+1)]&&!LIN['d'+aktivD]&&W.zustand().gesetzt)RUECK['D'+aktivD]={ok:false,text:E.tippLinien(W.d(),W.zustand().Y,W.zustand().X,D[aktivD].kpa,D[aktivD].q)};}
+  teil();melde(neu);}
+ const offenA=()=>!!OK.a;
+ const aOffen=()=>W.stimmt(VK.ventilKpa('1.1'),VK.lh('1.1'))&&istK('heimeier2');
+ const c1Offen=()=>istK('heimeier1')&&W.stimmt(VK.ventilKpa('2.2'),VK.lh('2.2'));
+ const aAuf=()=>aFrei||!!OK.a,cAuf=()=>cFrei||!!OK.c1;
+ const pk=t=>o.mitPunkten?`<span class="pkt">${E.teilPunkte(G,t)} von ${E.teilMax(t)} Punkten</span>`:'';
+ const opt=(f,liste,zu)=>`<div class="optionen">`+liste.map(([w,t])=>{const ok=OK[f],gew=ok?E.SOLL[f]:WAHL[f],r=RUECK[f];
+   return `<button type="button" data-f="${f}" data-w="${w}" aria-pressed="${gew===w}" class="${ok&&w===E.SOLL[f]?'ok':r&&!r.ok&&gew===w?'nein':''}"${ok||zu?' disabled':''}>${t}</button>`;}).join('')+'</div>';
+ const rueck=r=>r?`<span class="rueck ${r.ok?'ok':'nein'}">${r.text}</span>`:'';
+ const pruefKnopf=(f,zu)=>OK[f]?'':`<div class="wahl" style="margin:6px 0 0"><button type="button" class="knopf haupt" data-p="${f}"${zu?' disabled':''}>Prüfen</button></div>`;
+ const feld=(f,zu,lage)=>{const ok=OK[f],v=ok?(EIN[f]!==undefined&&EIN[f]!==''?EIN[f]:T(VK.r1(lage),1)):(EIN[f]||''),r=RUECK[f];
+  return `<label class="feld">Einstellwert <input type="text" class="zahl${ok?' ok':r&&!r.ok?' nein':''}" inputmode="decimal" autocomplete="off" data-f="${f}" value="${esc(v)}"${ok||zu?' disabled':''} aria-label="Einstellwert"></label>`+
+   (ok?'':`<button type="button" class="knopf haupt" data-p="${f}"${zu?' disabled':''}>Prüfen</button>`);};
+ function reiterLeiste(){const L=[['A','A Der Chef zeigt'],['B','B Jetzt du'],['C','C 1 K oder 2 K'],['D','D Ablesetrainer']];
+  wurzel.querySelector('[data-r="reiter"]').innerHTML=L.map(([t,n])=>{const zu=t!=='A'&&!offenA(),p=E.teilPunkte(G,t),m=E.teilMax(t);
+   return `<button type="button" role="tab" data-teil="${t}" aria-selected="${t===reiter}"${zu?' aria-disabled="true"':''}>${n}`+(o.mitPunkten?`<small>${p>=m?'✓ ':''}${p} von ${m} Punkten</small>`:zu?'<small>erst A lösen</small>':'')+'</button>';}).join('');
+  wurzel.querySelectorAll('[data-teil]').forEach(b=>b.onclick=()=>zeigeTeil(b.dataset.teil));}
+ function zeigeTeil(t){if(t!=='A'&&!offenA()){RUECK.sperre={ok:false,text:'Löse zuerst Teil A: Der Chef zeigt dir, wie man abliest.'};reiter='A';}else{delete RUECK.sperre;reiter=t;}
+  if(reiter!=='C')W.wechsle('heimeier2');schalter();punkteImBild();teil();}
+ function teilA(){const ok=OK.a,auf=aAuf();
+  return `<div class="aufgabe${ok?' fertig':''}" id="${o.kennung}-A">${pk('A')}<h3>A · Der Chef zeigt dir HK 1.1</h3>
+   <div class="sprech"><b class="wer">DEIN CHEF</b>„Das Arbeitszimmer braucht 83 kg/h, und das Ventil soll 7,5 kPa abbauen. Ich ziehe die waagrechte Linie bei 7,5 kPa und die senkrechte bei 83 kg/h. Wo sie sich treffen, lese ich ab.“</div>
+   ${ok?'':`<div class="wahl"><button type="button" class="knopf haupt" data-r="zeigen">Zeig es mir</button></div>`}
+   <p style="margin:8px 0 4px"><b>Zwischen welchen Linien liegt der Punkt?</b> <span class="klein">Nimm die Lupe unter dem Bild.</span></p>
+   ${auf?'':'<span class="sperre">Noch gesperrt: Erst zeigt dir der Chef die Linien (oder du setzt sie selbst auf 7,5 kPa und 83 kg/h).</span>'}
+   ${opt('a',OPT.a,!auf)}${pruefKnopf('a',!auf)}${rueck(RUECK.a)}${rueck(RUECK.sperre)}
+   ${ok?`<div class="sprech" style="margin-top:10px"><b class="wer">DEIN CHEF</b>${E.chefSatz} „Heimeier lässt sich stufenlos einstellen. Jetzt du!“</div><div class="wahl"><button type="button" class="knopf" data-weiter="B">Weiter zu Teil B</button></div>`:''}</div>`;}
+ function teilB(){const fertig=E.B_HK.every(k=>OK[E.bk(k)]);
+  let h=`<div class="aufgabe${fertig?' fertig':''}" id="${o.kennung}-B">${pk('B')}<h3>B · Jetzt du: HK 1.2, 2.1 und 2.2</h3>
+   <p>Die Werte aus der Planungsskizze stehen bei jedem Heizkörper. Setz beide Linien${o.mitPunkten?' (5 Punkte)':''} – dann öffnet sich das Feld. Lies den Einstellwert ab, auf eine Stelle nach dem Komma${o.mitPunkten?' (10 Punkte)':''}.</p>`;
+  E.B_HK.forEach(k=>{const f=E.bk(k),ok=OK[f],lin=LIN[k]||OK[f+'l'],akt=k===aktivB&&!ok;
+   h+=`<div class="ea-hk${akt?' aktiv':''}${ok?' fertig':''}" data-hk="${k}"><div class="ea-hk-kopf"><b>${VK.HK[k].n}</b><span class="ea-werte">ṁ = ${VK.lh(k)} kg/h · Δp = ${T(VK.ventilKpa(k),1)} kPa</span>`+
+    (ok?'<span class="ok-text">✓</span>':`<button type="button" class="knopf" data-waehle="${k}" aria-pressed="${akt}">${akt?'wird abgelesen':'diesen ablesen'}</button>`)+'</div>'+
+    `<p class="klein" style="margin:2px 0 4px">${lin?'Linien: ✓ – der Punkt steht im Bild.':`Linien: setz die waagrechte auf ${T(VK.ventilKpa(k),1)} kPa und die senkrechte auf ${VK.lh(k)} kg/h.`}</p>`+
+    (lin?feld(f,false,E.lageHK(k)):'')+rueck(RUECK[f]||RUECK['B'+k])+'</div>';});
+  if(fertig)h+=`<div class="meldung"><b>Heimeier für den Anbau:</b> HK 1.1 → 4,6 · HK 1.2 → ${T(VK.r1(E.lageHK('1.2')),1)} · HK 2.1 → ${T(VK.r1(E.lageHK('2.1')),1)} · HK 2.2 → ${T(VK.r1(E.lageHK('2.2')),1)}</div>`;
+  return h+'</div>';}
+ function teilC(){const auf=cAuf();
+  let sperre='';if(!OK.c1&&!auf)sperre=istK('heimeier1')?`<span class="sperre">Setz die Linien auf HK 2.2: 5,1 kPa und 122 kg/h.</span>`:'<span class="sperre">Noch gesperrt: Schalte oben auf <b>1 K</b>.</span>';
+  return `<div class="aufgabe${OK.c1&&OK.c2?' fertig':''}" id="${o.kennung}-C">${pk('C')}<h3>C · 1 K oder 2 K?</h3>
+   <p>Schalte oben auf das Diagramm für <b>1 K</b> und setz HK 2.2 ein (122 kg/h, 5,1 kPa). <b>Was siehst du?</b>${o.mitPunkten?' <span class="klein">(10 Punkte)</span>':''}</p>
+   ${sperre}${opt('c1',OPT.c1,!auf)}${pruefKnopf('c1',!auf)}${rueck(RUECK.c1)}
+   ${OK.c1?'<p class="hinweis-gruen" style="margin:6px 0">Darum nimmst du das Diagramm für 2 K: Bei 1 K reicht das Ventil für HK 2.2 nicht.</p>':''}
+   <p style="margin:12px 0 4px"><b>Was heißt „Regeldifferenz 2 K“?</b>${o.mitPunkten?' <span class="klein">(5 Punkte)</span>':''} <span class="klein">Der Knopf „Was heißt 1 K und 2 K?“ hilft.</span></p>
+   ${opt('c2',OPT.c2,false)}${pruefKnopf('c2',false)}${rueck(RUECK.c2)}</div>`;}
+ function teilD(){let h=`<div class="aufgabe" id="${o.kennung}-D">${pk('D')}<h3>D · Ablesetrainer</h3>
+   <p>Drei Ventile mit neuen Zahlen. Setz die Linien, lies ab und gib den Einstellwert ein, auf eine Stelle nach dem Komma. Bei jedem Öffnen gibt es neue Punkte.</p>`;
+  [0,1,2].forEach(i=>{const f='d'+(i+1),p=D[i],ok=OK[f],lin=LIN['d'+i],akt=i===aktivD&&!ok;
+   h+=`<div class="ea-hk${akt?' aktiv':''}${ok?' fertig':''}" data-d="${i}"><div class="ea-hk-kopf"><b>Ventil ${i+1}</b><span class="ea-werte">ṁ = ${p.q} kg/h · Δp = ${T(p.kpa,1)} kPa</span>`+
+    (ok?'<span class="ok-text">✓</span>':`<button type="button" class="knopf" data-waehled="${i}" aria-pressed="${akt}">${akt?'wird abgelesen':'dieses ablesen'}</button>`)+'</div>'+
+    (lin||ok?feld(f,false,p.lage):`<p class="klein" style="margin:2px 0 4px">Linien: setz die waagrechte auf ${T(p.kpa,1)} kPa und die senkrechte auf ${p.q} kg/h.</p>`)+rueck(RUECK[f]||RUECK['D'+i])+
+    (ok?`<div class="wahl" style="margin:6px 0 0"><button type="button" class="knopf" data-neu="${i}">Noch einmal mit neuen Zahlen</button></div>`:'')+'</div>';});
+  return h+'</div>';}
+ function teil(){reiterLeiste();const c=wurzel.querySelector('[data-r="teil"]');
+  c.innerHTML=reiter==='A'?teilA():reiter==='B'?teilB():reiter==='C'?teilC():teilD();
+  if(o.mitPunkten&&punkte()>=100)c.insertAdjacentHTML('beforeend','<div class="merk"><b>Alles geschafft: 100 von 100 Punkten.</b> Im Ablesetrainer kannst du mit neuen Zahlen weiterüben.</div>');
+  c.querySelectorAll('button[data-w]').forEach(b=>b.onclick=()=>{WAHL[b.dataset.f]=b.dataset.w;delete RUECK[b.dataset.f];teil();});
+  c.querySelectorAll('input[data-f]').forEach(e=>{e.addEventListener('input',()=>{EIN[e.dataset.f]=e.value;e.classList.remove('nein');});
+   e.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();pruefe(e.dataset.f);}});});
+  c.querySelectorAll('button[data-p]').forEach(b=>b.onclick=()=>pruefe(b.dataset.p));
+  const zg=c.querySelector('[data-r="zeigen"]');if(zg)zg.onclick=()=>{zg.disabled=true;W.lupe(false);W.animiere(VK.ventilKpa('1.1'),VK.lh('1.1'),()=>{if(aOffen())aFrei=true;teil();});};
+  c.querySelectorAll('[data-weiter]').forEach(b=>b.onclick=()=>zeigeTeil(b.dataset.weiter));
+  c.querySelectorAll('[data-waehle]').forEach(b=>b.onclick=()=>{aktivB=b.dataset.waehle;teil();});
+  c.querySelectorAll('[data-waehled]').forEach(b=>b.onclick=()=>{aktivD=+b.dataset.waehled;teil();});
+  c.querySelectorAll('[data-neu]').forEach(b=>b.onclick=()=>{const i=+b.dataset.neu;D[i]=E.trainerPunkt(z,D.filter((_,j)=>j!==i));OK['d'+(i+1)]=false;delete LIN['d'+i];delete EIN['d'+(i+1)];delete RUECK['d'+(i+1)];aktivD=i;teil();});}
+ function lies(){wurzel.querySelectorAll('[data-r="teil"] input[data-f]').forEach(e=>{EIN[e.dataset.f]=e.value;});}
+ function pruefe(f){lies();if(OK[f])return punkte();let neu=false;
+  if(f==='a'||f==='c1'||f==='c2'){const w=WAHL[f];
+   if(f==='a'&&!aAuf())return punkte();if(f==='c1'&&!cAuf())return punkte();
+   if(!w)RUECK[f]={ok:false,text:'Wähl erst eine Antwort aus.'};
+   else if(w===E.SOLL[f]){OK[f]=true;if(!G[f]){G[f]=1;neu=true;}RUECK[f]={ok:true,text:'Richtig!'};}
+   else RUECK[f]={ok:false,text:f==='a'?'Nimm die Lupe: Welche Linie liegt links vom Punkt, welche rechts? Die gestrichelten Linien sind die Zwischenmarkierungen 1,5 … 7,5.':
+    f==='c1'?(w==='vier'?'Schau genau: Rechts von welcher Linie liegt der Punkt? Die Nummern stehen oben am Rand.':'Das 1-K-Diagramm hier ist von Heimeier. Schau, wo der Punkt im Vergleich zu Linie 8 liegt.'):
+    'Lies den Text hinter „Was heißt 1 K und 2 K?“ oben über dem Diagramm.'};
+   if(f==='a'&&OK.a)punkteImBild();}
+  else if(/^b\d\d$/.test(f)){const k=E.B_HK.find(x=>E.bk(x)===f);if(!(LIN[k]||OK[f+'l']))return punkte();
+   const r=E.pruefeWert(E.lageHK(k),EIN[f]);if(r.ok){OK[f]=true;if(!G[f]){G[f]=1;neu=true;}RUECK[f]={ok:true,text:'Richtig!'};aktivB=E.B_HK.find(x=>!OK[E.bk(x)])||aktivB;punkteImBild();}else RUECK[f]={ok:false,text:r.tipp};}
+  else if(/^d\d$/.test(f)){const i=+f[1]-1;if(!LIN['d'+i])return punkte();
+   const r=E.pruefeWert(D[i].lage,EIN[f]);if(r.ok){OK[f]=true;if(!G[f]){G[f]=1;neu=true;RUECK[f]={ok:true,text:'Richtig!'};}else RUECK[f]={ok:true,text:o.mitPunkten?'Richtig! (Die Punkte dafür hattest du schon.)':'Richtig!'};
+    const n=[0,1,2].find(j=>!OK['d'+(j+1)]);if(n!==undefined)aktivD=n;}else RUECK[f]={ok:false,text:r.tipp};}
+  teil();melde(neu);return punkte();}
+ function schalter(){wurzel.querySelectorAll('[data-k]').forEach(b=>b.setAttribute('aria-pressed',String(istK(b.dataset.k))));}
+ wurzel.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{W.wechsle(b.dataset.k);schalter();punkteImBild();teil();});
+ const ib=wurzel.querySelector('[data-r="info"]');ib.onclick=()=>{infoAuf=!infoAuf;ib.setAttribute('aria-expanded',String(infoAuf));wurzel.querySelector('[data-r="infotext"]').hidden=!infoAuf;};
+ punkteImBild();teil();
+ return {W,punkte,pruefe,zeigeTeil,reiter:()=>reiter,geloest:()=>E.FELDER.filter(k=>G[k]),ok:()=>Object.assign({},OK),
+  trainer:()=>D.map((p,i)=>G['d'+(i+1)]&&OK['d'+(i+1)]?{kpa:p.kpa,q:p.q}:null),D:()=>D.map(p=>Object.assign({},p)),
+  waehle:(f,w)=>{WAHL[f]=w;teil();},eingabe:(f,v)=>{EIN[f]=v;teil();},rueck:f=>RUECK[f],aktiv:()=>({B:aktivB,D:aktivD}),linienOk:()=>Object.assign({},LIN)};
+}
+
+// ---------------------------------------------------------------- Höhe der festen Kopfzeile als CSS-Variable --kopf (für die stehende linke Spalte)
+(function(){const k=document.querySelector('.kopf');const f=()=>{try{document.documentElement.style.setProperty('--kopf',(k?k.offsetHeight:0)+'px');}catch(_){}};
+ f();try{addEventListener('resize',f);}catch(_){}try{if(window.ResizeObserver&&k)new ResizeObserver(f).observe(k);}catch(_){}})();
+
+const PL=bauPlanung(document.getElementById('planung'),{mitPunkten:false,kennung:'pz'});
+const EW=bauEinstellwert(document.getElementById('einstellwert'),{mitPunkten:false,kennung:'ea'});
+window.__seite={PL,EW};
+</script>
+</body>
+</html>
