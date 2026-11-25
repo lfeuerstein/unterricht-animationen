@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>2.1 Am alten Kessel: Gasgerätearten und Typschild – Haus Kessler</title>
+<style>
+:root{--papier:#f4f1ea;--tinte:#22303a;--leise:#5d6b75;--linie:#d5cfc2;--karte:#fff;--akzent:#0b6b7d;--akzent-hell:#e1f0f2;--gold:#d99a1b;
+  --vl:#d0342c;--rl:#2f6fb7;--ring:#b0408a;--gut:#2e7d4f;--gut-hell:#e4f3e3;--schlecht:#c8371f;--schlecht-hell:#fde3df;--merk:#fffbe9;--merk-rand:#ecd9a0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation}
+body{margin:0;background:var(--papier);color:var(--tinte);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+.kopf{position:sticky;top:0;z-index:5;background:var(--papier);border-bottom:1px solid var(--linie);padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.kopf .titel{flex:1 1 360px;min-width:0}
+.kopf .ober{margin:0;font-size:13px;color:var(--leise)}
+.kopf h1{margin:0;font-size:20px;line-height:1.25}
+.kopf .stand{font-size:16px;white-space:nowrap;text-align:right}
+.kopf .stand small{display:block;font-size:12px;color:var(--leise)}
+.kurs{min-height:44px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--akzent);background:#fff;color:var(--akzent);font-weight:600;cursor:pointer;touch-action:manipulation}
+main{max-width:1040px;margin:0 auto;padding:14px 16px 60px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+h2{font-size:20px;margin:0 0 8px;line-height:1.25}
+h3{font-size:17px;margin:14px 0 6px}
+p{margin:0 0 10px}
+.klein{font-size:14px;color:var(--leise)}
+.sprech{border-left:5px solid var(--akzent);background:var(--akzent-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:0 0 12px}
+.sprech b.wer{display:block;font-size:13px;color:var(--akzent);letter-spacing:.3px;margin-bottom:2px}
+.merk{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 12px;margin:10px 0 0}
+.wahl{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.knopf,.wahl button{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;touch-action:manipulation}
+.wahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.knopf.haupt{background:var(--akzent);border-color:var(--akzent);color:#fff}
+.knopf:disabled,.wahl button:disabled{opacity:.45;cursor:default}
+svg{display:block;width:100%;height:auto}
+.rollen{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--leise);font-weight:600}
+.balken{height:12px;border-radius:6px;background:var(--akzent)}
+.balkenreihe{display:flex;min-width:60px}
+.zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.zwei{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}}
+/* Animation */
+.wegbild{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.messung{min-height:48px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--akzent-hell);font-size:17px}
+.messung b{font-size:19px}
+.hk-knopf{cursor:pointer}
+.lupe-ruf{cursor:pointer}
+.lupe{border:2px solid var(--tinte);border-radius:14px;padding:12px 14px;margin-top:12px;background:#fff}
+.lupe h3{margin:0 0 6px}
+.lupe ol{margin:8px 0 0;padding-left:22px}
+.lupe li{margin:3px 0}
+/* Aufgaben */
+.aufgabe{border:1px solid var(--linie);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:#fff}
+.aufgabe h3{margin:0 0 6px}
+.aufgabe .pkt{float:right;margin-left:10px;font-size:14px;color:var(--leise);font-weight:600}
+.aufgabe.fertig{border-color:var(--gut);box-shadow:0 0 0 2px var(--gut-hell)}
+.feld{display:inline-flex;align-items:center;gap:6px;margin:4px 16px 4px 0;font-size:17px}
+input.zahl{font:inherit;width:5.2em;min-height:44px;padding:6px 8px;border:1px solid var(--linie);border-radius:8px;background:#fff;color:var(--tinte)}
+input.zahl.ok{border-color:var(--gut);background:var(--gut-hell)}
+input.zahl.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+input.zahl:disabled{opacity:1;color:var(--tinte)}
+.rueck{display:block;margin-top:8px;font-size:15px}
+.rueck.ok{color:var(--gut);font-weight:600}
+.rueck.nein{color:var(--schlecht)}
+.satz{border:1px solid var(--linie);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+.satz p{margin:0 0 6px;font-style:italic}
+.satz.ok{border-color:var(--gut);background:var(--gut-hell)}
+.satz.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+.satz .wahl{margin:0}
+/* Zeichnen */
+svg.zeichnen{min-width:680px;touch-action:manipulation;background:#eef1ea;border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.gruppe{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 8px}
+.gruppe button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.gruppe .gname{font-size:14px;color:var(--leise);font-weight:600;min-width:110px}
+.pruefliste{list-style:none;padding:0;margin:10px 0 0;font-size:15px}
+.pruefliste li{padding:3px 0 3px 26px;position:relative}
+.pruefliste li::before{position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;text-align:center;line-height:18px}
+.pruefliste li.ok::before{content:"✓";background:var(--gut)}
+.pruefliste li.nein::before{content:"✗";background:var(--schlecht)}
+/* Team */
+.tablet{border:2px solid var(--tinte);border-radius:16px;padding:14px;background:#fff;margin-top:6px}
+.tablet h3{margin:0 0 6px}
+.phase{border-top:1px solid var(--linie);padding-top:10px;margin-top:12px}
+.phase.zu{opacity:.45}
+.phase label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.grosswahl{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}
+.grosswahl button{min-width:150px;min-height:96px;border-radius:16px;border:2px solid var(--tinte);background:#fff;cursor:pointer;font-size:18px;padding:10px 14px;touch-action:manipulation}
+.grosswahl button b{display:block;font-size:34px;line-height:1.1}
+.ok-text{color:var(--gut);font-weight:600}
+.hinweis-gruen{display:inline-block;background:var(--gut-hell);border:1px solid var(--gut);border-radius:8px;padding:2px 8px}
+.hinweis-orange{display:inline-block;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:2px 8px}
+@media (max-width:820px){body{font-size:16px}.kopf h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Haus Kessler 2.1 – Ergänzungen zu basis.css (Kopie aus Haus Röhringer): Typschild und Aufstellort, Satz-Auswahl, Bestandsliste */
+.geraet{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:700px){.geraet{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+figure.bild{margin:0;background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;padding:8px 10px 10px}
+figure.bild figcaption{font-size:14px;font-weight:600;margin:0 0 6px}
+svg.typschild{max-width:420px;margin:0 auto}
+svg.ortbild{max-width:520px;margin:0 auto;border-radius:6px}
+.steckbrief{margin:10px 0 0;padding-left:20px;font-size:15px}
+.steckbrief li{margin:2px 0}
+.frage{margin:12px 0 6px}
+.satzwahl{display:flex;flex-direction:column;gap:8px;margin:0 0 6px}
+.satzwahl button{min-height:44px;padding:9px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;text-align:left;line-height:1.35;touch-action:manipulation}
+.satzwahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.satzwahl button:disabled{opacity:.45;cursor:default}
+.wahl button.ok[aria-pressed],.satzwahl button.ok[aria-pressed]{background:var(--gut-hell);border:2px solid var(--gut);color:var(--tinte);opacity:1}
+.wahl button.nein[aria-pressed],.satzwahl button.nein[aria-pressed]{background:var(--schlecht-hell);border:2px solid var(--schlecht);color:var(--tinte)}
+.wahl button.ok::after,.satzwahl button.ok::after{content:" ✓";color:var(--gut);font-weight:700}
+.wahl button.nein::after,.satzwahl button.nein::after{content:" ✗";color:var(--schlecht);font-weight:700}
+.mitspieler{border:1px solid var(--linie);border-radius:12px;padding:10px 12px;margin:10px 0;background:#fcfbf8}
+.mitspieler h4{margin:0 0 2px;font-size:16px}
+.mitspieler .frage{margin:8px 0 6px}
+input.zahl.art{width:11em;text-transform:none}
+table.liste{min-width:600px}
+table.liste td,table.liste th{vertical-align:top}
+.gross{font-size:20px;font-weight:700}
+.grosswahl button small{display:block;font-size:13px;color:var(--leise);margin-top:2px}
+.merk b{font-weight:700}
+
+.leise{color:var(--leise);font-size:14px}
+.kennz{font-weight:700;color:var(--akzent);margin:0 0 2px}
+a.zurueck{color:var(--akzent)}
+h1{font-size:24px;margin:0 0 4px;line-height:1.2}
+.sprung{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.sprung a{display:inline-block;padding:9px 14px;border-radius:999px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-decoration:none;font-size:15px}
+section.karte{scroll-margin-top:10px}
+.videoplatz{border:2px dashed var(--linie);border-radius:10px;padding:12px 14px;background:#fcfbf8;color:var(--leise)}
+.videoplatz a{color:var(--akzent);font-weight:600}
+footer{margin-top:28px;font-size:13px;color:var(--leise);border-top:1px solid var(--linie);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+  <p class="leise"><a class="zurueck" href="index.html">← Haus Kessler: alle Stationen</a></p>
+  <p class="kennz">3195 · 2.1</p>
+  <h1>Haus Kessler – Station 2.1 Am alten Kessel: Gasgerätearten und Typschild</h1>
+  <p class="leise">Haus Kessler – Auftrag 2: Planung. Video und Team-Übung zum Arbeitsblatt 2.1, ohne Anmeldung und ohne Punkte.</p>
+  <div class="sprung"><a href="#video">Video 2.1.1</a><a href="#team-uebung">2.1.2 Dreier-Team</a></div>
+
+  <section class="karte" id="video">
+    <h2>Video 2.1.1: Gasgerätearten A, B, C – woher kommt die Luft?</h2>
+    <div class="videoplatz"><!--VIDEO-2-1-1--><p><a href="https://youtu.be/ZX5jxzhgj2c?t=310" target="_blank" rel="noopener"><b>Video bei YouTube öffnen</b> (ab 5:10, etwa 3 Minuten)</a></p><p>Der Sprecher kommt aus der Schweiz: Er sagt „Gasapparat“ statt Gasgerät, „Typ A, B, C“ statt Art A, B, C und „Abzug“ statt Abgasanlage.</p><p class="leise">Quelle: YouTube, Kanal „sanitärlernen“, „Gasapparate 1 I Anforderungen &amp; Bauarten“. Der Link öffnet YouTube; dort gelten die Datenschutzregeln von YouTube.</p></div>
+  </section>
+
+  <section class="karte" id="team-uebung">
+    <h2>2.1.2 Dreier-Team: Drei Geräte, eine Bestandsliste</h2>
+    <div class="sprech"><b class="wer">DEIN CHEF</b>„Ihr seid zu dritt. Jeder nimmt sich ein Gerät vor: den alten Kessel, das Gerät oben im Bad oder den Prospekt vom neuen Gerät. Sagt mir für jedes Gerät, woher es seine Luft holt und was das Tabellenbuch vom Aufstellraum verlangt. Am Ende will ich von jedem von euch die ganze Bestandsliste.“</div>
+    <p><b>So geht es:</b> Teil 1 – du liest das Typschild deines Geräts und schlägst im Tabellenbuch nach (S. 385 bis 388). Teil 2 – du holst dir eine Antwort vom nächsten Tablet (Tablet 1 fragt Tablet 2, Tablet 2 fragt Tablet 3, Tablet 3 fragt Tablet 1). Teil 3 – ihr setzt euch zusammen, jeder trägt die Ergebnisse der beiden anderen in die Bestandsliste ein, und ihr beantwortet eine gemeinsame Frage.</p>
+    <div id="team"></div>
+  </section>
+
+  <footer>Diese Seite setzt keine Cookies, speichert nichts auf dem Gerät und lädt nichts von anderen Servern. Beim Aufruf verarbeitet der Anbieter GitHub technisch die IP-Adresse des Geräts.</footer>
+</main>
+<script>
+// ---------------------------------------------------------------- Dreier-Team 2.1.2 „Drei Geräte, eine Bestandsliste“ (ohne DOM)
+// Haus Kessler, Station 2.1 „Am alten Kessel: Gasgerätearten und Typschild“. Feinplan: VORSCHAU-Kessler-Station-2-1.html (Element „Dreier-Team:
+// Drei Geräte, eine Bestandsliste“), Typschild-Texte wörtlich aus BAUPLAN-Auftrag-2-Planung-25-11.md, Abschnitt D, Station 2.1 (A, B, C).
+// Regel des Lehrers 24.11.2026 (Weg A): Die Übung fragt „Welches Tablet bist du? 1 · 2 · 3“. Ring: 1 holt von 2, 2 von 3, 3 von 1.
+// Tablet 1 alter Kessel (Heizraum im Keller) · Tablet 2 Gerät im Bad (Mietwohnung OG, Bad mit Fenster) · Tablet 3 neues Gerät (Prospekt).
+// Punkte wie Röhringer 3.1.2: Teil 1 zwei eigene Antworten (2 × 15) · Teil 2 Ringtausch (20, zählt erst, wenn Teil 1 stimmt) ·
+// Teil 3 vier Antworten der Mitspieler (4 × 10) + gemeinsame Frage (10), zählen erst, wenn Teil 2 stimmt. 100 nur, wenn alles stimmt.
+// Tabellenbuch = neue Ausgabe (6. Auflage 2026): Tab. 385.1 (Gerätearten), Tab. 387.2 (Aufstellräume), S. 388 (Schutzziele Art B).
+const BTK=(()=>{
+ const Q='Q̇';
+ // Typschilder: jede Zeile = ein Stück des Bauplan-Textes zwischen „ · “ (wörtlich)
+ const GERAETE=[
+  {k:'kessel',name:'Alter Kessel',kurz:'alter Kessel',ort:'Heizraum im Keller',ortKurz:'Heizraum, Keller',
+   platte:['Art B11BS','Kat. I2ELL','2E, G 20 – 20 mbar',Q+'NB 26,0 kW',Q+'NL 23,4 kW'],verblasst:true,
+   art:'B11BS',arten:['B11BS'],luft:'raum',bed:'schutz',
+   steckbrief:['Gas-Spezialheizkessel mit atmosphärischem Brenner, von 1996.','Das Abgas geht über ein Rohr in den Schornstein, Zug 1.','Der Hersteller auf dem Typschild ist verblasst.']},
+  {k:'bad',name:'Gerät im Bad',kurz:'Gerät im Bad',ort:'Bad der Mietwohnung im OG',ortKurz:'Bad, OG (Mietwohnung)',
+   platte:['DE, cat I2ELL','Art B11BS','2E, G 20 – 20 mbar',Q+'NB 24,4 kW',Q+'NL 22,0 kW','CE-0085 BP 0217','CE 0085 – 04'],
+   art:'B11BS',arten:['B11BS'],luft:'raum',bed:'bad',
+   steckbrief:['Gas-Durchlaufwasserheizer für das warme Wasser der Mietwohnung.','Das Abgas geht über ein Rohr in den Schornstein, Zug 2.','Das Bad hat ein Fenster. Die Mieterin hat 2026 alle Fenster der Wohnung tauschen lassen.']},
+  {k:'neu',name:'Neues Gerät',kurz:'neues Gerät',ort:'Heizraum im Keller, andere Wand (geplant)',ortKurz:'Heizraum, Keller (geplant)',
+   platte:['DE, cat I2ELL','Art C13x, C33x, C43x, C53x, C93x','2E, G 20 – 20 mbar',Q+'NB 20,0 kW',Q+'N 80/60 °C 19,5 kW',Q+'N 50/30 °C 21,2 kW','CE-0085 CT 0456','CE 0085 – 26'],
+   art:'C13x, C33x, C43x, C53x, C93x',arten:['C13X','C33X','C43X','C53X','C93X'],luft:'rohr',bed:'frei',
+   steckbrief:['Gas-Brennwertkessel, wandhängend, mit Gebläse – so steht es im Prospekt.','Geplant: im Heizraum an der anderen Wand.','Luft und Abgas sollen über ein Luft-Abgas-System im alten Schornsteinzug 1 laufen.']}];
+ // Ring: Tablet i untersucht Gerät i und fragt Tablet „von“ nach der Art auf dessen Typschild
+ const TAB=[{von:1},{von:2},{von:0}];
+ // Teil 1, Frage 1
+ const LUFT={raum:'aus dem Aufstellraum',rohr:'über ein eigenes Rohr von draußen'};
+ // Teil 1, Frage 2: je Tablet drei Sätze, genau einer stimmt (Tab. 387.2, S. 388)
+ const SATZ={
+  schutz:'Das Gerät ist nur zulässig, wenn die Schutzziele eingehalten sind (S. 388): sicherer Betrieb beim Anfahren und genug Verbrennungsluft.',
+  bad:'Das Gerät ist nur zulässig, wenn die Schutzziele eingehalten sind (S. 388) – und es darf nicht in einem Bad ohne Außenfenster hängen, das über einen Schacht ohne Ventilator entlüftet wird.',
+  frei:'Das Gerät darf unabhängig von Rauminhalt und Raumlüftung hängen – sogar in einer Garage.',
+  artA:'Eine Lüftungsanlage muss während des Betriebs je kW mindestens 30 m³/h Luft aus dem Raum ins Freie abführen.',
+  nie:'In einem Bad darf ein Gerät dieser Art grundsätzlich nicht hängen.',
+  oeffnung:'Der Raum braucht eine Öffnung ins Freie von 150 cm² oder 2 × 75 cm².'};
+ const WAHL=[['artA','schutz','frei'],['nie','frei','bad'],['frei','oeffnung','schutz']];
+ // Kurzfassung für die Bestandsliste (Teil 3 und die fertige Liste)
+ const BED={schutz:'nur, wenn die Schutzziele eingehalten sind (S. 388)',
+  bad:'Schutzziele (S. 388) – und kein Bad ohne Außenfenster mit Schachtlüftung',
+  frei:'keine Bedingung an Rauminhalt und Lüftung – sogar Garage erlaubt'};
+ const BEDS=['schutz','bad','frei'];
+ // gemeinsame Frage (Lösung laut Vorschau: „Gerät im Bad: Es braucht Raumluft, und die Fenster sind neu.“)
+ const SCHLUSS=[
+  {k:'kessel',t:'Alter Kessel: Er braucht Raumluft und ist schon 30 Jahre alt.'},
+  {k:'badfenster',t:'Gerät im Bad: Es braucht Raumluft, und die Fenster sind neu.'},
+  {k:'badohne',t:'Gerät im Bad: Das Bad hat kein Fenster, also darf es dort gar nicht hängen.'},
+  {k:'neu',t:'Neues Gerät: Es wird als Nächstes eingebaut, also prüfen wir zuerst seine Luft.'}];
+ const SCHLUSS_RICHTIG='badfenster';
+ const leer=()=>({luft:'',bed:'',ring:'',fremd:{},schluss:''});
+ const andere=i=>[0,1,2].filter(j=>j!==i);
+ // Art vom Typschild tolerant lesen: Groß/klein egal, Leerzeichen, Bindestriche, Punkte, Kommas egal, tiefgestellte Ziffern (B₁₁) erlaubt,
+ // „Art“ davor erlaubt. Kessel und Bad: B11BS. Neues Gerät: eine oder mehrere der Arten vom Typschild (C13x, C33x, C43x, C53x, C93x), jede mit x.
+ function kompakt(s){let t=String(s==null?'':s);try{t=t.normalize('NFKC');}catch(_){}
+  t=t.toUpperCase().replace(/[\s\-‐-―.,;:\/_…+·*()"'„“”]/g,'');return t.replace(/^ART/,'').replace(/UND/g,'');}
+ function artPasst(s,g){const G=typeof g==='number'?GERAETE[g]:g,t=kompakt(s);if(!t)return false;
+  if(G.k!=='neu')return t==='B11BS';
+  const teile=t.match(/C\d\dX/g)||[];return teile.length>0&&t.replace(/C\d\dX/g,'')===''&&teile.every(x=>G.arten.includes(x));}
+ // Grund, warum eine Art nicht passt (für die Rückmeldung): leer · eigen (Art des eigenen Geräts) · fastB (B11 ohne BS) · fastX (C.. ohne x) · nein
+ function artHinweis(s,i){const G=GERAETE[TAB[i].von],t=kompakt(s);if(!t)return 'leer';if(artPasst(s,G))return 'ok';
+  if(G.k!==GERAETE[i].k&&artPasst(s,GERAETE[i]))return 'eigen';
+  if(G.k!=='neu'&&/^B11(B|S)?$/.test(t))return 'fastB';
+  if(G.k==='neu'&&/^(C\d\dX?)+$/.test(t)&&/C\d\d(?!X)/.test(t))return 'fastX';
+  return 'nein';}
+ function stand(i,z){const G=GERAETE[i],T=TAB[i];z=z||leer();
+  const eigen=[z.luft===G.luft,z.bed===G.bed],ring=artPasst(z.ring,T.von);
+  const fremd=andere(i).map(j=>{const f=z.fremd[GERAETE[j].k]||{};return [f.luft===(GERAETE[j].luft==='raum'?'ja':'nein'),f.bed===GERAETE[j].bed];});
+  const schluss=z.schluss===SCHLUSS_RICHTIG;
+  const p1=eigen.every(Boolean),p2=p1&&ring,p3=p2&&fremd.flat().every(Boolean)&&schluss;
+  const punkte=eigen.filter(Boolean).length*15+(p2?20:0)+(p2?fremd.flat().filter(Boolean).length*10+(schluss?10:0):0);
+  return {eigen,ring,fremd,schluss,p1,p2,p3,punkte};}
+ // richtig ausgefüllt (für Proben und die Lösung der Lehrkraft)
+ function richtig(i){const z=leer(),G=GERAETE[i];z.luft=G.luft;z.bed=G.bed;z.ring=GERAETE[TAB[i].von].k==='neu'?'C93x':'B11BS';
+  andere(i).forEach(j=>{z.fremd[GERAETE[j].k]={luft:GERAETE[j].luft==='raum'?'ja':'nein',bed:GERAETE[j].bed};});z.schluss=SCHLUSS_RICHTIG;return z;}
+ // Spielstand prüfen (aus Moodle geladen): nur bekannte Felder und Werte, Text kurz
+ function saeubere(z){const o=leer();if(!z||typeof z!=='object')return o;
+  if(z.luft in LUFT)o.luft=z.luft;if(typeof z.bed==='string'&&z.bed in SATZ)o.bed=z.bed;
+  o.ring=typeof z.ring==='string'?z.ring.slice(0,40):'';
+  if(z.fremd&&typeof z.fremd==='object')GERAETE.forEach(G=>{const f=z.fremd[G.k];if(f&&typeof f==='object')o.fremd[G.k]={luft:['ja','nein'].includes(f.luft)?f.luft:'',bed:BEDS.includes(f.bed)?f.bed:''};});
+  o.schluss=SCHLUSS.some(s=>s.k===z.schluss)?z.schluss:'';return o;}
+ return {GERAETE,TAB,LUFT,SATZ,WAHL,BED,BEDS,SCHLUSS,SCHLUSS_RICHTIG,leer,andere,kompakt,artPasst,artHinweis,stand,richtig,saeubere};
+})();
+
+// ---------------------------------------------------------------- Bilder der Station 2.1 (selbst gezeichnet, keine Buchskizze): Typschilder und Aufstellorte
+// Typschild: Zeilen wörtlich aus BTK.GERAETE[i].platte (Bauplan Station 2.1, A/B/C). Aufstellort: schlichter Schnitt durch den Raum, ohne Luft-
+// und Abgaspfeile (woher die Luft kommt, ist die Frage in Teil 1).
+const K21BILD=(()=>{
+ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+ const FONT='font-family="Arial, Helvetica, sans-serif"';
+ const FARBE=[{a:'#efe7d2',b:'#cbbf9e',rand:'#8d8166',text:'#2b2a25'},{a:'#f1f3f5',b:'#c8cdd3',rand:'#7f8891',text:'#1f2a33'},{a:'#f2f7fa',b:'#cbd8df',rand:'#557686',text:'#1b2b35'}];
+ // eine Zeile des Schildes; „Q̇NB 26,0 kW“ → Q̇ mit tiefgestelltem NB links, Wert rechtsbündig
+ function zeile(s,y,f){const m=s.match(/^Q̇(N[BL]?) (.*?)\s*([\d,]+ kW)$/);
+  if(m)return `<text x="34" y="${y}" fill="${f.text}">Q̇<tspan dy="4" font-size="11">${esc(m[1])}</tspan><tspan dy="-4">${m[2]?' '+esc(m[2]):''}</tspan></text><text x="326" y="${y}" text-anchor="end" fill="${f.text}">${esc(m[3])}</text>`;
+  const ce=/^CE 0085/.test(s);
+  return `<text x="34" y="${y}" fill="${f.text}"${ce?' font-weight="700" font-size="17"':''}>${esc(s)}</text>`;}
+ function typschild(i){const G=BTK.GERAETE[i],f=FARBE[i],start=G.verblasst?84:52,H=start+(G.platte.length-1)*27+30,id='ts'+i;
+  let s=`<svg class="typschild" viewBox="0 0 360 ${H}" role="img" aria-label="${esc('Typschild ('+G.name+'): '+G.platte.join(' · ')+(G.verblasst?' – Hersteller verblasst':''))}" ${FONT} font-size="16">`+
+   `<defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${f.a}"/><stop offset="1" stop-color="${f.b}"/></linearGradient></defs>`+
+   `<rect x="8" y="8" width="344" height="${H-16}" rx="12" fill="url(#${id})" stroke="${f.rand}" stroke-width="2"/>`+
+   `<rect x="14" y="14" width="332" height="${H-28}" rx="8" fill="none" stroke="#ffffff" stroke-opacity=".55"/>`+
+   [[24,24],[336,24],[24,H-24],[336,H-24]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4.5" fill="${f.b}" stroke="${f.rand}"/><circle cx="${x-1.2}" cy="${y-1.2}" r="1.4" fill="#fff" opacity=".7"/>`).join('');
+  if(G.verblasst){// Herstellerzeile abgegriffen, dazu etwas Rost
+   s+=`<g opacity=".32" fill="${f.rand}">`+[[34,34,26],[64,40,10],[78,34,30],[112,36,8],[124,34,22],[156,38,14],[176,34,24]].map(([x,y,w])=>`<rect x="${x}" y="${y}" width="${w}" height="${y===34?14:9}" rx="2"/>`).join('')+'</g>'+
+    `<path d="M30 54 L210 46 M40 62 L170 57" stroke="#fff" stroke-opacity=".6" stroke-width="1.2"/>`+
+    `<text x="220" y="47" fill="${f.rand}" font-size="12" font-style="italic" opacity=".9">(verblasst)</text>`+
+    `<ellipse cx="262" cy="${H-15}" rx="16" ry="5" fill="#a8703d" opacity=".22"/><ellipse cx="70" cy="${H-14}" rx="10" ry="4" fill="#a8703d" opacity=".18"/>`;}
+  G.platte.forEach((z,n)=>{s+=zeile(z,start+n*27,f);});
+  return s+'</svg>';}
+ // ---------------------------------------------------------------- Aufstellorte
+ const T=(x,y,s,o)=>`<text x="${x}" y="${y}"${o?' '+o:''}>${esc(s)}</text>`;
+ function keller(titel){// Schnitt durch den Heizraum im Keller: Erdreich, Kellerfenster, Schornstein Zug 1 rechts
+  return `<rect x="0" y="0" width="360" height="36" fill="#e3eef6"/><rect x="0" y="36" width="360" height="204" fill="#d8c3a0"/>`+
+   `<path d="M0 36 H360" stroke="#7d6a4c" stroke-width="2"/>`+
+   `<rect x="14" y="50" width="332" height="186" fill="#b8ad9b"/><rect x="22" y="58" width="316" height="170" fill="#f6f3ec"/>`+
+   `<rect x="22" y="222" width="316" height="6" fill="#e6e0d3"/>`+
+   `<rect x="34" y="66" width="50" height="28" fill="#cfe3f1" stroke="#6d7c88" stroke-width="2"/><path d="M59 66 V94" stroke="#6d7c88" stroke-width="2"/>`+
+   T(34,108,'Kellerfenster','font-size="11" fill="#5d6b75"')+
+   `<rect x="292" y="0" width="34" height="228" fill="#c4bfb7" stroke="#8f8981"/><rect x="300" y="0" width="18" height="228" fill="#a9a39a"/>`+
+   T(12,24,titel,'font-size="14" font-weight="700" fill="#22303a"');}
+ function tuer(x){return `<rect x="${x}" y="150" width="40" height="78" fill="#c99f6e" stroke="#8a6a44"/><circle cx="${x+33}" cy="192" r="2.5" fill="#5a4630"/>`;}
+ function kessel(blass){const o=blass?' opacity=".38" stroke-dasharray="5 4"':'';
+  return `<g${blass?' opacity=".55"':''}><rect x="168" y="140" width="78" height="88" rx="4" fill="#ece9e2" stroke="#4b5560" stroke-width="1.5"${o}/>`+
+   `<rect x="186" y="190" width="42" height="18" rx="2" fill="#3a3f45"${blass?' opacity=".4"':''}/>`+
+   (blass?'':`<path d="M195 205 q3 -8 6 0 M205 205 q3 -9 6 0 M215 205 q3 -8 6 0" stroke="#f0a030" stroke-width="2" fill="none"/>`)+
+   `<path d="M182 140 L232 140 L222 126 L192 126 Z" fill="#d9d6cf" stroke="#4b5560"${o}/></g>`;}
+ function ort(i){const k=BTK.GERAETE[i].k,kl='font-size="12.5" fill="#22303a"';let s='',label='';
+  if(k==='kessel'){label='Heizraum im Keller: alter Kessel auf dem Boden, Abgasrohr in den Schornstein Zug 1, Kellerfenster, Tür';
+   s=keller('Heizraum (Keller)')+tuer(30)+kessel(false)+
+    `<path d="M207 126 V100 Q207 92 215 92 H292" fill="none" stroke="#7b838b" stroke-width="10"/><path d="M207 126 V100 Q207 92 215 92 H292" fill="none" stroke="#a7aeb5" stroke-width="3"/>`+
+    `<rect x="174" y="150" width="18" height="12" fill="#d9cfb2" stroke="#8d8166"/>`+
+    T(164,160,'Typschild','text-anchor="end" '+kl)+T(164,214,'alter Kessel','text-anchor="end" font-weight="700" '+kl)+
+    T(286,74,'Schornstein, Zug 1','text-anchor="end" '+kl);}
+  else if(k==='bad'){label='Bad der Mietwohnung im Obergeschoss: Fenster, Badewanne, Gas-Durchlaufwasserheizer an der Wand, Abgasrohr in den Schornstein Zug 2';
+   s=`<rect x="0" y="0" width="360" height="240" fill="#e9e4da"/><rect x="14" y="30" width="304" height="198" fill="#f7f5f0"/>`+
+    `<rect x="14" y="160" width="304" height="68" fill="#e1edf1"/>`+
+    Array.from({length:17},(_,n)=>`<path d="M${14+n*18} 160 V228" stroke="#c9dbe1"/>`).join('')+`<path d="M14 177 H318 M14 194 H318 M14 211 H318" stroke="#c9dbe1"/>`+
+    `<rect x="0" y="228" width="360" height="12" fill="#a9a196"/>`+
+    `<rect x="322" y="0" width="30" height="228" fill="#c4bfb7" stroke="#8f8981"/><rect x="329" y="0" width="16" height="228" fill="#a9a39a"/>`+
+    `<rect x="26" y="54" width="78" height="92" fill="#cfe3f1" stroke="#6d7c88" stroke-width="3"/><path d="M65 54 V146 M26 100 H104" stroke="#ffffff" stroke-width="4"/><rect x="26" y="54" width="78" height="92" fill="none" stroke="#6d7c88" stroke-width="3"/>`+
+    T(26,46,'Fenster (neu, 2026)',kl)+
+    `<rect x="120" y="186" width="172" height="40" rx="9" fill="#ffffff" stroke="#8796a0" stroke-width="1.5"/><path d="M128 194 H284" stroke="#d5dde2" stroke-width="2"/>`+
+    `<path d="M175 156 V182" stroke="#7a8a96" stroke-width="3"/><rect x="168" y="178" width="18" height="6" rx="2" fill="#7a8a96"/>`+
+    `<rect x="150" y="82" width="50" height="74" rx="4" fill="#f2f0eb" stroke="#4b5560" stroke-width="1.5"/><rect x="163" y="104" width="24" height="12" rx="2" fill="#3a3f45"/>`+
+    `<path d="M154 82 L196 82 L188 70 L162 70 Z" fill="#d9d6cf" stroke="#4b5560"/>`+
+    `<path d="M175 70 V56 Q175 48 183 48 H322" fill="none" stroke="#7b838b" stroke-width="9"/><path d="M175 70 V56 Q175 48 183 48 H322" fill="none" stroke="#a7aeb5" stroke-width="3"/>`+
+    `<rect x="158" y="132" width="16" height="10" fill="#e0e3e6" stroke="#7f8891"/>`+
+    T(206,141,'Typschild',kl)+T(206,96,'Gas-Durchlauf-','font-weight="700" '+kl)+T(206,109,'wasserheizer','font-weight="700" '+kl)+
+    T(316,72,'Schornstein, Zug 2','text-anchor="end" '+kl)+T(14,20,'Bad (Mietwohnung, OG)','font-size="14" font-weight="700" fill="#22303a"');}
+  else {label='Plan für den Heizraum im Keller: neues Gerät an der Wand, Luft-Abgas-System im alten Schornsteinzug 1, der alte Kessel kommt raus';
+   s=keller('Heizraum (Keller) – der Plan')+kessel(true)+T(207,166,'alter Kessel','text-anchor="middle" font-size="11" fill="#4b5560"')+T(207,180,'kommt raus','text-anchor="middle" font-size="11" fill="#4b5560"')+
+    `<path d="M127 100 V92 Q127 84 135 84 H300" fill="none" stroke="#b9c2c9" stroke-width="16"/><path d="M127 100 V92 Q127 84 135 84 H309 V0" fill="none" stroke="#7b838b" stroke-width="6"/>`+
+    `<rect x="104" y="100" width="46" height="74" rx="5" fill="#ffffff" stroke="#0b6b7d" stroke-width="2" stroke-dasharray="6 4"/><rect x="115" y="116" width="24" height="12" rx="2" fill="#d6ebee"/>`+
+    T(127,190,'neues Gerät','text-anchor="middle" font-weight="700" '+kl)+T(127,204,'(geplant)','text-anchor="middle" '+kl)+
+    T(286,70,'Luft-Abgas-System im alten Zug 1','text-anchor="end" '+kl);}
+  return `<svg class="ortbild" viewBox="0 0 360 240" role="img" aria-label="${esc(label)}" ${FONT}>${s}</svg>`;}
+ return {typschild,ort};
+})();
+
+// ---------------------------------------------------------------- Dreier-Team 2.1.2: Bild und Bedienung (braucht BTK, K21BILD)
+// Start: „Welches Tablet bist du? 1 · 2 · 3“. Danach zeigt das Tablet nur sein Gerät (Typschild, Aufstellort, Steckbrief) und die drei Teile.
+// Z = aktuelle Auswahl, P = Stand beim letzten „Prüfen“. Grün/rot, Punkte und das Öffnen des nächsten Teils richten sich nur nach P –
+// wer nach dem Prüfen etwas anderes antippt, sieht erst beim nächsten Prüfen, ob es stimmt. Richtige Antworten bleiben stehen (gesperrt).
+// o: {stand:{t,Z,P}|null, mitPunkten, beiAenderung(), beiPunkte(p)}
+function bauBestand(wurzel,o){
+ o=Object.assign({stand:null,mitPunkten:true,beiAenderung:null,beiPunkte:null},o||{});
+ const R=BTK,G=R.GERAETE,mitP=!!o.mitPunkten;
+ let t=-1,rueck=null;
+ const Z=[R.leer(),R.leer(),R.leer()],P=[null,null,null];
+ const st=o.stand;
+ if(st&&typeof st==='object'){if([0,1,2].includes(st.t))t=st.t;
+  if(Array.isArray(st.Z))st.Z.slice(0,3).forEach((z,i)=>{Z[i]=R.saeubere(z);});
+  if(Array.isArray(st.P))st.P.slice(0,3).forEach((z,i)=>{P[i]=z?R.saeubere(z):null;});}
+ const kopie=z=>JSON.parse(JSON.stringify(z)),e=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+ const gs=i=>R.stand(i,P[i]||R.leer());
+ const besterStand=()=>Math.max(...[0,1,2].map(i=>gs(i).punkte));
+ const aenderung=()=>{o.beiAenderung&&o.beiAenderung();};
+ function startbild(){rueck=null;
+  wurzel.innerHTML='<div class="karte"><h2>Welches Tablet bist du?</h2>'+
+   '<p>Setzt euch zu dritt zusammen. Jeder von euch nimmt eine andere Nummer. Jedes Tablet zeigt ein anderes Gerät aus dem Haus von Herrn Kessler – am Ende braucht jeder die Ergebnisse der beiden anderen.</p>'+
+   '<div class="grosswahl">'+G.map((g,i)=>`<button type="button" data-t="${i}"><b>${i+1}</b>${g.name}<small>${g.ortKurz}</small></button>`).join('')+'</div>'+
+   '<p class="klein">Ihr seid nur zu zweit? Dann übernimmt einer von euch das dritte Tablet mit: Er wählt später unten „anderes Tablet wählen“.</p></div>';
+  wurzel.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>waehleTablet(+b.dataset.t));}
+ function waehleTablet(i){t=i;rueck=null;aenderung();tablet();zumAnfang();}
+ // an den Anfang des Tablets rollen – unter die feste Kopfzeile (sonst verdeckt sie die Überschrift)
+ function zumAnfang(){try{const k=document.querySelector('.kopf'),ab=k?k.getBoundingClientRect().height+8:8;window.scrollTo(0,Math.max(0,wurzel.getBoundingClientRect().top+window.pageYOffset-ab));}catch(_){}}
+ function tablet(){const g=G[t];
+  const cap=g.k==='neu'?'Typschild aus dem Prospekt':g.k==='kessel'?'Typschild am alten Kessel':'Typschild am Gerät im Bad';
+  wurzel.innerHTML=`<div class="tablet"><h3>Tablet ${t+1} – dein Gerät: ${g.name}</h3>
+   <p class="klein" style="margin:0 0 8px">Dein Team: Tablet 1 alter Kessel · Tablet 2 Gerät im Bad · Tablet 3 neues Gerät. Dein Tablet zeigt nur dein Gerät.</p>
+   <div class="geraet"><figure class="bild"><figcaption>${cap}</figcaption>${K21BILD.typschild(t)}</figure>
+   <figure class="bild"><figcaption>Aufstellort: ${g.ort}</figcaption>${K21BILD.ort(t)}</figure></div>
+   <ul class="steckbrief">${g.steckbrief.map(x=>`<li>${x}</li>`).join('')}</ul>
+   <div data-r="teile"></div>
+   <p class="klein" style="margin-top:14px">Falsches Tablet gewählt oder nur zu zweit? <button type="button" class="knopf" data-r="wechsel">anderes Tablet wählen</button></p></div>`;
+  wurzel.querySelector('[data-r="wechsel"]').onclick=()=>{t=-1;aenderung();startbild();};
+  teile();}
+ // Auswahlknopf: gedrückt = aktuelle Auswahl; grün/rot nur, wenn genau dieser Wert geprüft wurde; richtig geprüft = gesperrt
+ function knopf(attr,v,text,zv,pv,ok,zu){const an=zv===v,gep=pv!=null&&pv!==''&&zv===pv,kl=an&&gep?(ok?'ok':'nein'):'';
+  return `<button type="button" ${attr} data-v="${v}" aria-pressed="${an}"${kl?` class="${kl}"`:''}${zu||(gep&&ok)?' disabled':''}>${text}</button>`;}
+ const pkt=(txt,zu)=>mitP?`<span class="klein">(${txt}${zu?' · erst wenn '+zu+' stimmt':''})</span>`:zu?`<span class="klein">(erst wenn ${zu} stimmt)</span>`:'';
+ function teile(){
+  const z=Z[t],p=P[t],s=gs(t),g=G[t],T=R.TAB[t],vg=G[T.von],an=R.andere(t);
+  const ringGep=!!(p&&p.ring!==''&&z.ring===p.ring),ringKl=ringGep?(s.ring?'ok':'nein'):'';
+  let h=`<div class="phase"><b>1 · Dein Gerät</b> ${pkt('zweimal 15 Punkte')}
+   <p class="frage">Woher holt dein Gerät seine Verbrennungsluft? <span class="klein">Die Art auf dem Typschild verrät es – Tabellenbuch S. 385, Tab. 385.1.</span></p>
+   <div class="wahl">${Object.keys(R.LUFT).map(v=>knopf('data-f="luft"',v,R.LUFT[v],z.luft,p&&p.luft,s.eigen[0],false)).join('')}</div>
+   <p class="frage">Was verlangt das Tabellenbuch vom Aufstellraum deines Geräts? <span class="klein">Tab. 387.2 auf S. 387, Spalte deiner Geräteart – und S. 388.</span></p>
+   <div class="satzwahl">${R.WAHL[t].map(v=>knopf('data-f="bed"',v,R.SATZ[v],z.bed,p&&p.bed,s.eigen[1],false)).join('')}</div>`+
+   (s.p1?`<div class="merk"><b>Für die Bestandsliste – sag es nachher deinen Mitspielern:</b><br>${g.name}: Luft aus dem Raum? <b>${g.luft==='raum'?'ja':'nein'}</b> · Aufstellraum: <b>${R.BED[g.bed]}</b></div>`:'')+`</div>
+   <div class="phase ${s.p1?'':'zu'}"><b>2 · Frag Tablet ${T.von+1}</b> ${pkt('20 Punkte',s.p1?'':'Teil 1')}
+   <p class="frage">Diese Antwort kennt nur dein Mitspieler am Tablet ${T.von+1} (${vg.kurz}). Geh hin und frag: <b>„Welche Art steht auf deinem Typschild?“</b></p>
+   <label><span>Art${vg.k==='neu'?' <span class="klein">(auf dem Typschild stehen mehrere – eine genügt)</span>':''}:</span> <input type="text" class="zahl art${ringKl?' '+ringKl:''}" data-f="ring" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" value="${e(z.ring)}"${!s.p1||(ringGep&&s.ring)?' disabled':''}></label></div>
+   <div class="phase ${s.p2?'':'zu'}"><b>3 · Eure Bestandsliste</b> ${pkt('viermal 10 und 10 Punkte',s.p2?'':'Teil 2')}
+   <p class="frage">Setzt euch zusammen. Trag ein, was deine beiden Mitspieler herausgefunden haben:</p>`+
+   an.map((j,a)=>{const m=G[j],f=z.fremd[m.k]||{luft:'',bed:''},pf=(p&&p.fremd[m.k])||{},ok=s.fremd[a],at=`data-f="fremd" data-g="${m.k}"`;
+    return `<div class="mitspieler"><h4>${m.name} <span class="klein">(Tablet ${j+1} · ${m.ortKurz}${s.p2?' · Art '+m.art:''})</span></h4>
+     <p class="frage">Luft aus dem Raum?</p><div class="wahl">${['ja','nein'].map(v=>knopf(at+' data-x="luft"',v,v,f.luft,pf.luft,ok[0],!s.p2)).join('')}</div>
+     <p class="frage">Was verlangt das Tabellenbuch vom Aufstellraum?</p><div class="satzwahl">${R.BEDS.map(v=>knopf(at+' data-x="bed"',v,R.BED[v],f.bed,pf.bed,ok[1],!s.p2)).join('')}</div></div>`;}).join('')+
+   `<p class="frage"><b>Gemeinsame Frage:</b> Bei welchem Gerät müssen wir als Nächstes prüfen, ob die Luft reicht – und warum gerade jetzt?</p>
+   <div class="satzwahl">${R.SCHLUSS.map(x=>knopf('data-f="schluss"',x.k,x.t,z.schluss,p&&p.schluss,s.schluss,!s.p2)).join('')}</div></div>
+   <div class="phase"><b>Bestandsliste für den Chef</b> ${s.p3?'<span class="hinweis-gruen">vollständig</span>':'<span class="klein">(füllt sich, sobald eure Antworten stimmen)</span>'}
+   <div class="rollen"><table class="liste"><tr><th>Gerät</th><th>Ort</th><th>Art</th><th>Luft aus dem Raum?</th><th>Was verlangt das Tabellenbuch vom Aufstellraum?</th></tr>`+
+   [0,1,2].map(j=>{const m=G[j],eig=j===t,a=an.indexOf(j),ok=eig?[s.p1,s.p1]:[s.p2&&s.fremd[a][0],s.p2&&s.fremd[a][1]];
+    return `<tr data-zeile="${m.k}"><td><b>${m.name}</b>${eig?' <span class="klein">(deins)</span>':''}</td><td>${m.ortKurz}</td><td>${eig||s.p2?m.art:'–'}</td>`+
+     `<td>${ok[0]?(m.luft==='raum'?'ja':'nein'):'–'}</td><td>${ok[1]?R.BED[m.bed]:'–'}</td></tr>`;}).join('')+
+   `</table></div></div>
+   <div class="phase">${mitP?`<span class="gross">${s.punkte} von 100 Punkten</span> `:''}${s.p3?'<span class="hinweis-gruen">Alles richtig</span>':`<span class="klein">${mitP?'Die volle Punktzahl gibt es erst, wenn auch die Antworten deiner Mitspieler stimmen.':'Fertig ist die Liste, wenn alle Antworten stimmen.'}</span>`}
+   <div class="wahl" style="margin:10px 0 0"><button type="button" class="knopf haupt" data-r="pruefen">Prüfen</button></div>
+   <p class="rueck${rueck&&rueck.k?' '+rueck.k:''}" data-r="rueck">${rueck?rueck.t:''}</p></div>`;
+  const c=wurzel.querySelector('[data-r="teile"]');c.innerHTML=h;
+  c.querySelectorAll('button[data-f]').forEach(b=>b.onclick=()=>{lies();const d=b.dataset,zz=Z[t];
+   if(d.f==='fremd'){zz.fremd[d.g]=zz.fremd[d.g]||{luft:'',bed:''};zz.fremd[d.g][d.x]=d.v;}else zz[d.f]=d.v;aenderung();teile();});
+  const ri=c.querySelector('input[data-f="ring"]');ri.addEventListener('input',()=>{Z[t].ring=ri.value;ri.classList.remove('ok','nein');aenderung();});
+  c.querySelector('[data-r="pruefen"]').onclick=()=>pruefen();}
+ function lies(){const ri=wurzel.querySelector('[data-r="teile"] input[data-f="ring"]');if(ri&&t>=0)Z[t].ring=ri.value.slice(0,40);}
+ function pruefen(){if(t<0)return null;lies();P[t]=kopie(Z[t]);const s=gs(t),T=R.TAB[t],z=Z[t];let k='nein',x;
+  if(s.p3){k='ok';x=mitP?'Alles richtig – 100 Punkte. Eure Bestandsliste ist vollständig.':'Alles richtig – eure Bestandsliste ist vollständig.';}
+  else if(!s.p1)x='Teil 1 stimmt noch nicht. Sieh dir dein Typschild an und schlag nach: Tab. 385.1 (S. 385) und Tab. 387.2 (S. 387).';
+  else if(!s.p2){const hw=R.artHinweis(z.ring,t),n=T.von+1;
+   x=hw==='leer'?`Teil 1 stimmt. Jetzt frag Tablet ${n} nach der Art auf seinem Typschild.`:hw==='eigen'?`Das ist die Art von deinem eigenen Gerät. Frag Tablet ${n} nach seinem Typschild.`:
+    hw==='fastB'?'Fast: Auf dem Typschild steht hinter „B11“ noch etwas. Frag noch einmal nach.':hw==='fastX'?'Fast: Auf dem Typschild steht hinter der Zahl noch ein Buchstabe. Frag noch einmal nach.':
+    'Die Art von deinem Mitspieler stimmt noch nicht. Frag noch einmal nach.';if(hw==='leer')k='';}
+  else if(!z.schluss&&R.andere(t).every(j=>{const f=z.fremd[G[j].k];return !f||(!f.luft&&!f.bed);})){k='';x='Teil 2 stimmt. Jetzt setzt euch zusammen und füllt die Bestandsliste.';}
+  else if(s.fremd.flat().every(Boolean)&&!s.schluss)x='Die gemeinsame Frage stimmt noch nicht. Überlegt zusammen: Wo im Haus hat sich gerade etwas geändert?';
+  else x='Noch nicht alles richtig. Vergleicht eure Ergebnisse noch einmal.';
+  rueck={k,t:x};teile();aenderung();o.beiPunkte&&o.beiPunkte(besterStand());return s;}
+ if(t<0)startbild();else tablet();
+ return {waehleTablet,pruefen,tablet:()=>t,
+  setze:(i,f)=>{f(Z[i]);if(i===t&&t>=0)teile();aenderung();},
+  fuellen:i=>{Z[i]=R.richtig(i);if(i===t&&t>=0)teile();aenderung();},
+  stand:i=>gs(i),besterStand,zumAnfang,
+  exportiere:()=>({t,Z:kopie(Z),P:kopie(P)}),
+  wechsel:()=>{t=-1;aenderung();startbild();}};
+}
+
+const TM=bauBestand(document.getElementById('team'),{mitPunkten:false});
+window.__seite={TM};
+</script>
+</body>
+</html>
