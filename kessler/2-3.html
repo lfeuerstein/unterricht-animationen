@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>2.3 Schornstein und Dach: Die Abgasanlage – Haus Kessler</title>
+<style>
+:root{--papier:#f4f1ea;--tinte:#22303a;--leise:#5d6b75;--linie:#d5cfc2;--karte:#fff;--akzent:#0b6b7d;--akzent-hell:#e1f0f2;--gold:#d99a1b;
+  --vl:#d0342c;--rl:#2f6fb7;--ring:#b0408a;--gut:#2e7d4f;--gut-hell:#e4f3e3;--schlecht:#c8371f;--schlecht-hell:#fde3df;--merk:#fffbe9;--merk-rand:#ecd9a0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation}
+body{margin:0;background:var(--papier);color:var(--tinte);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+.kopf{position:sticky;top:0;z-index:5;background:var(--papier);border-bottom:1px solid var(--linie);padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.kopf .titel{flex:1 1 360px;min-width:0}
+.kopf .ober{margin:0;font-size:13px;color:var(--leise)}
+.kopf h1{margin:0;font-size:20px;line-height:1.25}
+.kopf .stand{font-size:16px;white-space:nowrap;text-align:right}
+.kopf .stand small{display:block;font-size:12px;color:var(--leise)}
+.kurs{min-height:44px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--akzent);background:#fff;color:var(--akzent);font-weight:600;cursor:pointer;touch-action:manipulation}
+main{max-width:1040px;margin:0 auto;padding:14px 16px 60px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+h2{font-size:20px;margin:0 0 8px;line-height:1.25}
+h3{font-size:17px;margin:14px 0 6px}
+p{margin:0 0 10px}
+.klein{font-size:14px;color:var(--leise)}
+.sprech{border-left:5px solid var(--akzent);background:var(--akzent-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:0 0 12px}
+.sprech b.wer{display:block;font-size:13px;color:var(--akzent);letter-spacing:.3px;margin-bottom:2px}
+.merk{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 12px;margin:10px 0 0}
+.wahl{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.knopf,.wahl button{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;touch-action:manipulation}
+.wahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.knopf.haupt{background:var(--akzent);border-color:var(--akzent);color:#fff}
+.knopf:disabled,.wahl button:disabled{opacity:.45;cursor:default}
+svg{display:block;width:100%;height:auto}
+.rollen{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--leise);font-weight:600}
+.balken{height:12px;border-radius:6px;background:var(--akzent)}
+.balkenreihe{display:flex;min-width:60px}
+.zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.zwei{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}}
+/* Animation */
+.wegbild{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.messung{min-height:48px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--akzent-hell);font-size:17px}
+.messung b{font-size:19px}
+.hk-knopf{cursor:pointer}
+.lupe-ruf{cursor:pointer}
+.lupe{border:2px solid var(--tinte);border-radius:14px;padding:12px 14px;margin-top:12px;background:#fff}
+.lupe h3{margin:0 0 6px}
+.lupe ol{margin:8px 0 0;padding-left:22px}
+.lupe li{margin:3px 0}
+/* Aufgaben */
+.aufgabe{border:1px solid var(--linie);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:#fff}
+.aufgabe h3{margin:0 0 6px}
+.aufgabe .pkt{float:right;margin-left:10px;font-size:14px;color:var(--leise);font-weight:600}
+.aufgabe.fertig{border-color:var(--gut);box-shadow:0 0 0 2px var(--gut-hell)}
+.feld{display:inline-flex;align-items:center;gap:6px;margin:4px 16px 4px 0;font-size:17px}
+input.zahl{font:inherit;width:5.2em;min-height:44px;padding:6px 8px;border:1px solid var(--linie);border-radius:8px;background:#fff;color:var(--tinte)}
+input.zahl.ok{border-color:var(--gut);background:var(--gut-hell)}
+input.zahl.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+input.zahl:disabled{opacity:1;color:var(--tinte)}
+.rueck{display:block;margin-top:8px;font-size:15px}
+.rueck.ok{color:var(--gut);font-weight:600}
+.rueck.nein{color:var(--schlecht)}
+.satz{border:1px solid var(--linie);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+.satz p{margin:0 0 6px;font-style:italic}
+.satz.ok{border-color:var(--gut);background:var(--gut-hell)}
+.satz.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+.satz .wahl{margin:0}
+/* Zeichnen */
+svg.zeichnen{min-width:680px;touch-action:manipulation;background:#eef1ea;border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.gruppe{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 8px}
+.gruppe button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.gruppe .gname{font-size:14px;color:var(--leise);font-weight:600;min-width:110px}
+.pruefliste{list-style:none;padding:0;margin:10px 0 0;font-size:15px}
+.pruefliste li{padding:3px 0 3px 26px;position:relative}
+.pruefliste li::before{position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;text-align:center;line-height:18px}
+.pruefliste li.ok::before{content:"✓";background:var(--gut)}
+.pruefliste li.nein::before{content:"✗";background:var(--schlecht)}
+/* Team */
+.tablet{border:2px solid var(--tinte);border-radius:16px;padding:14px;background:#fff;margin-top:6px}
+.tablet h3{margin:0 0 6px}
+.phase{border-top:1px solid var(--linie);padding-top:10px;margin-top:12px}
+.phase.zu{opacity:.45}
+.phase label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.grosswahl{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}
+.grosswahl button{min-width:150px;min-height:96px;border-radius:16px;border:2px solid var(--tinte);background:#fff;cursor:pointer;font-size:18px;padding:10px 14px;touch-action:manipulation}
+.grosswahl button b{display:block;font-size:34px;line-height:1.1}
+.ok-text{color:var(--gut);font-weight:600}
+.hinweis-gruen{display:inline-block;background:var(--gut-hell);border:1px solid var(--gut);border-radius:8px;padding:2px 8px}
+.hinweis-orange{display:inline-block;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:2px 8px}
+@media (max-width:820px){body{font-size:16px}.kopf h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Haus Kessler 2.3 – Ergänzungen zu basis.css (gemeinsam, unverändert eingebunden): Fehlerbild, Angaben A/B/C, Fundstellen, Prüfprotokoll */
+.lage{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:860px){.lage{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);align-items:start}}
+figure.bild{margin:0;background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;padding:8px 10px 10px}
+figure.bild figcaption{font-size:14px;font-weight:600;margin:0 0 6px}
+svg.plan{max-width:520px;margin:0 auto}
+.wissen{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;padding:10px 12px;font-size:15px}
+.wissen h4{margin:0 0 6px;font-size:15px}
+.wissen ul{margin:0;padding-left:18px}
+.wissen li{margin:3px 0}
+.frage{margin:12px 0 6px}
+.zeile{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:6px 0}
+.zeile .was{font-size:15px;color:var(--leise);min-width:92px}
+.reihe{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.reihe button{min-width:48px;min-height:44px;padding:6px 12px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;font-weight:600;touch-action:manipulation}
+.reihe button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.reihe button:disabled{opacity:.45;cursor:default}
+.satzwahl{display:flex;flex-direction:column;gap:8px;margin:0 0 6px}
+.satzwahl button{min-height:44px;padding:9px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;text-align:left;line-height:1.35;touch-action:manipulation}
+.satzwahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.satzwahl button:disabled{opacity:.45;cursor:default}
+.satzwahl button .bst{display:inline-block;min-width:1.6em;font-weight:700}
+.wahl button.ok[aria-pressed],.satzwahl button.ok[aria-pressed],.reihe button.ok[aria-pressed]{background:var(--gut-hell);border:2px solid var(--gut);color:var(--tinte);opacity:1}
+.wahl button.nein[aria-pressed],.satzwahl button.nein[aria-pressed],.reihe button.nein[aria-pressed]{background:var(--schlecht-hell);border:2px solid var(--schlecht);color:var(--tinte)}
+.wahl button.ok::after,.satzwahl button.ok::after,.reihe button.ok::after{content:" ✓";color:var(--gut);font-weight:700}
+.wahl button.nein::after,.satzwahl button.nein::after,.reihe button.nein::after{content:" ✗";color:var(--schlecht);font-weight:700}
+input.zahl{width:5.6em}
+.mitspieler{border:1px solid var(--linie);border-radius:12px;padding:10px 12px;margin:10px 0;background:#fcfbf8}
+.mitspieler h4{margin:0 0 4px;font-size:16px}
+.ringfrage{border:1px solid var(--linie);border-radius:12px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+table.vergleich{min-width:620px}
+table.vergleich td,table.vergleich th{vertical-align:top}
+.gross{font-size:20px;font-weight:700}
+.grosswahl button small{display:block;font-size:13px;color:var(--leise);margin-top:2px}
+.merk b{font-weight:700}
+
+.leise{color:var(--leise);font-size:14px}
+.kennz{font-weight:700;color:var(--akzent);margin:0 0 2px}
+a.zurueck{color:var(--akzent)}
+h1{font-size:24px;margin:0 0 4px;line-height:1.2}
+.sprung{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.sprung a{display:inline-block;padding:9px 14px;border-radius:999px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-decoration:none;font-size:15px}
+section.karte{scroll-margin-top:10px}
+.videoplatz{border:2px dashed var(--linie);border-radius:10px;padding:12px 14px;background:#fcfbf8;color:var(--leise)}
+.videoplatz a{color:var(--akzent);font-weight:600}
+footer{margin-top:28px;font-size:13px;color:var(--leise);border-top:1px solid var(--linie);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+  <p class="leise"><a class="zurueck" href="index.html">← Haus Kessler: alle Stationen</a></p>
+  <p class="kennz">3195 · 2.3</p>
+  <h1>Haus Kessler – Station 2.3 Schornstein und Dach: Die Abgasanlage</h1>
+  <p class="leise">Haus Kessler – Auftrag 2: Planung. Video und Team-Übung zum Arbeitsblatt 2.3, ohne Anmeldung und ohne Punkte.</p>
+  <div class="sprung"><a href="#video">Video 2.3.1</a><a href="#team-uebung">2.3.2 Dreier-Team</a></div>
+
+  <section class="karte" id="video">
+    <h2>Video 2.3.1: Brennwerttherme kompakt – Aufbau, Funktion und Effizienz</h2>
+    <div class="videoplatz"><!--VIDEO-2-3-1--><p><a href="https://youtu.be/NTAtJodGJjY" target="_blank" rel="noopener"><b>Video bei YouTube öffnen</b> (5:01 Minuten)</a></p><p>Das Video zeigt, wie eine Brennwerttherme arbeitet, warum dabei Wasser aus dem Abgas entsteht und wohin das Abgas geht. Es sagt „Rauchgas“ statt Abgas und „Schornstein auskleiden“ – gemeint ist: Eine neue Abgasleitung wird in den alten Schornstein eingezogen.</p><p class="leise">Quelle: YouTube, Kanal „Zentralstelle für die Weiterbildung im Handwerk (ZWH)“, „Brennwerttherme kompakt: Aufbau, Funktion und Effizienz“. Der Link öffnet YouTube; dort gelten die Datenschutzregeln von YouTube.</p></div>
+  </section>
+
+  <section class="karte" id="team-uebung">
+    <h2>2.3.2 Dreier-Team: Drei Fehler im Plan</h2>
+    <div class="sprech"><b class="wer">DEIN CHEF</b>„Der Kollege hat die Abgasanlage für Herrn Kessler schon gezeichnet – drei Bilder, und in jedem steckt ein Fehler. Ihr seid zu dritt: Jeder prüft ein Bild mit dem Tabellenbuch, dann prüft ihr gegenseitig nach. Am Ende will ich von jedem von euch das Prüfprotokoll. Das kommt in die Planungsmappe.“</div>
+    <p><b>So geht es:</b> Teil 1 – du prüfst dein Bild: Welche Angabe ist falsch, was wäre richtig, und warum? Teil 2 – du holst dir einen Wert vom nächsten Tablet und prüfst ihn in deinem eigenen Tabellenbuch nach (Tablet 1 fragt Tablet 2, Tablet 2 fragt Tablet 3, Tablet 3 fragt Tablet 1). Teil 3 – ihr setzt euch zusammen, jeder trägt die Fehler der beiden anderen Bilder ins Prüfprotokoll ein, und ihr beantwortet die Frage von Herrn Kessler.</p>
+    <div id="team"></div>
+  </section>
+
+  <footer>Diese Seite setzt keine Cookies, speichert nichts auf dem Gerät und lädt nichts von anderen Servern. Beim Aufruf verarbeitet der Anbieter GitHub technisch die IP-Adresse des Geräts.</footer>
+</main>
+<script>
+// ---------------------------------------------------------------- Dreier-Team 2.3.2 „Drei Fehler im Plan“ (ohne DOM)
+// Haus Kessler, Station 2.3 „Schornstein und Dach: Die Abgasanlage“ (Kurs 3195 „Haus Kessler A2“). Feinplan: VORSCHAU-Kessler-Station-2-3.html
+// (Element „2.3.2 Dreier-Team: Drei Fehler im Plan“, freigegeben am 25.11.2026 07:49), Hauswerte aus BAUPLAN-Auftrag-2-Planung-25-11.md (A; D: Station 2.3).
+// Regel des Lehrers 24.11.2026 (Weg A, K20): Die Übung fragt „Welches Tablet bist du? 1 · 2 · 3“. Ring: 1 holt von 2, 2 von 3, 3 von 1.
+// Der Kollege hat die Abgasanlage gezeichnet; jedes Tablet zeigt EIN Bild mit drei Angaben A, B, C, genau eine ist falsch:
+// Tablet 1 Dach (Plan) – C „Mündung 20 cm über Dach“ · Tablet 2 Keller mit dem neuen Gerät (Plan) – B „Kondensat → Schornsteinsockel“ ·
+// Tablet 3 Keller heute (alter Kessel) – A „Holzbalken 2 cm über Rohr: passt“.
+// Punkte (Feinplan): Teil 1 falsche Angabe (10) + richtiger Wert (15; Tablet 2: 10 für die kg im Januar + 5 für die Liter am Tag) + Warum (15) ·
+// Teil 2 Ringtausch: Wert und Fundstelle des Mitspielers (10) + im eigenen Buch nachgeprüft „stimmt“ (10), zählt erst, wenn Teil 1 stimmt und
+// nachgeprüft ist · Teil 3 Prüfprotokoll: falsche Angabe und richtiger Wert der beiden anderen Bilder (4 × 7,5) + gemeinsame Frage (10), zählt erst,
+// wenn Teil 2 stimmt. 100 nur, wenn alles stimmt.
+// Tabellenbuch = neue Ausgabe (6. Auflage 2026), am Bild geprüft: S. 389 „Abgasmündungen über Dach“ (raumluftunabhängig mit Gebläse,
+// Q̇NL ≤ 50 kW: mind. 40 cm) und „Abstände … zu Bauteilen aus brennbaren Baustoffen“ (160 ≥ ϑA > 85 °C: d₁ = 5 cm) · Tab. 353.3 Erdgas E
+// 1,63 kg/m³ (bzw. 0,14 l/kWh) · Tab. 353.4 pH-Wert des Kondensats bei Erdgas 4,0.
+// Toleranzen (Feinplan): Kondensat im Januar ± 5 kg, am Tag ± 1 Liter; 40 cm, 5 cm und pH 4,0 genau.
+const T23=(()=>{
+ const KOND=1.63,PH=4.0,GAS_JAN=400,TAGE_JAN=31,GAS_JAHR=2200;
+ const JAN_KG=Math.round(GAS_JAN*KOND);// 652
+ const JAN_TAG=Math.round(GAS_JAN*KOND/TAGE_JAN*10)/10;// 21,0
+ const ABC=['A','B','C'];
+ // Fundstellen für den Ringtausch („wo steht er?“)
+ const STELLEN=['Tab. 350.4','Tab. 353.3','Tab. 353.4','S. 389'];
+ const BILDER=[
+  {nr:1,kurz:'Dach (Plan)',titel:'Bild 1 · Dach (Plan)',knopf:'Dach',klein:'Bild 1: die neue Mündung',
+   angaben:{A:'Schornsteinkopf wird abgetragen',B:'Abgasleitung PP, dicht',C:'Mündung 20 cm über Dach'},falsch:'C',
+   wissen:['Neues Gerät: Gas-Brennwertkessel mit Gebläse, raumluftunabhängig (Art C93x), Q̇<sub>NB</sub> = 20,0 kW, Abgas höchstens 75 °C',
+    'Die Abgasleitung aus Kunststoff (PP) kommt in den alten Zug 1 und führt durch das Schrägdach.',
+    'Die Verbrennungsluft kommt im Ringspalt von oben zum Gerät.'],
+   wert:{frage:'Wie hoch muss die Mündung des neuen Geräts mindestens über der Dachfläche liegen?',was:'Mündung',einheit:'cm',soll:40,tol:0,dez:0,pkt:15,
+    protokoll:'Mündung mindestens',plan:20},
+   warum:[
+    {k:'steil',t:'Das Dach ist steiler als 20°. Dann muss jede Mündung 40 cm über dem First liegen.'},
+    {k:'geblaese',t:'Das neue Gerät ist raumluftunabhängig, hat ein Gebläse und liegt unter 50 kW. Dafür verlangt S. 389 mindestens 40 cm über der Dachfläche.'},
+    {k:'tropfen',t:'Das Gerät macht Kondensat. Die Mündung muss höher liegen, damit kein Wasser auf das Dach tropft.'}],warumRichtig:'geblaese',
+   ring:{frage:'die Mindesthöhe der Mündung über der Dachfläche.',was:'Mündung',einheit:'cm',soll:40,tol:0,dez:0,stelle:'S. 389'}},
+  {nr:2,kurz:'Keller (Plan)',titel:'Bild 2 · Keller (Plan)',knopf:'Keller, Plan',klein:'Bild 2: das neue Gerät',
+   angaben:{A:'Luft kommt im Ringspalt',B:'Kondensat → Schornsteinsockel',C:'Gerät: Gebläse, Abgas max. 75 °C'},falsch:'B',
+   wissen:['Neues Gerät: Gas-Brennwertkessel, wandhängend im Heizraum, mit Gebläse, raumluftunabhängig (Art C93x), Abgas höchstens 75 °C',
+    'Gas: Erdgas E. Herr Kessler verbraucht im Januar <b>400 m³</b> Gas (im ganzen Jahr etwa 2.200 m³). Der Januar hat 31 Tage.',
+    'Unten aus dem Gerät läuft das Kondensat. Rechne mit dem Wert in kg je m³; 1 kg Kondensat ≈ 1 Liter.'],
+   wert:{frage:'Wohin mit dem Kondensat – und wie viel ist es? Wie viel Kondensat entsteht im Januar höchstens?',was:'im Januar',einheit:'kg',soll:JAN_KG,tol:5,dez:0,pkt:10,
+    protokoll:'Kondensat im Januar',plan:null},
+   wert2:{frage:'Wie viel ist das am Tag?',was:'am Tag etwa',einheit:'Liter',soll:JAN_TAG,tol:1,dez:0,pkt:5},
+   warum:[
+    {k:'sauber',t:'Kondensat ist sauberes Wasser. Es darf im Sockel versickern – nur die Menge ist zu groß.'},
+    {k:'frost',t:'Das Kondensat friert im Winter im Sockel ein. Sonst wäre der Sockel in Ordnung.'},
+    {k:'sauer',t:'Das Kondensat ist sauer (pH 4,0, Tab. 353.4). Es muss über einen Ablauf mit Siphon ins Abwasser – nicht ins Mauerwerk.'}],warumRichtig:'sauer',
+   ring:{frage:'der pH-Wert des Kondensats.',was:'pH-Wert',einheit:'',soll:PH,tol:0.05,dez:1,stelle:'Tab. 353.4'}},
+  {nr:3,kurz:'Keller (heute)',titel:'Bild 3 · Keller (heute)',knopf:'Keller, heute',klein:'Bild 3: der alte Kessel',
+   angaben:{A:'Holzbalken 2 cm über Rohr: passt',B:'Abgas am Rohr: 140 °C',C:'Kessel B11BS'},falsch:'A',
+   wissen:['Alter Kessel: Gas-Spezialheizkessel von 1996 mit atmosphärischem Brenner, Art B11BS, Q̇<sub>NB</sub> = 26,0 kW',
+    'Das Abgasrohr vom Kessel zum Schornstein heißt Verbindungsstück. Das Abgas darin hat 140 °C.',
+    'Die Kellerdecke hat Holzbalken. Schau dir das Holz über dem Rohr genau an.'],
+   wert:{frage:'Wie groß muss der Abstand zwischen dem Abgasrohr des alten Kessels (Verbindungsstück) und dem Holzbalken mindestens sein?',was:'Abstand',einheit:'cm',soll:5,tol:0,dez:0,pkt:15,
+    protokoll:'Abstand mindestens',plan:2},
+   warum:[
+    {k:'heiss',t:'Das Abgas hat 140 °C. Für 85 bis 160 °C verlangt S. 389 beim Verbindungsstück mindestens 5 cm (d₁). Mit 2 cm wird das Holz zu heiß – darum ist es schon dunkel.'},
+    {k:'kondens',t:'Das Holz ist dunkel vom Kondensat. Der Abstand ist egal, das Rohr muss nur dicht sein.'},
+    {k:'staub',t:'Unter 160 °C braucht das Rohr keinen Abstand zum Holz. Das dunkle Holz ist nur Staub vom Kessel.'}],warumRichtig:'heiss',
+   ring:{frage:'der Mindestabstand zwischen dem Abgasrohr des alten Kessels und dem Holzbalken.',was:'Abstand',einheit:'cm',soll:5,tol:0,dez:0,stelle:'S. 389'}}];
+ // Ring: Tablet i fragt Tablet „von“: „Welcher Wert gilt bei dir – und wo steht er?“
+ const TAB=[{von:1},{von:2},{von:0}];
+ // gemeinsame Frage (Lösung und zwei Ablenker wörtlich aus dem Feinplan, dazu ein dritter)
+ const SCHLUSS=[
+  {k:'abriss',t:'Ja, der alte Schornstein muss abgerissen werden.'},
+  {k:'zug',t:'Nein: In Zug 1 kommt eine Abgasleitung aus Kunststoff, die nass werden darf; der alte Schornstein bleibt als Schacht, im Ringspalt kommt die Luft.'},
+  {k:'direkt',t:'Nein, das Gerät kann einfach an den alten Schornstein.'},
+  {k:'gemauert',t:'Ja, ein Brennwertgerät braucht immer einen neuen gemauerten Kamin.'}];
+ const SCHLUSS_RICHTIG='zug';
+ const fmt=(x,dez)=>{const r=Math.round(x*10**(dez||0))/10**(dez||0);return r.toFixed(dez||0).replace('.',',');};
+ // Zahl lesen: Komma oder Punkt, „ca.“ und „pH“ davor, Einheit dahinter (cm, kg, l, Liter, „am Tag“) und Leerzeichen außen erlaubt;
+ // sonst nichts (keine Rechnung wie „400*1,63“, kein „6 52“)
+ function zahl(s){let t=String(s==null?'':s).trim().toLowerCase();
+  const vorne=/^(ca\.?|circa|etwa|ungefähr|≈|~|ph[\s:=-]*)\s*/;for(let k=0;k<2;k++)t=t.replace(vorne,'');
+  t=t.replace(/\s*(?:l|liter)?\s*(?:\/\s*tag|am tag|pro tag|je tag)$/,'').replace(/\s*(?:cm|kg|liter|l)$/,'').trim();
+  if(!/^\d{1,4}(?:[.,]\d{0,3})?$/.test(t))return NaN;return parseFloat(t.replace(',','.'));}
+ const nahe=(v,soll,tol)=>Number.isFinite(v)&&Math.abs(v-soll)<=tol+1e-9;
+ const leer=()=>({a:'',w:'',w2:'',g:'',rw:'',rf:'',rc:'',f:{},e:''});
+ const andere=i=>[0,1,2].filter(j=>j!==i);
+ function ring(i){const j=TAB[i].von;return Object.assign({von:j},BILDER[j].ring);}
+ function stand(i,z){z=z||leer();const B=BILDER[i];
+  const angabe=z.a===B.falsch;
+  const wert=nahe(zahl(z.w),B.wert.soll,B.wert.tol);
+  const wert2=B.wert2?nahe(zahl(z.w2),B.wert2.soll,B.wert2.tol):true;
+  const warum=z.g===B.warumRichtig;
+  const p1=angabe&&wert&&wert2&&warum;
+  const R=ring(i),ringW=nahe(zahl(z.rw),R.soll,R.tol),ringF=z.rf===R.stelle,ringA=ringW&&ringF;
+  const ringB=z.rc!==''&&z.rc===(ringA?'stimmt':'nicht');// richtig nachgeprüft (auch „stimmt nicht“, wenn wirklich etwas nicht stimmt)
+  const p2=p1&&ringA&&z.rc==='stimmt';
+  const fremd=andere(i).map(j=>{const f=z.f[j]||{},Bj=BILDER[j];return [f.a===Bj.falsch,nahe(zahl(f.w),Bj.wert.soll,Bj.wert.tol)];});
+  const schluss=z.e===SCHLUSS_RICHTIG;
+  const p3=p2&&fremd.flat().every(Boolean)&&schluss;
+  const teil1=(angabe?10:0)+(wert?B.wert.pkt:0)+(B.wert2&&wert2?B.wert2.pkt:0)+(warum?15:0);
+  // Teil 2 zählt erst, wenn Teil 1 stimmt und der Schüler selbst nachgeprüft hat („stimmt“ / „stimmt nicht“ angetippt) – sonst verrieten
+  // Farben und Punkte, ob der Wert des Mitspielers stimmt, bevor er im eigenen Buch nachgesehen hat
+  const teil2=p1&&z.rc!==''?(ringA?10:0)+(ringA&&z.rc==='stimmt'?10:0):0;
+  const teil3=p2?fremd.flat().filter(Boolean).length*7.5+(schluss?10:0):0;
+  return {angabe,wert,wert2,warum,ringW,ringF,ringA,ringB,fremd,schluss,p1,p2,p3,teil1,teil2,teil3,punkte:teil1+teil2+teil3};}
+ // Hinweis zum eigenen Wert (Schlüssel; den Text macht die Bedienung)
+ function wertHinweis(i,z){const B=BILDER[i],v=zahl(z.w),roh=String(z.w==null?'':z.w).trim();
+  if(!nahe(v,B.wert.soll,B.wert.tol)){
+   if(!Number.isFinite(v))return roh?'zahl':'leer';
+   if(B.wert.plan!=null&&nahe(v,B.wert.plan,0))return 'plan';
+   if(i===0&&(nahe(v,100,0)||nahe(v,1,0)))return 'gross';
+   if(i===1&&nahe(v,GAS_JAN*10.03*0.14,5))return 'kwh';
+   if(i===1&&nahe(v,GAS_JAHR*KOND,10))return 'jahr';
+   if(i===1&&nahe(v,GAS_JAN*1.53,3))return 'll';
+   if(i===2&&[10,20,40].some(x=>nahe(v,x,0)))return 'heiss';
+   if(i===2&&nahe(v,0,0))return 'null';
+   return 'nein';}
+  if(B.wert2&&!nahe(zahl(z.w2),B.wert2.soll,B.wert2.tol))return String(z.w2==null?'':z.w2).trim()?(Number.isFinite(zahl(z.w2))?'tag':'zahl'):'tagleer';
+  return '';}
+ // eine Zeile des Prüfprotokolls (w = eingetragener, schon als richtig erkannter Wert)
+ function protokoll(j,w){const B=BILDER[j],x=fmt(Number.isFinite(w)?w:B.wert.soll,B.wert.dez);
+  const falsch=`${B.falsch} · ${B.angaben[B.falsch]}`;
+  if(j===0)return {falsch,richtig:`mind. ${x} cm über der Dachfläche (Gerät mit Gebläse, unter 50 kW)`,seite:'S. 389'};
+  if(j===1)return {falsch,richtig:`über einen Ablauf mit Siphon ins Abwasser (sauer, pH 4,0) – im Januar bis ${x} kg`,seite:'Tab. 353.3 und 353.4'};
+  return {falsch,richtig:`mind. ${x} cm Abstand (d₁) – das Holz ist schon dunkel`,seite:'S. 389'};}
+ // richtig ausgefüllt (für Proben und die Lösung der Lehrkraft)
+ function richtig(i){const z=leer(),B=BILDER[i],R=ring(i);
+  z.a=B.falsch;z.w=fmt(B.wert.soll,B.wert.dez);if(B.wert2)z.w2=fmt(B.wert2.soll,B.wert2.dez);z.g=B.warumRichtig;
+  z.rw=fmt(R.soll,R.dez);z.rf=R.stelle;z.rc='stimmt';
+  andere(i).forEach(j=>{const Bj=BILDER[j];z.f[j]={a:Bj.falsch,w:fmt(Bj.wert.soll,Bj.wert.dez)};});z.e=SCHLUSS_RICHTIG;return z;}
+ // Spielstand prüfen (aus Moodle geladen): nur bekannte Felder und Werte, Text kurz
+ const WARUM=BILDER.flatMap(B=>B.warum.map(x=>x.k));
+ function saeubere(z){const o=leer();if(!z||typeof z!=='object')return o;
+  const txt=v=>typeof v==='string'?v.slice(0,12):'',eins=(v,erl)=>erl.includes(v)?v:'';
+  o.a=eins(z.a,ABC);o.w=txt(z.w);o.w2=txt(z.w2);o.g=eins(z.g,WARUM);
+  o.rw=txt(z.rw);o.rf=eins(z.rf,STELLEN);o.rc=eins(z.rc,['stimmt','nicht']);
+  if(z.f&&typeof z.f==='object')[0,1,2].forEach(j=>{const f=z.f[j];if(f&&typeof f==='object')o.f[j]={a:eins(f.a,ABC),w:txt(f.w)};});
+  o.e=SCHLUSS.some(s=>s.k===z.e)?z.e:'';return o;}
+ return {KOND,PH,GAS_JAN,TAGE_JAN,GAS_JAHR,JAN_KG,JAN_TAG,ABC,STELLEN,BILDER,TAB,SCHLUSS,SCHLUSS_RICHTIG,fmt,zahl,nahe,leer,andere,ring,stand,wertHinweis,protokoll,richtig,saeubere};
+})();
+
+// ---------------------------------------------------------------- Fehlerbild „Drei Fehler im Plan“ (selbst gezeichnet, keine Buchskizze), Station 2.3
+// Drei Bilder nach dem Fehlerbild des Feinplans (VORSCHAU-Kessler-Station-2-3.html, Block 2.3.2 Dreier-Team), je Tablet eines, größer gezeichnet:
+// Bild 1 Dach (Plan) · Bild 2 Keller mit dem neuen Gerät (Plan) · Bild 3 Keller heute (alter Kessel). Jedes Bild trägt die drei Angaben A, B, C
+// (Buchstabe im Bild und Liste darunter). o.wahl = angetippte Angabe (orange umrandet), o.farbe = 'ok' | 'nein' nach dem Prüfen (grün/rot),
+// o.fertig = Teil 1 stimmt → die Verbesserung erscheint grün im Bild. Ohne Maßstab, ohne Tabellenwerte (das ist die Frage).
+const T23BILD=(()=>{
+ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+ const FONT='font-family="Arial, Helvetica, sans-serif"';
+ const T=(x,y,s,o)=>`<text x="${x}" y="${y}"${o?' '+o:''}>${esc(s)}</text>`;
+ const GRUEN='#1f7a3f',ORANGE='#e07a10',ROT='#c8371f',DUNKEL='#1d2a33',LUFT='#2f6fb7',GRAU='#7a8790';
+ const farbe=(o,b)=>o.wahl===b?(o.farbe==='ok'?GRUEN:o.farbe==='nein'?ROT:ORANGE):DUNKEL;
+ // Buchstabe A, B, C im Bild; angetippt = Ring (orange, nach dem Prüfen grün/rot)
+ function marke(x,y,b,o){const an=o.wahl===b,f=farbe(o,b);
+  return `<g class="marke" data-marke="${b}">${an?`<circle cx="${x}" cy="${y}" r="17" fill="none" stroke="${f}" stroke-width="3.5"/>`:''}`+
+   `<circle cx="${x}" cy="${y}" r="12" fill="#ffffff" stroke="${f}" stroke-width="2"/>`+T(x,y+5,b,`font-size="14" font-weight="700" text-anchor="middle" fill="${f}"`)+'</g>';}
+ // Liste der drei Angaben unter dem Bild
+ function liste(i,o,y0){const B=T23.BILDER[i];return T23.ABC.map((b,n)=>{const y=y0+n*22,an=o.wahl===b,f=farbe(o,b);
+  return `<g>${marke(26,y,b,{wahl:''})}${T(46,y+5,B.angaben[b],`font-size="14"${an?` font-weight="700" fill="${f}"`:''}`)}</g>`;}).join('');}
+ const kopf=titel=>T(14,24,titel,'font-size="16" font-weight="700"')+T(14,42,'gezeichnet vom Kollegen · ohne Maßstab','font-size="11" fill="#5b6b77"');
+ const pfeil=(id,f)=>`<marker id="${id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${f}"/></marker>`;
+ const mauerwerk=id=>`<pattern id="${id}" width="20" height="12" patternUnits="userSpaceOnUse"><rect width="20" height="12" fill="#e6e0d6"/><path d="M0,12 H20 M10,0 V6 M0,6 H20 M0,6 V12 M20,6 V12" stroke="#b9ad9c" stroke-width="1"/></pattern>`;
+
+ // ---------------------------------------------------------------- Bild 1 · Dach (Plan)
+ function dach(o){const yr=x=>300-0.4*(x-10),xm=225,yd=yr(xm),top=yd-30,neu=yd-60;// Oberkante Dachfläche; Rohrmitte; Mündung Plan (20 cm) und richtig (40 cm)
+  let s=kopf('Bild 1 · Dach (Plan)');
+  // Dachboden unter dem Dach
+  s+=`<path d="M10,${yr(10)+8} L450,${yr(450)+8} L450,320 L10,320 Z" fill="#f4f1ea"/>`+
+   `<line x1="10" y1="320" x2="450" y2="320" stroke="${DUNKEL}" stroke-width="3"/>`+T(372,314,'Dachboden','font-size="12" fill="#5b6b77"');
+  // alter Zug 1, gemauert, endet unter der Dachhaut; alter Kopf (abgetragen) gestrichelt
+  s+=`<path d="M196,${yr(196)} L254,${yr(254)} L254,320 L196,320 Z" fill="url(#m1)" stroke="${DUNKEL}" stroke-width="2"/>`+
+   `<path d="M196,${yr(196)} L196,110 L254,110 L254,${yr(254)}" fill="none" stroke="${GRAU}" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+  // Dach (Ziegel)
+  s+=`<path d="M10,${yr(10)+4} L450,${yr(450)+4}" stroke="#9a4f22" stroke-width="9"/>`+
+   `<path d="M10,${yr(10)} L450,${yr(450)}" stroke="#c46a35" stroke-width="3" stroke-dasharray="16 5"/>`;
+  // Abgasleitung PP im Zug, durch das Dach
+  s+=`<rect x="${xm-8}" y="${top}" width="16" height="${320-top}" fill="#f3f5f7" stroke="${DUNKEL}" stroke-width="2"/>`+
+   `<rect x="${xm-11}" y="${top-4}" width="22" height="5" fill="${DUNKEL}"/>`+
+   `<path d="M${xm-16},${yd+4} L${xm+16},${yd-9} L${xm+16},${yd-3} L${xm-16},${yd+10} Z" fill="#5b6b77"/>`;
+  // Maß 20 cm (so hat es der Kollege geplant)
+  s+=`<line x1="${xm-12}" y1="${top}" x2="${xm-58}" y2="${top}" stroke="${DUNKEL}"/><line x1="${xm-18}" y1="${yd}" x2="${xm-58}" y2="${yd}" stroke="${DUNKEL}"/>`+
+   `<line x1="${xm-50}" y1="${top+1}" x2="${xm-50}" y2="${yd-1}" stroke="${DUNKEL}" stroke-width="1.6" marker-start="url(#p1)" marker-end="url(#p1)"/>`+
+   T(112,yd-10,'20 cm','font-size="16" font-weight="700"');
+  // Buchstaben
+  s+=marke(320,72,'A',o)+`<line x1="309" y1="79" x2="256" y2="110" stroke="${GRAU}"/>`+T(338,68,'alter Kopf','font-size="12"')+T(338,83,'abgetragen','font-size="12"');
+  s+=marke(300,272,'B',o)+`<line x1="288" y1="272" x2="${xm+9}" y2="272" stroke="${GRAU}"/>`+T(318,268,'Abgasleitung','font-size="12"')+T(318,282,'PP, dicht','font-size="12"');
+  s+=marke(88,yd-15,'C',o);
+  // Verbesserung (grün), wenn Teil 1 stimmt
+  if(o.fertig)s+=`<rect x="${xm-8}" y="${neu}" width="16" height="${top-neu-4}" fill="#e4f3e3" stroke="${GRUEN}" stroke-width="2" stroke-dasharray="5 3"/>`+
+   `<rect x="${xm-11}" y="${neu-4}" width="22" height="5" fill="${GRUEN}"/>`+
+   `<line x1="${xm+11}" y1="${neu}" x2="${xm+26}" y2="${neu}" stroke="${GRUEN}"/>`+
+   `<line x1="${xm+19}" y1="${neu+1}" x2="${xm+19}" y2="${yd-7}" stroke="${GRUEN}" stroke-width="2" marker-start="url(#p2)" marker-end="url(#p2)"/>`+
+   `<rect x="262" y="102" width="106" height="40" rx="6" fill="#ffffff" stroke="${GRUEN}" stroke-width="1.5"/>`+
+   T(270,118,'richtig:','font-size="12" fill="'+GRUEN+'"')+T(270,135,'mind. 40 cm','font-size="15" font-weight="700" fill="'+GRUEN+'"');
+  return {h:336,s,defs:mauerwerk('m1')+pfeil('p1',DUNKEL)+pfeil('p2',GRUEN)};}
+
+ // ---------------------------------------------------------------- Bild 2 · Keller (Plan)
+ function kellerPlan(o){let s=kopf('Bild 2 · Keller (Plan)');
+  // Decke, Boden
+  s+=`<rect x="10" y="54" width="440" height="12" fill="#d5dbe0" stroke="${DUNKEL}" stroke-width="1.5"/>`+
+   `<line x1="10" y1="300" x2="450" y2="300" stroke="${DUNKEL}" stroke-width="3"/>`+T(18,320,'Heizraum im Keller','font-size="12" fill="#5b6b77"');
+  // Schornstein Zug 1 (Schacht) mit Sockel
+  s+=`<rect x="320" y="48" width="18" height="210" fill="url(#m2)" stroke="${DUNKEL}" stroke-width="2"/><rect x="382" y="48" width="18" height="210" fill="url(#m2)" stroke="${DUNKEL}" stroke-width="2"/>`+
+   `<rect x="320" y="258" width="80" height="42" fill="#cfc6b8" stroke="${DUNKEL}" stroke-width="2"/>`+T(337,284,'Sockel','font-size="12"')+T(406,214,'Zug 1','font-size="12" fill="#5b6b77"');
+  // Abgasleitung PP im Zug mit Stützbogen, waagerecht zum Gerät (Luft außen, Abgas innen)
+  s+=`<rect x="353" y="48" width="14" height="80" fill="#f3f5f7" stroke="${DUNKEL}" stroke-width="1.6"/>`+
+   `<path d="M160,128 L338,128" stroke="#c9d3da" stroke-width="18"/><path d="M160,128 L360,128 L360,120" fill="none" stroke="${DUNKEL}" stroke-width="5"/>`;
+  // Verbrennungsluft im Ringspalt (blau, von oben)
+  s+=`<line x1="345" y1="60" x2="345" y2="114" stroke="${LUFT}" stroke-width="2.2" marker-end="url(#pl)"/><line x1="375" y1="60" x2="375" y2="114" stroke="${LUFT}" stroke-width="2.2" marker-end="url(#pl)"/>`+
+   `<line x1="300" y1="121" x2="244" y2="121" stroke="${LUFT}" stroke-width="2" marker-end="url(#pl)"/>`;
+  // neues Gerät, wandhängend, mit Gebläse
+  s+=`<rect x="50" y="90" width="110" height="130" rx="6" fill="#ffffff" stroke="${DUNKEL}" stroke-width="2"/>`+
+   `<circle cx="136" cy="112" r="11" fill="none" stroke="${DUNKEL}" stroke-width="1.5"/><path d="M136,112 L136,103 M136,112 L144,117 M136,112 L128,117" stroke="${DUNKEL}" stroke-width="1.6"/>`+
+   T(60,150,'neues Gerät','font-size="13" font-weight="700"')+T(60,180,'Gebläse,','font-size="12"')+T(60,195,'Abgas max. 75 °C','font-size="11"');
+  // Kondensat (so hat es der Kollege geplant): in den Schornsteinsockel
+  s+=`<path d="M105,220 L105,280 L316,280" fill="none" stroke="${DUNKEL}" stroke-width="2.4" stroke-dasharray="7 4" marker-end="url(#p3)"/>`+T(160,272,'Kondensat','font-size="13"');
+  // Buchstaben
+  s+=marke(424,100,'A',o)+`<line x1="412" y1="100" x2="378" y2="94" stroke="${GRAU}"/>`+T(250,112,'Luft','font-size="12" fill="'+LUFT+'"');
+  s+=marke(262,256,'B',o);
+  s+=marke(34,86,'C',o);
+  if(o.fertig)s+=`<path d="M224,273 l14,14 M238,273 l-14,14" stroke="${ROT}" stroke-width="3"/>`+
+   `<path d="M105,220 L105,240" stroke="${GRUEN}" stroke-width="3"/>`+
+   `<path d="M96,240 L114,240 L109,252 L101,252 Z" fill="#e4f3e3" stroke="${GRUEN}" stroke-width="2"/>`+
+   `<path d="M105,252 L105,264 Q105,272 113,272 Q121,272 121,264 L121,258" fill="none" stroke="${GRUEN}" stroke-width="3"/>`+
+   `<path d="M121,262 L146,262 L146,300" fill="none" stroke="${GRUEN}" stroke-width="3"/>`+
+   `<rect x="166" y="190" width="146" height="44" rx="6" fill="#ffffff" stroke="${GRUEN}" stroke-width="1.5"/>`+
+   T(174,208,'richtig: Siphon →','font-size="13" font-weight="700" fill="'+GRUEN+'"')+T(174,225,'Abwasserleitung','font-size="13" font-weight="700" fill="'+GRUEN+'"');
+  return {h:336,s,defs:mauerwerk('m2')+pfeil('p3',DUNKEL)+pfeil('pl',LUFT)};}
+
+ // ---------------------------------------------------------------- Bild 3 · Keller (heute)
+ function kellerHeute(o){let s=kopf('Bild 3 · Keller (heute)');
+  // Holzbalken der Kellerdecke, über dem Rohr dunkel
+  s+=`<rect x="10" y="56" width="356" height="30" fill="#d9c3a8" stroke="${DUNKEL}" stroke-width="1.5"/>`+
+   `<path d="M20,66 C80,62 140,70 200,66 S320,62 360,68 M20,77 C90,74 160,80 230,76 S320,74 360,79" fill="none" stroke="#b89a76" stroke-width="1"/>`+
+   T(18,76,'Holzbalken der Kellerdecke','font-size="12" fill="#4a3a28"');
+  s+=`<ellipse cx="250" cy="82" rx="72" ry="6" fill="#5a3d22" opacity="0.75"/><ellipse cx="250" cy="81" rx="46" ry="4.5" fill="#3b2614" opacity="0.75"/>`;
+  // Schornstein, Boden
+  s+=`<rect x="378" y="48" width="62" height="252" fill="url(#m3)" stroke="${DUNKEL}" stroke-width="2"/>`+T(390,320,'Zug 1','font-size="12" fill="#5b6b77"')+
+   `<line x1="10" y1="300" x2="450" y2="300" stroke="${DUNKEL}" stroke-width="3"/>`;
+  // alter Kessel mit Strömungssicherung
+  s+=`<rect x="44" y="190" width="120" height="110" rx="4" fill="#ffffff" stroke="${DUNKEL}" stroke-width="2"/>`+
+   `<path d="M78,190 L130,190 L122,170 L86,170 Z" fill="#ffffff" stroke="${DUNKEL}" stroke-width="1.8"/>`+
+   T(56,226,'alter Kessel','font-size="13" font-weight="700"')+T(56,244,'von 1996','font-size="12" fill="#5b6b77"')+T(56,282,'Art B11BS','font-size="13"');
+  // Verbindungsstück (Abgasrohr) knapp unter dem Balken
+  s+=`<path d="M104,170 L104,101 L378,101" fill="none" stroke="#7d8790" stroke-width="18" stroke-linejoin="round"/>`+
+   `<path d="M104,170 L104,101 L378,101" fill="none" stroke="#a3acb4" stroke-width="10" stroke-linejoin="round"/>`;
+  // Maß „Abstand 2 cm“
+  s+=`<line x1="292" y1="86" x2="306" y2="86" stroke="${DUNKEL}"/><line x1="292" y1="92" x2="306" y2="92" stroke="${DUNKEL}"/>`+
+   `<path d="M299,146 L299,91" stroke="${DUNKEL}" stroke-width="1.2" marker-end="url(#p4)"/>`+T(260,164,'Abstand 2 cm','font-size="16" font-weight="700"');
+  // Buchstaben
+  s+=marke(238,159,'A',o);
+  s+=marke(196,136,'B',o)+`<line x1="196" y1="124" x2="196" y2="111" stroke="${GRAU}"/>`+T(126,138,'Abgas','font-size="12"')+T(126,153,'140 °C','font-size="13" font-weight="700"');
+  s+=marke(190,270,'C',o);
+  if(o.fertig)s+=`<rect x="250" y="107" width="128" height="18" fill="none" stroke="${GRUEN}" stroke-width="2" stroke-dasharray="5 3"/>`+
+   `<path d="M342,87 L342,106" stroke="${GRUEN}" stroke-width="2" marker-start="url(#p5)" marker-end="url(#p5)"/>`+
+   `<rect x="214" y="192" width="160" height="44" rx="6" fill="#ffffff" stroke="${GRUEN}" stroke-width="1.5"/>`+
+   T(222,210,'richtig: mind. 5 cm (d₁)','font-size="13" font-weight="700" fill="'+GRUEN+'"')+T(222,227,'Holz schon zu heiß','font-size="12" fill="'+GRUEN+'"');
+  return {h:336,s,defs:mauerwerk('m3')+pfeil('p4',DUNKEL)+pfeil('p5',GRUEN)};}
+
+ function bild(i,o){o=Object.assign({wahl:'',farbe:'',fertig:false},o||{});const B=T23.BILDER[i];
+  const z=[dach,kellerPlan,kellerHeute][i](o),hoehe=z.h+3*22+12;
+  const titel=`${B.titel}, gezeichnet vom Kollegen, ohne Maßstab. Angaben: A ${B.angaben.A}; B ${B.angaben.B}; C ${B.angaben.C}.`+(o.fertig?` Verbessert: ${T23.protokoll(i).richtig}.`:'');
+  return `<svg class="plan" viewBox="0 0 460 ${hoehe}" role="img" aria-label="${esc(titel)}" ${FONT} font-size="12" fill="${DUNKEL}"><defs>${z.defs}</defs>`+
+   `<rect x="1" y="1" width="458" height="${hoehe-2}" rx="8" fill="#ffffff" stroke="#d5cfc2"/>`+z.s+
+   `<line x1="10" y1="${z.h}" x2="450" y2="${z.h}" stroke="#d5cfc2"/>`+liste(i,o,z.h+22)+'</svg>';}
+ return {bild};
+})();
+
+// ---------------------------------------------------------------- Dreier-Team 2.3.2: Bild und Bedienung (braucht T23, T23BILD)
+// Start: „Welches Tablet bist du? 1 · 2 · 3“. Danach zeigt das Tablet nur sein Bild aus dem Plan des Kollegen (mit den Angaben A, B, C), das
+// Wissen dazu und die drei Teile. Z = aktuelle Eingabe, P = Stand beim letzten „Prüfen“. Grün/rot, Punkte und das Öffnen des nächsten Teils
+// richten sich nur nach P – wer nach dem Prüfen etwas ändert, sieht erst beim nächsten Prüfen, ob es stimmt. Richtige Antworten bleiben stehen
+// (gesperrt). Teil 2: Wert und Fundstelle des Mitspielers werden erst gefärbt, wenn „stimmt“ / „stimmt nicht“ angetippt war (erst selbst nachprüfen).
+// Stimmt Teil 1, zeigt das Bild die Verbesserung in Grün.
+// o: {stand:{t,Z,P}|null, mitPunkten, beiAenderung(), beiPunkte(p)}
+function bauPruefprotokoll(wurzel,o){
+ o=Object.assign({stand:null,mitPunkten:true,beiAenderung:null,beiPunkte:null},o||{});
+ const R=T23,B=R.BILDER,mitP=!!o.mitPunkten;
+ let t=-1,rueck=null;
+ const Z=[R.leer(),R.leer(),R.leer()],P=[null,null,null];
+ const st=o.stand;
+ if(st&&typeof st==='object'){if([0,1,2].includes(st.t))t=st.t;
+  if(Array.isArray(st.Z))st.Z.slice(0,3).forEach((z,i)=>{Z[i]=R.saeubere(z);});
+  if(Array.isArray(st.P))st.P.slice(0,3).forEach((z,i)=>{P[i]=z?R.saeubere(z):null;if(z&&!Array.isArray(st.Z))Z[i]=R.saeubere(z);});}
+ const kopie=z=>JSON.parse(JSON.stringify(z)),e=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+ const gs=i=>R.stand(i,P[i]||R.leer());
+ const besterStand=()=>Math.max(...[0,1,2].map(i=>gs(i).punkte));
+ const aenderung=()=>{o.beiAenderung&&o.beiAenderung();};
+ const zahlText=(v,dez)=>{const x=R.zahl(v);return Number.isFinite(x)?R.fmt(x,dez):e(v);};
+ function startbild(){rueck=null;
+  wurzel.innerHTML='<div class="karte"><h2>Welches Tablet bist du?</h2>'+
+   '<p>Setzt euch zu dritt zusammen. Jeder von euch nimmt eine andere Nummer. Jedes Tablet zeigt ein anderes Bild aus dem Plan des Kollegen – am Ende braucht jeder die Ergebnisse der beiden anderen.</p>'+
+   '<div class="grosswahl">'+B.map((b,i)=>`<button type="button" data-t="${i}"><b>${i+1}</b>${b.knopf}<small>${b.klein}</small></button>`).join('')+'</div>'+
+   '<p class="klein">Ihr seid nur zu zweit? Dann übernimmt einer von euch das dritte Tablet mit: Er wählt später unten „anderes Tablet wählen“.</p></div>';
+  wurzel.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>waehleTablet(+b.dataset.t));}
+ function waehleTablet(i){t=i;rueck=null;aenderung();tablet();zumAnfang();}
+ // an den Anfang des Tablets rollen – unter die feste Kopfzeile (sonst verdeckt sie die Überschrift)
+ function zumAnfang(){try{const k=document.querySelector('.kopf'),ab=k?k.getBoundingClientRect().height+8:8;window.scrollTo(0,Math.max(0,wurzel.getBoundingClientRect().top+window.pageYOffset-ab));}catch(_){}}
+ function tablet(){const b=B[t];
+  wurzel.innerHTML=`<div class="tablet"><h3>Tablet ${t+1} – dein Bild: ${b.titel}</h3>
+   <p class="klein" style="margin:0 0 8px">Dein Team: ${B.map((x,i)=>`Tablet ${i+1} ${x.titel}`).join(' · ')}. Dein Tablet prüft nur dein Bild.</p>
+   <div class="lage"><figure class="bild"><figcaption>So hat der Kollege es gezeichnet</figcaption><div data-r="bild"></div></figure>
+   <div class="wissen"><h4>Das weißt du zu deinem Bild</h4><ul>${b.wissen.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <p class="klein" style="margin:8px 0 0">Genau eine der drei Angaben A, B, C ist falsch. Du brauchst dein Tabellenbuch (S. 350, 353 und 389) und den Taschenrechner.</p></div></div>
+   <div data-r="teile"></div>
+   <p class="klein" style="margin-top:14px">Falsches Tablet gewählt oder nur zu zweit? <button type="button" class="knopf" data-r="wechsel">anderes Tablet wählen</button></p></div>`;
+  wurzel.querySelector('[data-r="wechsel"]').onclick=()=>{lies();t=-1;aenderung();startbild();};
+  teile();}
+ // Auswahlknopf: gedrückt = aktuelle Auswahl; grün/rot nur, wenn genau dieser Wert geprüft wurde; richtig geprüft = gesperrt
+ function knopf(attr,v,text,zv,pv,ok,zu,sperre,farbe){const an=zv===v,gep=farbe!==false&&pv!=null&&pv!==''&&zv===pv,kl=an&&gep?(ok?'ok':'nein'):'';
+  if(sperre===undefined)sperre=ok;
+  return `<button type="button" ${attr} data-v="${e(v)}" aria-pressed="${an}"${kl?` class="${kl}"`:''}${zu||(gep&&sperre)?' disabled':''}>${text}</button>`;}
+ // Zahlenfeld: grün/rot nur, wenn genau diese Eingabe geprüft wurde; richtig geprüft = gesperrt
+ function feld(attr,zv,pv,ok,zu,farbe){const gep=farbe!==false&&pv!=null&&pv!==''&&zv===pv,kl=gep?(ok?' ok':' nein'):'';
+  return `<input type="text" class="zahl${kl}" ${attr} inputmode="decimal" maxlength="12" autocomplete="off" autocorrect="off" spellcheck="false" value="${e(zv)}"${zu||(gep&&ok)?' disabled':''}>`;}
+ const pkt=(txt,zu)=>mitP?`<span class="klein">(${txt}${zu?' · erst wenn '+zu+' stimmt':''})</span>`:zu?`<span class="klein">(erst wenn ${zu} stimmt)</span>`:'';
+ function bildZeigen(){const c=wurzel.querySelector('[data-r="bild"]');if(!c)return;const z=Z[t],p=P[t],s=gs(t);
+  const geprueft=!!(p&&p.a&&z.a===p.a);
+  c.innerHTML=T23BILD.bild(t,{wahl:z.a,farbe:geprueft?(s.angabe?'ok':'nein'):'',fertig:s.p1});}
+ function teile(){
+  const z=Z[t],p=P[t],s=gs(t),b=B[t],RG=R.ring(t),vb=B[RG.von],an=R.andere(t);
+  bildZeigen();
+  let h=`<div class="phase"><b>1 · Dein Bild</b> ${pkt('falsche Angabe 10, richtiger Wert 15, Begründung 15 – zusammen 40 Punkte')}
+   <p class="frage">Welche Angabe im Bild ist falsch?</p>
+   <div class="satzwahl" data-gruppe="a">${R.ABC.map(x=>knopf('data-f="a"',x,`<span class="bst">${x}</span>${e(b.angaben[x])}`,z.a,p&&p.a,s.angabe,false)).join('')}</div>
+   <p class="frage">Was wäre richtig? ${b.wert.frage}</p>
+   <div class="zeile"><span class="was">${b.wert.was}</span>${feld(`data-f="w" aria-label="${e(b.wert.was)} in ${e(b.wert.einheit)}"`,z.w,p&&p.w,s.wert,false)}<span>${b.wert.einheit}</span></div>`+
+   (b.wert2?`<div class="zeile"><span class="was">${b.wert2.was}</span>${feld(`data-f="w2" aria-label="${e(b.wert2.was)} in ${e(b.wert2.einheit)}"`,z.w2,p&&p.w2,s.wert2,false)}<span>${b.wert2.einheit}</span></div>`:'')+
+   `<p class="frage">Warum? Wähl die richtige Begründung.</p>
+   <div class="satzwahl">${b.warum.map(x=>knopf('data-f="g"',x.k,e(x.t),z.g,p&&p.g,s.warum,false)).join('')}</div>`;
+  if(s.p1){const pr=R.protokoll(t,R.zahl(p.w));
+   h+=`<div class="merk"><b>Für euer Prüfprotokoll – sag es nachher deinen Mitspielern:</b><br>${b.titel}: falsch ist <b>${pr.falsch}</b><br>richtig: <b>${pr.richtig}</b>`+
+    (b.wert2?` · am Tag etwa <b>${zahlText(p.w2,0)} Liter</b>`:'')+`<br>${b.ring.was}: <b>${R.fmt(b.ring.soll,b.ring.dez)}${b.ring.einheit?' '+b.ring.einheit:''}</b> · Fundstelle: <b>${b.ring.stelle}</b></div>`;}
+  h+='</div>';
+  const ringFarbe=!!(p&&p.rc);
+  h+=`<div class="phase ${s.p1?'':'zu'}"><b>2 · Frag Tablet ${RG.von+1}</b> ${pkt('zweimal 10 Punkte',s.p1?'':'Teil 1')}
+   <p class="frage">Tablet ${RG.von+1} prüft <b>${vb.titel}</b>. Diese Antwort kennt nur dein Mitspieler. Geh hin und frag: <b>„Welcher Wert gilt bei dir – und wo steht er?“</b> Gemeint ist ${RG.frage}</p>
+   <div class="ringfrage"><div class="zeile"><span class="was">${RG.was}</span>${feld(`data-f="rw" aria-label="${e(RG.was)} bei Tablet ${RG.von+1}"`,z.rw,p&&p.rw,s.ringW,!s.p1,ringFarbe)}<span>${RG.einheit}</span></div>
+   <div class="zeile"><span class="was">Fundstelle</span><div class="reihe">${R.STELLEN.map(x=>knopf('data-f="rf"',x,x,z.rf,p&&p.rf,s.ringF,!s.p1,undefined,ringFarbe)).join('')}</div></div></div>
+   <p class="frage">Jetzt prüfst du nach – wie das Gegenzeichnen auf der Baustelle: Schlag die Stelle im eigenen Tabellenbuch nach. Stimmen Wert und Fundstelle deines Mitspielers?</p>
+   <div class="wahl">${[['stimmt','stimmt'],['nicht','stimmt nicht']].map(([v,tx])=>knopf('data-f="rc"',v,tx,z.rc,p&&p.rc,s.ringB,!s.p1,s.ringB&&s.ringA)).join('')}</div></div>`;
+  h+=`<div class="phase ${s.p2?'':'zu'}"><b>3 · Euer Prüfprotokoll für den Chef</b> ${pkt('viermal 7,5 und 10 Punkte',s.p2?'':'Teil 2')}
+   <p class="frage">Setzt euch zusammen. Trag für die Bilder deiner beiden Mitspieler ein, welche Angabe falsch ist und welcher Wert richtig wäre:</p>`+
+   an.map((j,a)=>{const bj=B[j],f=z.f[j]||{a:'',w:''},pf=(p&&p.f[j])||{},ok=s.fremd[a],at=`data-f="f" data-g="${j}"`;
+    return `<div class="mitspieler"><h4>Tablet ${j+1}: ${bj.titel}</h4>
+     <div class="zeile"><span class="was">falsch ist</span><div class="reihe">${R.ABC.map(x=>knopf(at+` data-x="a" aria-label="Bild ${j+1}: Angabe ${x} ist falsch"`,x,x,f.a,pf.a,ok[0],!s.p2)).join('')}</div></div>
+     <div class="zeile"><span class="was">${bj.wert.protokoll}</span>${feld(at+` data-x="w" aria-label="Bild ${j+1}: ${e(bj.wert.protokoll)} in ${e(bj.wert.einheit)}"`,f.w,pf.w,ok[1],!s.p2)}<span>${bj.wert.einheit}</span></div></div>`;}).join('')+
+   `<p class="frage"><b>Gemeinsame Frage:</b> Herr Kessler fragt: „Muss ich jetzt einen neuen Kamin bauen?“ Was antwortet ihr?</p>
+   <div class="satzwahl">${R.SCHLUSS.map(x=>knopf('data-f="e"',x.k,e(x.t),z.e,p&&p.e,s.schluss,!s.p2)).join('')}</div></div>
+   <div class="phase"><b>Prüfprotokoll für den Chef</b> ${s.p3?'<span class="hinweis-gruen">vollständig</span>':'<span class="klein">(füllt sich, sobald eure Antworten stimmen)</span>'}
+   <div class="rollen"><table class="vergleich"><tr><th>Bild</th><th>falsche Angabe</th><th>richtig wäre</th><th>Fundstelle</th></tr>`+
+   [0,1,2].map(j=>{const eig=j===t,a=an.indexOf(j),ok=eig?[s.p1,s.p1]:[s.p2&&s.fremd[a][0],s.p2&&s.fremd[a][1]],wert=eig?(p&&p.w):(p&&p.f[j]&&p.f[j].w);
+    const pr=R.protokoll(j,R.zahl(wert));
+    return `<tr data-zeile="${j}"><td><b>${j+1}</b> ${B[j].kurz}${eig?' <span class="klein">(deins)</span>':''}</td><td>${ok[0]?pr.falsch:'–'}</td><td>${ok[1]?pr.richtig:'–'}</td><td>${ok[1]?pr.seite:'–'}</td></tr>`;}).join('')+
+   `</table></div>${s.p3?'<p class="klein" style="margin:8px 0 0">Antwort an Herrn Kessler: Kein neuer Kamin – in Zug 1 kommt eine Abgasleitung aus Kunststoff, die nass werden darf; der alte Schornstein bleibt als Schacht, im Ringspalt kommt die Luft. Das Prüfprotokoll kommt in deine Planungsmappe (2.6: „Abgasanlage: Ausführung, Kondensat, Mündung“).</p>':''}</div>
+   <div class="phase">${mitP?`<span class="gross">${Math.round(s.punkte)} von 100 Punkten</span> `:''}${s.p3?'<span class="hinweis-gruen">Alles richtig</span>':`<span class="klein">${mitP?'Die volle Punktzahl gibt es erst, wenn auch die Ergebnisse deiner Mitspieler stimmen.':'Fertig ist das Prüfprotokoll, wenn alle Antworten stimmen.'}</span>`}
+   <div class="wahl" style="margin:10px 0 0"><button type="button" class="knopf haupt" data-r="pruefen">Prüfen</button></div>
+   <p class="rueck${rueck&&rueck.k?' '+rueck.k:''}" data-r="rueck">${rueck?rueck.t:''}</p></div>`;
+  const c=wurzel.querySelector('[data-r="teile"]');c.innerHTML=h;
+  c.querySelectorAll('button[data-f]').forEach(bt=>bt.onclick=()=>{lies();const d=bt.dataset,zz=Z[t];
+   if(d.f==='f'){zz.f[d.g]=zz.f[d.g]||{a:'',w:''};zz.f[d.g][d.x]=d.v;}else zz[d.f]=d.v;aenderung();teile();});
+  c.querySelectorAll('input[data-f]').forEach(inp=>inp.addEventListener('input',()=>{schreibFeld(inp);inp.classList.remove('ok','nein');aenderung();}));
+  c.querySelector('[data-r="pruefen"]').onclick=()=>pruefen();}
+ function schreibFeld(inp){if(t<0)return;const d=inp.dataset,v=String(inp.value).slice(0,12),zz=Z[t];
+  if(d.f==='f'){zz.f[d.g]=zz.f[d.g]||{a:'',w:''};zz.f[d.g].w=v;}else zz[d.f]=v;}
+ function lies(){if(t<0)return;wurzel.querySelectorAll('[data-r="teile"] input[data-f]').forEach(schreibFeld);}
+ // Rückmeldung zum eigenen Wert (Teil 1)
+ function wertText(hw){const b=B[t];
+  return ({leer:'Jetzt fehlt noch der richtige Wert.',zahl:'Tipp nur eine Zahl ein, zum Beispiel 25.',
+   plan:`${b.wert.plan} ${b.wert.einheit} steht im Plan des Kollegen – das ist ja der Fehler. Schlag nach, was das Tabellenbuch verlangt.`,
+   gross:'Das ist der Wert für große Geräte über 50 kW. Das neue Gerät hat 20 kW und ein Gebläse.',
+   kwh:'Du hast mit 0,14 l/kWh gerechnet. Nimm den Wert in kg je m³.',
+   jahr:'Das ist das ganze Jahr. Gefragt ist nur der Januar mit 400 m³.',
+   ll:'Das ist der Wert für Erdgas LL. Herr Kessler hat Erdgas E.',
+   heiss:'Das ist ein Abstand für heißeres Abgas (über 160 °C). Der alte Kessel hat 140 °C.',
+   null:'0 cm gilt nur, wenn das Abgas kälter als 85 °C ist. Der alte Kessel hat 140 °C.',
+   tag:'Die Menge im Januar stimmt. Jetzt teil sie durch die Tage im Januar (31) – 1 kg ≈ 1 Liter.',
+   tagleer:'Die Menge im Januar stimmt. Jetzt fehlt noch, wie viel Liter das am Tag sind.',
+   nein:t===0?'Der Wert stimmt noch nicht. Schau im Tabellenbuch bei „Abgasmündungen über Dach“: Welche Spalte gilt für ein Gerät mit Gebläse unter 50 kW?':
+    t===1?'Rechne noch einmal: Gas im Januar (400 m³) × Kondensat je m³ Erdgas E (Wert in kg je m³).':
+    'Der Wert stimmt noch nicht. Welche Zeile gilt für 140 °C? Gefragt ist der Abstand vom Verbindungsstück (d₁).'})[hw]||'Der Wert stimmt noch nicht.';}
+ function pruefen(){if(t<0)return null;lies();P[t]=kopie(Z[t]);const s=gs(t),z=Z[t],RG=R.ring(t),n=RG.von+1;let k='nein',x;
+  if(s.p3){k='ok';x=mitP?'Alles richtig – 100 Punkte. Euer Prüfprotokoll für den Chef ist fertig.':'Alles richtig – euer Prüfprotokoll für den Chef ist fertig.';}
+  else if(!s.p1){
+   if(!z.a&&!String(z.w).trim()&&!String(z.w2).trim()&&!z.g){k='';x='Lies zuerst die drei Angaben A, B und C im Bild. Tipp die falsche an und trag dann ein, was richtig wäre.';}
+   else if(!s.angabe)x=z.a?'Teil 1 stimmt noch nicht: Falsch ist eine andere Angabe. Prüf A, B und C einzeln mit deinem Tabellenbuch.':'Tipp noch an, welche Angabe – A, B oder C – falsch ist.';
+   else if(!s.wert||!s.wert2){const hw=R.wertHinweis(t,z);x=wertText(hw);if(hw==='leer'||hw==='tagleer')k='';}
+   else if(!z.g){k='';x='Angabe und Wert stimmen. Jetzt fehlt noch die Begründung.';}
+   else x='Angabe und Wert stimmen. Die Begründung noch nicht: Lies die drei Sätze noch einmal genau – welcher passt zu deinem Bild und zum Tabellenbuch?';}
+  else if(!s.p2){const eigen=B[t].ring.soll;
+   if(!String(z.rw).trim()&&!z.rf&&!z.rc){k='';x=`Teil 1 stimmt. Jetzt frag Tablet ${n}: „Welcher Wert gilt bei dir – und wo steht er?“`;}
+   else if(!z.rc){k='';x='Prüf zuerst selbst nach: Schlag die Stelle im Tabellenbuch nach und tipp „stimmt“ oder „stimmt nicht“ an. Dann wieder „Prüfen“.';}
+   else if(s.ringA)x='Sieh noch einmal im Tabellenbuch nach: Wert und Fundstelle deines Mitspielers stimmen doch.';
+   else if(z.rc==='nicht'){k='';x=`Gut nachgeprüft: Da stimmt wirklich etwas nicht. Klärt es mit Tablet ${n} zusammen, verbessert ${!s.ringW&&!s.ringF?'Wert und Fundstelle':s.ringW?'die Fundstelle':'den Wert'} und prüft noch einmal.`;}
+   else if(!s.ringW&&eigen!==RG.soll&&R.nahe(R.zahl(z.rw),eigen,0))x=`Du hast „stimmt“ angetippt – aber das ist der Wert von deinem eigenen Bild. Bei Tablet ${n} geht es um etwas anderes. Frag noch einmal nach.`;
+   else if(!s.ringW)x=`Du hast „stimmt“ angetippt – aber der Wert stimmt nicht. Schlag selbst nach und klärt es mit Tablet ${n} zusammen.`;
+   else x=`Du hast „stimmt“ angetippt – aber der Wert steht an einer anderen Stelle im Tabellenbuch. Schlag selbst nach und klärt es mit Tablet ${n} zusammen.`;}
+  else if(!z.e&&R.andere(t).every(j=>{const f=z.f[j];return !f||(!f.a&&!String(f.w).trim());})){k='';x='Teil 2 stimmt. Jetzt setzt euch zusammen und tragt euer Prüfprotokoll ein.';}
+  else if(s.fremd.flat().every(Boolean)&&!s.schluss)x='Das Protokoll stimmt. Die Antwort an Herrn Kessler noch nicht: Was passiert mit dem alten Schornstein – und wohin kommt die neue Abgasleitung?';
+  else x='Noch nicht alles richtig. Fragt eure Mitspieler noch einmal – rot ist, was noch nicht stimmt.';
+  rueck={k,t:x};teile();aenderung();o.beiPunkte&&o.beiPunkte(besterStand());return s;}
+ if(t<0)startbild();else tablet();
+ return {waehleTablet,pruefen,tablet:()=>t,
+  setze:(i,f)=>{f(Z[i]);if(i===t&&t>=0)teile();aenderung();},
+  fuellen:i=>{Z[i]=R.richtig(i);if(i===t&&t>=0)teile();aenderung();},
+  stand:i=>gs(i),besterStand,zumAnfang,
+  exportiere:()=>{lies();return {t,Z:kopie(Z),P:kopie(P)};},
+  wechsel:()=>{lies();t=-1;aenderung();startbild();}};
+}
+
+const TM=bauPruefprotokoll(document.getElementById('team'),{mitPunkten:false});
+window.__seite={TM};
+</script>
+</body>
+</html>
