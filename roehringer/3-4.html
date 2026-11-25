@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>3.4 Reicht die Pumpe? Kennlinien und Betriebspunkt – Haus Röhringer</title>
+<style>
+:root{--papier:#f4f1ea;--tinte:#22303a;--leise:#5d6b75;--linie:#d5cfc2;--karte:#fff;--akzent:#0b6b7d;--akzent-hell:#e1f0f2;--gold:#d99a1b;
+  --vl:#d0342c;--rl:#2f6fb7;--ring:#b0408a;--gut:#2e7d4f;--gut-hell:#e4f3e3;--schlecht:#c8371f;--schlecht-hell:#fde3df;--merk:#fffbe9;--merk-rand:#ecd9a0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation}
+body{margin:0;background:var(--papier);color:var(--tinte);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+.kopf{position:sticky;top:0;z-index:5;background:var(--papier);border-bottom:1px solid var(--linie);padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.kopf .titel{flex:1 1 360px;min-width:0}
+.kopf .ober{margin:0;font-size:13px;color:var(--leise)}
+.kopf h1{margin:0;font-size:20px;line-height:1.25}
+.kopf .stand{font-size:16px;white-space:nowrap;text-align:right}
+.kopf .stand small{display:block;font-size:12px;color:var(--leise)}
+.kurs{min-height:44px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--akzent);background:#fff;color:var(--akzent);font-weight:600;cursor:pointer;touch-action:manipulation}
+main{max-width:1040px;margin:0 auto;padding:14px 16px 60px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+h2{font-size:20px;margin:0 0 8px;line-height:1.25}
+h3{font-size:17px;margin:14px 0 6px}
+p{margin:0 0 10px}
+.klein{font-size:14px;color:var(--leise)}
+.sprech{border-left:5px solid var(--akzent);background:var(--akzent-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:0 0 12px}
+.sprech b.wer{display:block;font-size:13px;color:var(--akzent);letter-spacing:.3px;margin-bottom:2px}
+.merk{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 12px;margin:10px 0 0}
+.wahl{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.knopf,.wahl button{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;touch-action:manipulation}
+.wahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.knopf.haupt{background:var(--akzent);border-color:var(--akzent);color:#fff}
+.knopf:disabled,.wahl button:disabled{opacity:.45;cursor:default}
+svg{display:block;width:100%;height:auto}
+.rollen{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--leise);font-weight:600}
+.balken{height:12px;border-radius:6px;background:var(--akzent)}
+.balkenreihe{display:flex;min-width:60px}
+.zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.zwei{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}}
+/* Animation */
+.wegbild{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.messung{min-height:48px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--akzent-hell);font-size:17px}
+.messung b{font-size:19px}
+.hk-knopf{cursor:pointer}
+.lupe-ruf{cursor:pointer}
+.lupe{border:2px solid var(--tinte);border-radius:14px;padding:12px 14px;margin-top:12px;background:#fff}
+.lupe h3{margin:0 0 6px}
+.lupe ol{margin:8px 0 0;padding-left:22px}
+.lupe li{margin:3px 0}
+/* Aufgaben */
+.aufgabe{border:1px solid var(--linie);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:#fff}
+.aufgabe h3{margin:0 0 6px}
+.aufgabe .pkt{float:right;margin-left:10px;font-size:14px;color:var(--leise);font-weight:600}
+.aufgabe.fertig{border-color:var(--gut);box-shadow:0 0 0 2px var(--gut-hell)}
+.feld{display:inline-flex;align-items:center;gap:6px;margin:4px 16px 4px 0;font-size:17px}
+input.zahl{font:inherit;width:5.2em;min-height:44px;padding:6px 8px;border:1px solid var(--linie);border-radius:8px;background:#fff;color:var(--tinte)}
+input.zahl.ok{border-color:var(--gut);background:var(--gut-hell)}
+input.zahl.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+input.zahl:disabled{opacity:1;color:var(--tinte)}
+.rueck{display:block;margin-top:8px;font-size:15px}
+.rueck.ok{color:var(--gut);font-weight:600}
+.rueck.nein{color:var(--schlecht)}
+.satz{border:1px solid var(--linie);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+.satz p{margin:0 0 6px;font-style:italic}
+.satz.ok{border-color:var(--gut);background:var(--gut-hell)}
+.satz.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+.satz .wahl{margin:0}
+/* Zeichnen */
+svg.zeichnen{min-width:680px;touch-action:manipulation;background:#eef1ea;border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.gruppe{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 8px}
+.gruppe button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.gruppe .gname{font-size:14px;color:var(--leise);font-weight:600;min-width:110px}
+.pruefliste{list-style:none;padding:0;margin:10px 0 0;font-size:15px}
+.pruefliste li{padding:3px 0 3px 26px;position:relative}
+.pruefliste li::before{position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;text-align:center;line-height:18px}
+.pruefliste li.ok::before{content:"✓";background:var(--gut)}
+.pruefliste li.nein::before{content:"✗";background:var(--schlecht)}
+/* Team */
+.tablet{border:2px solid var(--tinte);border-radius:16px;padding:14px;background:#fff;margin-top:6px}
+.tablet h3{margin:0 0 6px}
+.phase{border-top:1px solid var(--linie);padding-top:10px;margin-top:12px}
+.phase.zu{opacity:.45}
+.phase label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.grosswahl{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}
+.grosswahl button{min-width:150px;min-height:96px;border-radius:16px;border:2px solid var(--tinte);background:#fff;cursor:pointer;font-size:18px;padding:10px 14px;touch-action:manipulation}
+.grosswahl button b{display:block;font-size:34px;line-height:1.1}
+.ok-text{color:var(--gut);font-weight:600}
+.hinweis-gruen{display:inline-block;background:var(--gut-hell);border:1px solid var(--gut);border-radius:8px;padding:2px 8px}
+.hinweis-orange{display:inline-block;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:2px 8px}
+@media (max-width:820px){body{font-size:16px}.kopf h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Station 3.2 – Ergänzungen zu basis.css (Reiter, Animation, Auswahl, Rechentrainer, Strangliste) */
+.reiter{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.reiter button{min-height:48px;padding:6px 16px;border-radius:12px;border:1.5px solid var(--linie);background:#fff;color:var(--tinte);font-size:16px;font-weight:600;cursor:pointer;touch-action:manipulation;text-align:left}
+.reiter button[aria-selected="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.reiter button small{display:block;font-size:12px;font-weight:400;opacity:.85}
+.dr-zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.dr-zwei{grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);align-items:start}}
+.dr-bild{margin:0}
+.dr-gruppe{align-items:center;margin:0 0 8px}
+.gname{font-size:14px;color:var(--leise);font-weight:600;margin-right:2px}
+.dr-svg{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.dr-info{margin:8px 0 0}
+.dr-fuss{margin:8px 0 0}
+.dr-rechts .karte{margin:0}
+/* Sprechblase des Chefs: hochkant oben, quer in der rechten Spalte (damit Regler und Bild ganz auf den Schirm passen) */
+.chef-rechts{margin:0 0 12px}
+@media (min-width:900px){.chef-oben{display:none}}
+@media (max-width:899px){.chef-rechts{display:none}}
+/* Auswahlantworten */
+.optionen{display:flex;flex-direction:column;gap:8px;margin:6px 0 8px}
+.optionen button{min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-align:left;font-size:16px;cursor:pointer;touch-action:manipulation}
+.optionen.quer{flex-direction:row;flex-wrap:wrap}
+.optionen button[aria-pressed="true"]{border-color:var(--tinte);box-shadow:inset 0 0 0 2px var(--tinte)}
+.optionen button.ok{background:var(--gut-hell);border-color:var(--gut);box-shadow:inset 0 0 0 2px var(--gut)}
+.optionen button.nein{background:var(--schlecht-hell);border-color:var(--schlecht);box-shadow:inset 0 0 0 2px var(--schlecht)}
+.optionen button:disabled{cursor:default}
+.optionen button:disabled:not(.ok){opacity:.5}
+.aufgabe.gesperrt .optionen,.aufgabe.gesperrt .feld,.aufgabe.gesperrt .wahl{opacity:.45}
+.sperre{display:block;font-size:15px;color:#7a4d00;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:6px 10px;margin:6px 0}
+.lsatz{font-style:italic;line-height:2;margin:4px 0 8px}
+.lluecke{display:inline-block;min-width:7em;padding:0 8px;border-bottom:2px solid var(--tinte);font-style:normal;font-weight:700;text-align:center}
+.lluecke.ok{color:var(--gut);border-color:var(--gut)}
+.lluecke.nein{color:var(--schlecht);border-color:var(--schlecht)}
+.weiter{margin:4px 0 0}
+/* Rechentrainer */
+.rt-leiste{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.rt-leiste .reiter{margin:0}
+.rt-karten{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.rt-karten .aufgabe{margin:0}
+.rt-karten .breit{grid-column:1/-1}
+.feldzeile{margin:6px 0}
+.feldzeile .optionen{margin:6px 0 0}
+.aufgabe .nr{display:inline-block;min-width:2.2em;font-weight:700;color:var(--akzent)}
+.aufgabe .gegeben{font-size:18px}
+.rt-skizze{max-width:640px;margin:6px 0 10px;border:1px solid var(--linie);border-radius:10px;overflow:hidden;background:#fffef9}
+.merkzeile{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 14px;margin:0 0 12px;font-size:17px}
+.merkzeile p{margin:2px 0}
+.geuebt{font-size:13px;color:var(--gut);font-weight:600;margin-left:6px}
+/* Strangliste (Dreier-Team) */
+.strangliste td,.strangliste th{padding:6px 6px}
+.strangliste td.zahl{text-align:right;white-space:nowrap}
+.strangliste tr.eigen td{background:#fff8d6}
+.strangliste tr.chef td{color:var(--leise)}
+.skizze-chef svg{border:1px solid var(--linie);border-radius:10px}
+@media (min-width:900px){.tablet .dr-zwei>div:first-child{position:sticky;top:104px}}
+a.kurs{display:inline-flex;align-items:center;text-decoration:none}
+.merksatz{font-size:19px;line-height:1.45}
+.meldung{border-left:5px solid var(--gut);background:var(--gut-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0 0}
+
+/* Station 3.4 – Ergänzungen zu basis.css und s32.css (Kennlinien-Baustein, Kennlinienfeld-Animation, Anlagenkennlinie zeichnen, Pumpen-Team) */
+/* Kennlinien-Baustein */
+.kl-flaeche{position:relative}
+.kl-svg{background:#fff;border:1px solid var(--linie);border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.kl-griff{position:absolute;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;z-index:2}
+.kl-griff[data-griff="y"]{cursor:ns-resize}.kl-griff[data-griff="x"]{cursor:ew-resize}
+.kl-gross .kl-griff{display:none}
+.kl-gross .kl-svg{border-color:var(--tinte);border-width:2px}
+.kl-knoepfe{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0}
+.kl-paar{display:inline-flex;align-items:center;gap:6px}
+.kl-name{font-weight:700;color:var(--leise);min-width:1.4em}
+.kl-k{min-width:52px;font-size:22px;font-weight:700;padding:2px 0;line-height:1}
+.kl-wert{display:inline-block;min-width:6.6em;text-align:center;font-size:17px}
+.kl-lupe{min-width:96px}
+.kl-quelle{margin:6px 0 0}
+.z34-bild{display:block;width:100%;height:auto;border:1px solid var(--linie);border-radius:10px;background:#fff}
+/* Animation 3.4.1: Haus | Kennlinienfeld | Anzeigen und Aufgaben (quer), Haus und Feld nebeneinander, Aufgaben darunter (hochkant) */
+.kf-gitter{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:600px){.kf-gitter{grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr)}.kf-rechts{grid-column:1/-1}}
+@media (min-width:900px){.kf-gitter{grid-template-columns:minmax(0,.8fr) minmax(0,1.08fr) minmax(0,1fr);align-items:start}.kf-rechts{grid-column:auto}
+ .kf-haus,.kf-diagr{position:sticky;top:calc(var(--kopf,0px) + 8px)}}
+.kf-gitter>.karte{margin:0;padding:10px}
+.kf-haus-svg{display:block;width:100%;height:auto;border:1px solid var(--linie);border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.kf-ziel{cursor:pointer;outline:none}
+.kf-ziel:focus-visible{fill-opacity:.12;fill:#0b6b7d}
+.kf-pumpe,.kf-stufen,.kf-ventile,.kf-schalter{margin:8px 0 0;gap:6px}
+.kf-pumpe button,.kf-stufen button,.kf-ventile button,.kf-schalter button{padding:6px 9px;font-size:15px}
+.kf-legende{margin:6px 0 0;font-size:13px}
+.kf-streifen-titel{margin:6px 0 2px;font-size:13px;font-weight:700;color:var(--leise)}
+.kf-rechts .karte{margin:0 0 12px}
+.kf-anzeigen{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;padding:10px 12px}
+.kf-anz span{display:block;font-size:13px;color:var(--leise)}
+.kf-anz b{display:block;font-size:19px;line-height:1.2}
+.kf-anz small{display:block;font-size:12px;color:var(--leise)}
+.kf-feld span{margin-right:4px}
+.kf-zeile{margin:6px 0}
+.kf-zeile .gname{display:block;margin:0 0 2px}
+.kf-satz{line-height:2.3}
+.kf-luecke{min-height:44px;min-width:6.5em;background:#fff;border:0;border-bottom:2px solid var(--tinte);border-radius:4px 4px 0 0;cursor:pointer;font:inherit;font-style:normal;font-weight:700;color:var(--tinte);touch-action:manipulation}
+.kf-luecke:disabled{cursor:default}
+.kf-woerter{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.kf-wort{min-height:44px;padding:6px 14px;border-radius:10px;border:2px solid var(--tinte);background:#fff;color:var(--tinte);font-size:16px;font-weight:600;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.kf-wort.gewaehlt{background:var(--akzent-hell);border-color:var(--akzent);box-shadow:0 0 0 3px var(--akzent-hell)}
+.kf-geist{position:fixed;z-index:50;pointer-events:none;box-shadow:0 8px 18px rgba(0,0,0,.25);cursor:grabbing}
+.kf-vormachen{margin:6px 0 4px;padding-left:22px}
+.kf-vormachen li{margin:3px 0}
+.kf-bild{margin-top:14px}
+/* Übung 3.4.2 Anlagenkennlinie zeichnen */
+@media (min-width:900px){.dr-zwei.ak{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}.ak-links{position:sticky;top:calc(var(--kopf,0px) + 8px)}}
+.ak-links .karte{margin:0}
+.ak-werkzeug{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:8px 0 0}
+.ak-werkzeug .gname{margin:0}
+.ak-werkzeug button{padding:6px 10px;font-size:15px}
+.ak-zeichne{font-size:14px;margin:6px 0 0}
+.ak-farbe{display:inline-block;width:22px;height:4px;border-radius:2px;vertical-align:middle;margin-right:4px}
+.ak-tab{font-size:15px;margin:6px 0 8px}
+.ak-tab td,.ak-tab th{padding:4px 6px;text-align:right;white-space:nowrap}
+.ak-tab th:first-child,.ak-tab td:first-child{text-align:left}
+.aufgabe.aktiv{border-color:var(--akzent);box-shadow:0 0 0 2px var(--akzent-hell)}
+.ak-runde{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 12px}
+.ak-runde .hinweis-orange{font-weight:600}
+.ak-pfeile button{min-width:48px;font-size:18px;font-weight:700}
+/* Dreier-Team 3.4.2 */
+.rp-zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.rp-zwei{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:start}.rp-links{position:sticky;top:calc(var(--kopf,0px) + 8px)}}
+.rp-tab td,.rp-tab th{padding:4px 6px;font-size:14px}
+.rp-tab td.zahl{text-align:right;white-space:nowrap}
+.rp-diagramm{margin:8px 0}
+.rp-schluss svg{margin:8px 0}
+
+.leise{color:var(--leise);font-size:14px}
+.kennz{font-weight:700;color:var(--akzent);margin:0 0 2px}
+a.zurueck{color:var(--akzent)}
+h1{font-size:24px;margin:0 0 4px;line-height:1.2}
+.sprung{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.sprung a{display:inline-block;padding:9px 14px;border-radius:999px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-decoration:none;font-size:15px}
+section.abschnitt{scroll-margin-top:10px;margin:0 0 22px}
+section.abschnitt>h2{margin:8px 0 6px}
+footer{margin-top:28px;font-size:13px;color:var(--leise);border-top:1px solid var(--linie);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+  <p class="leise"><a class="zurueck" href="index.html">← Haus Röhringer: alle Stationen</a></p>
+  <p class="kennz">3194 · 3.4</p>
+  <h1>3.4 Reicht die Pumpe? Kennlinien und Betriebspunkt</h1>
+  <p class="leise">Haus Röhringer – Der Anbau kommt ans Netz. Animation und Übung zum Arbeitsblatt 3.4, ohne Anmeldung und ohne Punkte.</p>
+  <div class="sprung"><a href="#animation">3.4.1 Animation</a><a href="#anlagenkennlinie">3.4.2 Anlagenkennlinie zeichnen</a></div>
+
+  <section class="abschnitt" id="animation">
+    <h2>3.4.1 Animation: Kennlinienfeld – Ventile auf, Ventile zu</h2>
+    <p>Ein Modellhaus mit fünf Heizkörpern. Tipp auf einen Heizkörper, um sein Ventil zu öffnen oder zu schließen, und schalte die Pumpe um: ungeregelt, Δp-c oder Δp-v. Im Diagramm wandert der Betriebspunkt mit. Damit löst du die Aufgaben 1, 2 und 5 auf deinem Arbeitsblatt.</p>
+    <div id="feld"></div>
+  </section>
+
+  <section class="abschnitt" id="anlagenkennlinie">
+    <h2>3.4.2 Übung: Anlagenkennlinie zeichnen und Betriebspunkt finden</h2>
+    <p>Trag die Pumpe und das Rohrnetz ins Raster ein, lies die Betriebspunkte ab und zeichne die Regelungsarten Δp-c und Δp-v ein (Aufgabe 4 auf dem Arbeitsblatt). Mit „Neue Zahlen“ übst du mit einer anderen Pumpe und einem anderen Rohrnetz weiter.</p>
+    <div id="kennlinie"></div>
+  </section>
+
+  <footer>Diese Seite setzt keine Cookies, speichert nichts auf dem Gerät und lädt nichts von anderen Servern. Beim Aufruf verarbeitet der Anbieter GitHub technisch die IP-Adresse des Geräts.</footer>
+</main>
+<script>
+// ---------------------------------------------------------------- Zahlen lesen und schreiben (deutsch), für Station 3.2 (ohne DOM)
+// Eingaben dürfen Komma oder Punkt haben, mit oder ohne Einheit, mit Leerzeichen als Tausendertrenner („10 000“).
+// „2.700“ ist doppeldeutig (Tausenderpunkt oder Dezimalpunkt): Dann gilt die Lesart, die näher am erwarteten Wert liegt.
+const ZAHL=(()=>{
+ const EINHEIT=/\s*(mws|m\s*ws|meter|m|bar|mbar|hpa|kpa|pa\/m|pa|kg\/h|m\/s|°c|°|%)\.?$/i;
+ function lies(s,soll){
+  let t=String(s==null?'':s).trim().toLowerCase();
+  for(let i=0;i<2;i++)t=t.replace(EINHEIT,'');
+  t=t.replace(/[\s  ']/g,'');
+  if(!t)return NaN;
+  let m;
+  if((m=/^(-?)(\d{1,3}(?:\.\d{3})+),(\d+)$/.exec(t)))return parseFloat(m[1]+m[2].replace(/\./g,'')+'.'+m[3]);   // 2.700,5
+  if(/^-?\d{1,3}(\.\d{3})+$/.test(t)){const dez=parseFloat(t),tau=parseFloat(t.replace(/\./g,''));                // 2.700 → 2,7 oder 2700
+   if(soll===undefined||!isFinite(soll)||soll===0)return dez;
+   const ab=x=>Math.abs(Math.log(Math.abs(x)||1e-12)-Math.log(Math.abs(soll)));return ab(tau)<ab(dez)?tau:dez;}
+  t=t.replace(',','.');
+  if(!/^-?(\d+(\.\d+)?|\.\d+)$/.test(t))return NaN;
+  return parseFloat(t);}
+ // deutsch schreiben: n Nachkommastellen (ohne n: so wenige wie nötig, höchstens 3), ab 10 000 mit schmalem Leerzeichen
+ function text(x,n){if(!isFinite(x))return '';let s;
+  if(n===undefined){s=String(Math.round(x*1000)/1000);}else s=(+x).toFixed(n);
+  let [g,k]=s.split('.');const neg=g.startsWith('-');if(neg)g=g.slice(1);
+  if(g.length>4)g=g.replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+  return (neg?'-':'')+g+(k?','+k:'');}
+ const gleich=(a,b,rel)=>Math.abs(a-b)<=Math.max(1e-9,Math.abs(b)*(rel||1e-9));
+ return {lies,text,gleich};
+})();
+
+// ---------------------------------------------------------------- SVG-Helfer (für Animation und Zeichenübungen)
+const SVGNS='http://www.w3.org/2000/svg';
+function svgEl(n,a,t){const e=document.createElementNS(SVGNS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!==undefined)e.textContent=t;return e;}
+const dstr=p=>p.map((q,i)=>(i?'L':'M')+q[0]+' '+q[1]).join(' ');
+
+// erzeugt von bauen-3-4.mjs aus Skripte/vorschau-3-4/zahlen-3-4.js (Rechenblatt der Vorschau) – nicht von Hand ändern
+// ohne die Zahlen von Probe-Test und Kapiteltest; Z34_RUNDEN = Übungsrunden „Neue Zahlen“ der Übung 3.4.2 (beim Bau gegen die Testzahlen geprüft)
+const Z34={"bestand":{"liste":[{"nr":"A1","raum":"Wohnzimmer","g":"EG","W":2090,"l":16,"Vlh":179.7,"rohrPa":2400},{"nr":"A2","raum":"Küche/Essen","g":"EG","W":1280,"l":14,"Vlh":110.1,"rohrPa":2100},{"nr":"A3","raum":"Flur","g":"EG","W":470,"l":10,"Vlh":40.4,"rohrPa":1500},{"nr":"A4","raum":"Gäste-WC","g":"EG","W":300,"l":12,"Vlh":25.8,"rohrPa":1800},{"nr":"A5","raum":"Schlafzimmer","g":"OG","W":1060,"l":24,"Vlh":91.1,"rohrPa":3600},{"nr":"A6","raum":"Kinderzimmer 1","g":"OG","W":920,"l":26,"Vlh":79.1,"rohrPa":3900},{"nr":"A7","raum":"Kinderzimmer 2","g":"OG","W":920,"l":28,"Vlh":79.1,"rohrPa":4200},{"nr":"A8","raum":"Bad","g":"OG","W":1100,"l":30,"Vlh":94.6,"rohrPa":4500}],"QB":8140,"VB":699.91,"VBrund":700,"QA":3896,"VA":335,"Vges":1035,"Vges_m3h":1.035,"Qges":12036,"qWm2_bei145":56.1},"gegenprobe15K":{"VB":466.6,"Vges":801.6},"strang":{"bestand":"Bad","l":30,"rohrPa":4500,"mitVentilPa":9000,"anbauPa":10200,"ganzesHausPa":10200},"pumpe":{"1":{"q":0.6889,"H0":1.898,"Vnull":2.088,"werte":[[0,1.898],[0.5,1.698],[1,1.337],[1.5,0.817],[2,0.136]]},"2":{"q":0.8519,"H0":2.903,"Vnull":2.582,"werte":[[0,2.903],[0.5,2.674],[1,2.284],[1.5,1.735],[2,1.026],[2.5,0.157]]},"3":{"q":1,"H0":4,"Vnull":3.031,"werte":[[0,4],[0.5,3.745],[1,3.33],[1.5,2.755],[2,2.02],[2.5,1.125],[3,0.07]]}},"auslegung":{"V":1.035,"H":1.02,"H_981":1.04,"k":0.9522,"stufeBeiV":{"1":1.306,"2":2.251,"3":3.295},"anlagenkennlinie":[[0.25,0.06],[0.5,0.238],[0.75,0.536],[1,0.952],[1.035,1.02],[1.25,1.488],[1.5,2.142],[1.75,2.916],[2,3.809]]},"betriebspunkt":{"1":{"V":1.13,"H":1.217,"P":31.5},"2":{"V":1.398,"H":1.861,"P":48},"3":{"V":1.641,"H":2.564,"P":65.8}},"mehrWasser":{"1":0.092,"3":0.586},"vorher":{"V":0.7,"H":0.9,"k":1.8367,"bp3":{"V":1.283,"H":3.024,"P":63.7},"bp1":{"V":0.884,"H":1.435,"P":30.5}},"danfoss":{"H":1.04,"stufe1":1.306},"ablesen":{"s1_0":1.9,"s1_1":1.337,"s2_1":2.284,"s3_1":3.33,"s3_2":2.02},"leistung":{"Pab_ausl":2.93,"Pab_bp3":11.69,"Pab_bp1":3.82,"Pel_bp3":65.8,"Pel_bp1":31.5,"Pel_s3_V0":56,"Pel_s1_V0":27},"teillast":{"s3":{"V":0.943,"H":3.386,"P":61.7},"s1":{"V":0.649,"H":1.607,"P":29.6}},"bonus":{"H0_s2":2.903,"H0_s1":1.898,"halbe":{"V":0.5,"dp":0.25,"P":0.125}},"modell41":{"1":{"K":13,"ungeregelt":{"V":0.374,"H":1.814,"jeHK":0.374,"ventil":1.744,"P":33},"dpc":{"V":0.277,"H":1,"jeHK":0.277,"ventil":0.962,"P":5.5},"dpv":{"V":0.216,"H":0.608,"jeHK":0.216,"ventil":0.585,"P":3.9}},"2":{"K":3.625,"ungeregelt":{"V":0.65,"H":1.532,"jeHK":0.325,"ventil":1.321,"P":35.2},"dpc":{"V":0.525,"H":1,"jeHK":0.263,"ventil":0.862,"P":8.2},"dpv":{"V":0.447,"H":0.723,"jeHK":0.223,"ventil":0.624,"P":6}},"3":{"K":1.889,"ungeregelt":{"V":0.826,"H":1.289,"jeHK":0.275,"ventil":0.948,"P":36.6},"dpc":{"V":0.728,"H":1,"jeHK":0.243,"ventil":0.735,"P":10.4},"dpv":{"V":0.664,"H":0.832,"jeHK":0.221,"ventil":0.612,"P":8.5}},"4":{"K":1.281,"ungeregelt":{"V":0.933,"H":1.116,"jeHK":0.233,"ventil":0.681,"P":37.5},"dpc":{"V":0.883,"H":1,"jeHK":0.221,"ventil":0.61,"P":12.1},"dpv":{"V":0.85,"H":0.925,"jeHK":0.212,"ventil":0.564,"P":11.1}},"5":{"K":1,"ungeregelt":{"V":1,"H":1,"jeHK":0.2,"ventil":0.5,"P":38},"dpc":{"V":1,"H":1,"jeHK":0.2,"ventil":0.5,"P":13.4},"dpv":{"V":1,"H":1,"jeHK":0.2,"ventil":0.5,"P":13.4}}},"ue42":{"pumpe":[[0,320],[0.5,300],[1,260],[1.5,200],[2,120],[2.5,20]],"anlage":[[0.5,27.5],[1,110],[1.5,247.5],[2,440]],"bp1":{"V":1.395,"dp":214.2},"bp2":{"V":1.114,"dp":248.1},"gedrosselt":[[0.5,50],[1,200],[1.25,312.5]],"dpv_bei0":107.1}};
+const Z34_RUNDEN=[[260,0,40,60,[0.4,1.5,2],120,1.4],[260,0,40,60,[0.6,1.2,2],130,1.4],[260,20,20,60,[0.8,1.2,2],130,1.4],[260,20,20,70,[0.5,1.4,1.8],130,1.4],[260,20,20,70,[0.6,1.4,1.8],170,1.4],[260,20,20,170,[0.6,1.2,1.4],260,1.2],[260,30,20,60,[0.8,1.5,2],120,1.4],[260,40,20,60,[0.8,1.5,2],120,1.4],[260,40,40,60,[0.4,1.2,2],130,1.25],[260,40,40,60,[0.6,1.6,1.8],130,1.3],[260,40,40,60,[0.4,1.2,2],130,1.4],[260,40,40,130,[0.6,1.4,1.6],220,1.2],[260,40,40,130,[0.5,1.5,1.6],220,1.25],[260,40,40,130,[0.5,1.2,1.4],220,1.3],[280,0,20,120,[0.5,1.5,1.8],210,1.3],[280,0,20,120,[0.8,1.5,1.6],220,1.2],[280,0,20,120,[0.6,1.5,1.8],220,1.25],[280,0,20,120,[0.6,1.6,1.8],220,1.3],[280,0,40,100,[0.8,1.6,1.8],190,1.25],[280,0,40,100,[0.6,1.6,1.8],190,1.3],[280,0,40,100,[0.8,1.5,1.6],190,1.4],[280,0,60,170,[0.8,1.4,1.5],270,1.2],[280,10,40,60,[0.4,1.8,2],130,1.4],[280,10,40,130,[0.8,1.5,1.6],190,1.25],[280,10,40,130,[0.4,1.4,1.5],190,1.3],[280,10,40,130,[0.6,1.5,1.6],190,1.4],[280,10,60,70,[0.6,1.6,1.8],170,1.2],[280,10,60,70,[0.6,1.2,1.6],170,1.4],[280,20,40,60,[0.8,1.2,2],120,1.4],[280,20,40,60,[0.6,1.5,2],130,1.4],[280,30,20,60,[0.4,1.6,2],130,1.4],[280,30,20,70,[0.4,1.4,1.8],130,1.4],[280,30,20,100,[0.6,1.2,1.6],190,1.2],[280,30,20,100,[0.4,1.5,1.6],190,1.25],[280,30,20,100,[0.6,1.5,1.6],190,1.3],[280,30,20,100,[0.5,1.5,1.6],190,1.4],[280,30,20,130,[0.5,1.5,1.6],190,1.2],[280,30,20,130,[0.5,1.5,1.6],190,1.25],[280,30,20,130,[0.4,1.4,1.5],190,1.3],[280,30,20,130,[0.8,1.4,1.5],190,1.4],[280,40,20,60,[0.8,1.2,1.8],130,1.4],[300,0,20,100,[0.4,1.5,1.8],170,1.4],[300,0,20,130,[0.6,1.5,1.6],230,1.2],[300,0,20,130,[0.8,1.5,1.6],230,1.3],[300,0,20,170,[0.4,1.4,1.5],230,1.3],[300,0,20,170,[0.8,1.4,1.5],240,1.2],[300,0,60,60,[0.6,1.5,2],130,1.4],[300,0,60,130,[0.4,1.4,1.5],190,1.25],[300,0,60,130,[0.6,1.4,1.6],190,1.3],[300,0,60,130,[0.4,1.4,1.5],190,1.4],[300,10,20,120,[0.5,1.5,1.6],210,1.25],[300,10,20,120,[0.8,1.5,1.6],210,1.3],[300,10,20,120,[0.5,1.5,1.6],220,1.2],[300,10,20,120,[0.5,1.2,1.8],220,1.25],[300,10,20,120,[0.6,1.2,1.6],220,1.3],[300,10,20,170,[0.4,1.4,1.5],230,1.2],[300,10,20,170,[0.6,1.4,1.5],230,1.3],[300,10,40,100,[0.8,1.2,1.8],190,1.25],[300,10,40,100,[0.8,1.6,1.8],190,1.3],[300,10,40,100,[0.5,1.6,1.8],190,1.4],[300,10,60,120,[0.6,1.6,1.8],190,1.2],[300,10,60,120,[0.5,1.4,1.8],190,1.25],[300,10,60,120,[0.8,1.5,1.6],190,1.3],[300,10,60,120,[0.4,1.4,1.5],190,1.4],[300,10,60,130,[0.8,1.4,1.5],190,1.2],[300,10,60,130,[0.5,1.4,1.6],190,1.25],[300,10,60,130,[0.4,1.4,1.5],190,1.3],[300,10,60,130,[0.6,1.4,1.5],190,1.4],[300,20,40,60,[0.6,1.5,2],130,1.4],[300,20,40,130,[0.8,1.2,1.5],190,1.2],[300,20,40,130,[0.6,1.5,1.6],190,1.25],[300,20,40,130,[0.4,1.4,1.6],190,1.3],[300,20,60,170,[0.5,1.2,1.4],270,1.2],[300,30,40,60,[0.5,1.5,2],130,1.4],[300,30,40,130,[0.4,1.4,1.5],190,1.2],[300,30,40,130,[0.6,1.4,1.6],190,1.25],[300,30,40,130,[0.4,1.4,1.5],190,1.3],[300,30,40,130,[0.5,1.4,1.6],190,1.4],[300,30,60,70,[0.4,1.2,1.6],170,1.4],[300,30,60,170,[0.4,1.2,1.4],260,1.2],[300,40,20,100,[0.4,1.2,1.8],190,1.25],[300,40,20,100,[0.4,1.2,1.8],190,1.3],[300,40,20,100,[0.4,1.5,1.6],190,1.4],[300,40,40,170,[0.6,1.2,1.4],270,1.2],[340,0,40,130,[0.5,1.5,1.6],230,1.25],[340,0,40,130,[0.8,1.5,1.6],230,1.3],[340,0,40,170,[0.8,1.2,1.5],230,1.25],[340,0,40,170,[0.5,1.2,1.5],230,1.3],[340,0,40,170,[0.4,1.4,1.5],240,1.25],[340,10,40,120,[0.6,1.5,1.6],220,1.25],[340,10,40,120,[0.4,1.6,1.8],220,1.3],[340,20,40,120,[0.4,1.6,1.8],210,1.25],[340,20,40,120,[0.6,1.5,1.6],220,1.25],[340,20,40,120,[0.5,1.5,1.6],220,1.3],[340,20,60,100,[0.6,1.5,1.6],190,1.25],[340,20,60,100,[0.4,1.2,1.8],190,1.3],[340,20,60,100,[0.4,1.2,1.8],190,1.4],[340,30,20,130,[0.6,1.2,1.6],230,1.25],[340,30,20,130,[0.6,1.5,1.6],230,1.3],[340,30,20,170,[0.4,1.4,1.5],240,1.25],[340,30,60,130,[0.8,1.4,1.6],190,1.25],[340,30,60,130,[0.8,1.4,1.6],190,1.3],[340,30,60,130,[0.4,1.4,1.5],190,1.4],[340,40,20,120,[0.8,1.2,1.6],220,1.25],[340,40,20,120,[0.5,1.6,1.8],220,1.3],[340,40,60,120,[0.6,1.4,1.6],190,1.2],[340,40,60,120,[0.6,1.4,1.5],190,1.25],[340,40,60,120,[0.6,1.5,1.6],190,1.3],[340,40,60,120,[0.8,1.6,1.8],190,1.4],[360,0,40,100,[0.8,1.2,1.8],190,1.4],[360,0,60,170,[0.4,1.4,1.5],240,1.2],[360,10,40,130,[0.5,1.2,1.6],190,1.4],[360,20,40,130,[0.5,1.5,1.6],230,1.25],[360,20,40,170,[0.5,1.4,1.5],240,1.25],[360,30,20,100,[0.6,1.2,1.8],190,1.4],[360,30,40,120,[0.5,1.5,1.6],220,1.25],[360,30,40,120,[0.5,1.2,1.8],220,1.3],[360,30,40,170,[0.5,1.4,1.5],240,1.25],[360,40,20,130,[0.8,1.2,1.6],230,1.3],[360,40,20,170,[0.8,1.4,1.5],230,1.3],[360,40,60,60,[0.4,1.4,2],130,1.4],[360,40,60,130,[0.8,1.5,1.6],190,1.25],[360,40,60,130,[0.6,1.2,1.6],190,1.3],[360,40,60,130,[0.6,1.5,1.6],190,1.4],[360,40,60,130,[0.4,1.5,1.6],210,1.2],[360,40,60,130,[0.8,1.2,1.5],210,1.25],[360,40,60,130,[0.8,1.5,1.6],210,1.3],[380,0,60,130,[0.8,1.5,1.6],190,1.4],[380,10,40,100,[0.4,1.5,1.8],190,1.4],[380,10,60,170,[0.6,1.4,1.5],240,1.25],[380,20,40,100,[0.6,1.5,1.8],190,1.4],[380,20,60,70,[0.4,1.4,1.8],170,1.4],[380,20,60,170,[0.4,1.4,1.5],240,1.2],[380,30,40,170,[0.5,1.4,1.5],260,1.2]];
+
+// ---------------------------------------------------------------- Kennlinien-Baustein der Station 3.4 (gemeinsam für Animation 3.4.1, Übung 3.4.2 und Dreier-Team)
+// KL (ohne DOM): Rasten, Schnittpunkt zweier Kurven numerisch (Abtasten + Bisektion), glatte Kurve durch gesetzte Punkte (monoton, ohne Überschwingen).
+// bauKennlinien(wurzel,o) (braucht ZAHL, svgEl): Diagramm mit Achsen und Raster wie Millimeterpapier, Kurven aus Formel oder Wertetabelle, Punkte,
+// Hilfslinien, zwei Ziehlinien mit Rasten (Griffe an den Achsen als durchsichtige HTML-Streifen mit touch-action:none – Wischen über dem Bild rollt
+// die Seite weiter), Feinknöpfe − / + (gedrückt halten = weiterzählen), Lupe (Ausschnitt um einen Punkt) und Tippen ins Raster (für Punkte).
+const KL=(()=>{
+ const rund=(v,n)=>{v=+v;return +(v+(v>=0?1e-9:-1e-9)).toFixed(n==null?6:n);}; // kleiner Zuschlag: 1,035 → 1,04 (nicht 1,03 wegen der Gleitkommadarstellung)
+ const rasten=(v,s,min,max)=>{let r=rund(Math.round(v/s)*s,6);if(min!=null&&r<min)r=min;if(max!=null&&r>max)r=max;return r;};
+ // Nullstelle von h zwischen a und b (Vorzeichenwechsel nötig) – Bisektion
+ function nullstelle(h,a,b,n){let fa=h(a),fb=h(b);if(!isFinite(fa)||!isFinite(fb))return null;if(fa===0)return a;if(fb===0)return b;if(fa*fb>0)return null;
+  for(let i=0;i<(n||90);i++){const m=(a+b)/2,fm=h(m);if(fm===0)return m;if(fa*fm<0){b=m;fb=fm;}else{a=m;fa=fm;}}return (a+b)/2;}
+ // erster Schnitt der Kurven f und g zwischen a und b: grob abtasten, dann Bisektion
+ function schnitt(f,g,a,b,teile){teile=teile||400;const h=x=>f(x)-g(x);let x0=a,h0=h(a);
+  for(let i=1;i<=teile;i++){const x1=a+(b-a)*i/teile,h1=h(x1);
+   if(isFinite(h0)&&isFinite(h1)&&(h0===0||h0*h1<0)){const x=h0===0?x0:nullstelle(h,x0,x1);return {x,y:f(x)};}x0=x1;h0=h1;}
+  return null;}
+ // glatte Kurve durch Punkte (nach x sortiert): monotone kubische Hermite-Interpolation (Fritsch-Carlson) – kein Überschwingen zwischen den Punkten
+ function glatt(pp){const p=(pp||[]).slice().sort((u,v)=>u[0]-v[0]).filter((q,i,a)=>!i||q[0]>a[i-1][0]+1e-9),n=p.length;if(n<2)return null;
+  const x=p.map(q=>q[0]),y=p.map(q=>q[1]),d=[],m=new Array(n);
+  for(let i=0;i<n-1;i++)d.push((y[i+1]-y[i])/(x[i+1]-x[i]));
+  m[0]=d[0];m[n-1]=d[n-2];for(let i=1;i<n-1;i++)m[i]=d[i-1]*d[i]<=0?0:(d[i-1]+d[i])/2;
+  for(let i=0;i<n-1;i++){if(d[i]===0){m[i]=0;m[i+1]=0;continue;}const a=m[i]/d[i],b=m[i+1]/d[i],s=a*a+b*b;if(s>9){const t=3/Math.sqrt(s);m[i]=t*a*d[i];m[i+1]=t*b*d[i];}}
+  const f=v=>{if(v<x[0]-1e-9||v>x[n-1]+1e-9)return NaN;let i=0;while(i<n-2&&v>x[i+1])i++;const h=x[i+1]-x[i],t=(v-x[i])/h,t2=t*t,t3=t2*t;
+   return (2*t3-3*t2+1)*y[i]+(t3-2*t2+t)*h*m[i]+(-2*t3+3*t2)*y[i+1]+(t3-t2)*h*m[i+1];};
+  f.von=x[0];f.bis=x[n-1];return f;}
+ // Werte eines Rasters von min bis max (ohne Rundungsfehler)
+ const reihe=(min,max,s)=>{const n=Math.round((max-min)/s),r=[];for(let i=0;i<=n;i++)r.push(rund(min+i*s,6));return r;};
+ const vielfaches=(v,s)=>Math.abs(v/s-Math.round(v/s))<1e-6;
+ return {rund,rasten,nullstelle,schnitt,glatt,reihe,vielfaches};
+})();
+
+// o: {kennung, w, h, rand:{l,r,o,u}, titel, untertitel, quelle,
+//     x/y: {min,max,raster,haupt,marken,stellen,text,name,einheit,rasten,markenText(v)}, y2: {f,text,stellen} (rechte Achse, Wert = y·f),
+//     griffe:{x,y}, knoepfe, lupe, lupeFaktor, tippen(x,y,ev), beiLinien(zustand,ende), lupeZentrum() → {x,y}|null}
+function bauKennlinien(wurzel,o){
+ o=Object.assign({kennung:'kl',w:640,h:470,rand:null,titel:'',untertitel:'',quelle:'',x:null,y:null,y2:null,griffe:null,knoepfe:false,lupe:false,lupeFaktor:4,
+  tippen:null,beiLinien:null,lupeZentrum:null,aria:''},o||{});
+ const ax=o.x,ay=o.y,W=o.w,H=o.h,T=ZAHL.text,ROT='#d32f2f';
+ const R=Object.assign({l:64,r:o.y2?58:16,o:o.titel?(o.untertitel?50:34):12,u:50},o.rand||{}),X0=R.l,X1=W-R.r,Y0=R.o,Y1=H-R.u;
+ const gr=Object.assign({x:false,y:false},o.griffe||{}),gesperrt={x:false,y:false};
+ const px=v=>X0+(v-ax.min)/(ax.max-ax.min)*(X1-X0),py=v=>Y1-(v-ay.min)/(ay.max-ay.min)*(Y1-Y0);
+ const xAus=p=>ax.min+(p-X0)/(X1-X0)*(ax.max-ax.min),yAus=p=>ay.min+(Y1-p)/(Y1-Y0)*(ay.max-ay.min);
+ let kurven=[],punkte=[],hilfen=[],texte=[],LX=null,LY=null,lupe=false,stilX={},stilY={},yLinie=null,xLinie=null;
+ const proz=(a,b)=>(a/b*100).toFixed(3)+'%';
+ const knopfPaar=(ach,a)=>`<span class="kl-paar" data-paar="${ach}"><span class="kl-name">${a.name||''}</span><button type="button" class="knopf kl-k" data-s="${ach}" data-d="-1" aria-label="${ach==='y'?'waagrechte Linie tiefer':'senkrechte Linie nach links'}">−</button>`+
+  `<b class="kl-wert" data-r="${ach}wert" aria-live="polite">–</b><button type="button" class="knopf kl-k" data-s="${ach}" data-d="1" aria-label="${ach==='y'?'waagrechte Linie höher':'senkrechte Linie nach rechts'}">+</button></span>`;
+ wurzel.innerHTML=`<div class="kl" data-kl="${o.kennung}"><div class="kl-flaeche"><svg viewBox="0 0 ${W} ${H}" class="kl-svg" role="img" data-r="svg"></svg>`+
+  // Griffe: links bis kurz vor die Δp-Achse, unten ab kurz unter der V̇-Achse – Tippen auf die Achsen selbst (V̇ = 0, Δp = 0) setzt Punkte
+  (gr.y?`<div class="kl-griff" data-griff="y" aria-hidden="true" style="left:0;top:${proz(Y0-8,H)};width:${proz(X0-9,W)};height:${proz(Y1-Y0+16,H)}"></div>`:'')+
+  (gr.x?`<div class="kl-griff" data-griff="x" aria-hidden="true" style="left:${proz(X0-8,W)};top:${proz(Y1+9,H)};width:${proz(X1-X0+16,W)};height:${proz(Math.min(R.u-9,44),H)}"></div>`:'')+'</div>'+
+  (o.knoepfe&&(gr.x||gr.y||o.lupe)?'<div class="kl-knoepfe">'+(gr.y?knopfPaar('y',ay):'')+(gr.x?knopfPaar('x',ax):'')+
+   (o.lupe?'<button type="button" class="knopf kl-lupe" data-r="lupe" aria-pressed="false">Lupe</button>':'')+'</div>':'')+
+  (o.quelle?`<p class="klein kl-quelle">${o.quelle}</p>`:'')+'</div>';
+ const svg=wurzel.querySelector('[data-r="svg"]'),fl=wurzel.querySelector('.kl-flaeche');
+ const A=(p,n,a,t)=>{const e=svgEl(n,a,t);p.appendChild(e);return e;};
+ const ns={'vector-effect':'non-scaling-stroke'};
+ let dyn=null,kl=null,zu=null;
+ const idClip=o.kennung+'-clip';
+ function zeichneFest(){svg.innerHTML='';svg.setAttribute('aria-label',o.aria||o.titel||'Diagramm');
+  A(svg,'rect',{x:0,y:0,width:W,height:H,fill:'#fff'});
+  if(o.titel)A(svg,'text',{x:X0,y:20,'font-size':16,'font-weight':700,fill:'#1d2a33'},o.titel);
+  if(o.untertitel)A(svg,'text',{x:X0,y:38,'font-size':12.5,fill:'#5b6b77'},o.untertitel);
+  const g=A(svg,'g',{'data-r':'kl-gitter'});
+  KL.reihe(ax.min,ax.max,ax.raster).forEach(v=>{const h=KL.vielfaches(v-ax.min,ax.haupt||ax.marken);A(g,'line',Object.assign({x1:px(v),y1:Y0,x2:px(v),y2:Y1,stroke:h?'#9aa7b1':'#dde3e8','stroke-width':h?1.1:0.7},ns));});
+  KL.reihe(ay.min,ay.max,ay.raster).forEach(v=>{const h=KL.vielfaches(v-ay.min,ay.haupt||ay.marken);A(g,'line',Object.assign({x1:X0,y1:py(v),x2:X1,y2:py(v),stroke:h?'#9aa7b1':'#dde3e8','stroke-width':h?1.1:0.7},ns));});
+  A(svg,'rect',Object.assign({x:X0,y:Y0,width:X1-X0,height:Y1-Y0,fill:'none',stroke:'#1d2a33','stroke-width':1.5},ns));
+  const fs=o.schrift||13;
+  KL.reihe(ax.min,ax.max,ax.marken).forEach(v=>A(svg,'text',{x:px(v),y:Y1+fs+4,'font-size':fs,'text-anchor':'middle',fill:'#1d2a33'},ax.markenText?ax.markenText(v):T(v,ax.stellen)));
+  KL.reihe(ay.min,ay.max,ay.marken).forEach(v=>{A(svg,'text',{x:X0-5,y:py(v)+fs*0.35,'font-size':fs,'text-anchor':'end',fill:'#1d2a33'},ay.markenText?ay.markenText(v):T(v,ay.stellen));
+   if(o.y2)A(svg,'text',{x:X1+5,y:py(v)+fs*0.35,'font-size':fs,fill:'#1d2a33'},T(KL.rund(v*o.y2.f,6),o.y2.stellen));});
+  if(ax.text)A(svg,'text',{x:(X0+X1)/2,y:Y1+fs*2+10,'font-size':fs+0.5,'text-anchor':'middle',fill:'#1d2a33'},ax.text);
+  const ym=(Y0+Y1)/2;
+  if(ay.text)A(svg,'text',{x:fs,y:ym,'font-size':fs+0.5,'text-anchor':'middle',fill:'#1d2a33',transform:`rotate(-90 ${fs} ${ym})`},ay.text);
+  if(o.y2&&o.y2.text)A(svg,'text',{x:W-fs*0.6,y:ym,'font-size':fs+0.5,'text-anchor':'middle',fill:'#1d2a33',transform:`rotate(90 ${W-fs*0.6} ${ym})`},o.y2.text);
+  const cp=A(A(svg,'defs',{}),'clipPath',{id:idClip});A(cp,'rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0});
+  kl=A(svg,'g',{'clip-path':`url(#${idClip})`,'data-r':'kl-kurven'});zu=A(svg,'g',{'data-r':'kl-oben'});dyn=A(svg,'g',{'data-r':'kl-beweglich'});}
+ const m=()=>lupe?1/o.lupeFaktor:1;
+ // eine Kurve als Linienzug (Formel f oder Punkte, glatt = monotone Interpolation)
+ function linienzug(k){const f=k.f||(k.punkte?(k.glatt===false?null:KL.glatt(k.punkte)):null);
+  if(!f&&k.punkte){return [k.punkte.slice().sort((a,b)=>a[0]-b[0]).map(q=>[px(q[0]),py(q[1])])];}
+  if(!f)return [];const von=Math.max(ax.min,k.von!=null?k.von:(f.von!=null?f.von:ax.min)),bis=Math.min(ax.max,k.bis!=null?k.bis:(f.bis!=null?f.bis:ax.max));
+  const n=k.n||180,zuege=[];let z=[];
+  for(let i=0;i<=n;i++){const v=von+(bis-von)*i/n,y=f(v);if(y==null||!isFinite(y)){if(z.length>1)zuege.push(z);z=[];continue;}
+   const yc=Math.max(ay.min-(ay.max-ay.min)*0.5,Math.min(ay.max+(ay.max-ay.min)*0.5,y));z.push([px(v),py(yc)]);}
+  if(z.length>1)zuege.push(z);return zuege;}
+ function zeichne(){if(!dyn)return;kl.innerHTML='';zu.innerHTML='';dyn.innerHTML='';const s=m();
+  kurven.forEach(k=>{if(k.sichtbar===false)return;linienzug(k).forEach(z=>A(kl,'polyline',Object.assign({points:z.map(q=>q[0].toFixed(2)+','+q[1].toFixed(2)).join(' '),fill:'none',stroke:k.farbe||'#1d2a33',
+    'stroke-width':k.breite||2,'stroke-dasharray':k.strich||'none','stroke-linejoin':'round','stroke-linecap':'round',opacity:k.deckkraft==null?1:k.deckkraft,'data-kurve':k.id||''},ns)));
+   if(k.name&&k.nameBei){const [x,y]=k.nameBei;A(zu,'text',{x:px(x),y:py(y),'font-size':(k.schrift||13)*s,'font-weight':700,fill:k.farbe||'#1d2a33','text-anchor':k.anker||'start',
+    'paint-order':'stroke',stroke:'#fff','stroke-width':3.5*s,'stroke-linejoin':'round','data-name':k.id||''},k.name);}});
+  hilfen.forEach(h=>A(zu,'line',Object.assign({x1:px(h.x1),y1:py(h.y1),x2:px(h.x2),y2:py(h.y2),stroke:h.farbe||'#b26a00','stroke-width':h.breite||1.6,'stroke-dasharray':h.strich||'5 4','data-hilfe':h.id||''},ns)));
+  // Ziehlinien
+  const x=LX==null?null:px(LX),y=LY==null?null:py(LY);
+  if(y!=null){const sy=Object.assign({farbe:ROT,strich:'6 4',breite:1.8},stilY);let seg=yLinie?yLinie(LY,LX):null;
+   if(!seg)seg={x1:ax.min,y1:LY,x2:LX!=null&&!sy.ganz?LX:ax.max,y2:LY};
+   A(dyn,'line',Object.assign({x1:px(seg.x1),y1:py(seg.y1),x2:px(seg.x2),y2:py(seg.y2),stroke:sy.farbe,'stroke-width':sy.breite,'stroke-dasharray':sy.strich,'data-linie':'y'},ns));}
+  if(x!=null){const sx=Object.assign({farbe:ROT,strich:'6 4',breite:1.8},stilX);let seg=xLinie?xLinie(LX,LY):null;
+   if(!seg)seg={x1:LX,y1:ay.min,x2:LX,y2:LY!=null&&!sx.ganz?LY:ay.max};
+   A(dyn,'line',Object.assign({x1:px(seg.x1),y1:py(seg.y1),x2:px(seg.x2),y2:py(seg.y2),stroke:sx.farbe,'stroke-width':sx.breite,'stroke-dasharray':sx.strich,'data-linie':'x'},ns));}
+  if(x!=null&&y!=null&&!yLinie&&!xLinie)A(dyn,'circle',Object.assign({cx:x,cy:y,r:4.5*s,fill:ROT,stroke:'#fff','stroke-width':1.2,'data-r':'schnitt'},ns));
+  punkte.forEach(p=>{if(p.x==null||p.y==null)return;const cx=px(p.x),cy=py(p.y),r=(p.r||5)*s,f=p.farbe||'#1d2a33';
+   if(p.form==='kreuz')A(dyn,'path',Object.assign({d:`M${cx-r} ${cy-r}L${cx+r} ${cy+r}M${cx-r} ${cy+r}L${cx+r} ${cy-r}`,stroke:f,'stroke-width':p.breite||2.2,fill:'none','data-punkt':p.id||''},ns));
+   else A(dyn,'circle',Object.assign({cx,cy,r,fill:p.form==='ring'?'#fff':f,stroke:p.form==='ring'?f:'#fff','stroke-width':p.form==='ring'?2:1.3,'data-punkt':p.id||''},ns));
+   if(p.gewaehlt)A(dyn,'circle',Object.assign({cx,cy,r:r*2.1,fill:'none',stroke:'#0b6b7d','stroke-width':2,'stroke-dasharray':'3 2','data-r':'gewaehlt'},ns));
+   if(p.name)A(dyn,'text',{x:cx+(p.dx==null?8:p.dx)*s,y:cy+(p.dy==null?-8:p.dy)*s,'font-size':(p.schrift||13)*s,'font-weight':700,fill:f,'text-anchor':p.anker||'start',
+    'paint-order':'stroke',stroke:'#fff','stroke-width':3.5*s,'stroke-linejoin':'round'},p.name);});
+  texte.forEach(t=>A(dyn,'text',{x:px(t.x),y:py(t.y),'font-size':(t.schrift||12)*s,fill:t.farbe||'#5b6b77','text-anchor':t.anker||'start','font-weight':t.fett?700:400,
+   'paint-order':'stroke',stroke:'#fff','stroke-width':3*s,'stroke-linejoin':'round'},t.t));
+  // Griffe an den Achsen
+  if(!lupe){const an=c=>c!=null;
+   if(gr.y&&!gesperrt.y){const gy=y!=null?y:(Y0+Y1)/2,fa=stilY.farbe||ROT;
+    A(dyn,'polygon',{points:`${X0-1},${gy} ${X0-15},${gy-9} ${X0-15},${gy+9}`,fill:an(y)?fa:'#fff',stroke:fa,'stroke-width':2,'data-r':'griff-y'});
+    if(!an(y))A(dyn,'text',{x:X0+6,y:gy+5,'font-size':13,fill:fa,'font-weight':700},'◂ ziehen');}
+   if(gr.x&&!gesperrt.x){const gx=x!=null?x:(X0+X1)/2,fa=stilX.farbe||ROT;
+    A(dyn,'polygon',{points:`${gx},${Y1+1} ${gx-9},${Y1+15} ${gx+9},${Y1+15}`,fill:an(x)?fa:'#fff',stroke:fa,'stroke-width':2,'data-r':'griff-x'});
+    if(!an(x))A(dyn,'text',{x:gx,y:Y1-8,'font-size':13,fill:fa,'font-weight':700,'text-anchor':'middle'},'ziehen ▾');}}
+  const yw=wurzel.querySelector('[data-r="ywert"]'),xw=wurzel.querySelector('[data-r="xwert"]');
+  if(yw){const t=LY==null?'? '+(ay.einheit||''):T(LY,ay.wertStellen!=null?ay.wertStellen:ay.stellen)+' '+(ay.einheit||'');if(yw.textContent!==t)yw.textContent=t;}
+  if(xw){const t=LX==null?'? '+(ax.einheit||''):T(LX,ax.wertStellen!=null?ax.wertStellen:ax.stellen)+' '+(ax.einheit||'');if(xw.textContent!==t)xw.textContent=t;}
+  wurzel.querySelectorAll('[data-paar]').forEach(e=>{e.hidden=!!gesperrt[e.dataset.paar];});
+  const lb=wurzel.querySelector('[data-r="lupe"]');if(lb){lb.disabled=!zentrum();lb.setAttribute('aria-pressed',String(lupe));lb.textContent=lupe?'Lupe aus':'Lupe';}
+  if(lupe)ausschnitt();}
+ // Lupe: viewBox ein Viertel so groß um den Mittelpunkt (Ziehlinien-Schnitt oder lupeZentrum)
+ function zentrum(){if(o.lupeZentrum){const z=o.lupeZentrum();if(z)return z;}return LX!=null&&LY!=null?{x:LX,y:LY}:null;}
+ function ausschnitt(){const z=zentrum();if(!z){lupeAus();return;}const w=W/o.lupeFaktor,h=H/o.lupeFaktor;
+  let vx=px(z.x)-w/2,vy=py(z.y)-h/2;vx=Math.max(X0-w*0.25,Math.min(X1-w*0.75,vx));vy=Math.max(Y0-h*0.25,Math.min(Y1-h*0.75,vy));
+  svg.setAttribute('viewBox',`${vx.toFixed(2)} ${vy.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)}`);fl.classList.add('kl-gross');}
+ function lupeAus(){lupe=false;svg.setAttribute('viewBox',`0 0 ${W} ${H}`);fl.classList.remove('kl-gross');}
+ function melde(ende){o.beiLinien&&o.beiLinien(zustand(),ende);}
+ const rx=v=>KL.rasten(v,ax.rasten||ax.raster,ax.min,ax.max),ry=v=>KL.rasten(v,ay.rasten||ay.raster,ay.min,ay.max);
+ function setze(y,x,ende){if(y!==undefined)LY=y==null?null:ry(y);if(x!==undefined)LX=x==null?null:rx(x);zeichne();melde(ende!==false);}
+ // Bildschirm → Bildkoordinaten (gilt auch in der Lupe)
+ function svgPunkt(ev){const r=svg.getBoundingClientRect(),vb=svg.viewBox.baseVal;return {x:vb.x+(ev.clientX-r.left)/r.width*vb.width,y:vb.y+(ev.clientY-r.top)/r.height*vb.height};}
+ wurzel.querySelectorAll('[data-griff]').forEach(st=>{let zug=null;const ach=st.dataset.griff;
+  const schieb=ev=>{const q=svgPunkt(ev);if(ach==='y')setze(yAus(Math.min(Y1,Math.max(Y0,q.y))),undefined,false);else setze(undefined,xAus(Math.min(X1,Math.max(X0,q.x))),false);};
+  st.addEventListener('pointerdown',ev=>{if(lupe||gesperrt[ach])return;ev.preventDefault();zug=ev.pointerId;try{st.setPointerCapture(ev.pointerId);}catch(_){}schieb(ev);});
+  st.addEventListener('pointermove',ev=>{if(zug!==ev.pointerId)return;ev.preventDefault();schieb(ev);});
+  const los=ev=>{if(zug!==ev.pointerId)return;zug=null;melde(true);};
+  st.addEventListener('pointerup',los);st.addEventListener('pointercancel',los);});
+ // Feinknöpfe: Tipp = ein Rasterschritt, gedrückt halten = weiterzählen
+ function schritt(ach,r){if(gesperrt[ach])return;const a=ach==='y'?ay:ax,alt=ach==='y'?LY:LX,st=a.rasten||a.raster;
+  const neu=alt==null?(a.start!=null?a.start:(a.min+a.max)/2):alt+r*st;if(ach==='y')setze(neu,undefined,false);else setze(undefined,neu,false);}
+ wurzel.querySelectorAll('.kl-k').forEach(b=>{let t1=null,t2=null,wdh=false;const ach=b.dataset.s,r=+b.dataset.d;
+  const halt=()=>{if(t1)clearTimeout(t1);if(t2)clearInterval(t2);const war=!!t2;t1=t2=null;if(war)melde(true);};
+  b.addEventListener('pointerdown',()=>{wdh=false;halt();t1=setTimeout(()=>{t2=setInterval(()=>{wdh=true;schritt(ach,r);},70);},450);});
+  ['pointerup','pointercancel','pointerleave'].forEach(n=>b.addEventListener(n,halt));
+  b.addEventListener('click',()=>{if(wdh){wdh=false;return;}schritt(ach,r);melde(true);});});
+ const lb=wurzel.querySelector('[data-r="lupe"]');if(lb)lb.onclick=()=>{if(lupe)lupeAus();else if(zentrum())lupe=true;zeichne();};
+ // Tippen ins Raster (nur wenn o.tippen gesetzt ist): liefert die Werte an der Stelle (noch ohne Rasten)
+ svg.addEventListener('click',ev=>{if(!o.tippen)return;const q=svgPunkt(ev);if(q.x<X0-6||q.x>X1+6||q.y<Y0-6||q.y>Y1+6)return;
+  o.tippen(Math.min(ax.max,Math.max(ax.min,xAus(q.x))),Math.min(ay.max,Math.max(ay.min,yAus(q.y))),ev,{px:q.x,py:q.y,massstab:svg.getBoundingClientRect().width/svg.viewBox.baseVal.width});});
+ function zustand(){return {X:LX,Y:LY,gesetzt:LX!=null&&LY!=null,lupe};}
+ zeichneFest();zeichne();
+ return {svg,px,py,xAus,yAus,ax,ay,setze,zustand,neu:zeichne,
+  kurven:l=>{if(l)kurven=l.slice();zeichne();return kurven;},punkte:l=>{if(l)punkte=l.slice();zeichne();return punkte;},
+  hilfen:l=>{if(l)hilfen=l.slice();zeichne();return hilfen;},texte:l=>{if(l)texte=l.slice();zeichne();return texte;},
+  alles:a=>{if(a.kurven)kurven=a.kurven.slice();if(a.punkte)punkte=a.punkte.slice();if(a.hilfen)hilfen=a.hilfen.slice();if(a.texte)texte=a.texte.slice();zeichne();},
+  stil:(ach,s)=>{if(ach==='y')stilY=Object.assign({},s||{});else stilX=Object.assign({},s||{});zeichne();},
+  linieY:f=>{yLinie=f||null;zeichne();},linieX:f=>{xLinie=f||null;zeichne();},
+  sperre:(ach,an)=>{gesperrt[ach]=!!an;zeichne();},
+  lupe:an=>{if(an!==undefined){if(an&&zentrum())lupe=true;else lupeAus();zeichne();}return lupe;},
+  abstandPx:(x1,y1,x2,y2)=>Math.hypot(px(x1)-px(x2),py(y1)-py(y2)),rx,ry};
+}
+
+// ---------------------------------------------------------------- 3.4.1 Kennlinienfeld – Modellhaus mit fünf Heizkörpern (ohne DOM, braucht KL, ZAHL, Z34)
+// Modell laut Vorschau („Modell (Rechenblatt)“): Anlagenkennlinie bei n offenen Ventilen H = (0,5 + 12,5/n²)·V̇² – gemeinsames Rohr 0,5 m bei 1 m³/h,
+// jedes Ventil (mit Heizkörper) 0,5 m bei 0,2 m³/h. Ungeregelt H = 2,0 − 0,2·V̇ − 0,8·V̇², P = 30 + 8·V̇ W. Δp-c H = 1,0 m. Δp-v H = 0,5 + 0,5·V̇.
+// Geregelt P = 2,5 W + V̇·Δp / 0,25 (V̇ in m³/s, Δp = H · 9 810 Pa; Modellwerte, nicht Tab. 431.1). Alle Ventile zu: V̇ = 0, H = Höchstwert der Pumpe.
+// Der Betriebspunkt wird numerisch als Schnitt bestimmt (KL.schnitt); probe-logik-3-4.mjs prüft alle 18 Zustände gegen das Rechenblatt (Z34.modell41).
+// Beamer „drei Stufen“: Stufen I und II aus Stufe III nach den Proportionalgesetzen (Drehzahlen wie die alte Pumpe 25-40: 1 860 / 2 300 / 2 700 1/min),
+// Leistung im selben Verhältnis wie die Stufen der alten Pumpe im Rechenblatt (Leerlauf ≈ q², Anstieg ≈ q).
+// Druck im Rohr (für die Farbe): Pumpe hebt auf H, das gemeinsame Rohr baut je Hälfte 0,25·V̇² ab (Vorlauf vor dem ersten Abzweig, Rücklauf nach dem letzten),
+// das Ventil den Rest. Gemessen ab der Saugseite der Pumpe (0). In Flussrichtung nimmt der Druck nirgends zu.
+const KF=(()=>{
+ const ARTEN=['ungeregelt','dpc','dpv'],NAME={ungeregelt:'ungeregelt',dpc:'Δp-c',dpv:'Δp-v'},LANG={ungeregelt:'ungeregelt',dpc:'Δp-c (konstant)',dpv:'Δp-v (variabel)'};
+ const STUFE_Q={1:1860/2700,2:2300/2700,3:1},STUFE_NAME={1:'I',2:'II',3:'III'};
+ const K=n=>0.5+12.5/(n*n);
+ function pumpe(art,st){const q=STUFE_Q[st||3];
+  if(art==='ungeregelt')return V=>2.0*q*q-0.2*q*V-0.8*V*V;
+  if(art==='dpc')return ()=>1.0;
+  return V=>0.5+0.5*V;}
+ const MAX=V=>2.4-0.25*V-0.35*V*V; // Höchstkennlinie der geregelten Pumpe (nur gezeichnet, wie im Lösungsbild der Vorschau)
+ const leistung=(art,V,Hh,st)=>{const q=STUFE_Q[st||3];return art==='ungeregelt'?30*q*q+8*q*V:2.5+V/3600*Hh*9810/0.25;};
+ const vEnde=(art,st)=>art==='ungeregelt'?KL.nullstelle(pumpe(art,st),0,3):1.0;
+ function betrieb(n,art,st){const f=pumpe(art,st);let V=0,Hh=f(0);
+  if(n>0){const s=KL.schnitt(f,v=>K(n)*v*v,0,2.5);V=s.x;Hh=s.y;}
+  return {n,art,st:st||3,V,H:Hh,jeHK:n?V/n:0,ventil:n?Hh-0.5*V*V:0,P:leistung(art,V,Hh,st),p0:Hh,p1:Hh-0.25*V*V,p2:0.25*V*V};}
+ // ---------------------------------------------------------------- Bild des Hauses (viewBox 0 0 300 540): fünf Heizkörper übereinander, Zweirohr, Pumpe im Keller
+ // Vorlaufstrang links (x 58), Rücklaufstrang rechts (x 252): jeder Heizkörper wechselseitig angeschlossen (Ventil oben links, Rücklauf unten rechts) –
+ // so liegt keine Leitung auf einer anderen, und keine kreuzt eine andere. Im Keller: Rücklauf → Kessel → Pumpe → Vorlauf.
+ const HAUS={w:300,h:540,xV:58,xR:252,yK:500,pumpe:{x:110,r:13},kessel:{x0:148,x1:204,y0:482,y1:518},
+  hk:[1,2,3,4,5].map(i=>{const yt=70+(5-i)*80;return {i,yt,yv:yt+38,yr:yt+56,x0:104,x1:196,xv:84};})};
+ const HK=i=>HAUS.hk[i-1];
+ const TEILE=10;
+ // gezeichnete Rohrstücke mit Druck und Durchfluss; offen = Array mit 5 Wahrheitswerten (HK 1 unten … HK 5 oben)
+ function leitungen(offen,b){const n=offen.filter(Boolean).length,q=n?b.V/n:0,P=HAUS,st=[],xP=P.pumpe.x,r=P.pumpe.r;
+  const ueber=k=>offen.slice(k).filter(Boolean).length*q; // Durchfluss im Strang oberhalb von HK k
+  const linear=(pfad,pa,pb,pre,seite)=>{const L=[];let ges=0;for(let i=0;i<pfad.length-1;i++){const l=Math.hypot(pfad[i+1][0]-pfad[i][0],pfad[i+1][1]-pfad[i][1]);L.push(l);ges+=l;}
+   let s=0,nr=0;for(let i=0;i<pfad.length-1;i++){const [x1,y1]=pfad[i],[x2,y2]=pfad[i+1],t=Math.max(1,Math.round(L[i]/ges*TEILE));
+    for(let j=0;j<t;j++){const a=s+L[i]*j/t,e=s+L[i]*(j+1)/t,m=(a+e)/2;
+     st.push({id:pre+(nr++),seite,x1:x1+(x2-x1)*j/t,y1:y1+(y2-y1)*j/t,x2:x1+(x2-x1)*(j+1)/t,y2:y1+(y2-y1)*(j+1)/t,p:pa+(pb-pa)*m/ges,pa:pa+(pb-pa)*a/ges,pb:pa+(pb-pa)*e/ges,q:b.V});}
+    s+=L[i];}};
+  linear([[xP-r,P.yK],[P.xV,P.yK],[P.xV,HK(1).yv]],b.p0,b.p1,'vg','vl');
+  for(let k=1;k<5;k++)st.push({id:'vs'+k,seite:'vl',x1:P.xV,y1:HK(k).yv,x2:P.xV,y2:HK(k+1).yv,p:b.p1,pa:b.p1,pb:b.p1,q:ueber(k)});
+  HAUS.hk.forEach(h=>{const o=offen[h.i-1];
+   st.push({id:'va'+h.i,seite:'vl',x1:P.xV,y1:h.yv,x2:h.xv,y2:h.yv,p:b.p1,pa:b.p1,pb:b.p1,q:o?q:0});
+   st.push({id:'vb'+h.i,seite:'vl',x1:h.xv,y1:h.yv,x2:h.x0,y2:h.yv,p:b.p2,pa:b.p2,pb:b.p2,q:o?q:0});
+   st.push({id:'ra'+h.i,seite:'rl',x1:h.x1,y1:h.yr,x2:P.xR,y2:h.yr,p:b.p2,pa:b.p2,pb:b.p2,q:o?q:0});});
+  for(let k=4;k>=1;k--)st.push({id:'rs'+k,seite:'rl',x1:P.xR,y1:HK(k+1).yr,x2:P.xR,y2:HK(k).yr,p:b.p2,pa:b.p2,pb:b.p2,q:ueber(k)});
+  linear([[P.xR,HK(1).yr],[P.xR,P.yK],[P.kessel.x1,P.yK]],b.p2,0,'rg','rl');
+  st.push({id:'sg',seite:'vl',x1:P.kessel.x0,y1:P.yK,x2:xP+r,y2:P.yK,p:0,pa:0,pb:0,q:b.V});
+  return st;}
+ // Reihenfolge der Rohrstücke in Flussrichtung für den Weg durch HK j (Pumpe → … → Pumpe)
+ function weg(j,st){const id=s=>st.find(x=>x.id===s),r=[];
+  st.filter(x=>/^vg/.test(x.id)).forEach(x=>r.push(x));for(let k=1;k<j;k++)r.push(id('vs'+k));r.push(id('va'+j),id('vb'+j),{id:'hk'+j,heizkoerper:true},id('ra'+j));
+  for(let k=j-1;k>=1;k--)r.push(id('rs'+k));st.filter(x=>/^rg/.test(x.id)).forEach(x=>r.push(x));r.push(id('sg'));return r;}
+ // Druck → Helligkeit (dunkel = hoch, hell = niedrig) und Farbe (Vorlauf rot, Rücklauf blau)
+ const PMAX=2.0;
+ const hell=p=>82-52*Math.max(0,Math.min(1,p/PMAX));
+ const farbe=(seite,p)=>seite==='vl'?`hsl(3,72%,${hell(p).toFixed(1)}%)`:`hsl(212,68%,${hell(p).toFixed(1)}%)`;
+ // Rauschen am obersten offenen Ventil: ab 1,0 m Druck am Ventil sichtbar, wächst mit dem Druck
+ const rauschen=v=>v<1.0?0:v<1.3?1:v<1.6?2:3;
+
+ // ---------------------------------------------------------------- Aufgaben A–D (100 Punkte)
+ const M=Z34.modell41,r2=x=>Math.round(x*100)/100,T=ZAHL.text;
+ const W1={ungeregelt:r2(M[1].ungeregelt.jeHK),dpc:r2(M[1].dpc.jeHK),dpv:r2(M[1].dpv.jeHK)};
+ const P5=Math.round(M[5].ungeregelt.P),P1=Math.round(M[1].ungeregelt.P);
+ const H0={ungeregelt:betrieb(0,'ungeregelt').H,dpc:betrieb(0,'dpc').H,dpv:betrieb(0,'dpv').H};
+ const WOERTER=['steiler','flacher','links oben','rechts unten','steigt','Drehzahl'];
+ const LUECKEN=[{k:'g1',soll:'steiler'},{k:'g2',soll:'links oben'},{k:'g3',soll:'steigt'},{k:'g4',soll:'Drehzahl'}];
+ const MERKSATZ=['Schließen Ventile, wird die Anlagenkennlinie','. Bei der ungeregelten Pumpe wandert der Betriebspunkt auf der Pumpenkennlinie nach',': Der Volumenstrom sinkt, der Druck','. Die geregelte Pumpe senkt ihre','.'];
+ const A=[
+  {k:'a1',teil:'A',p:5,art:'zahl',titel:'Ventile zu',frage:'Alle Ventile sind zu, die Pumpe ist ungeregelt. Wie groß ist die Förderhöhe, wenn kein Wasser fließt?',einheit:'m',soll:H0.ungeregelt,tol:0.05,
+   gate:'u0',sperre:'Erst im Bild: Pumpe „ungeregelt“, alle Ventile zu.',gut:'Das ist die Wassersäule aus 3.2: Fließt kein Wasser, drückt die Pumpe am stärksten.'},
+  {k:'a2',teil:'A',p:5,art:'wahl',titel:'Ventile auf',frage:'Öffne die Ventile nacheinander. Was macht die Förderhöhe?',soll:'sinkt',opt:[['sinkt','sie sinkt'],['steigt','sie steigt'],['bleibt','sie bleibt gleich']],
+   gate:'u3',sperre:'Erst im Bild: Pumpe „ungeregelt“, öffne mindestens drei Ventile – eins nach dem anderen.'},
+  {k:'a3',teil:'A',p:5,art:'wahl',titel:'Die Spur',frage:'Alle fünf Ventile sind offen. Die Spur deiner Betriebspunkte ist …',soll:'pumpe',opt:[['pumpe','die Pumpenkennlinie'],['anlage','die Anlagenkennlinie'],['bp','der Betriebspunkt']],
+   gate:'uAlle',sperre:'Erst im Bild: Pumpe „ungeregelt“, öffne alle fünf Ventile nacheinander (0, 1, 2, 3, 4, 5 offen).',gut:'Die rote Linie ist die Pumpenkennlinie – so viel Förderhöhe schafft die Pumpe bei jedem Volumenstrom.'},
+  {k:'b1',teil:'B',p:10,art:'felder',titel:'Doppelter Volumenstrom',frage:'Lies an der blauen Anlagenkennlinie (alle fünf Ventile offen) ab und vergleiche.',
+   felder:[{k:'b1a',vor:'Bei 0,5 m³/h:',einheit:'m',soll:K(5)*0.25,tol:0.05},{k:'b1b',vor:'Bei 1,0 m³/h:',einheit:'m',soll:K(5)*1,tol:0.05},
+    {k:'b1c',vor:'Um wie viel mal steigt der Druckverlust, wenn sich der Volumenstrom verdoppelt?',einheit:'-mal',soll:4,tol:0.05}],
+   gate:'k5',sperre:'Erst im Bild: alle fünf Ventile auf und „Anlagenkennlinie zeigen“.',gut:'Doppelter Volumenstrom – vierfacher Druckverlust: Die Anlagenkennlinie ist eine Parabel durch den Nullpunkt (quadratisch).'},
+  {k:'b2',teil:'B',p:5,art:'wahl',titel:'Ventile schließen',frage:'Schließ zwei Ventile. Die Anlagenkennlinie wird …',soll:'steiler',opt:[['steiler','steiler'],['flacher','flacher'],['gleich','bleibt gleich']],
+   gate:'k3',sperre:'Erst im Bild: Anlagenkennlinie zeigen und zwei Ventile schließen (drei offen).'},
+  {k:'b3',teil:'B',p:10,art:'wahl',titel:'Der Betriebspunkt',frage:'Der Betriebspunkt ist der Punkt, an dem …',soll:'schnitt',opt:[['schnitt','sich Pumpen- und Anlagenkennlinie schneiden'],['max','die Pumpe am meisten Druck macht'],['offen','alle Ventile offen sind']],
+   gate:'k5',sperre:'Erst im Bild: alle fünf Ventile auf und „Anlagenkennlinie zeigen“.'},
+  {k:'b4',teil:'B',p:10,art:'zahl',titel:'Betriebspunkt ablesen',frage:'Ungeregelte Pumpe, drei Ventile offen: Lies den Betriebspunkt ab. Wie groß ist der Volumenstrom?',einheit:'m³/h',soll:M[3].ungeregelt.V,tol:0.05,
+   gate:'u3n',sperre:'Erst im Bild: Pumpe „ungeregelt“, genau drei Ventile offen.'},
+  {k:'c1',teil:'C',p:5,art:'zahl',titel:'Nur ein Ventil offen',frage:'Ungeregelte Pumpe, nur ein Ventil offen: Wie groß ist die Förderhöhe?',einheit:'m',soll:M[1].ungeregelt.H,tol:0.05,auch:[1.8],
+   gate:'u1',sperre:'Erst im Bild: Pumpe „ungeregelt“, vier Ventile zu – nur eins offen.'},
+  {k:'c2',teil:'C',p:10,art:'zuordnen',titel:'Der letzte offene Heizkörper',frage:'Wie viel Wasser bekommt der letzte offene Heizkörper? Gebraucht werden 0,20 m³/h. Ordne zu.',
+   zeilen:ARTEN.map(a=>({k:'c2'+a,name:LANG[a],soll:T(W1[a],2)})),werte:ARTEN.map(a=>T(W1[a],2)),
+   gate:'alle1',sperre:'Erst im Bild: Schalte die Pumpe um und lass bei jeder der drei Pumpen nur ein Ventil offen.',gut:'Δp-v kommt den 0,20 m³/h am nächsten – darum passt Δp-v am besten zur Zweirohrheizung mit Thermostatventilen.'},
+  {k:'c3',teil:'C',p:10,art:'wahl',titel:'Strom',frage:'Was macht die Leistungsaufnahme der ungeregelten Pumpe, wenn die Ventile schließen?',soll:'wenig',
+   opt:[['wenig',`sie sinkt nur wenig (${P5} → ${P1} W)`],['steigt','sie steigt'],['viertel','sie sinkt auf ein Viertel']],
+   gate:'u51',sperre:'Erst im Bild: Pumpe „ungeregelt“ – einmal alle fünf Ventile offen, einmal nur eins.',gut:'Die ungeregelte Pumpe braucht fast so viel Strom wie bei Volllast, obwohl kaum noch Wasser fließt.'},
+  {k:'c4',teil:'C',p:5,art:'wahl',titel:'Δp-v ohne Volumenstrom',frage:'Bis auf welchen Teil senkt Δp-v die Förderhöhe, wenn kein Wasser mehr fließt?',soll:'haelfte',opt:[['haelfte','die Hälfte'],['viertel','ein Viertel'],['null','null']],
+   gate:'v0',sperre:'Erst im Bild: Pumpe „Δp-v“, alle Ventile zu.'},
+  {k:'c5',teil:'C',p:10,art:'wahl',titel:'Es pfeift',frage:'Warum rauscht oder pfeift das Ventil bei der ungeregelten Pumpe?',soll:'druck',
+   opt:[['druck','Wenn andere Ventile schließen, steigt der Druck an den offenen Ventilen.'],['heiss','Das Wasser wird zu heiß.'],['langsam','Die Pumpe läuft zu langsam.']],
+   gate:'u1',sperre:'Erst im Bild: Pumpe „ungeregelt“, nur ein Ventil offen.'},
+  {k:'d',teil:'D',p:10,art:'luecke',titel:'Merksatz',frage:'Zieh die Wörter in die Lücken (oder tipp erst ein Wort, dann eine Lücke). Zwei Wörter bleiben übrig.',gate:null}];
+ const SCHLUESSEL=A.map(a=>a.k),TEILE_N=['A','B','C','D'],TEIL_TITEL={A:'Pumpenkennlinie',B:'Anlagenkennlinie',C:'Drei Pumpen',D:'Merksatz'};
+ const auf=k=>A.find(a=>a.k===k);
+ const punkte=G=>A.reduce((s,a)=>s+(G[a.k]?a.p:0),0);
+ // Gates aus den besuchten Zuständen (E: Menge wie 'ungeregelt3', 'k5' …)
+ function frei(a,E){if(!a.gate)return true;const u=[0,1,2,3,4,5].filter(n=>E['ungeregelt'+n]).length;
+  switch(a.gate){case 'u0':return !!E.ungeregelt0;case 'u3':return u>=3;case 'uAlle':return u===6;case 'k5':return !!E.k5;case 'k3':return !!E.k3;
+   case 'u3n':return !!E.ungeregelt3;case 'u1':return !!E.ungeregelt1;case 'alle1':return !!(E.ungeregelt1&&E.dpc1&&E.dpv1);case 'u51':return !!(E.ungeregelt1&&E.ungeregelt5);
+   case 'v0':return !!E.dpv0;}return true;}
+ const lies=(s,soll)=>ZAHL.lies(String(s==null?'':s).replace(/\s*-?\s*(mal|fach)\b|\s*[x×]\s*$/gi,''),soll);
+ const nah=(x,s,t)=>isFinite(x)&&Math.abs(x-s)<=t+1e-9;
+ // Prüfen einer Zahl / Auswahl → {ok, tipp}
+ function pruefe(k,w){const a=auf(k)||A.find(x=>x.felder&&x.felder.some(f=>f.k===k)||x.zeilen&&x.zeilen.some(z=>z.k===k));if(!a)return {ok:false,tipp:''};
+  if(a.art==='wahl'){const ok=w===a.soll;return {ok,tipp:ok?'':tippWahl(k,w)};}
+  if(a.art==='zahl'){const x=lies(w,a.soll),ok=nah(x,a.soll,a.tol)||(a.auch||[]).some(s=>nah(x,s,a.tol));return {ok,tipp:ok?'':tippZahl(k,x)};}
+  if(a.art==='felder'){const f=a.felder.find(z=>z.k===k);const x=lies(w,f.soll),ok=nah(x,f.soll,f.tol);return {ok,tipp:ok?'':tippFeld(k,x)};}
+  if(a.art==='zuordnen'){const z=a.zeilen.find(z=>z.k===k);const ok=!!z&&w===z.soll;return {ok,tipp:ok?'':'Schalte die Pumpe um und lass jedes Mal nur ein Ventil offen. Lies „je offener Heizkörper“ ab.'};}
+  return {ok:false,tipp:''};}
+ function tippZahl(k,x){if(!isFinite(x))return 'Gib eine Zahl ein, zum Beispiel 1,5.';
+  if(k==='a1'){if(nah(x,1.0,0.05)||nah(x,0.5,0.05))return 'Stell die Pumpe auf „ungeregelt“.';if(nah(x,200,10)||nah(x,20,1))return 'In Metern, bitte: 1 m ≈ 100 mbar.';if(x<0.05)return 'Fließt kein Wasser, ist der Volumenstrom null – gefragt ist die Förderhöhe.';return 'Lies die Förderhöhe in der Anzeige oder an der senkrechten Achse ab, solange alle Ventile zu sind.';}
+  if(k==='b4'){if(nah(x,M[3].dpc.V,0.03)||nah(x,M[3].dpv.V,0.03))return 'Stell die Pumpe auf „ungeregelt“.';if(nah(x,M[3].ungeregelt.H,0.05))return 'Gefragt ist der Volumenstrom (waagrechte Achse), nicht die Förderhöhe.';
+   return 'Lies unter dem schwarzen Betriebspunkt auf der waagrechten Achse ab – die Lupe hilft.';}
+  if(k==='c1'){if(nah(x,1.0,0.05))return 'Das war bei fünf offenen Ventilen. Schließ vier Ventile – nur eins bleibt offen.';if(nah(x,M[1].ungeregelt.V,0.03))return 'Gefragt ist die Förderhöhe in m, nicht der Volumenstrom.';
+   if(nah(x,181,3))return 'In Metern, bitte: 1 m ≈ 100 mbar.';return 'Lies die Förderhöhe ab, wenn bei der ungeregelten Pumpe nur ein Ventil offen ist.';}
+  return 'Schau noch einmal ins Bild.';}
+ function tippFeld(k,x){if(!isFinite(x))return 'Gib eine Zahl ein.';
+  if(k==='b1c'){if(nah(x,2,0.05))return 'Lies bei 0,5 und bei 1,0 m³/h ab und teile.';return 'Teile den Druckverlust bei 1,0 m³/h durch den bei 0,5 m³/h.';}
+  return 'Geh von der Stelle auf der waagrechten Achse senkrecht hoch bis zur blauen Kurve und dann waagrecht zur Achse links.';}
+ function tippWahl(k,w){const t={
+   a2:'Schau auf die Anzeige „Förderhöhe“, während du ein Ventil nach dem anderen öffnest.',
+   a3:w==='anlage'?'Die Anlagenkennlinie gehört zum Rohrnetz. Deine Punkte zeigen, was die Pumpe bei jedem Volumenstrom schafft.':'Jeder einzelne Punkt ist ein Betriebspunkt. Gefragt ist die Linie, auf der sie alle liegen.',
+   b2:'Schau, wie sich die blaue Linie bewegt, wenn du zwei Ventile schließt.',
+   b3:'Der Betriebspunkt liegt auf beiden Linien – auf der roten und auf der blauen.',
+   c3:w==='steigt'?'Schau auf den Leistungsstreifen: Wohin wandert der Punkt?':'Vergleiche im Leistungsstreifen die Leistung bei fünf und bei einem offenen Ventil.',
+   c4:'Stell Δp-v ein und schließ alle Ventile. Vergleiche mit 1,0 m bei fünf offenen Ventilen.',
+   c5:'Schau auf das Zeichen am obersten offenen Ventil: Wann erscheint es – und was zeigt die Förderhöhe dann?'};
+  return t[k]||'Schau noch einmal ins Bild.';}
+ function pruefeLuecken(L){const r={};LUECKEN.forEach(l=>{r[l.k]=L[l.k]===l.soll;});return r;}
+ return {ARTEN,NAME,LANG,STUFE_Q,STUFE_NAME,K,pumpe,MAX,leistung,vEnde,betrieb,HAUS,leitungen,weg,PMAX,hell,farbe,rauschen,
+  A,SCHLUESSEL,TEILE:TEILE_N,TEIL_TITEL,auf,punkte,frei,pruefe,pruefeLuecken,WOERTER,LUECKEN,MERKSATZ,W1,P5,P1,H0,
+  // Merksätze der Beamer-Fassung (Satz des Lehrers vom 07.01.2026, Wort „quadratisch“ wie in „Fachlich geprüft“ 2; Kurs-Satz aus „Fachlich geprüft“ 3)
+  MERK:['<b>Anlagenkennlinie:</b> Bei der Öffnung aller Ventile und Widerstände im Rohrnetz ist die Anlagenkennlinie am flachsten. Bei 0 m³/h Volumenstrom ist der Widerstand auch 0 m. Bei steigendem Volumenstrom steigt der Widerstand quadratisch (Parabel: doppelter Volumenstrom – vierfacher Druckverlust). Schließen die Ventile, wird die Kennlinie steiler. Der Punkt, an dem sich Pumpen- und Anlagenkennlinie schneiden, ist der Betriebspunkt.',
+   '<b>Ventile zu – was macht die Pumpe?</b> Schließen die Ventile, sinkt der Volumenstrom. Die ungeregelte Pumpe läuft mit gleicher Drehzahl weiter: Ihr Druck steigt, die Ventile können pfeifen. Ihre Leistungsaufnahme sinkt dabei nur wenig – sie braucht fast so viel Strom wie bei Volllast, obwohl kaum Wasser fließt. Die geregelte Pumpe merkt das und senkt ihre Drehzahl: Der Druck bleibt gleich (Δp-c) oder sinkt (Δp-v), und sie braucht viel weniger Strom (Tab. 431.1: 26 W → 15 bzw. 10 W).']};
+})();
+
+// ---------------------------------------------------------------- 3.4.1 Kennlinienfeld: Bild und Bedienung (braucht KF, KL, ZAHL, svgEl, bauKennlinien)
+// Links das Modellhaus im Schnitt (fünf Heizkörper übereinander, Zweirohr): Tippen auf einen Heizkörper = Ventil auf/zu. Im Keller die Pumpe
+// (Umschalter ungeregelt · Δp-c · Δp-v). Wasserpunkte laufen nur in Flussrichtung, schneller bei mehr Volumenstrom; die Rohre zeigen den Druck als
+// Farbe (dunkel hinter der Pumpe, in Flussrichtung heller). Am obersten offenen Ventil wächst ab 1,0 m Druck am Ventil ein Rauschen-Zeichen.
+// Mitte: Kennlinienfeld H über V̇ (0–1,6 m³/h, 0–2,4 m, Raster 0,1) mit Pumpe rot, Anlagenkennlinie blau, Betriebspunkt schwarz; darunter der
+// Leistungsstreifen P über V̇. Rechts die Anzeigen und die Aufgaben (Schüler, öffentlich) bzw. Merksätze, „drei Stufen“ und Lösungsbild (Beamer).
+// o: {modus:'schueler'|'oeffentlich'|'beamer', teil:'A'…'D', aufgaben (bauKfAufgaben), rechtsKopf, beiTeil(t)}
+function bauKennlinienfeld(wurzel,o){
+ o=Object.assign({modus:'schueler',teil:'A',aufgaben:null,rechtsKopf:'',beiTeil:null},o||{});
+ const T=ZAHL.text,HA=KF.HAUS,AUF=o.aufgaben,beamer=o.modus==='beamer';
+ const reduziert=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(_){return false;}})();
+ const Z={offen:[false,false,false,false,false],art:'ungeregelt',st:3,teil:KF.TEILE.includes(o.teil)?o.teil:'A',schar:false,spur:false,
+  anlageGezeigt:false,bewegung:!reduziert,stufen:false,merk:false,bild:false};
+ const E={},SPUR={};
+ const n=()=>Z.offen.filter(Boolean).length;
+ let B=KF.betrieb(0,'ungeregelt',3),BA={V:B.V,H:B.H,P:B.P},anim=null;
+ wurzel.innerHTML=(AUF?'<div class="reiter" role="tablist" aria-label="Teile der Animation" data-r="reiter"></div>':'')+
+  '<div class="kf-gitter"><div class="karte kf-haus"><svg data-r="haus" viewBox="0 0 300 540" class="kf-haus-svg" role="img" aria-label="Modellhaus im Schnitt mit fünf Heizkörpern übereinander, Pumpe im Keller"></svg>'+
+  '<div class="wahl kf-pumpe" role="group" aria-label="Pumpe" data-r="pumpe"></div><div class="wahl kf-stufen" role="group" aria-label="Drehzahlstufe" data-r="stufen" hidden></div>'+
+  '<div class="wahl kf-ventile"><button type="button" class="knopf" data-k="zu">alle zu</button><button type="button" class="knopf" data-k="auf">alle auf</button></div>'+
+  '<p class="klein kf-legende">Tipp auf einen Heizkörper: Ventil auf / zu. <b style="color:#c62828">Vorlauf rot</b>, <b style="color:#1565c0">Rücklauf blau</b>. Druck im Rohr: dunkel = hoch, hell = niedrig.</p></div>'+
+  '<div class="karte kf-diagr"><div data-r="feld"></div><p class="kf-streifen-titel">Leistungsaufnahme P (Strom)</p><div data-r="streifen"></div>'+
+  '<div class="wahl kf-schalter" data-r="schalter"></div><div class="wahl kf-schalter"><button type="button" class="knopf" data-k="bewegung"></button></div></div>'+
+  '<div class="kf-rechts">'+(o.rechtsKopf||'')+'<div class="karte kf-anzeigen" data-r="anzeigen" aria-live="polite"></div><div data-r="rechts"></div></div></div>'+
+  (beamer?'<div class="karte kf-bild" data-r="bild" hidden></div>':'');
+ const $=r=>wurzel.querySelector('[data-r="'+r+'"]'),hs=$('haus');
+ // ---------------------------------------------------------------- Diagramme (Kennlinien-Baustein)
+ const FD=bauKennlinien($('feld'),{kennung:'kf',w:440,h:340,rand:{l:54,r:12,o:12,u:52},schrift:15,lupeFaktor:3,
+  x:{min:0,max:1.6,raster:0.1,haupt:0.2,marken:0.4,stellen:1,text:'Volumenstrom V̇ in m³/h'},
+  y:{min:0,max:2.4,raster:0.1,haupt:0.2,marken:0.4,stellen:1,text:'Förderhöhe H in m'},
+  aria:'Kennlinienfeld: Förderhöhe H über dem Volumenstrom V̇',lupeZentrum:()=>({x:B.V,y:B.H})});
+ const FS=bauKennlinien($('streifen'),{kennung:'kfp',w:440,h:120,rand:{l:54,r:12,o:10,u:28},schrift:14,
+  x:{min:0,max:1.6,raster:0.1,haupt:0.2,marken:0.4,stellen:1,text:''},y:{min:0,max:45,raster:5,haupt:15,marken:15,stellen:0,text:'P in W'},
+  aria:'Leistungsstreifen: Leistungsaufnahme P über dem Volumenstrom V̇'});
+ const geloest=k=>!!(AUF&&AUF.istGeloest(k));
+ const pumpeSichtbar=()=>!AUF||Z.teil!=='A'||geloest('a3');
+ const anlageSichtbar=()=>!AUF||Z.teil==='C'||Z.teil==='D'||(Z.teil==='B'&&(Z.anlageGezeigt||geloest('b1')));
+ const spurAn=()=>Z.spur||(!!AUF&&Z.teil==='A');
+ const spurSchl=()=>Z.art+(Z.art==='ungeregelt'?Z.st:'');
+ function zeichneFeld(){const nn=n(),kur=[],pk=[],hil=[],tx=[],ROT='#c62828',BLAU='#1565c0';
+  if(Z.schar&&!(AUF&&Z.teil==='A'&&!geloest('a3')))[1,2,3,4,5].forEach(k=>{const K=KF.K(k),vx=Math.min(1.5,Math.sqrt(2.3/K));
+   kur.push({id:'schar'+k,f:v=>K*v*v,farbe:BLAU,breite:1.1,strich:'4 3',deckkraft:0.75,name:String(k),nameBei:[vx+0.025,K*vx*vx-0.04],schrift:14});});
+  if(pumpeSichtbar()){
+   if(beamer&&Z.stufen&&Z.art==='ungeregelt')[1,2,3].forEach(s=>{const f=KF.pumpe('ungeregelt',s);
+    kur.push({id:'stufe'+s,f,von:0,bis:KF.vEnde('ungeregelt',s),farbe:ROT,breite:s===Z.st?3:1.5,name:'Stufe '+KF.STUFE_NAME[s],nameBei:[0.03,f(0)+0.08],schrift:15});});
+   else{if(Z.art!=='ungeregelt')kur.push({id:'max',f:KF.MAX,von:0,bis:1.6,farbe:ROT,breite:1,strich:'2 3',name:'max.',nameBei:[1.22,KF.MAX(1.22)+0.08],schrift:14});
+    const f=KF.pumpe(Z.art,Z.st);kur.push({id:'pumpe',f,von:0,bis:KF.vEnde(Z.art,Z.st),farbe:ROT,breite:3,name:'Pumpe '+KF.NAME[Z.art],nameBei:[0.03,f(0.03)+0.09],schrift:15});}}
+  if(anlageSichtbar()){if(nn>0){const K=KF.K(nn),vx=Math.min(1.45,Math.sqrt(2.2/K));
+    kur.push({id:'anlage',f:v=>K*v*v,von:0,bis:1.6,farbe:BLAU,breite:2.6,name:Z.schar?'':'Anlage · '+nn+' offen',nameBei:[vx+0.03,Math.min(2.3,K*vx*vx)],anker:vx>1.2?'end':'start',schrift:15});}
+   else{hil.push({id:'anlage0',x1:0.006,y1:0,x2:0.006,y2:2.4,farbe:BLAU,breite:3.2,strich:'none'});tx.push({x:0.04,y:2.26,t:'Anlage: alle Ventile zu',farbe:BLAU,fett:true,schrift:15});}}
+  if(AUF&&Z.teil==='B'&&anlageSichtbar()&&nn===5&&!geloest('b1'))[0.5,1.0].forEach(v=>{const h=KF.K(5)*v*v;hil.push({id:'h'+v,x1:v,y1:0,x2:v,y2:h},{id:'w'+v,x1:0,y1:h,x2:v,y2:h});});
+  if(spurAn())(SPUR[spurSchl()]||[]).forEach(p=>pk.push({id:'spur',x:p.V,y:p.H,farbe:'#6b7a86',r:3.8}));
+  pk.push({id:'bp',x:BA.V,y:BA.H,farbe:'#111',r:6.5,name:'BP',dx:9,dy:-10,schrift:16});
+  FD.alles({kurven:kur,punkte:pk,hilfen:hil,texte:tx});
+  // Leistungsstreifen
+  const sk=[],sp=[],linie=(art,s,id,breit)=>{const f=KF.pumpe(art,s);sk.push({id,f:v=>KF.leistung(art,v,f(v),s),von:0,bis:KF.vEnde(art,s),farbe:'#e65100',breite:breit?2.4:1.3,
+    name:beamer&&Z.stufen&&art==='ungeregelt'?KF.STUFE_NAME[s]:'',nameBei:[Math.min(1.5,KF.vEnde(art,s))+0.01,KF.leistung(art,KF.vEnde(art,s),0,s)],schrift:13});};
+  if(beamer&&Z.stufen&&Z.art==='ungeregelt')[1,2,3].forEach(s=>linie('ungeregelt',s,'p'+s,s===Z.st));else linie(Z.art,Z.st,'p',true);
+  if(spurAn())(SPUR[spurSchl()]||[]).forEach(p=>sp.push({id:'spur',x:p.V,y:p.P,farbe:'#6b7a86',r:3.2}));
+  sp.push({id:'bp',x:BA.V,y:BA.P,farbe:'#e65100',r:5,name:Math.round(B.P)+' W',dx:9,dy:-7,schrift:14});
+  FS.alles({kurven:sk,punkte:sp});}
+ // ---------------------------------------------------------------- Haus
+ const A_=(p,n_,a,t)=>{const e=svgEl(n_,a,t);p.appendChild(e);return e;};
+ let gRohre,gPfeile,gHK,gTropfen,gTechnik,gOben,gZiele;
+ function hausFest(){hs.innerHTML='';
+  A_(hs,'rect',{x:0,y:0,width:300,height:540,fill:'#fbfaf6'});
+  A_(hs,'rect',{x:0,y:472,width:300,height:68,fill:'#ece5d6'});
+  A_(hs,'rect',{x:20,y:472,width:260,height:60,fill:'#f6f2e9',stroke:'#9aa7b1','stroke-width':1.5});
+  A_(hs,'polygon',{points:'12,72 150,16 288,72',fill:'#f1ece3',stroke:'#5d6b75','stroke-width':2,'stroke-linejoin':'round'});
+  A_(hs,'rect',{x:20,y:70,width:260,height:402,fill:'#fffef9',stroke:'#5d6b75','stroke-width':2});
+  [150,230,310,390].forEach(y=>A_(hs,'rect',{x:21,y:y-2,width:258,height:4,fill:'#d4cdbf'}));
+  A_(hs,'rect',{x:20,y:469,width:260,height:5,fill:'#b9b1a1'});
+  A_(hs,'text',{x:44,y:300,'font-size':11,'font-weight':700,fill:'#c62828','text-anchor':'middle',transform:'rotate(-90 44 300)'},'Vorlauf');
+  A_(hs,'text',{x:268,y:300,'font-size':11,'font-weight':700,fill:'#1565c0','text-anchor':'middle',transform:'rotate(90 268 300)'},'Rücklauf');
+  A_(hs,'text',{x:276,y:527,'font-size':10.5,fill:'#5d6b75','text-anchor':'end'},'Keller');
+  gRohre=A_(hs,'g',{'data-r':'rohre'});gPfeile=A_(hs,'g',{'data-r':'pfeile'});gTropfen=A_(hs,'g',{'data-r':'tropfen'});gHK=A_(hs,'g',{'data-r':'heizkoerper'});
+  gTechnik=A_(hs,'g',{'data-r':'technik'});gOben=A_(hs,'g',{'data-r':'oben'});gZiele=A_(hs,'g',{'data-r':'ziele'});
+  const P=HA.pumpe,K=HA.kessel;
+  A_(gTechnik,'rect',{x:K.x0,y:K.y0,width:K.x1-K.x0,height:K.y1-K.y0,rx:4,fill:'#f4e2cf',stroke:'#5d6b75','stroke-width':1.6});
+  A_(gTechnik,'text',{x:(K.x0+K.x1)/2,y:HA.yK+4,'font-size':11,'font-weight':700,'text-anchor':'middle',fill:'#5d3a1a'},'Kessel');
+  A_(gTechnik,'circle',{cx:P.x,cy:HA.yK,r:P.r,fill:'#fff',stroke:'#1d2a33','stroke-width':2});
+  A_(gTechnik,'polygon',{points:`${P.x-11},${HA.yK} ${P.x+6},${HA.yK-9} ${P.x+6},${HA.yK+9}`,fill:'#1d2a33'});
+  A_(gTechnik,'text',{x:P.x,y:528,'font-size':11,'font-weight':700,'text-anchor':'middle',fill:'#1d2a33','data-r':'pumpenname'},'Pumpe');
+  HA.hk.forEach(h=>{const z=A_(gZiele,'rect',{x:64,y:h.yt+6,width:136,height:64,fill:'#000','fill-opacity':0,class:'kf-ziel',tabindex:0,role:'button','data-hk':h.i});
+   z.addEventListener('click',()=>ventil(h.i));
+   z.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();ventil(h.i);}});});}
+ function hausNeu(){const b=B,nn=b.n,st=KF.leitungen(Z.offen,b);
+  gRohre.innerHTML='';gPfeile.innerHTML='';gHK.innerHTML='';gOben.innerHTML='';
+  st.forEach(s=>A_(gRohre,'line',{x1:s.x1,y1:s.y1,x2:s.x2,y2:s.y2,stroke:'#4d5a64','stroke-width':8.4,'stroke-linecap':'round'}));
+  st.forEach(s=>A_(gRohre,'line',{x1:s.x1,y1:s.y1,x2:s.x2,y2:s.y2,stroke:KF.farbe(s.seite,s.p),'stroke-width':5.6,'stroke-linecap':'round','data-rohr':s.id,'data-p':s.p.toFixed(4),'data-seite':s.seite}));
+  // Pfeile in Flussrichtung (nur wo Wasser fließt)
+  const pfeil=(x1,y1,x2,y2)=>{const mx=(x1+x2)/2,my=(y1+y2)/2,l=Math.hypot(x2-x1,y2-y1)||1,ux=(x2-x1)/l,uy=(y2-y1)/l,a=4.6;
+   A_(gPfeile,'polygon',{points:`${(mx+ux*a).toFixed(1)},${(my+uy*a).toFixed(1)} ${(mx-ux*a-uy*a).toFixed(1)},${(my-uy*a+ux*a).toFixed(1)} ${(mx-ux*a+uy*a).toFixed(1)},${(my-uy*a-ux*a).toFixed(1)}`,fill:'#1d2a33',opacity:0.8,'data-pfeil':'1'});};
+  if(nn>0){
+   st.filter(s=>/^(va|ra|vs|rs)\d/.test(s.id)&&s.q>1e-9).forEach(s=>pfeil(s.x1,s.y1,s.x2,s.y2));
+   pfeil(HA.pumpe.x-HA.pumpe.r,HA.yK,HA.xV,HA.yK);pfeil(HA.xV,HA.yK,HA.xV,KF.HAUS.hk[0].yv);pfeil(HA.xR,KF.HAUS.hk[0].yr,HA.xR,HA.yK);pfeil(HA.kessel.x0,HA.yK,HA.pumpe.x+HA.pumpe.r,HA.yK);
+   pfeil(HA.xR,HA.yK,HA.kessel.x1,HA.yK);}
+  // Heizkörper und Ventile
+  const oben=nn?Math.max(...Z.offen.map((x,i)=>x?i+1:0)):0;
+  HA.hk.forEach(h=>{const of=Z.offen[h.i-1],warm=of&&nn>0;
+   A_(gHK,'rect',{x:h.x0,y:h.yt+26,width:h.x1-h.x0,height:38,rx:3,fill:warm?'#ffe6c7':'#eef1f4',stroke:'#5d6b75','stroke-width':1.6,'data-heizkoerper':h.i});
+   for(let x=h.x0+9;x<h.x1-4;x+=9)A_(gHK,'line',{x1:x,y1:h.yt+29,x2:x,y2:h.yt+61,stroke:warm?'#f3c99a':'#d9dfe5','stroke-width':1});
+   A_(gHK,'text',{x:(h.x0+h.x1)/2,y:h.yt+42,'font-size':11.5,'font-weight':700,'text-anchor':'middle',fill:'#1d2a33','paint-order':'stroke',stroke:warm?'#ffe6c7':'#eef1f4','stroke-width':3},`HK ${h.i} · ${of?'auf':'zu'}`);
+   if(of)A_(gHK,'text',{x:(h.x0+h.x1)/2,y:h.yt+57,'font-size':11,'text-anchor':'middle',fill:'#1d2a33','data-wasser':h.i,'paint-order':'stroke',stroke:warm?'#ffe6c7':'#eef1f4','stroke-width':3},`${T(b.jeHK,2)} m³/h`);
+   const x=h.xv,y=h.yv;
+   A_(gHK,'polygon',{points:`${x-7},${y-5} ${x+7},${y+5} ${x+7},${y-5} ${x-7},${y+5}`,fill:'#3c4852'});
+   A_(gHK,'line',{x1:x,y1:y-4,x2:x,y2:y-11,stroke:'#3c4852','stroke-width':2});
+   A_(gHK,'circle',{cx:x,cy:y-17,r:7.5,fill:of?'#7cc68a':'#ef9a9a',stroke:'#1d2a33','stroke-width':1.5,'data-knopf':h.i});
+   if(h.i===oben){const st_=KF.rauschen(b.ventil);for(let i=0;i<st_;i++){const r=7+i*5.5,cx=x+6,cy=y-21,a1=-75*Math.PI/180,a2=-5*Math.PI/180;
+     A_(gOben,'path',{d:`M${(cx+r*Math.cos(a1)).toFixed(1)} ${(cy+r*Math.sin(a1)).toFixed(1)} A${r} ${r} 0 0 1 ${(cx+r*Math.cos(a2)).toFixed(1)} ${(cy+r*Math.sin(a2)).toFixed(1)}`,fill:'none',stroke:'#e65100','stroke-width':2.2,'stroke-linecap':'round','data-rauschen':h.i});}
+    if(st_)A_(gOben,'text',{x:x+32,y:h.yt+15,'font-size':11,'font-weight':700,fill:'#e65100','data-r':'rauschtext'},st_>=3?'pfeift!':'rauscht');}});
+  const pn=hs.querySelector('[data-r="pumpenname"]');if(pn)pn.textContent='Pumpe · '+KF.NAME[Z.art]+(beamer&&Z.stufen&&Z.art==='ungeregelt'?' · Stufe '+KF.STUFE_NAME[Z.st]:'');
+  gZiele.querySelectorAll('[data-hk]').forEach(e=>{const i=+e.dataset.hk;e.setAttribute('aria-label',`Heizkörper ${i}: Ventil ${Z.offen[i-1]?'auf':'zu'} – antippen zum ${Z.offen[i-1]?'Schließen':'Öffnen'}`);});
+  wegeNeu();tropfen(performance.now());}
+ // ---------------------------------------------------------------- Wasserpunkte (nur in Flussrichtung, Tempo nach dem Durchfluss im Rohrstück)
+ let wege=[],lauf=null,t0=null;
+ const tempo=q=>24*Math.pow(Math.max(q,0.01)/0.2,0.6),ABST=0.8;
+ function wegeNeu(){wege=[];const b=B,nn=b.n;if(!nn)return;const q=b.V/nn,P=HA,HK=i=>P.hk[i-1],ueber=k=>Z.offen.slice(k).filter(Boolean).length*q;
+  Z.offen.forEach((of,ix)=>{if(!of)return;const j=ix+1,h=HK(j),s=[],seg=(x1,y1,x2,y2,qq)=>s.push({x1,y1,x2,y2,q:qq});
+   seg(P.pumpe.x-P.pumpe.r,P.yK,P.xV,P.yK,b.V);seg(P.xV,P.yK,P.xV,HK(1).yv,b.V);for(let k=1;k<j;k++)seg(P.xV,HK(k).yv,P.xV,HK(k+1).yv,ueber(k));
+   seg(P.xV,h.yv,h.x0,h.yv,q);seg(h.x0+4,h.yv,h.x1-4,h.yr,q);seg(h.x1,h.yr,P.xR,h.yr,q);for(let k=j-1;k>=1;k--)seg(P.xR,HK(k+1).yr,P.xR,HK(k).yr,ueber(k));
+   seg(P.xR,HK(1).yr,P.xR,P.yK,b.V);seg(P.xR,P.yK,P.kessel.x0,P.yK,b.V);seg(P.kessel.x0,P.yK,P.pumpe.x-P.pumpe.r,P.yK,b.V);
+   let t=0;s.forEach(x=>{x.l=Math.hypot(x.x2-x.x1,x.y2-x.y1);x.t0=t;t+=x.l/tempo(x.q);});wege.push({j,s,T:t});});}
+ function tropfen(jetzt){if(!gTropfen)return;if(!Z.bewegung||!wege.length){if(gTropfen.childNodes.length)gTropfen.innerHTML='';return;}
+  if(t0==null)t0=jetzt;const t=(jetzt-t0)/1000,pos=[];
+  wege.forEach(w=>{const z=Math.floor(w.T/ABST);for(let i=0;i<z;i++){let tau=(t+i*ABST+w.j*ABST/5)%w.T;const s=w.s.find(x=>tau>=x.t0&&tau<x.t0+x.l/tempo(x.q))||w.s[w.s.length-1];
+   const f=Math.min(1,(tau-s.t0)*tempo(s.q)/(s.l||1));pos.push([s.x1+(s.x2-s.x1)*f,s.y1+(s.y2-s.y1)*f]);}});
+  while(gTropfen.childNodes.length<pos.length)A_(gTropfen,'circle',{r:2.6,fill:'#fff',stroke:'#1d2a33','stroke-width':0.8});
+  while(gTropfen.childNodes.length>pos.length)gTropfen.removeChild(gTropfen.lastChild);
+  pos.forEach((p,i)=>{const c=gTropfen.childNodes[i];c.setAttribute('cx',p[0].toFixed(1));c.setAttribute('cy',p[1].toFixed(1));});}
+ function laufen(){if(lauf)return;const takt=j=>{lauf=null;if(!Z.bewegung||!wege.length||!wurzel.isConnected){tropfen(j);return;}tropfen(j);lauf=requestAnimationFrame(takt);};lauf=requestAnimationFrame(takt);}
+ // ---------------------------------------------------------------- Zustand ändern
+ function merke(){const nn=n();if(Z.st===3)E[Z.art+nn]=1;if(anlageSichtbar()){if(nn===5)E.k5=1;if(nn===3)E.k3=1;}
+  const sl=spurSchl(),l=SPUR[sl]||(SPUR[sl]=[]);if(!l.some(p=>p.n===nn))l.push({n:nn,V:B.V,H:B.H,P:B.P});}
+ function neu(ohneAnim){const alt={V:BA.V,H:BA.H,P:BA.P},altArt=B.art,altSt=B.st;
+  B=KF.betrieb(n(),Z.art,Z.art==='ungeregelt'?Z.st:3);merke();
+  if(anim){cancelAnimationFrame(anim.id);anim=null;}
+  if(ohneAnim||!Z.bewegung||reduziert){BA={V:B.V,H:B.H,P:B.P};}
+  else{const ziel={V:B.V,H:B.H,P:B.P},gleich=altArt===B.art&&altSt===B.st,f=KF.pumpe(B.art,B.st),tA=performance.now();
+   anim={art:B.art,id:0};const takt=j=>{if(!anim)return;const s=Math.min(1,(j-tA)/450),e=s<.5?2*s*s:1-Math.pow(-2*s+2,2)/2,V=alt.V+(ziel.V-alt.V)*e;
+    BA={V,H:gleich?f(V):alt.H+(ziel.H-alt.H)*e,P:alt.P+(ziel.P-alt.P)*e};if(s>=1)BA=ziel;zeichneFeld();if(s<1)anim.id=requestAnimationFrame(takt);else anim=null;};
+   anim.id=requestAnimationFrame(takt);}
+  hausNeu();zeichneFeld();regler();schalter();anzeigen();if(AUF)AUF.neu();laufen();}
+ function ventil(i){Z.offen[i-1]=!Z.offen[i-1];neu();}
+ function setzeOffen(k){Z.offen=[1,2,3,4,5].map(i=>i<=k);neu();}
+ function pumpeWahl(a){if(!KF.ARTEN.includes(a))return;Z.art=a;neu();}
+ // ---------------------------------------------------------------- Bedienung
+ function regler(){const p=$('pumpe');p.innerHTML=KF.ARTEN.map(a=>`<button type="button" data-art="${a}" aria-pressed="${a===Z.art}">${KF.NAME[a]}</button>`).join('');
+  p.querySelectorAll('[data-art]').forEach(b=>b.onclick=()=>pumpeWahl(b.dataset.art));
+  const s=$('stufen');s.hidden=!(beamer&&Z.stufen&&Z.art==='ungeregelt');
+  if(!s.hidden){s.innerHTML=[1,2,3].map(k=>`<button type="button" data-st="${k}" aria-pressed="${k===Z.st}">Stufe ${KF.STUFE_NAME[k]}</button>`).join('');
+   s.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>{Z.st=+b.dataset.st;neu();});}
+  const bw=wurzel.querySelector('[data-k="bewegung"]');bw.textContent=Z.bewegung?'Bewegung: an':'Bewegung: aus';bw.setAttribute('aria-pressed',String(Z.bewegung));}
+ wurzel.querySelector('[data-k="zu"]').onclick=()=>setzeOffen(0);
+ wurzel.querySelector('[data-k="auf"]').onclick=()=>setzeOffen(5);
+ wurzel.querySelector('[data-k="bewegung"]').onclick=()=>{Z.bewegung=!Z.bewegung;regler();if(!Z.bewegung)tropfen(0);laufen();};
+ function schalter(){const c=$('schalter'),inA=!!AUF&&Z.teil==='A',scharZu=inA&&!geloest('a3');
+  let h=`<button type="button" data-s="schar" aria-pressed="${Z.schar&&!scharZu}"${scharZu?' disabled':''}>Schar zeigen</button>`+
+   `<button type="button" data-s="spur" aria-pressed="${spurAn()}"${inA?' disabled title="In Teil A ist die Spur immer an."':''}>Spur</button>`+
+   `<button type="button" data-s="weg">Spur löschen</button><button type="button" data-s="lupe" aria-pressed="${FD.lupe()}">${FD.lupe()?'Lupe aus':'Lupe'}</button>`;
+  if(AUF&&Z.teil==='B'&&!anlageSichtbar())h+='<button type="button" class="knopf haupt" data-s="anlage">Anlagenkennlinie zeigen</button>';
+  c.innerHTML=h;
+  c.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const s=b.dataset.s;
+   if(s==='schar')Z.schar=!Z.schar;if(s==='spur')Z.spur=!Z.spur;if(s==='weg')Object.keys(SPUR).forEach(k=>{SPUR[k]=[];});if(s==='lupe')FD.lupe(!FD.lupe());
+   if(s==='anlage')Z.anlageGezeigt=true;if(s==='weg'||s==='anlage')merke();zeichneFeld();schalter();if(AUF)AUF.neu();});}
+ function anzeigen(){const b=B,nn=b.n,c=$('anzeigen');
+  c.innerHTML=`<div class="kf-anz"><span>Förderhöhe H</span><b data-a="H">${T(b.H,2)} m</b><small>≈ ${Math.round(b.H*100)} mbar</small></div>`+
+   `<div class="kf-anz"><span>Volumenstrom V̇</span><b data-a="V">${T(b.V,2)} m³/h</b><small>${nn} von 5 Ventilen offen</small></div>`+
+   `<div class="kf-anz"><span>je offener Heizkörper</span><b data-a="je">${nn?T(b.jeHK,2)+' m³/h':'–'}</b><small>${nn?'gebraucht: 0,20 m³/h':'alle Ventile zu'}</small></div>`+
+   `<div class="kf-anz"><span>Leistungsaufnahme P</span><b data-a="P">${Math.round(b.P)} W</b><small>${b.art==='ungeregelt'?'ungeregelt':'geregelt'} · Modellwerte</small></div>`;}
+ function reiterLeiste(){const r=$('reiter');if(!r)return;
+  r.innerHTML=KF.TEILE.map(t=>`<button type="button" role="tab" data-teil="${t}" aria-selected="${t===Z.teil}">Teil ${t} · ${KF.TEIL_TITEL[t]}<small>${AUF.reiterText(t)}</small></button>`).join('');
+  r.querySelectorAll('[data-teil]').forEach(b=>b.onclick=()=>zeigeTeil(b.dataset.teil));}
+ function zeigeTeil(t){if(!KF.TEILE.includes(t))return;Z.teil=t;merke();reiterLeiste();rechts();zeichneFeld();schalter();o.beiTeil&&o.beiTeil(t);}
+ function rechts(){const c=$('rechts');if(AUF)AUF.zeige(Z.teil,c);else if(beamer)beamerTafel(c);}
+ // ---------------------------------------------------------------- Beamer: drei Stufen, Merksätze, Lösungsbild
+ function beamerTafel(c){const W=KF.W1;
+  c.innerHTML=`<div class="karte"><h2>Vormachen</h2><div class="wahl"><button type="button" data-b="stufen" aria-pressed="${Z.stufen}">drei Stufen</button>`+
+   `<button type="button" data-b="merk" aria-pressed="${Z.merk}">Merksätze</button><button type="button" data-b="bild" aria-pressed="${Z.bild}">Lösungsbild</button></div>`+
+   `<ol class="kf-vormachen"><li>Ungeregelt, alle Ventile zu: ${T(KF.H0.ungeregelt,1)} m – die Wassersäule aus 3.2.</li><li>Spur an, Ventile nacheinander öffnen: Die Betriebspunkte liegen auf der Pumpenkennlinie.</li>`+
+   `<li>Schar zeigen: Je mehr Ventile zu sind, desto steiler die Anlagenkennlinie.</li><li>Nur ein Ventil offen, Pumpe umschalten: ungeregelt ${T(W.ungeregelt,2)} · Δp-c ${T(W.dpc,2)} · Δp-v ${T(W.dpv,2)} m³/h (gebraucht 0,20).</li></ol>`+
+   (Z.merk?KF.MERK.map(t=>`<div class="merk merksatz">${t}</div>`).join(''):'')+
+   (Z.stufen?'<p class="klein" style="margin-top:10px">Stufen I und II nach den Proportionalgesetzen aus Stufe III (Drehzahlen wie die alte Pumpe 25-40: 1 860 / 2 300 / 2 700 1/min). Modellwerte.</p>':'')+'</div>';
+  c.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const k=b.dataset.b;Z[k]=!Z[k];if(k==='stufen'&&!Z.stufen)Z.st=3;
+   if(k==='bild'){const bi=$('bild');bi.hidden=!Z.bild;bi.innerHTML=Z.bild?'<h2>Lösungsbild: Ventile schließen – drei Pumpen</h2>'+Z34_BILD_FELD+'<p class="klein">Aus dem Bildskript der Vorschau (neu gezeichnet aus dem Modell).</p>':'';}
+   beamerTafel(c);regler();neu(true);});}
+ hausFest();reiterLeiste();rechts();neu(true);
+ if(AUF)AUF.verbinde({ereignisse:()=>Object.assign({},E),neu:()=>{zeichneFeld();schalter();reiterLeiste();},teil:()=>Z.teil,zeigeTeil:t=>{zeigeTeil(t);try{wurzel.scrollIntoView({block:'start'});}catch(_){}}});
+ return {zustand:()=>Object.assign({},B,{offen:Z.offen.slice(),art:Z.art,teil:Z.teil}),ventil,setzeOffen,pumpe:pumpeWahl,zeigeTeil,teil:()=>Z.teil,
+  ereignisse:()=>Object.assign({},E),spur:()=>JSON.parse(JSON.stringify(SPUR)),FD,FS,
+  schalte:(k,an)=>{if(k in Z){Z[k]=an===undefined?!Z[k]:!!an;if(k==='stufen'&&!Z.stufen)Z.st=3;regler();neu(true);if(beamer)rechts();}},
+  stufe:s=>{Z.st=s;neu(true);},anlageZeigen:()=>{Z.anlageGezeigt=true;merke();zeichneFeld();schalter();if(AUF)AUF.neu();},
+  bewegung:an=>{Z.bewegung=!!an;regler();if(!Z.bewegung)tropfen(0);laufen();},tropfenZahl:()=>gTropfen.childNodes.length};
+}
+
+// ---------------------------------------------------------------- Aufgaben A–D rechts neben dem Bild (Schülerfassung mit Punkten, öffentliche Seite ohne Punkte)
+// Jede Frage öffnet sich erst nach der passenden Handlung im Bild. Auswahlantworten gemischt. Richtig = grün und gesperrt; gespeichert werden nur
+// die gelösten Aufgaben (Schlüssel), die Punkte und der Teil. o: {gespeichert:[Schlüssel], mitPunkten, beiAenderung(), beiPunkte(p)}
+function bauKfAufgaben(o){
+ o=Object.assign({gespeichert:[],mitPunkten:true,beiAenderung:null,beiPunkte:null},o||{});
+ const G={},GP={},WAHL={},L={},T=ZAHL.text;let F=null,cont=null,teil='A',wort=null,zug=null;
+ (o.gespeichert||[]).forEach(k=>{if(KF.SCHLUESSEL.includes(k))G[k]=1;});
+ const mische=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+ const OPT={};KF.A.forEach(a=>{if(a.opt)OPT[a.k]=mische(a.opt);if(a.art==='zuordnen')OPT[a.k]=mische(a.werte);});
+ const WORT=mische(KF.WOERTER);
+ const punkte=()=>KF.punkte(G);
+ const ereig=()=>F?F.ereignisse():{};
+ const frei=a=>!!G[a.k]||KF.frei(a,ereig());
+ const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+ const PUNKTE_TEIL=t=>KF.A.filter(a=>a.teil===t).reduce((s,a)=>s+a.p,0);
+ const teilPunkte=t=>KF.A.filter(a=>a.teil===t).reduce((s,a)=>s+(G[a.k]?a.p:0),0);
+ const reiterText=t=>o.mitPunkten?(teilPunkte(t)>=PUNKTE_TEIL(t)?'✓ ':'')+teilPunkte(t)+' von '+PUNKTE_TEIL(t)+' Punkten':(KF.A.filter(a=>a.teil===t).every(a=>G[a.k])?'✓ gelöst':(n=>n===1?'1 Aufgabe':n+' Aufgaben')(KF.A.filter(a=>a.teil===t).length));
+ function optionen(a,fe,fr){const gp=GP[a.k];return `<div class="optionen${a.opt.length<=3&&a.opt.every(x=>x[1].length<26)?' quer':''}">`+OPT[a.k].map(([w,t])=>{const gew=WAHL[a.k]===w,ok=fe&&w===a.soll,nein=!fe&&gp&&!gp.ok&&gew;
+  return `<button type="button" data-a="${a.k}" data-w="${w}" aria-pressed="${gew||ok}" class="${ok?'ok':nein?'nein':''}"${fe||!fr?' disabled':''}>${t}</button>`;}).join('')+'</div>';}
+ function feld(k,soll,fe,fr,einheit,vor,stellen){const v=WAHL[k]!==undefined?WAHL[k]:fe?T(soll,stellen):'',gp=GP[k];
+  return `<label class="feld kf-feld">${vor?`<span>${vor}</span>`:''}<input type="text" class="zahl${fe?' ok':gp&&!gp.ok?' nein':''}" inputmode="decimal" autocomplete="off" data-f="${k}" value="${esc(v)}"${fe||!fr?' disabled':''}> ${einheit}</label>`;}
+ function karte(a){const fe=!!G[a.k],fr=frei(a),gp=GP[a.k];
+  let h=`<div class="aufgabe${fe?' fertig':''}${fr?'':' gesperrt'}" id="kf-${a.k}" data-aufgabe="${a.k}">`+(o.mitPunkten?`<span class="pkt">${fe?a.p:0} von ${a.p} Punkten</span>`:'')+`<h3>${a.k.toUpperCase().replace(/^([A-D])(\d?)$/,'$1$2')}) ${a.titel}</h3><p>${a.frage}</p>`;
+  if(!fr)h+=`<span class="sperre">Noch gesperrt: ${a.sperre}</span>`;
+  if(a.art==='wahl')h+=optionen(a,fe,fr);
+  else if(a.art==='zahl')h+=feld(a.k,a.soll,fe,fr,a.einheit,'Antwort:',a.einheit==='m³/h'?2:1);
+  else if(a.art==='felder')h+=a.felder.map(f=>feld(f.k,f.soll,fe||!!G[f.k],fr,f.einheit,f.vor,f.k==='b1c'?0:2)).join('<br>');
+  else if(a.art==='zuordnen')h+=a.zeilen.map(z=>`<div class="kf-zeile"><span class="gname">${z.name}:</span><div class="optionen quer">`+OPT[a.k].map(w=>{const gew=WAHL[z.k]===w,ok=fe&&w===z.soll,nein=!fe&&GP[z.k]&&!GP[z.k].ok&&gew;
+    return `<button type="button" data-a="${z.k}" data-w="${w}" aria-pressed="${gew||ok}" class="${ok?'ok':nein?'nein':''}"${fe||!fr?' disabled':''}>${w} m³/h</button>`;}).join('')+'</div></div>').join('');
+  else if(a.art==='luecke'){const pl=KF.LUECKEN.map((l,i)=>{const w=fe?l.soll:L[l.k],kl=fe||GP[l.k]&&GP[l.k].ok&&w?' ok':GP[l.k]&&!GP[l.k].ok&&w?' nein':'';
+     return `<button type="button" class="lluecke kf-luecke${kl}" data-l="${l.k}"${fe?' disabled':''} aria-label="Lücke ${i+1}">${w?esc(w):'…'}</button>`;});
+   h+=`<p class="lsatz kf-satz">${KF.MERKSATZ[0]} ${pl[0]}${KF.MERKSATZ[1]} ${pl[1]}${KF.MERKSATZ[2]} ${pl[2]}${KF.MERKSATZ[3]} ${pl[3]}${KF.MERKSATZ[4]}</p>`;
+   if(!fe){const benutzt=Object.values(L);h+='<div class="kf-woerter" data-r="woerter">'+WORT.map(w=>`<button type="button" class="kf-wort${wort===w?' gewaehlt':''}" data-wort="${esc(w)}"${benutzt.includes(w)?' hidden':''}>${esc(w)}</button>`).join('')+'</div>';}}
+  if(!fe)h+=`<div class="wahl" style="margin:8px 0 0"><button type="button" class="knopf haupt" data-p="${a.k}"${fr?'':' disabled'}>Prüfen</button></div>`;
+  if(fe)h+=`<span class="rueck ok">Richtig!${a.gut?' '+a.gut:''}</span>`;else if(gp&&!gp.ok&&gp.tipp)h+=`<span class="rueck nein">${gp.tipp}</span>`;
+  return h+'</div>';}
+ function zeige(t,c){teil=t;cont=c;const auf=KF.A.filter(a=>a.teil===t),alle=auf.every(a=>G[a.k]);
+  let h=`<div class="karte"><h2>Teil ${t} · ${KF.TEIL_TITEL[t]}</h2><p class="klein">Du kannst so oft prüfen, wie du willst. Was einmal richtig ist, bleibt richtig${o.mitPunkten?' – deine Punkte sinken nie':''}.</p>`+auf.map(karte).join('');
+  const i=KF.TEILE.indexOf(t);if(alle&&i<3)h+=`<div class="wahl weiter"><button type="button" class="knopf haupt" data-weiter="${KF.TEILE[i+1]}">Weiter zu Teil ${KF.TEILE[i+1]} →</button></div>`;
+  if(o.mitPunkten&&punkte()>=100)h+='<div class="merk"><b>Alle Aufgaben geschafft: 100 von 100 Punkten.</b></div>';
+  else if(alle&&i===3)h+='<div class="merk">Hier ist alles gelöst. Schau in den anderen Teilen nach offenen Aufgaben.</div>';
+  c.innerHTML=h+'</div>';
+  c.querySelectorAll('button[data-a]').forEach(b=>b.onclick=()=>{const k=b.dataset.a;WAHL[k]=b.dataset.w;if(GP[k]&&!GP[k].ok)delete GP[k];const a0=k.slice(0,2);if(GP[a0]&&!GP[a0].ok)delete GP[a0];o.beiAenderung&&o.beiAenderung();neu();});
+  c.querySelectorAll('input[data-f]').forEach(e=>{e.addEventListener('input',()=>{WAHL[e.dataset.f]=e.value;e.classList.remove('nein');});
+   e.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();const a=KF.A.find(x=>x.k===e.dataset.f||(x.felder&&x.felder.some(f=>f.k===e.dataset.f)));if(a)pruefe(a.k);}});});
+  c.querySelectorAll('button[data-p]').forEach(b=>b.onclick=()=>pruefe(b.dataset.p));
+  c.querySelectorAll('button[data-weiter]').forEach(b=>b.onclick=()=>{if(F&&F.zeigeTeil)F.zeigeTeil(b.dataset.weiter);});
+  luckenBedienung(c);}
+ // Lückentext: Wort antippen, dann Lücke – oder Wort in die Lücke ziehen. Gefüllte Lücke antippen = Wort zurück.
+ function lege(l,w){if(!KF.LUECKEN.some(x=>x.k===l)||G.d)return;Object.keys(L).forEach(k=>{if(L[k]===w)delete L[k];});if(w)L[l]=w;else delete L[l];delete GP[l];if(GP.d&&!GP.d.ok)delete GP.d;wort=null;o.beiAenderung&&o.beiAenderung();neu();}
+ function luckenBedienung(c){
+  c.querySelectorAll('[data-wort]').forEach(b=>{let start=null,geist=null,gezogen=false;
+   b.addEventListener('pointerdown',ev=>{start={x:ev.clientX,y:ev.clientY,id:ev.pointerId};gezogen=false;try{b.setPointerCapture(ev.pointerId);}catch(_){}});
+   b.addEventListener('pointermove',ev=>{if(!start||start.id!==ev.pointerId)return;if(!gezogen&&Math.hypot(ev.clientX-start.x,ev.clientY-start.y)>8){gezogen=true;
+     geist=b.cloneNode(true);geist.classList.add('kf-geist');document.body.appendChild(geist);}
+    if(gezogen&&geist){ev.preventDefault();geist.style.left=(ev.clientX-30)+'px';geist.style.top=(ev.clientY-22)+'px';}});
+   const ende=ev=>{if(!start||start.id!==ev.pointerId)return;const war=gezogen;start=null;if(geist){geist.remove();geist=null;}
+    if(war){b.dataset.gezogen='1';const z=document.elementFromPoint(ev.clientX,ev.clientY),l=z&&z.closest?z.closest('[data-l]'):null;if(l)lege(l.dataset.l,b.dataset.wort);}};
+   b.addEventListener('pointerup',ende);b.addEventListener('pointercancel',ev=>{start=null;if(geist){geist.remove();geist=null;}});
+   b.addEventListener('click',()=>{if(b.dataset.gezogen){delete b.dataset.gezogen;return;}wort=wort===b.dataset.wort?null:b.dataset.wort;neu();});});
+  c.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{const l=b.dataset.l;if(wort)lege(l,wort);else if(L[l])lege(l,null);});}
+ function neu(){if(!cont)return;const a=document.activeElement,k=a&&a.dataset&&a.dataset.f&&cont.contains(a)?a.dataset.f:null;zeige(teil,cont);
+  if(k){const e=cont.querySelector('input[data-f="'+k+'"]');if(e&&!e.disabled){try{e.focus();const n=e.value.length;e.setSelectionRange(n,n);}catch(_){}}}
+  if(F&&F.neu)F.neu();}
+ function lies(){if(!cont)return;cont.querySelectorAll('input[data-f]').forEach(e=>{if(!e.disabled)WAHL[e.dataset.f]=e.value;});}
+ function pruefe(k){const a=KF.auf(k);if(!a||G[k])return punkte();lies();if(!frei(a)){neu();return punkte();}
+  if(a.art==='wahl'||a.art==='zahl'){const w=WAHL[k];if(w===undefined||String(w).trim()==='')GP[k]={ok:false,tipp:a.art==='wahl'?'Tipp zuerst auf eine Antwort.':'Gib zuerst eine Zahl ein.'};
+   else{const r=KF.pruefe(k,w);GP[k]=r;if(r.ok)G[k]=1;}}
+  else if(a.art==='felder'){let alle=true,leer=false,tipp='';a.felder.forEach(f=>{if(G[f.k])return;const w=WAHL[f.k];if(w===undefined||String(w).trim()===''){leer=true;alle=false;return;}
+    const r=KF.pruefe(f.k,w);GP[f.k]=r;if(r.ok)G[f.k]=1;else{alle=false;if(!tipp)tipp=r.tipp;}});
+   if(alle){G[k]=1;GP[k]={ok:true};}else GP[k]={ok:false,tipp:tipp||(leer?'Füll noch alle Felder aus.':'')};}
+  else if(a.art==='zuordnen'){let alle=true,leer=false;a.zeilen.forEach(z=>{const w=WAHL[z.k];if(!w){leer=true;alle=false;return;}const r=KF.pruefe(z.k,w);GP[z.k]=r;if(!r.ok)alle=false;});
+   if(alle)G[k]=1;GP[k]={ok:alle,tipp:alle?'':leer?'Wähl für jede Pumpe einen Wert.':'Schalte die Pumpe um und lass jedes Mal nur ein Ventil offen. Lies „je offener Heizkörper“ ab.'};}
+  else if(a.art==='luecke'){const r=KF.pruefeLuecken(L),alle=KF.LUECKEN.every(l=>r[l.k]),leer=KF.LUECKEN.some(l=>!L[l.k]);KF.LUECKEN.forEach(l=>{GP[l.k]={ok:r[l.k]};});
+   if(alle)G[k]=1;GP[k]={ok:alle,tipp:alle?'':leer?'Füll noch alle vier Lücken.':'Probier es im Bild aus: Ventile zu – wird die blaue Linie steiler oder flacher? Wohin wandert der Punkt?'};}
+  o.beiPunkte&&o.beiPunkte(punkte());o.beiAenderung&&o.beiAenderung();neu();return punkte();}
+ return {zeige,neu,reiterText,punkte,pruefe,lege,verbinde:f=>{F=f;neu();},geloest:()=>KF.SCHLUESSEL.filter(k=>G[k]),istGeloest:k=>!!G[k],
+  waehle:(k,w)=>{WAHL[k]=w;neu();},eingabe:(k,v)=>{WAHL[k]=v;const e=cont&&cont.querySelector(`input[data-f="${k}"]`);if(e)e.value=v;},G:()=>Object.assign({},G),GP:()=>JSON.parse(JSON.stringify(GP)),optionen:k=>(OPT[k]||[]).map(x=>Array.isArray(x)?x[0]:x),woerter:()=>WORT.slice()};
+}
+
+// ---------------------------------------------------------------- 3.4.2 Übung „Anlagenkennlinie zeichnen und Betriebspunkt finden“ (ohne DOM, braucht KL, ZAHL, Z34, Z34_RUNDEN)
+// Aufbau wie die Klassenarbeit vom 04.04.2025, Aufgabe 1 a–e, mit hausgroßen Zahlen aus dem Rechenblatt der Vorschau (Z34.ue42):
+// Pumpe 0 → 320 · 0,5 → 300 · 1,0 → 260 · 1,5 → 200 · 2,0 → 120 · 2,5 → 20 mbar (liegt genau auf Δp = 320 − 20·V̇ − 40·V̇²), Rohrnetz 110 mbar bei 1,0 m³/h,
+// gedrosselt 200 mbar bei 1,0 m³/h. BP1 und BP2 = Schnitt numerisch. Punkte: A 6 × 3 + 2 · B 3 × 5 + 5 + 10 · C 2 × 10 · D 4 + 3 + 4 + 4 · E 5 + 10 = 100.
+// „Neue Zahlen“: Runden aus Z34_RUNDEN (beim Bau ausgewählt: nie die Zahlen von Probe-Test und Kapiteltest, Schnitt im Raster, nicht auf einem Tabellenwert).
+const AK=(()=>{
+ const T=ZAHL.text,U=Z34.ue42;
+ const K1=U.anlage.find(p=>p[0]===1)[1],K2=U.gedrosselt.find(p=>p[0]===1)[1];
+ const TOL={V:0.05,dp:5,rech:1,bpV:0.05,bpDp:10,linie:10};
+ // r = [a, b, c, k1, [V̇ Teil B], k2, V̇ Teil D] oder null für die Hauptrunde
+ function runde(r){const haupt=!r,[a,b,c,k1,bv,k2,w]=r||[320,20,40,K1,[0.5,1.5,1.8],K2,1.25];
+  const f=V=>a-b*V-c*V*V;
+  const pumpe=haupt?U.pumpe.map(p=>p.slice()):[0,0.5,1,1.5,2,2.5].filter(V=>f(V)>=-1e-9).map(V=>[V,KL.rund(f(V),1)]);
+  const s1=KL.schnitt(f,V=>k1*V*V,0,3),s2=KL.schnitt(f,V=>k2*V*V,0,3);
+  const auf=(k,l)=>[[0,0],...l.map(V=>[V,KL.rund(k*V*V,2)])].sort((x,y)=>x[0]-y[0]);
+  return {haupt,a,b,c,f,pumpe,k1,k2,bv:bv.slice(),dv:[0.5,w],bp1:{V:s1.x,dp:s1.y},bp2:{V:s2.x,dp:s2.y},
+   anlage:auf(k1,[...bv,1].sort((x,y)=>x-y)),gedrosselt:auf(k2,[0.5,1,w])};}
+ const HAUPT=runde(null);
+ const uebung=i=>runde(Z34_RUNDEN[((i%Z34_RUNDEN.length)+Z34_RUNDEN.length)%Z34_RUNDEN.length]);
+ // Schlüssel und Punkte
+ const P={p0:3,p1:3,p2:3,p3:3,p4:3,p5:3,pk:2,b0:5,b1:5,b2:5,bk:5,bn:10,cv:10,cp:10,d0:2,d1:2,dk:3,dv:2,dp:2,dq:4,e1:5,e2:10};
+ const SCHLUESSEL=Object.keys(P),TEILE={A:['p0','p1','p2','p3','p4','p5','pk'],B:['b0','b1','b2','bk','bn'],C:['cv','cp'],D:['d0','d1','dk','dv','dp','dq'],E:['e1','e2']};
+ const punkte=G=>SCHLUESSEL.reduce((s,k)=>s+(G[k]?P[k]:0),0);
+ const KURVE={p:'pumpe',a:'anlage',g:'gedrosselt'};
+ const ziele=(R,ku)=>R[KURVE[ku]];
+ // gesetzte Punkte gegen die Zielpunkte: treffer je Ziel, extra = Punkte ohne Ziel
+ const passt=(p,z)=>Math.abs(p[0]-z[0])<=TOL.V+1e-9&&Math.abs(p[1]-z[1])<=TOL.dp+1e-9;
+ function pruefePunkte(R,ku,pts){const Z=ziele(R,ku),treffer=Z.map(z=>pts.some(p=>passt(p,z))),extra=pts.filter(p=>!Z.some(z=>passt(p,z))).length;
+  return {treffer,extra,alle:treffer.every(Boolean)&&extra===0};}
+ const lies=(s,soll)=>ZAHL.lies(s,soll);
+ const nah=(x,s,t)=>isFinite(x)&&Math.abs(x-s)<=t+1e-9;
+ // Rechenfelder: b0..b2 (Teil B), d0..d1 (Teil D)
+ function rechenSoll(R,k){if(/^b\d$/.test(k)){const V=R.bv[+k[1]];return {V,V1:1,p1:R.k1,soll:R.k1*V*V};}const V=R.dv[+k[1]];return {V,V1:1,p1:R.k2,soll:R.k2*V*V};}
+ function pruefeRechnung(R,k,w){const s=rechenSoll(R,k),x=lies(w,s.soll),ok=nah(x,s.soll,TOL.rech);
+  if(ok||!isFinite(x))return {ok,tipp:ok?'':'Gib den Druckverlust in mbar ein.'};
+  const q=s.V/s.V1;let tipp=`Δp₂ = Δp₁ · (V̇₂/V̇₁)² = ${T(s.p1)} · (${T(s.V)}/${T(s.V1,1)})².`;
+  if(nah(x,s.p1*q,TOL.rech))tipp=`quadratisch: (${T(s.V)})² = ${T(KL.rund(q*q,4))}, nicht ${T(s.V)}.`;
+  else if(nah(x,s.p1*q*q*q,TOL.rech*2))tipp=`Nur hoch 2, nicht hoch 3: (${T(s.V)})² = ${T(KL.rund(q*q,4))}.`;
+  else if(nah(x,s.p1/(q*q),TOL.rech))tipp='Andersherum: Der Druckverlust wächst mit dem Volumenstrom – mal (V̇₂/V̇₁)², nicht geteilt.';
+  return {ok:false,tipp};}
+ // Betriebspunkte ablesen
+ function pruefeBP(R,k,w){const bp=/^c/.test(k)?R.bp1:R.bp2,istV=/v$/.test(k),soll=istV?bp.V:bp.dp,x=lies(w,soll),ok=nah(x,soll,istV?TOL.bpV:TOL.bpDp);
+  if(ok)return {ok,tipp:''};if(!isFinite(x))return {ok,tipp:istV?'Gib den Volumenstrom in m³/h ein, zum Beispiel 1,25.':'Gib den Druck in mbar ein.'};
+  const tabV=[...R.pumpe,...R.anlage,...R.gedrosselt].map(p=>p[0]).filter(v=>v>0),tabDp=[...R.pumpe,...R.anlage,...R.gedrosselt].map(p=>p[1]).filter(v=>v>0);
+  if(istV&&tabV.some(v=>nah(x,v,0.02))||!istV&&tabDp.some(v=>nah(x,v,2)))return {ok,tipp:'Der Betriebspunkt liegt dort, wo sich beide Kurven schneiden – nicht an einem Tabellenwert.'};
+  if(istV&&nah(x,bp.dp/100,0.05))return {ok,tipp:'Gefragt ist der Volumenstrom auf der waagrechten Achse.'};
+  if(/^d/.test(k)&&(istV?nah(x,R.bp1.V,0.05):nah(x,R.bp1.dp,10)))return {ok,tipp:'Das ist BP1. BP2 liegt auf der gestrichelten Kurve der gedrosselten Ventile.'};
+  return {ok,tipp:istV?'Zieh die senkrechte Linie unter den Schnittpunkt der roten und der blauen Kurve und lies unten ab – die Lupe hilft.':'Zieh die waagrechte Linie auf den Schnittpunkt und lies links ab – die Lupe hilft.'};}
+ // Regelungsarten durch BP1: Δp-c waagrecht, Δp-v gerade bis zur halben Höhe bei V̇ = 0
+ function pruefeLinie(R,k,y){if(y==null||!isFinite(y))return {ok:false,tipp:'Zieh die Linie am Griff links an der Δp-Achse.'};
+  if(k==='e1'){const ok=nah(y,R.bp1.dp,TOL.linie);return {ok,tipp:ok?'':'Δp-c hält den Druck von BP1: Die Linie läuft waagrecht durch BP1.'};}
+  const soll=R.bp1.dp/2,ok=nah(y,soll,TOL.linie);if(ok)return {ok,tipp:''};
+  if(y<=25)return {ok,tipp:'Δp-v geht nur bis zur Hälfte.'};
+  if(nah(y,R.bp1.dp,TOL.linie))return {ok,tipp:'Das wäre Δp-c (waagrecht). Δp-v fällt zum Nullpunkt hin ab – bis zur Hälfte.'};
+  return {ok,tipp:'Δp-v: von BP1 gerade bis zur halben Höhe von BP1 bei V̇ = 0.'};}
+ const FRAGEN={
+  bn:{frage:'Warum geht die Anlagenkennlinie durch den Nullpunkt?',soll:'reibung',opt:[['reibung','Ohne Volumenstrom gibt es keine Reibung, also keinen Druckverlust.'],['aus','Weil die Pumpe aus ist.'],['zu','Weil die Ventile zu sind.']],
+   tipp:'Woher kommt der Druckverlust im Rohrnetz? Was ist, wenn gar kein Wasser fließt?'},
+  dq:{frage:'Was ist passiert?',soll:'links',opt:[['links','Der Volumenstrom sinkt, der Druck steigt – der Betriebspunkt wandert auf der Pumpenkennlinie nach links oben.'],['beide','Beide sinken.'],['bleibt','Der Betriebspunkt bleibt.']],
+   tipp:'Vergleiche BP1 und BP2: Wo liegt BP2 – links oder rechts, höher oder tiefer?'}};
+ function pruefeFrage(k,w){const q=FRAGEN[k];const ok=w===q.soll;return {ok,tipp:ok?'':q.tipp};}
+ return {T:TOL,runde,HAUPT,uebung,P,SCHLUESSEL,TEILE,punkte,KURVE,ziele,passt,pruefePunkte,rechenSoll,pruefeRechnung,pruefeBP,pruefeLinie,FRAGEN,pruefeFrage,K1,K2};
+})();
+
+// ---------------------------------------------------------------- 3.4.2 Übung „Anlagenkennlinie zeichnen“: Bild und Bedienung (braucht AK, KL, ZAHL, svgEl, bauKennlinien)
+// Links ein Raster wie Millimeterpapier (V̇ 0–2,5 m³/h, Raster 0,1; Δp 0–400 mbar, Raster 10). Punkte setzt man durch Tippen (rastet auf 0,05 m³/h und
+// 5 mbar), der gewählte Punkt lässt sich mit den Pfeilen genau schieben. „Kurve zeichnen“ verbindet die Punkte glatt. Senkrechte und waagrechte
+// Ablese-Linie mit Griffen an den Achsen, Lupe. In Teil E steuert der Griff links die Regelungs-Linie (Δp-c grün, Δp-v lila).
+// Rechts die Teile A–E mit den Wertetabellen. Unten „Neue Zahlen (ohne Punkte)“ für weitere Runden.
+// o: {gespeichert:{g,pts,kz}|null, mitPunkten, kennung, chefHtml, beiAenderung(), beiPunkte(p)}
+function bauAnlagenkennlinie(wurzel,o){
+ o=Object.assign({gespeichert:null,mitPunkten:true,kennung:'ak',chefHtml:'',beiAenderung:null,beiPunkte:null},o||{});
+ const T=ZAHL.text,esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+ const ROT='#c62828',BLAU='#1565c0',GRUEN='#2e7d32',LILA='#7b4fb3',dez=v=>Math.abs(v*10-Math.round(v*10))<1e-9?1:2;
+ const leer=()=>({G:{},GP:{},W:{},pts:{p:[],a:[],g:[]},kz:{p:false,a:false,g:false},lin:{X:null,Y:null,e1:null,e2:null},aktiv:'A',wahl:null,meldung:''});
+ const mische=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+ const OPT={bn:mische(AK.FRAGEN.bn.opt),dq:mische(AK.FRAGEN.dq.opt)};
+ let R=AK.HAUPT,S=leer(),HAUPT=S,uebung=false;
+ // Spielstand aus Moodle: gelöste Schlüssel, gesetzte Punkte (V̇·100, mbar), gezeichnete Kurven
+ const g0=o.gespeichert;
+ if(g0&&typeof g0==='object'){(Array.isArray(g0.g)?g0.g:[]).forEach(k=>{if(AK.SCHLUESSEL.includes(k))S.G[k]=1;});
+  if(g0.pts&&typeof g0.pts==='object')['p','a','g'].forEach(k=>{if(Array.isArray(g0.pts[k]))S.pts[k]=g0.pts[k].filter(q=>Array.isArray(q)&&q.length===2&&isFinite(q[0])&&isFinite(q[1])).slice(0,12)
+   .map(q=>[KL.rasten(q[0]/100,0.05,0,2.5),KL.rasten(q[1],5,0,400)]);});
+  if(typeof g0.kz==='string')['p','a','g'].forEach(k=>{S.kz[k]=g0.kz.includes(k);});}
+ const istFrei=t=>t==='A'||t==='B'||((t==='C'||t==='D'||t==='E')&&!!S.G.pk&&!!S.G.bk)&&(t==='C'||(!!S.G.cv&&!!S.G.cp));
+ const fertig=t=>AK.TEILE[t].every(k=>S.G[k]);
+ S.aktiv=['A','B','C','D','E'].find(t=>istFrei(t)&&!fertig(t))||'A';
+ wurzel.innerHTML=`<div class="ak-runde" data-r="runde"></div><div class="dr-zwei ak"><div class="ak-links"><div class="karte"><div data-r="diagramm"></div>`+
+  `<div class="ak-werkzeug" data-r="werkzeug"></div></div></div><div class="ak-rechts">${o.chefHtml||''}<div data-r="aufgaben"></div></div></div>`;
+ const $=r=>wurzel.querySelector('[data-r="'+r+'"]');
+ let bereit=false;
+ const D=bauKennlinien($('diagramm'),{kennung:o.kennung,w:640,h:470,rand:{l:68,r:18,o:40,u:58},schrift:14.5,titel:'Δp über V̇',untertitel:'',
+  x:{min:0,max:2.5,raster:0.1,haupt:0.5,marken:0.5,stellen:1,rasten:0.01,wertStellen:2,text:'Volumenstrom V̇ in m³/h',name:'V̇',einheit:'m³/h',start:1.2},
+  y:{min:0,max:400,raster:10,haupt:50,marken:50,stellen:0,rasten:1,text:'Druck Δp in mbar',name:'Δp',einheit:'mbar',start:200},
+  griffe:{x:true,y:true},knoepfe:true,lupe:true,lupeFaktor:4,aria:'Raster wie Millimeterpapier: Druck Δp über dem Volumenstrom V̇',
+  tippen:(x,y,ev,info)=>tippe(x,y,info),beiLinien:(z)=>linien(z),lupeZentrum:()=>bereit?lupeMitte():null});
+ function lupeMitte(){const p=gewaehlt();if(p)return {x:p[0],y:p[1]};const z=D.zustand();
+  if(z.X!=null&&z.Y!=null)return {x:z.X,y:z.Y};return S.G.cv&&S.G.cp?{x:R.bp1.V,y:R.bp1.dp}:null;}
+ // ---------------------------------------------------------------- was gerade gezeichnet wird
+ const ziel=()=>({A:'p',B:'a',D:S.G.dk?null:'g'})[S.aktiv]||null;
+ const eModus=()=>S.aktiv==='E'&&istFrei('E')?(S.G.e1?(S.G.e2?null:'e2'):'e1'):null;
+ const gewaehlt=()=>{const k=ziel();return k&&S.wahl!=null?S.pts[k][S.wahl]||null:null;};
+ const KEYS={p:['p0','p1','p2','p3','p4','p5']};
+ function gesperrt(k,p){if(k==='a')return !!S.G.bk;if(k==='g')return !!S.G.dk;if(S.G.pk)return true;const Z=AK.ziele(R,'p');return Z.some((z,i)=>S.G[KEYS.p[i]]&&AK.passt(p,z));}
+ function tippe(x,y,info){const k=ziel();if(!k)return;const pts=S.pts[k],m=info&&info.massstab||1;
+  let best=-1,bd=1e9;pts.forEach((p,i)=>{const d=D.abstandPx(p[0],p[1],x,y)*m;if(d<bd){bd=d;best=i;}});
+  if(best>=0&&bd<=18){if(!gesperrt(k,pts[best]))S.wahl=best;zeichne();werkzeug();return;}
+  if(k==='a'&&S.G.bk||k==='g'&&S.G.dk||k==='p'&&S.G.pk)return;
+  const q=[KL.rasten(x,0.05,0,2.5),KL.rasten(y,5,0,400)],da=pts.findIndex(p=>Math.abs(p[0]-q[0])<1e-9&&Math.abs(p[1]-q[1])<1e-9);
+  if(da>=0)S.wahl=da;else{if(pts.length>=12){S.meldung='Höchstens 12 Punkte je Kurve – lösch zuerst einen.';werkzeug();return;}pts.push(q);S.wahl=pts.length-1;}
+  S.meldung='';aenderung();zeichne();werkzeug();teile();}
+ function schiebe(dx,dy){const k=ziel(),p=gewaehlt();if(!p||gesperrt(k,p))return;p[0]=KL.rasten(p[0]+dx,0.05,0,2.5);p[1]=KL.rasten(p[1]+dy,5,0,400);aenderung();zeichne();werkzeug();teile();}
+ function loesche(){const k=ziel(),p=gewaehlt();if(!p||gesperrt(k,p))return;S.pts[k].splice(S.wahl,1);S.wahl=null;aenderung();zeichne();werkzeug();teile();}
+ function kurve(){const k=ziel();if(!k)return;if(S.pts[k].length<2){S.meldung='Setz zuerst mindestens zwei Punkte.';werkzeug();return;}S.kz[k]=true;S.meldung='';aenderung();zeichne();werkzeug();teile();}
+ function linien(z){const e=eModus();if(e)S.lin[e]=z.Y;else S.lin.Y=z.Y;S.lin.X=z.X;}
+ function modusLinien(){const e=eModus();
+  if(e==='e1'){D.stil('y',{farbe:GRUEN,strich:'none',breite:2.6});D.linieY(Y=>({x1:0,y1:Y,x2:R.bp1.V,y2:Y}));D.setze(S.lin.e1,S.lin.X,false);}
+  else if(e==='e2'){D.stil('y',{farbe:LILA,strich:'none',breite:2.6});D.linieY(Y=>({x1:0,y1:Y,x2:R.bp1.V,y2:R.bp1.dp}));D.setze(S.lin.e2,S.lin.X,false);}
+  else{D.stil('y',{});D.linieY(null);D.setze(S.lin.Y,S.lin.X,false);}}
+ // ---------------------------------------------------------------- Diagramm
+ function zeichne(){const kur=[],pk=[],hil=[],tx=[],k0=ziel(),FARBE={p:ROT,a:BLAU,g:BLAU};
+  ['p','a','g'].forEach(k=>{const pts=S.pts[k];if(S.kz[k]&&pts.length>=2){const f=KL.glatt(pts.map(q=>q.slice()));
+    kur.push({id:'kurve-'+k,f,farbe:FARBE[k],breite:2.6,strich:k==='g'?'9 6':'none',name:{p:'Pumpe',a:'Rohrnetz',g:'gedrosselt'}[k],
+     nameBei:k==='p'?[Math.min(f.bis,1.9)+0.04,f(Math.min(f.bis,1.9))+12]:[Math.min(f.bis,1.4)+0.05,Math.min(395,f(Math.min(f.bis,1.4)))],anker:'start',schrift:14});}
+   pts.forEach((q,i)=>pk.push({id:'punkt-'+k,x:q[0],y:q[1],farbe:FARBE[k],form:'kreuz',r:6,breite:2.4,gewaehlt:k===k0&&i===S.wahl}));});
+  if(S.G.cv&&S.G.cp)pk.push({id:'bp1',x:R.bp1.V,y:R.bp1.dp,farbe:'#111',r:6,name:'BP1',dx:10,dy:22,schrift:15});
+  if(S.G.dv&&S.G.dp)pk.push({id:'bp2',x:R.bp2.V,y:R.bp2.dp,farbe:'#111',r:6,name:'BP2',dx:-10,dy:-10,anker:'end',schrift:15});
+  if(S.G.e1){hil.push({id:'dpc',x1:0,y1:R.bp1.dp,x2:R.bp1.V,y2:R.bp1.dp,farbe:GRUEN,breite:2.6,strich:'none'});tx.push({x:0.05,y:R.bp1.dp+8,t:'Δp-c',farbe:GRUEN,fett:true,schrift:14});}
+  if(S.G.e2){hil.push({id:'dpv',x1:0,y1:R.bp1.dp/2,x2:R.bp1.V,y2:R.bp1.dp,farbe:LILA,breite:2.6,strich:'none'});tx.push({x:0.05,y:R.bp1.dp/2-18,t:'Δp-v',farbe:LILA,fett:true,schrift:14});}
+  D.alles({kurven:kur,punkte:pk,hilfen:hil,texte:tx});}
+ function werkzeug(){const c=$('werkzeug'),k=ziel(),p=gewaehlt(),e=eModus();let h='';
+  if(k){const n={p:'die Pumpe (rot)',a:'das Rohrnetz (blau)',g:'das gedrosselte Rohrnetz (blau gestrichelt)'}[k],fa={p:ROT,a:BLAU,g:BLAU}[k];
+   h+=`<span class="gname"><span class="ak-farbe" style="background:${fa}"></span>Du zeichnest ${n}:</span>`+
+    `<button type="button" class="knopf" data-w="kurve"${S.kz[k]&&k==='p'&&S.G.pk||k==='a'&&S.G.bk||k==='g'&&S.G.dk?' disabled':''}>Kurve zeichnen</button>`;
+   h+=`<span class="ak-pfeile wahl" style="margin:0"><button type="button" class="knopf" data-w="l" aria-label="Punkt nach links"${p?'':' disabled'}>◀</button><button type="button" class="knopf" data-w="r" aria-label="Punkt nach rechts"${p?'':' disabled'}>▶</button>`+
+    `<button type="button" class="knopf" data-w="u" aria-label="Punkt nach unten"${p?'':' disabled'}>▼</button><button type="button" class="knopf" data-w="o" aria-label="Punkt nach oben"${p?'':' disabled'}>▲</button>`+
+    `<button type="button" class="knopf" data-w="weg"${p?'':' disabled'}>Punkt löschen</button></span>`;
+   h+=`<p class="klein ak-zeichne" data-r="punktinfo">${p?`Gewählter Punkt: <b>${T(p[0],2)} m³/h · ${T(p[1],0)} mbar</b>`:'Tipp ins Raster: Der Punkt rastet auf 0,05 m³/h und 5 mbar ein. Tipp auf einen Punkt, um ihn zu wählen.'}</p>`;}
+  else if(e)h+=`<p class="klein ak-zeichne"><b style="color:${e==='e1'?GRUEN:LILA}">${e==='e1'?'Δp-c':'Δp-v'}:</b> Zieh die Linie am Griff links an der Δp-Achse oder stell sie mit − / + genau ein.</p>`;
+  else h+='<p class="klein ak-zeichne">Lies mit den roten Linien ab: Griff links (waagrecht) und Griff unten (senkrecht), genau mit − / +. Die Lupe hilft.</p>';
+  if(S.meldung)h+=`<p class="rueck nein" style="margin:4px 0 0">${esc(S.meldung)}</p>`;
+  c.innerHTML=h;
+  const on=(w,f)=>{const b=c.querySelector(`[data-w="${w}"]`);if(b)b.onclick=f;};
+  on('kurve',kurve);on('l',()=>schiebe(-0.05,0));on('r',()=>schiebe(0.05,0));on('u',()=>schiebe(0,-5));on('o',()=>schiebe(0,5));on('weg',loesche);}
+ // ---------------------------------------------------------------- Aufgaben A–E
+ const pkt=keys=>keys.reduce((s,k)=>s+(S.G[k]?AK.P[k]:0),0),max=keys=>keys.reduce((s,k)=>s+AK.P[k],0);
+ const mitP=()=>o.mitPunkten&&!uebung;
+ const tab=(z,ein)=>`<div class="rollen"><table class="ak-tab"><tr><th>V̇ in m³/h</th>${z.map(q=>`<td>${T(q[0],dez(q[0]))}</td>`).join('')}</tr><tr><th>Δp in mbar</th>${z.map(q=>`<td>${ein===false?'…':T(q[1])}</td>`).join('')}</tr></table></div>`;
+ function feld(k,soll,stellen,einheit,vor){const fe=!!S.G[k],gp=S.GP[k],v=S.W[k]!==undefined?S.W[k]:fe?T(soll,stellen):'';
+  return `<label class="feld">${vor?`<span>${vor}</span>`:''}<input type="text" class="zahl${fe?' ok':gp&&!gp.ok?' nein':''}" inputmode="decimal" autocomplete="off" data-f="${k}" value="${esc(v)}"${fe?' disabled':''}> ${einheit}</label>`;}
+ function frage(k){const q=AK.FRAGEN[k],fe=!!S.G[k],gp=S.GP[k];return `<p style="margin:10px 0 4px"><b>${q.frage}</b></p><div class="optionen">`+OPT[k].map(([w,t])=>{const gew=S.W[k]===w,ok=fe&&w===q.soll,nein=!fe&&gp&&!gp.ok&&gew;
+  return `<button type="button" data-q="${k}" data-w="${w}" aria-pressed="${gew||ok}" class="${ok?'ok':nein?'nein':''}"${fe?' disabled':''}>${t}</button>`;}).join('')+'</div>';}
+ function karte(t,titel,inhalt){const fr=istFrei(t),fe=fertig(t),keys=AK.TEILE[t];
+  return `<div class="aufgabe${fe?' fertig':''}${fr?'':' gesperrt'}${S.aktiv===t&&!fe&&fr?' aktiv':''}" id="${o.kennung}-${t}" data-teil="${t}">`+(mitP()?`<span class="pkt">${pkt(keys)} von ${max(keys)} Punkten</span>`:'')+
+   `<h3>${t}) ${titel}</h3>`+(fr?inhalt:`<span class="sperre">Noch gesperrt: erst ${t==='C'?'Teil A und B (beide Kurven)':'Teil C (BP1)'}.</span>`)+
+   (fr&&!fe?`<div class="wahl" style="margin:8px 0 0">${S.aktiv!==t?`<button type="button" class="knopf" data-hier="${t}">Hier weiterarbeiten</button>`:''}<button type="button" class="knopf haupt" data-p="${t}">Prüfen</button></div>`:'')+
+   (fe?`<span class="rueck ok">Richtig!${t==='E'?' Δp-c hält den Druck, Δp-v senkt ihn bis zur Hälfte.':''}</span>`:S.GP[t]&&S.GP[t].tipp?`<span class="rueck nein">${S.GP[t].tipp}</span>`:'')+'</div>';}
+ function status(k){const r=AK.pruefePunkte(R,k,S.pts[k]),n=r.treffer.filter(Boolean).length;
+  return `<p class="klein" style="margin:6px 0 0">${S.pts[k].length} Punkte gesetzt${S.kz[k]?', Kurve gezeichnet':''}.</p>`;}
+ function teile(){const c=$('aufgaben'),bv=R.bv;
+  let h='';
+  h+=karte('A','Trag die Pumpe ein',`<p>Die Pumpe ist ungeregelt. Trag die Punkte der Wertetabelle ins Raster ein und verbinde sie mit „Kurve zeichnen“ (rot).</p>${tab(R.pumpe)}${status('p')}`);
+  h+=karte('B','Die Anlagenkennlinie',`<p>Das Rohrnetz hat bei 1,0 m³/h <b>${T(R.k1)} mbar</b> Druckverlust. Rechne mit <b>Δp₂ = Δp₁ · (V̇₂/V̇₁)²</b>:</p>`+
+   bv.map((V,i)=>feld('b'+i,R.k1*V*V,1,'mbar',`${T(V,dez(V))} m³/h →`)).join('<br>')+
+   `<p style="margin:8px 0 0">Setz die Punkte – mit dem Nullpunkt und ${T(R.k1)} mbar bei 1,0 m³/h – und zeichne die Anlagenkennlinie (blau).</p>${status('a')}${frage('bn')}`);
+  h+=karte('C','Betriebspunkt BP1',`<p>Lies den Betriebspunkt ab: Wo schneiden sich Pumpen- und Anlagenkennlinie?</p>${feld('cv',R.bp1.V,2,'m³/h','V̇ =')}<br>${feld('cp',R.bp1.dp,0,'mbar','Δp =')}`);
+  h+=karte('D','Die Thermostatventile drosseln',`<p>Bei 1,0 m³/h hat das Rohrnetz jetzt <b>${T(R.k2)} mbar</b>. Rechne:</p>`+
+   R.dv.map((V,i)=>feld('d'+i,R.k2*V*V,1,'mbar',`${T(V,dez(V))} m³/h →`)).join('<br>')+
+   `<p style="margin:8px 0 0">Setz die Punkte (mit Nullpunkt und ${T(R.k2)} mbar bei 1,0 m³/h) und zeichne die neue Anlagenkennlinie – sie wird gestrichelt.</p>${status('g')}`+
+   `<p style="margin:8px 0 0">Lies den neuen Betriebspunkt BP2 ab:</p>${feld('dv',R.bp2.V,2,'m³/h','V̇ =')}<br>${feld('dp',R.bp2.dp,0,'mbar','Δp =')}${frage('dq')}`);
+  h+=karte('E','Regelungsarten durch BP1',`<p><b style="color:${GRUEN}">Δp-c</b>: Zieh die grüne Linie am Griff links waagrecht durch BP1.${S.G.e1?' <span class="ok-text">✓</span>':''}</p>`+
+   `<p><b style="color:${LILA}">Δp-v</b>: Die lila Linie läuft gerade von BP1 zur Δp-Achse. Zieh ihren Griff links auf die richtige Höhe bei V̇ = 0.${S.G.e2?' <span class="ok-text">✓</span>':''}</p>`);
+  const alle=['A','B','C','D','E'].every(fertig);
+  if(alle)h+=`<div class="merk"><b>${mitP()?'Alle Aufgaben geschafft: 100 von 100 Punkten.':'Alles gelöst.'}</b> Mit „Neue Zahlen“ kannst du mit einer anderen Pumpe und einem anderen Rohrnetz weiterüben.</div>`;
+  c.innerHTML=h;
+  c.querySelectorAll('input[data-f]').forEach(e=>{e.addEventListener('input',()=>{S.W[e.dataset.f]=e.value;e.classList.remove('nein');});
+   e.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();const t=e.closest('[data-teil]');if(t)pruefe(t.dataset.teil);}});});
+  c.querySelectorAll('button[data-q]').forEach(b=>b.onclick=()=>{S.W[b.dataset.q]=b.dataset.w;delete S.GP[b.dataset.q];teileNeu();});
+  c.querySelectorAll('button[data-p]').forEach(b=>b.onclick=()=>pruefe(b.dataset.p));
+  c.querySelectorAll('button[data-hier]').forEach(b=>b.onclick=()=>aktiviere(b.dataset.hier));
+  c.querySelectorAll('[data-teil]').forEach(d=>d.addEventListener('click',ev=>{if(ev.target.closest('input,button'))return;const t=d.dataset.teil;if(istFrei(t)&&t!==S.aktiv&&!fertig(t))aktiviere(t);}));}
+ function teileNeu(){const a=document.activeElement,k=a&&a.dataset&&a.dataset.f?a.dataset.f:null;teile();if(k){const e=$('aufgaben').querySelector(`input[data-f="${k}"]`);if(e&&!e.disabled){try{e.focus();}catch(_){}}}}
+ function aktiviere(t){if(!istFrei(t))return;S.aktiv=t;S.wahl=null;S.meldung='';modusLinien();zeichne();werkzeug();teile();}
+ function lies(){$('aufgaben').querySelectorAll('input[data-f]').forEach(e=>{if(!e.disabled)S.W[e.dataset.f]=e.value;});}
+ function setze(k,r){S.GP[k]=r;if(r.ok)S.G[k]=1;}
+ function pruefe(t){if(!istFrei(t))return punkte();lies();const tipps=[],leerT=k=>S.W[k]===undefined||String(S.W[k]).trim()==='';
+  const zahl=(k,f)=>{if(S.G[k])return;if(leerT(k)){tipps.push('Füll noch alle Felder aus.');return;}const r=f(S.W[k]);setze(k,r);if(!r.ok)tipps.push(r.tipp);};
+  const wahl=k=>{if(S.G[k])return;if(!S.W[k]){tipps.push('Wähl noch eine Antwort aus.');return;}const r=AK.pruefeFrage(k,S.W[k]);setze(k,r);if(!r.ok)tipps.push(r.tipp);};
+  const kurveOk=(k,schl,was)=>{if(S.G[schl])return;const r=AK.pruefePunkte(R,k,S.pts[k]);
+   if(r.extra)tipps.push(`${r.extra===1?'Ein Punkt passt':r.extra+' Punkte passen'} zu keinem Wert der ${was} – tipp ihn an und lösch ihn.`);
+   else if(!r.treffer.every(Boolean)){const fehlt=AK.ziele(R,k).filter((z,i)=>!r.treffer[i]).map(z=>T(z[0],dez(z[0])));tipps.push(`Es fehlen noch Punkte – bei V̇ = ${fehlt.join(' · ')} m³/h.`);}
+   else if(!S.kz[k])tipps.push('Alle Punkte passen. Jetzt noch „Kurve zeichnen“.');
+   else S.G[schl]=1;return r;};
+  if(t==='A'){const r=AK.pruefePunkte(R,'p',S.pts.p);r.treffer.forEach((x,i)=>{if(x)S.G[KEYS.p[i]]=1;});kurveOk('p','pk','Tabelle');}
+  if(t==='B'){R.bv.forEach((V,i)=>zahl('b'+i,w=>AK.pruefeRechnung(R,'b'+i,w)));kurveOk('a','bk','Anlagenkennlinie');wahl('bn');}
+  if(t==='C'){zahl('cv',w=>AK.pruefeBP(R,'cv',w));zahl('cp',w=>AK.pruefeBP(R,'cp',w));}
+  if(t==='D'){R.dv.forEach((V,i)=>zahl('d'+i,w=>AK.pruefeRechnung(R,'d'+i,w)));kurveOk('g','dk','gedrosselten Anlagenkennlinie');zahl('dv',w=>AK.pruefeBP(R,'dv',w));zahl('dp',w=>AK.pruefeBP(R,'dp',w));wahl('dq');}
+  if(t==='E'){const e=eModus();if(e){const r=AK.pruefeLinie(R,e,S.lin[e]);setze(e,r);if(!r.ok)tipps.push(r.tipp);}}
+  S.GP[t]={ok:fertig(t),tipp:tipps[0]||''};
+  if(fertig(t)){const n=['A','B','C','D','E'].find(x=>istFrei(x)&&!fertig(x));if(n)S.aktiv=n;}
+  S.wahl=null;modusLinien();zeichne();werkzeug();teile();aenderung();if(mitP()&&o.beiPunkte)o.beiPunkte(punkte());return punkte();}
+ const punkte=()=>AK.punkte(HAUPT.G);
+ function aenderung(){if(!uebung&&o.beiAenderung)o.beiAenderung();}
+ // ---------------------------------------------------------------- Runden: Hauptrunde (Punkte) und Übungsrunden „Neue Zahlen“
+ let nr=Math.floor(Math.random()*Z34_RUNDEN.length);
+ function runde(){const c=$('runde');
+  c.innerHTML=uebung?`<span class="hinweis-orange">Übungsrunde mit neuen Zahlen – ohne Punkte</span><button type="button" class="knopf" data-r2="neu">Neue Zahlen</button><button type="button" class="knopf haupt" data-r2="zurueck">Zurück zur Runde ${o.mitPunkten?'mit Punkten':'aus dem Arbeitsblatt'}</button>`
+   :`<span class="klein">${o.mitPunkten?'Runde mit Punkten (Zahlen wie auf dem Arbeitsblatt).':'Zahlen wie auf dem Arbeitsblatt.'}</span><button type="button" class="knopf" data-r2="neu">Neue Zahlen (ohne Punkte)</button>`;
+  c.querySelectorAll('[data-r2]').forEach(b=>b.onclick=()=>{if(b.dataset.r2==='neu')neueZahlen();else zurueck();});}
+ function alles(){modusLinien();zeichne();werkzeug();teile();runde();}
+ function neueZahlen(i){uebung=true;nr=i!=null?i:(nr+1+Math.floor(Math.random()*(Z34_RUNDEN.length-1)))%Z34_RUNDEN.length;R=AK.uebung(nr);S=leer();D.lupe(false);alles();}
+ function zurueck(){uebung=false;R=AK.HAUPT;S=HAUPT;D.lupe(false);alles();}
+ bereit=true;alles();
+ return {punkte,pruefe,aktiviere,neueZahlen,zurueck,D,R:()=>R,S:()=>S,uebung:()=>uebung,
+  setzePunkte:(k,l)=>{S.pts[k]=l.map(q=>q.slice());S.wahl=null;zeichne();werkzeug();teile();},kurve:k=>{const a=S.aktiv;S.aktiv={p:'A',a:'B',g:'D'}[k];kurve();S.aktiv=a;},
+  eingabe:(k,v)=>{S.W[k]=v;teileNeu();},waehle:(k,w)=>{S.W[k]=w;teileNeu();},linie:(y,x)=>D.setze(y,x),
+  geloest:()=>AK.SCHLUESSEL.filter(k=>HAUPT.G[k]),
+  exportiere:()=>({v:1,g:AK.SCHLUESSEL.filter(k=>HAUPT.G[k]),pts:{p:HAUPT.pts.p.map(q=>[Math.round(q[0]*100),Math.round(q[1])]),a:HAUPT.pts.a.map(q=>[Math.round(q[0]*100),Math.round(q[1])]),g:HAUPT.pts.g.map(q=>[Math.round(q[0]*100),Math.round(q[1])])},
+   kz:['p','a','g'].filter(k=>HAUPT.kz[k]).join('')})};
+}
+
+// ---------------------------------------------------------------- Höhe der festen Kopfzeile als CSS-Variable --kopf (für die stehende linke Spalte)
+(function(){const k=document.querySelector('.kopf');const f=()=>{try{document.documentElement.style.setProperty('--kopf',(k?k.offsetHeight:0)+'px');}catch(_){}};
+ f();try{addEventListener('resize',f);}catch(_){}try{if(window.ResizeObserver&&k)new ResizeObserver(f).observe(k);}catch(_){}})();
+
+const AUF=bauKfAufgaben({mitPunkten:false});
+const F=bauKennlinienfeld(document.getElementById('feld'),{modus:'oeffentlich',aufgaben:AUF});
+const AKU=bauAnlagenkennlinie(document.getElementById('kennlinie'),{mitPunkten:false,kennung:'ak'});
+window.__seite={F,AUF,AKU};
+</script>
+</body>
+</html>
