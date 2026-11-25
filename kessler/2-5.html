@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>2.5 Am neuen Gerät: Gasregelstrecke und Anschlusswert – Haus Kessler</title>
+<style>
+:root{--papier:#f4f1ea;--tinte:#22303a;--leise:#5d6b75;--linie:#d5cfc2;--karte:#fff;--akzent:#0b6b7d;--akzent-hell:#e1f0f2;--gold:#d99a1b;
+  --vl:#d0342c;--rl:#2f6fb7;--ring:#b0408a;--gut:#2e7d4f;--gut-hell:#e4f3e3;--schlecht:#c8371f;--schlecht-hell:#fde3df;--merk:#fffbe9;--merk-rand:#ecd9a0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation}
+body{margin:0;background:var(--papier);color:var(--tinte);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+.kopf{position:sticky;top:0;z-index:5;background:var(--papier);border-bottom:1px solid var(--linie);padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.kopf .titel{flex:1 1 360px;min-width:0}
+.kopf .ober{margin:0;font-size:13px;color:var(--leise)}
+.kopf h1{margin:0;font-size:20px;line-height:1.25}
+.kopf .stand{font-size:16px;white-space:nowrap;text-align:right}
+.kopf .stand small{display:block;font-size:12px;color:var(--leise)}
+.kurs{min-height:44px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--akzent);background:#fff;color:var(--akzent);font-weight:600;cursor:pointer;touch-action:manipulation}
+main{max-width:1040px;margin:0 auto;padding:14px 16px 60px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+h2{font-size:20px;margin:0 0 8px;line-height:1.25}
+h3{font-size:17px;margin:14px 0 6px}
+p{margin:0 0 10px}
+.klein{font-size:14px;color:var(--leise)}
+.sprech{border-left:5px solid var(--akzent);background:var(--akzent-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:0 0 12px}
+.sprech b.wer{display:block;font-size:13px;color:var(--akzent);letter-spacing:.3px;margin-bottom:2px}
+.merk{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 12px;margin:10px 0 0}
+.wahl{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.knopf,.wahl button{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;touch-action:manipulation}
+.wahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.knopf.haupt{background:var(--akzent);border-color:var(--akzent);color:#fff}
+.knopf:disabled,.wahl button:disabled{opacity:.45;cursor:default}
+svg{display:block;width:100%;height:auto}
+.rollen{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--leise);font-weight:600}
+.balken{height:12px;border-radius:6px;background:var(--akzent)}
+.balkenreihe{display:flex;min-width:60px}
+.zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.zwei{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}}
+/* Animation */
+.wegbild{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.messung{min-height:48px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--akzent-hell);font-size:17px}
+.messung b{font-size:19px}
+.hk-knopf{cursor:pointer}
+.lupe-ruf{cursor:pointer}
+.lupe{border:2px solid var(--tinte);border-radius:14px;padding:12px 14px;margin-top:12px;background:#fff}
+.lupe h3{margin:0 0 6px}
+.lupe ol{margin:8px 0 0;padding-left:22px}
+.lupe li{margin:3px 0}
+/* Aufgaben */
+.aufgabe{border:1px solid var(--linie);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:#fff}
+.aufgabe h3{margin:0 0 6px}
+.aufgabe .pkt{float:right;margin-left:10px;font-size:14px;color:var(--leise);font-weight:600}
+.aufgabe.fertig{border-color:var(--gut);box-shadow:0 0 0 2px var(--gut-hell)}
+.feld{display:inline-flex;align-items:center;gap:6px;margin:4px 16px 4px 0;font-size:17px}
+input.zahl{font:inherit;width:5.2em;min-height:44px;padding:6px 8px;border:1px solid var(--linie);border-radius:8px;background:#fff;color:var(--tinte)}
+input.zahl.ok{border-color:var(--gut);background:var(--gut-hell)}
+input.zahl.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+input.zahl:disabled{opacity:1;color:var(--tinte)}
+.rueck{display:block;margin-top:8px;font-size:15px}
+.rueck.ok{color:var(--gut);font-weight:600}
+.rueck.nein{color:var(--schlecht)}
+.satz{border:1px solid var(--linie);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+.satz p{margin:0 0 6px;font-style:italic}
+.satz.ok{border-color:var(--gut);background:var(--gut-hell)}
+.satz.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+.satz .wahl{margin:0}
+/* Zeichnen */
+svg.zeichnen{min-width:680px;touch-action:manipulation;background:#eef1ea;border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.gruppe{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 8px}
+.gruppe button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.gruppe .gname{font-size:14px;color:var(--leise);font-weight:600;min-width:110px}
+.pruefliste{list-style:none;padding:0;margin:10px 0 0;font-size:15px}
+.pruefliste li{padding:3px 0 3px 26px;position:relative}
+.pruefliste li::before{position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;text-align:center;line-height:18px}
+.pruefliste li.ok::before{content:"✓";background:var(--gut)}
+.pruefliste li.nein::before{content:"✗";background:var(--schlecht)}
+/* Team */
+.tablet{border:2px solid var(--tinte);border-radius:16px;padding:14px;background:#fff;margin-top:6px}
+.tablet h3{margin:0 0 6px}
+.phase{border-top:1px solid var(--linie);padding-top:10px;margin-top:12px}
+.phase.zu{opacity:.45}
+.phase label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.grosswahl{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}
+.grosswahl button{min-width:150px;min-height:96px;border-radius:16px;border:2px solid var(--tinte);background:#fff;cursor:pointer;font-size:18px;padding:10px 14px;touch-action:manipulation}
+.grosswahl button b{display:block;font-size:34px;line-height:1.1}
+.ok-text{color:var(--gut);font-weight:600}
+.hinweis-gruen{display:inline-block;background:var(--gut-hell);border:1px solid var(--gut);border-radius:8px;padding:2px 8px}
+.hinweis-orange{display:inline-block;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:2px 8px}
+@media (max-width:820px){body{font-size:16px}.kopf h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Haus Kessler 2.5 – Ergänzungen zu basis.css (gemeinsam, unverändert eingebunden): Ablaufbild, Signale, Bericht für den Chef */
+.lage{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+figure.bild{margin:0;background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;padding:8px 10px 10px}
+figure.bild figcaption{font-size:14px;font-weight:600;margin:0 0 6px}
+svg.ablauf{max-width:780px;margin:0 auto}
+.wissen{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;padding:10px 12px;font-size:15px}
+.wissen h4{margin:0 0 6px;font-size:15px}
+.wissen ul{margin:0;padding-left:18px}
+.wissen li{margin:3px 0}
+.frage{margin:12px 0 6px}
+.zeile{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:6px 0}
+.zeile .was{font-size:15px;color:var(--leise);min-width:132px}
+.reihe{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.reihe button{min-width:52px;min-height:44px;padding:6px 12px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;font-weight:600;touch-action:manipulation}
+.reihe button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.reihe button:disabled{opacity:.45;cursor:default}
+.satzwahl{display:flex;flex-direction:column;gap:8px;margin:0 0 6px}
+.satzwahl button{min-height:44px;padding:9px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;text-align:left;line-height:1.35;touch-action:manipulation}
+.satzwahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.satzwahl button:disabled{opacity:.45;cursor:default}
+.wahl button.ok[aria-pressed],.satzwahl button.ok[aria-pressed],.reihe button.ok[aria-pressed]{background:var(--gut-hell);border:2px solid var(--gut);color:var(--tinte);opacity:1}
+.wahl button.nein[aria-pressed],.satzwahl button.nein[aria-pressed],.reihe button.nein[aria-pressed]{background:var(--schlecht-hell);border:2px solid var(--schlecht);color:var(--tinte)}
+.wahl button.ok::after,.satzwahl button.ok::after,.reihe button.ok::after{content:" ✓";color:var(--gut);font-weight:700}
+.wahl button.nein::after,.satzwahl button.nein::after,.reihe button.nein::after{content:" ✗";color:var(--schlecht);font-weight:700}
+input.zahl{width:5.6em}
+.mitspieler{border:1px solid var(--linie);border-radius:12px;padding:10px 12px;margin:10px 0;background:#fcfbf8}
+.mitspieler h4{margin:0 0 4px;font-size:16px}
+.ringfrage{border:1px solid var(--linie);border-radius:12px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+table.vergleich{min-width:680px}
+table.vergleich td,table.vergleich th{vertical-align:top}
+.gross{font-size:20px;font-weight:700}
+.grosswahl button small{display:block;font-size:13px;color:var(--leise);margin-top:2px}
+.merk b{font-weight:700}
+
+.leise{color:var(--leise);font-size:14px}
+.kennz{font-weight:700;color:var(--akzent);margin:0 0 2px}
+a.zurueck{color:var(--akzent)}
+h1{font-size:24px;margin:0 0 4px;line-height:1.2}
+.sprung{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.sprung a{display:inline-block;padding:9px 14px;border-radius:999px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-decoration:none;font-size:15px}
+section.karte{scroll-margin-top:10px}
+.videoplatz{border:2px dashed var(--linie);border-radius:10px;padding:12px 14px;background:#fcfbf8;color:var(--leise)}
+.videoplatz a{color:var(--akzent);font-weight:600}
+footer{margin-top:28px;font-size:13px;color:var(--leise);border-top:1px solid var(--linie);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+  <p class="leise"><a class="zurueck" href="index.html">← Haus Kessler: alle Stationen</a></p>
+  <p class="kennz">3195 · 2.5</p>
+  <h1>Haus Kessler – Station 2.5 Am neuen Gerät: Gasregelstrecke und Anschlusswert</h1>
+  <p class="leise">Haus Kessler – Auftrag 2: Planung. Video und Team-Übung zum Arbeitsblatt 2.5, ohne Anmeldung und ohne Punkte.</p>
+  <div class="sprung"><a href="#video">Video 2.5.1</a><a href="#team-uebung">2.5.2 Dreier-Team</a></div>
+
+  <section class="karte" id="video">
+    <h2>Video 2.5.1: Wirkungsweise einer Ionisationselektrode am Gasbrenner</h2>
+    <div class="videoplatz"><!--VIDEO-2-5-1--><p><a href="https://www.youtube.com/watch?v=m3T2BnAyzuE&amp;t=5" target="_blank" rel="noopener"><b>Video bei YouTube öffnen</b> (ab 0:05, etwa 5 Minuten)</a></p><p>Das Video zeigt an einem echten Gasbrenner mit Gebläse, wie die Ionisationselektrode merkt, ob die Flamme brennt – und was passiert, wenn sie ausgeht. Den Ablauf beim Start (Vorlüften, Zündung, Sicherheitszeit) findest du im Tabellenbuch auf S. 446.</p><p class="leise">Quelle: YouTube, Kanal „rinnenmaker“, „Wirkungsweise einer Ionisationselektrode am Gasbrenner“. Der Link öffnet YouTube; dort gelten die Datenschutzregeln von YouTube.</p></div>
+  </section>
+
+  <section class="karte" id="team-uebung">
+    <h2>2.5.2 Dreier-Team: Drei Störungen, ein Bericht für den Chef</h2>
+    <div class="sprech"><b class="wer">DEIN CHEF</b>„Herr Kessler will wissen, ob das neue Gerät sicher ist. Ich habe euch drei Ausdrucke aus dem Fehlerspeicher eines gleichen Geräts besorgt – jeder von euch bekommt einen. Lest ab, welches Signal gefehlt hat und wie viel Gas ohne Flamme ausgeströmt ist. Dann prüft ihr gegenseitig nach. Am Ende will ich von jedem von euch den Bericht: Was passiert, wenn die Flamme ausgeht? Der kommt in die Planungsmappe.“</div>
+    <p><b>So geht es:</b> Teil 1 – du liest deinen Ausdruck: Welches Signal fehlt oder fällt weg, wie lange und wie viel Gas strömte ohne Flamme, und was macht der Automat danach? Teil 2 – du holst dir Signal und Liter vom nächsten Tablet und rechnest nach (Tablet 1 fragt Tablet 2, Tablet 2 fragt Tablet 3, Tablet 3 fragt Tablet 1). Teil 3 – ihr setzt euch zusammen, jeder trägt die beiden anderen Fälle in den Bericht ein, und ihr beantwortet gemeinsam: Warum bläst das Gebläse vor jedem Start mindestens 20 s Luft durch den Brennraum?</p>
+    <p class="klein">Du brauchst dein Tabellenbuch (S. 445 und 446) und den Taschenrechner. Aus der Übung kennst du den Einstellwert des neuen Geräts: V̇<sub>E</sub> = 35,7 l/min.</p>
+    <div id="team"></div>
+  </section>
+
+  <footer>Diese Seite setzt keine Cookies, speichert nichts auf dem Gerät und lädt nichts von anderen Servern. Beim Aufruf verarbeitet der Anbieter GitHub technisch die IP-Adresse des Geräts.</footer>
+</main>
+<script>
+// ---------------------------------------------------------------- Dreier-Team 2.5.2 „Drei Störungen, ein Bericht für den Chef“ (ohne DOM)
+// Haus Kessler, Station 2.5 „Am neuen Gerät: Gasregelstrecke und Anschlusswert“ (Kurs 3195 „Haus Kessler A2“). Feinplan: VORSCHAU-Kessler-Station-2-5.html
+// (Element „2.5.2 Dreier-Team: Drei Störungen, ein Bericht für den Chef“, entschieden am 25.11.2026 08:09), Hauswerte aus BAUPLAN-Auftrag-2-Planung-25-11.md
+// (A; D: Station 2.5). Regel des Lehrers 24.11.2026 (Weg A, K20): Die Übung fragt „Welches Tablet bist du? 1 · 2 · 3“. Ring: 1 holt von 2, 2 von 3, 3 von 1.
+// Der Chef schickt drei Ausdrucke aus dem Fehlerspeicher eines gleichen Geräts; jedes Tablet bekommt EIN selbst gezeichnetes Ablaufbild wie T S. 446
+// (Zeilen STB/TR/GP, M, LP, Z, BV, FE; 0–60 s; wichtige Zeitpunkte als Zahl beschriftet):
+// Tablet 1 „Startversuch Montag, 6:00 Uhr“ – LP fehlt · Tablet 2 „Startversuch nach der Wartung“ – FE fehlt · Tablet 3 „Brenner lief schon“ – FE fällt weg.
+// Alle Tablets kennen aus der Übung V̇E = 35,7 l/min. Nur Tablet 3 bekommt den Satz „Laut Hersteller schließen die Ventile spätestens 1 s nach dem
+// Erlöschen der Flamme.“ (steht nicht im Tabellenbuch, Frage 6 des Feinplans).
+// Punkte (Feinplan): Teil 1 Signal, Sekunden, Liter, Automat (4 × 10) · Teil 2 Ringtausch: Signal und Liter des Mitspielers (10) + nachgeprüft „stimmt“ (10),
+// zählt erst, wenn Teil 1 stimmt und nachgeprüft ist · Teil 3 Bericht: Signal und Liter der beiden anderen Fälle (4 × 7,5) + gemeinsame Frage (10), zählt
+// erst, wenn Teil 2 stimmt. 100 nur, wenn alles stimmt.
+// Tabellenbuch = neue Ausgabe (6. Auflage 2026), am Bild geprüft: S. 446 Ablaufsteuerung (Vorlüftzeit mind. 20 s, t_S max. 3 s bzw. 5 s), Tab. 445.2
+// (Hauptbrenner ≤ 70 kW, direkte Zündung bei voller Leistung: t_S = 5 s).
+// Toleranzen (Feinplan): Sekunden genau, Liter ± 0,1.
+const T25=(()=>{
+ const VE=35.7;// l/min, Übung 2.5.2 d: 20,0 kW ÷ 9,35 kWh/m³ = 2,14 m³/h → 35,7 l/min
+ const TOL=0.1;
+ const liter=s=>Math.round(VE*s/60*10)/10;// 5 s → 2,975 → 3,0 · 1 s → 0,595 → 0,6
+ // die sechs Zeilen des Ablaufbilds (Reihenfolge wie im Feinplan); Schlüssel ohne Schrägstrich
+ const SIG=[{k:'STB',t:'STB/TR/GP'},{k:'M',t:'M'},{k:'LP',t:'LP'},{k:'Z',t:'Z'},{k:'BV',t:'BV'},{k:'FE',t:'FE'}];
+ const SIGK=SIG.map(s=>s.k);
+ const sigText=k=>(SIG.find(s=>s.k===k)||{t:''}).t;
+ // „Was macht der Automat danach?“ – dieselben vier Sätze auf allen Tablets (drei sind die Lösungen der drei Fälle)
+ const AUTOMAT=[
+  {k:'abbruch',t:'Er bricht den Start ab und gibt kein Gas frei – Störung.'},
+  {k:'verriegelt',t:'Er schließt beide Sicherheitsabsperrventile, schaltet auf Störung und verriegelt – entriegeln nur von Hand.'},
+  {k:'neustart',t:'Er schließt sofort die Ventile und startet neu mit Vorlüften; kommt dann keine Flamme, schaltet er auf Störung.'},
+  {k:'weiter',t:'Er lässt das Gasventil offen und zündet so lange weiter, bis eine Flamme kommt.'}];
+ const HERSTELLER='Laut Hersteller schließen die Ventile spätestens 1 s nach dem Erlöschen der Flamme.';
+ const GERAET='Das neue Gerät: Gas-Brennwertkessel mit Gebläse, Q̇<sub>NB</sub> = 20,0 kW; der Hauptbrenner wird direkt bei voller Leistung gezündet.';
+ const EINSTELL='Aus der Übung kennst du den Einstellwert: V̇<sub>E</sub> = 35,7 l/min – so viel Gas strömt in einer Minute (60 s), wenn das Gasventil offen ist.';
+ const LESEN='Ein Balken heißt: Das Signal ist an. Unten steht die Zeit in Sekunden – wie im Ablaufbild im Tabellenbuch S. 446.';
+ // Bauvorgabe Zeitpunkte (Feinplan, Sekunden): Balken je Zeile [von, bis]. Berichtigt nach T S. 446 (Hauptchat 25.11.2026 08:50): Die Zündung Z beginnt
+ // bei B, das Brennstoffventil BV öffnet erst danach; mit dem Öffnen von BV beginnt die Sicherheitszeit t_S, sie endet bei C′ (dort endet Z, ab da muss
+ // FE melden). Ausdruck 2: Z 34–41, BV 36–41 (t_S 36 → 41 = 5 s), FE nie, Störung 41. Ausdruck 3: Z 29–36, BV 31–50 (t_S 31 → 36), FE 32–50.
+ // Ausdruck 1 ist nicht betroffen (Z und BV nie an). Die Lösungen bleiben: Gas ohne Flamme wird ab dem Öffnen von BV gezählt.
+ const FAELLE=[
+  {nr:1,kurz:'Montag, 6:00 Uhr',titel:'Ausdruck 1 · Startversuch Montag, 6:00 Uhr',knopf:'Montag, 6:00 Uhr',klein:'Ausdruck 1: Startversuch',
+   balken:{STB:[[0,14]],M:[[2,14]],LP:[],Z:[],BV:[],FE:[]},marken:[{t:14,stoer:true}],
+   wissen:[GERAET,EINSTELL,LESEN,'Am Montag um 6:00 Uhr zeigte das Gerät „Störung“.'],
+   sig:'LP',sek:0,automat:'abbruch',
+   sekFrage:'Wie viele Sekunden strömte bei diesem Startversuch höchstens Gas ohne Flamme?',
+   fall:'keine Luft',signal:'LP fehlt – keine Luftmeldung',gas:'0 s',was:'bricht den Start ab, gibt kein Gas frei, Störung'},
+  {nr:2,kurz:'nach der Wartung',titel:'Ausdruck 2 · Startversuch nach der Wartung',knopf:'Nach der Wartung',klein:'Ausdruck 2: Startversuch',
+   balken:{STB:[[0,41]],M:[[2,41]],LP:[[4,41]],Z:[[34,41]],BV:[[36,41]],FE:[]},marken:[{t:34,anker:'end'},{t:36,anker:'start'},{t:41,stoer:true}],
+   wissen:[GERAET,EINSTELL,LESEN,'Nach der Wartung zeigte das Gerät beim ersten Start „Störung“.'],
+   sig:'FE',sek:5,automat:'verriegelt',
+   sekFrage:'Wie viele Sekunden strömte bei diesem Startversuch höchstens Gas ohne Flamme?',
+   fall:'keine Flamme beim Start',signal:'FE fehlt – keine Flamme beim Start',gas:'höchstens 5 s',was:'schließt beide Sicherheitsabsperrventile, Störabschaltung, verriegelt bis zum Entriegeln von Hand'},
+  {nr:3,kurz:'Brenner lief schon',titel:'Ausdruck 3 · Brenner lief schon',knopf:'Brenner lief schon',klein:'Ausdruck 3: im Betrieb',
+   balken:{STB:[[0,60]],M:[[2,60]],LP:[[4,60]],Z:[[29,36]],BV:[[31,50]],FE:[[32,50]]},marken:[{t:29,anker:'end'},{t:31,anker:'start'},{t:50}],
+   wissen:[GERAET,EINSTELL,LESEN,'Der Brenner lief schon, dann ging die Flamme aus. <b>'+HERSTELLER+'</b>'],
+   sig:'FE',sek:1,automat:'neustart',
+   sekFrage:'Wie viele Sekunden strömte nach dem Erlöschen der Flamme höchstens Gas ohne Flamme?',
+   fall:'Flamme geht im Betrieb aus',signal:'FE fällt weg – Flamme geht im Betrieb aus',gas:'höchstens 1 s',was:'schließt sofort die Ventile, startet neu mit Vorlüften; kommt keine Flamme, Störabschaltung'}];
+ FAELLE.forEach(f=>{f.liter=liter(f.sek);});
+ // Ring: Tablet i fragt Tablet „von“: „Welches Signal hat bei dir gefehlt, und wie viel Liter Gas sind ohne Flamme ausgeströmt?“
+ const TAB=[{von:1},{von:2},{von:0}];
+ const RINGFRAGE='Welches Signal hat bei dir gefehlt, und wie viel Liter Gas sind ohne Flamme ausgeströmt?';
+ // gemeinsame Frage (Lösung und zwei Ablenker aus dem Feinplan, dazu ein dritter)
+ const SCHLUSSFRAGE='Warum bläst das Gebläse vor jedem Start mindestens 20 s Luft durch den Brennraum?';
+ const SCHLUSS=[
+  {k:'kuehl',t:'Damit der Brenner abkühlt, bevor er wieder zündet.'},
+  {k:'zaehler',t:'Damit der Gaszähler anläuft.'},
+  {k:'spuelen',t:'Damit Gas, das sich z. B. nach einem Fehlstart im Brennraum gesammelt hat, hinausgeblasen wird – sonst kann der Zündfunke eine Verpuffung auslösen.'},
+  {k:'druck',t:'Damit der Gasdruck vor den Ventilen steigt.'}];
+ const SCHLUSS_RICHTIG='spuelen';
+ const fmt=(x,dez)=>{const r=Math.round(x*10**(dez||0))/10**(dez||0);return r.toFixed(dez||0).replace('.',',');};
+ const fmtL=v=>v===0?'0':fmt(v,1);
+ // Zahl lesen: Komma oder Punkt, „ca.“, „höchstens“ davor, Einheit dahinter (s, Sekunden, l, Liter) und Leerzeichen außen erlaubt;
+ // sonst nichts (keine Rechnung wie „35,7*5/60“, kein „3 0“, nichts Negatives)
+ function zahl(s){let t=String(s==null?'':s).trim().toLowerCase();
+  const vorne=/^(ca\.?|circa|etwa|ungefähr|höchstens|max\.?|≈|~)\s*/;for(let k=0;k<2;k++)t=t.replace(vorne,'');
+  t=t.replace(/\s*(?:s|sek\.?|sekunden|l|liter)$/,'').trim();
+  if(!/^\d{1,4}(?:[.,]\d{0,3})?$/.test(t))return NaN;return parseFloat(t.replace(',','.'));}
+ const nahe=(v,soll,tol)=>Number.isFinite(v)&&Math.abs(v-soll)<=tol+1e-9;
+ const leer=()=>({a:'',w:'',w2:'',g:'',rw:'',rf:'',rc:'',f:{},e:''});
+ const andere=i=>[0,1,2].filter(j=>j!==i);
+ function ring(i){const j=TAB[i].von,F=FAELLE[j];return {von:j,sig:F.sig,liter:F.liter,tol:TOL,sek:F.sek};}
+ function stand(i,z){z=z||leer();const F=FAELLE[i];
+  const sig=z.a===F.sig;
+  const sek=nahe(zahl(z.w),F.sek,0);
+  const lit=nahe(zahl(z.w2),F.liter,TOL);
+  const aut=z.g===F.automat;
+  const p1=sig&&sek&&lit&&aut;
+  const R=ring(i),ringW=nahe(zahl(z.rw),R.liter,R.tol),ringF=z.rf===R.sig,ringA=ringW&&ringF;
+  const ringB=z.rc!==''&&z.rc===(ringA?'stimmt':'nicht');// richtig nachgeprüft (auch „stimmt nicht“, wenn wirklich etwas nicht stimmt)
+  const p2=p1&&ringA&&z.rc==='stimmt';
+  const fremd=andere(i).map(j=>{const f=z.f[j]||{},Fj=FAELLE[j];return [f.a===Fj.sig,nahe(zahl(f.w),Fj.liter,TOL)];});
+  const schluss=z.e===SCHLUSS_RICHTIG;
+  const p3=p2&&fremd.flat().every(Boolean)&&schluss;
+  const teil1=(sig?10:0)+(sek?10:0)+(lit?10:0)+(aut?10:0);
+  // Teil 2 zählt erst, wenn Teil 1 stimmt und der Schüler selbst nachgeprüft hat („stimmt“ / „stimmt nicht“ angetippt) – sonst verrieten
+  // Farben und Punkte, ob die Angaben des Mitspielers stimmen, bevor er selbst nachgerechnet hat
+  const teil2=p1&&z.rc!==''?(ringA?10:0)+(ringA&&z.rc==='stimmt'?10:0):0;
+  const teil3=p2?fremd.flat().filter(Boolean).length*7.5+(schluss?10:0):0;
+  return {sig,sek,lit,aut,ringW,ringF,ringA,ringB,fremd,schluss,p1,p2,p3,teil1,teil2,teil3,punkte:teil1+teil2+teil3};}
+ // Hinweis zum gewählten Signal (Schlüssel; den Text macht die Bedienung)
+ function sigHinweis(i,z){const F=FAELLE[i],a=z.a;if(!a)return 'leer';if(a===F.sig)return '';
+  if(i===0)return ['Z','BV','FE'].includes(a)?'folge1':a==='M'?'geblaese1':'erlaubt';
+  if(i===1)return a==='LP'?'luft2':['Z','BV'].includes(a)?'gas2':'an2';
+  return a==='BV'?'bv3':a==='Z'?'z3':'weiter3';}
+ // Hinweis zu Sekunden und Litern (zuerst die Sekunden)
+ function wertHinweis(i,z){const F=FAELLE[i],v=zahl(z.w),roh=String(z.w==null?'':z.w).trim();
+  if(!nahe(v,F.sek,0)){
+   if(!Number.isFinite(v))return roh?'zahl':'leer';
+   const hat=x=>nahe(v,x,0);
+   if(i===0){if(hat(14))return 'stoer1';if(hat(12)||hat(2))return 'geblaese';if(hat(5)||hat(3)||hat(10))return 'ts1';return 'nein1';}
+   if(i===1){if(hat(41))return 'stoer2';if(hat(34))return 'start2';if(hat(36))return 'bvauf';if(hat(7))return 'zuend';if(hat(30)||hat(20))return 'vorl';if(hat(3))return 'gross';if(hat(10))return 'alt';if(hat(0))return 'null2';return 'nein2';}
+   if(hat(0))return 'null3';if(hat(50))return 'stoer3';if(hat(5)||hat(3))return 'ts3';if(hat(19)||hat(18))return 'betrieb';if(hat(29)||hat(31)||hat(32))return 'start3';if(hat(10))return 'alt';return 'nein3';}
+  const w=zahl(z.w2),r2=String(z.w2==null?'':z.w2).trim();
+  if(!nahe(w,F.liter,TOL)){
+   if(!Number.isFinite(w))return r2?'zahl':'literleer';
+   if(F.sek===0)return 'keingas';
+   if(nahe(w,VE*F.sek,0.6)&&F.sek>1)return 'min';
+   if(nahe(w,VE,0.1))return 'minute';
+   if(nahe(w,0,0))return 'nullgas';
+   return 'rechne';}
+  return '';}
+ // Hinweis zum Automaten
+ function autHinweis(i,z){const F=FAELLE[i],g=z.g;if(!g)return 'leer';if(g===F.automat)return '';if(g==='weiter')return 'nie';
+  if(i===0)return g==='verriegelt'?'offen1':'neu1';
+  if(i===1)return g==='abbruch'?'offen2':'neu2';
+  return 'neu3';}
+ // eine Zeile des Berichts (w = eingetragene, schon als richtig erkannte Liter)
+ function bericht(j,w){const F=FAELLE[j],l=fmtL(Number.isFinite(w)?w:F.liter);
+  return {fall:F.fall,signal:F.signal,gas:`${F.gas} · ${l} Liter`,was:F.was};}
+ // richtig ausgefüllt (für Proben und die Lösung der Lehrkraft)
+ function richtig(i){const z=leer(),F=FAELLE[i],R=ring(i);
+  z.a=F.sig;z.w=fmt(F.sek,0);z.w2=fmtL(F.liter);z.g=F.automat;
+  z.rw=fmtL(R.liter);z.rf=R.sig;z.rc='stimmt';
+  andere(i).forEach(j=>{const Fj=FAELLE[j];z.f[j]={a:Fj.sig,w:fmtL(Fj.liter)};});z.e=SCHLUSS_RICHTIG;return z;}
+ // Spielstand prüfen (aus Moodle geladen): nur bekannte Felder und Werte, Text kurz
+ const AUTK=AUTOMAT.map(x=>x.k);
+ function saeubere(z){const o=leer();if(!z||typeof z!=='object')return o;
+  const txt=v=>typeof v==='string'?v.slice(0,12):'',eins=(v,erl)=>erl.includes(v)?v:'';
+  o.a=eins(z.a,SIGK);o.w=txt(z.w);o.w2=txt(z.w2);o.g=eins(z.g,AUTK);
+  o.rw=txt(z.rw);o.rf=eins(z.rf,SIGK);o.rc=eins(z.rc,['stimmt','nicht']);
+  if(z.f&&typeof z.f==='object')[0,1,2].forEach(j=>{const f=z.f[j];if(f&&typeof f==='object')o.f[j]={a:eins(f.a,SIGK),w:txt(f.w)};});
+  o.e=SCHLUSS.some(s=>s.k===z.e)?z.e:'';return o;}
+ return {VE,TOL,SIG,SIGK,sigText,AUTOMAT,HERSTELLER,FAELLE,TAB,RINGFRAGE,SCHLUSSFRAGE,SCHLUSS,SCHLUSS_RICHTIG,fmt,fmtL,zahl,nahe,leer,andere,ring,stand,sigHinweis,wertHinweis,autHinweis,bericht,richtig,saeubere};
+})();
+
+// ---------------------------------------------------------------- Ablaufbilder „Drei Störungen“ (selbst gezeichnet, keine Buchskizze), Station 2.5
+// Drei Ausdrucke aus dem Fehlerspeicher eines gleichen Geräts, gezeichnet wie das Ablaufbild im Tabellenbuch S. 446 (eigene Zeichnung, eigene Maße):
+// Zeilen STB/TR/GP, M, LP, Z, BV, FE (Reihenfolge wie im Feinplan VORSCHAU-Kessler-Station-2-5.html, Element 2.5.2 Dreier-Team), Zeitachse 0–60 s,
+// die wichtigen Zeitpunkte als Zahl beschriftet (14 · 34, 36, 41 · 29, 31, 50), damit niemand zwischen Strichen ablesen muss. Legende der Signalnamen darunter.
+// Wie auf T S. 446: Z beginnt vor BV (Lücke), die Sicherheitszeit läuft ab dem Öffnen von BV (Berichtigung Hauptchat 25.11.2026 08:50).
+// o.wahl = angetipptes Signal (Zeile orange umrandet), o.farbe = 'ok' | 'nein' nach dem Prüfen (grün/rot), o.fertig = Teil 1 stimmt → die Lösung
+// erscheint grün im Bild. Vorher steht im Bild keine Lösung (keine Sekunden ohne Flamme, keine Liter).
+const T25BILD=(()=>{
+ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+ const FONT='font-family="Arial, Helvetica, sans-serif"';
+ const T=(x,y,s,o)=>`<text x="${x}" y="${y}"${o?' '+o:''}>${esc(s)}</text>`;
+ const GRUEN='#1f7a3f',ORANGE='#e07a10',ROT='#c8371f',DUNKEL='#1d2a33',LEISE='#5b6b77',BALKEN='#0f7b7b',STOER='#b23b3b';
+ // Zeitachse: x = 100 + 10 · t (0 bis 60 s) · Zeile r (0 = STB/TR/GP … 5 = FE): Mitte y = 72 + 26 · r + 13
+ const X0=100,PX=10,Y0=72,ZH=26,ACHSE=Y0+6*ZH+4;
+ const X=t=>X0+PX*t,YM=r=>Y0+ZH*r+13;
+ const farbe=(o,k)=>o.wahl===k?(o.farbe==='ok'?GRUEN:o.farbe==='nein'?ROT:ORANGE):DUNKEL;
+ function raster(){let s='';
+  for(let t=0;t<=60;t+=5)s+=`<line x1="${X(t)}" y1="${Y0-2}" x2="${X(t)}" y2="${ACHSE}" stroke="${t%10?'#eef1f4':'#dde3e8'}"/>`;
+  T25.SIG.forEach((g,r)=>{s+=`<line x1="${X0}" y1="${YM(r)+8}" x2="${X(60)}" y2="${YM(r)+8}" stroke="#c9d1d8"/>`;});
+  s+=`<line x1="${X0}" y1="${ACHSE}" x2="${X(60)}" y2="${ACHSE}" stroke="${DUNKEL}" stroke-width="1.5"/>`;
+  for(let t=0;t<=60;t+=10)s+=`<line x1="${X(t)}" y1="${ACHSE}" x2="${X(t)}" y2="${ACHSE+5}" stroke="${DUNKEL}"/>`+T(X(t),ACHSE+20,t===60?'60 s':String(t),`font-size="12" text-anchor="middle" fill="${LEISE}"`);
+  return s;}
+ // Zeilennamen links; angetippte Zeile umrandet (orange, nach dem Prüfen grün/rot)
+ function zeilen(o){return T25.SIG.map((g,r)=>{const an=o.wahl===g.k,f=farbe(o,g.k);
+  return `<g class="zeile" data-zeile="${g.k}">`+(an?`<rect x="6" y="${YM(r)-12}" width="${X(60)+8-6}" height="24" rx="6" fill="none" stroke="${f}" stroke-width="3"/>`:'')+
+   T(14,YM(r)+5,g.t,`font-size="13" font-weight="700" fill="${f}"`)+'</g>';}).join('');}
+ function balken(F){return T25.SIG.map((g,r)=>(F.balken[g.k]||[]).map(([a,b])=>
+  `<rect class="balken" data-sig="${g.k}" data-von="${a}" data-bis="${b}" x="${X(a)}" y="${YM(r)-7}" width="${PX*(b-a)}" height="14" fill="${BALKEN}"/>`).join('')).join('');}
+ // beschriftete Zeitpunkte: Störung rot, sonst gestrichelt; liegen zwei dicht beieinander, steht die Zahl links (anker 'end') bzw. rechts ('start') vom Strich
+ function marken(F){return F.marken.map(m=>m.stoer?
+  `<line x1="${X(m.t)}" y1="${Y0-8}" x2="${X(m.t)}" y2="${ACHSE}" stroke="${STOER}" stroke-width="2.2"/>`+T(X(m.t)+4,Y0-12,`Störung · ${m.t} s`,`font-size="13" font-weight="700" fill="${STOER}"`):
+  `<line x1="${X(m.t)}" y1="${Y0-8}" x2="${X(m.t)}" y2="${ACHSE}" stroke="${DUNKEL}" stroke-width="1.4" stroke-dasharray="5 4"/>`+
+  T(m.anker==='end'?X(m.t)-3:m.anker==='start'?X(m.t)+3:X(m.t),Y0-12,`${m.t} s`,`font-size="13" font-weight="700" text-anchor="${m.anker||'middle'}"`)).join('');}
+ // Legende wie T S. 446 (eigene Worte)
+ function legende(y){return T(14,y,'STB/TR/GP','font-size="12" font-weight="700"')+T(92,y,'Sicherheitstemperaturbegrenzer, Temperaturregler, Gasdruckwächter','font-size="12"')+
+  [['M','Gebläsemotor','LP','Luftdruckwächter'],['Z','Zündeinrichtung','BV','Brennstoffventil (Gasventil)'],['FE','Flammenüberwachung','','Balken = Signal ist an']].map(([a,b,c,d],n)=>{const yy=y+18*(n+1);
+   return T(14,yy,a,'font-size="12" font-weight="700"')+T(92,yy,b,'font-size="12"')+(c?T(370,yy,c,'font-size="12" font-weight="700"'):'')+T(c?406:370,yy,d,`font-size="12"${c?'':' font-style="italic"'}`);}).join('');}
+ // Lösung grün (nur wenn Teil 1 stimmt)
+ function loesung(i){const r=k=>T25.SIG.findIndex(g=>g.k===k);
+  const kasten=(x,y,w,z1,z2)=>`<rect x="${x}" y="${y}" width="${w}" height="42" rx="6" fill="#ffffff" stroke="${GRUEN}" stroke-width="1.5"/>`+
+   T(x+8,y+17,z1,`font-size="13" font-weight="700" fill="${GRUEN}"`)+T(x+8,y+34,z2,`font-size="12" fill="${GRUEN}"`);
+  if(i===0)return `<rect x="${X(4)}" y="${YM(r('LP'))-7}" width="${PX*10}" height="14" fill="none" stroke="${GRUEN}" stroke-width="2" stroke-dasharray="5 3"/>`+
+   kasten(270,YM(r('Z'))-13,330,'richtig: LP meldet keine Luft','→ BV bleibt zu: 0 s, 0 Liter Gas ohne Flamme');
+  if(i===1)return `<rect x="${X(36)-2}" y="${YM(r('BV'))-11}" width="${PX*5+4}" height="${2*ZH+22-ZH}" fill="none" stroke="${GRUEN}" stroke-width="2" stroke-dasharray="5 3"/>`+
+   kasten(112,YM(r('Z'))-13,318,'richtig: FE fehlt – keine Flamme','BV 5 s offen: 35,7 × 5 ÷ 60 ≈ 3,0 Liter Gas');
+  return `<rect x="${X(50)-3}" y="${YM(r('BV'))-11}" width="${PX+6}" height="${2*ZH+22-ZH}" fill="none" stroke="${GRUEN}" stroke-width="2" stroke-dasharray="5 3"/>`+
+   kasten(106,YM(r('Z'))-13,276,'richtig: FE fällt bei 50 s weg','Ventile höchstens 1 s offen → 0,6 Liter')+
+   T(X(52),YM(r('Z'))+5,'neuer Start',`font-size="12" font-weight="700" fill="${GRUEN}"`)+T(X(52),YM(r('BV'))+5,'Vorlüften',`font-size="12" fill="${GRUEN}"`);}
+ function bild(i,o){o=Object.assign({wahl:'',farbe:'',fertig:false},o||{});const F=T25.FAELLE[i],hoehe=ACHSE+30+4*18+10;
+  const zeilenText=T25.SIG.map(g=>{const b=F.balken[g.k]||[];return `${g.t} ${b.length?b.map(([a,c])=>`an von ${a} bis ${c} s`).join(', '):'nie an'}`;}).join('; ');
+  const titel=`${F.titel}, aus dem Fehlerspeicher eines gleichen Geräts, Zeit 0 bis 60 s. ${zeilenText}. `+F.marken.map(m=>m.stoer?`Störung bei ${m.t} s`:`Zeitpunkt ${m.t} s beschriftet`).join(', ')+'.'+
+   (o.fertig?` Lösung: ${F.signal}; Gas ohne Flamme ${T25.bericht(i).gas}.`:'');
+  return `<svg class="ablauf" viewBox="0 0 720 ${hoehe}" role="img" aria-label="${esc(titel)}" ${FONT} font-size="12" fill="${DUNKEL}">`+
+   `<rect x="1" y="1" width="718" height="${hoehe-2}" rx="8" fill="#ffffff" stroke="#d5cfc2"/>`+
+   T(14,24,F.titel,'font-size="16" font-weight="700"')+T(14,42,'Ausdruck aus dem Fehlerspeicher eines gleichen Geräts · Zeit in Sekunden',`font-size="11" fill="${LEISE}"`)+
+   raster()+zeilen(o)+balken(F)+marken(F)+(o.fertig?loesung(i):'')+
+   `<line x1="10" y1="${ACHSE+30}" x2="710" y2="${ACHSE+30}" stroke="#d5cfc2"/>`+legende(ACHSE+48)+'</svg>';}
+ return {bild,X,YM};
+})();
+
+// ---------------------------------------------------------------- Dreier-Team 2.5.2: Ausdruck und Bedienung (braucht T25, T25BILD)
+// Start: „Welches Tablet bist du? 1 · 2 · 3“. Danach zeigt das Tablet nur seinen Ausdruck aus dem Fehlerspeicher (Ablaufbild wie T S. 446), das
+// Wissen dazu und die drei Teile. Z = aktuelle Eingabe, P = Stand beim letzten „Prüfen“. Grün/rot, Punkte und das Öffnen des nächsten Teils
+// richten sich nur nach P – wer nach dem Prüfen etwas ändert, sieht erst beim nächsten Prüfen, ob es stimmt. Richtige Antworten bleiben stehen
+// (gesperrt). Teil 2: Signal und Liter des Mitspielers werden erst gefärbt, wenn „stimmt“ / „stimmt nicht“ angetippt war (erst selbst nachprüfen).
+// Stimmt Teil 1, zeigt der Ausdruck die Lösung in Grün.
+// o: {stand:{t,Z,P}|null, mitPunkten, beiAenderung(), beiPunkte(p)}
+function bauStoerbericht(wurzel,o){
+ o=Object.assign({stand:null,mitPunkten:true,beiAenderung:null,beiPunkte:null},o||{});
+ const R=T25,F=R.FAELLE,mitP=!!o.mitPunkten;
+ let t=-1,rueck=null;
+ const Z=[R.leer(),R.leer(),R.leer()],P=[null,null,null];
+ const st=o.stand;
+ if(st&&typeof st==='object'){if([0,1,2].includes(st.t))t=st.t;
+  if(Array.isArray(st.Z))st.Z.slice(0,3).forEach((z,i)=>{Z[i]=R.saeubere(z);});
+  if(Array.isArray(st.P))st.P.slice(0,3).forEach((z,i)=>{P[i]=z?R.saeubere(z):null;if(z&&!Array.isArray(st.Z))Z[i]=R.saeubere(z);});}
+ const kopie=z=>JSON.parse(JSON.stringify(z)),e=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+ const gs=i=>R.stand(i,P[i]||R.leer());
+ const besterStand=()=>Math.max(...[0,1,2].map(i=>gs(i).punkte));
+ const aenderung=()=>{o.beiAenderung&&o.beiAenderung();};
+ function startbild(){rueck=null;
+  wurzel.innerHTML='<div class="karte"><h2>Welches Tablet bist du?</h2>'+
+   '<p>Setzt euch zu dritt zusammen. Jeder von euch nimmt eine andere Nummer. Jedes Tablet zeigt einen anderen Ausdruck aus dem Fehlerspeicher – am Ende braucht jeder die Ergebnisse der beiden anderen.</p>'+
+   '<div class="grosswahl">'+F.map((b,i)=>`<button type="button" data-t="${i}"><b>${i+1}</b>${b.knopf}<small>${b.klein}</small></button>`).join('')+'</div>'+
+   '<p class="klein">Ihr seid nur zu zweit? Dann übernimmt einer von euch das dritte Tablet mit: Er wählt später unten „anderes Tablet wählen“.</p></div>';
+  wurzel.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>waehleTablet(+b.dataset.t));}
+ function waehleTablet(i){t=i;rueck=null;aenderung();tablet();zumAnfang();}
+ // an den Anfang des Tablets rollen – unter die feste Kopfzeile (sonst verdeckt sie die Überschrift)
+ function zumAnfang(){try{const k=document.querySelector('.kopf'),ab=k?k.getBoundingClientRect().height+8:8;window.scrollTo(0,Math.max(0,wurzel.getBoundingClientRect().top+window.pageYOffset-ab));}catch(_){}}
+ function tablet(){const b=F[t];
+  wurzel.innerHTML=`<div class="tablet"><h3>Tablet ${t+1} – dein Ausdruck: ${b.titel}</h3>
+   <p class="klein" style="margin:0 0 8px">Dein Team: ${F.map((x,i)=>`Tablet ${i+1} ${x.titel}`).join(' · ')}. Dein Tablet liest nur deinen Ausdruck.</p>
+   <div class="lage"><figure class="bild"><figcaption>Dein Ausdruck: Welches Signal war wann an?</figcaption><div data-r="bild"></div></figure>
+   <div class="wissen"><h4>Das weißt du zu deinem Ausdruck</h4><ul>${b.wissen.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <p class="klein" style="margin:8px 0 0">Lies den Ausdruck Zeile für Zeile. Du brauchst dein Tabellenbuch (S. 445 und 446) und den Taschenrechner.</p></div></div>
+   <div data-r="teile"></div>
+   <p class="klein" style="margin-top:14px">Falsches Tablet gewählt oder nur zu zweit? <button type="button" class="knopf" data-r="wechsel">anderes Tablet wählen</button></p></div>`;
+  wurzel.querySelector('[data-r="wechsel"]').onclick=()=>{lies();t=-1;aenderung();startbild();};
+  teile();}
+ // Auswahlknopf: gedrückt = aktuelle Auswahl; grün/rot nur, wenn genau dieser Wert geprüft wurde; richtig geprüft = gesperrt
+ function knopf(attr,v,text,zv,pv,ok,zu,sperre,farbe){const an=zv===v,gep=farbe!==false&&pv!=null&&pv!==''&&zv===pv,kl=an&&gep?(ok?'ok':'nein'):'';
+  if(sperre===undefined)sperre=ok;
+  return `<button type="button" ${attr} data-v="${e(v)}" aria-pressed="${an}"${kl?` class="${kl}"`:''}${zu||(gep&&sperre)?' disabled':''}>${text}</button>`;}
+ // Zahlenfeld: grün/rot nur, wenn genau diese Eingabe geprüft wurde; richtig geprüft = gesperrt
+ function feld(attr,zv,pv,ok,zu,farbe){const gep=farbe!==false&&pv!=null&&pv!==''&&zv===pv,kl=gep?(ok?' ok':' nein'):'';
+  return `<input type="text" class="zahl${kl}" ${attr} inputmode="decimal" maxlength="12" autocomplete="off" autocorrect="off" spellcheck="false" value="${e(zv)}"${zu||(gep&&ok)?' disabled':''}>`;}
+ const pkt=(txt,zu)=>mitP?`<span class="klein">(${txt}${zu?' · erst wenn '+zu+' stimmt':''})</span>`:zu?`<span class="klein">(erst wenn ${zu} stimmt)</span>`:'';
+ const signale=(attr,zv,pv,ok,zu,sperre,farbe)=>R.SIG.map(g=>knopf(attr+` aria-label="Signal ${g.t}"`,g.k,g.t,zv,pv,ok,zu,sperre,farbe)).join('');
+ function bildZeigen(){const c=wurzel.querySelector('[data-r="bild"]');if(!c)return;const z=Z[t],p=P[t],s=gs(t);
+  const geprueft=!!(p&&p.a&&z.a===p.a);
+  c.innerHTML=T25BILD.bild(t,{wahl:z.a,farbe:geprueft?(s.sig?'ok':'nein'):'',fertig:s.p1});}
+ function teile(){
+  const z=Z[t],p=P[t],s=gs(t),b=F[t],RG=R.ring(t),vb=F[RG.von],an=R.andere(t);
+  bildZeigen();
+  let h=`<div class="phase"><b>1 · Dein Ausdruck</b> ${pkt('Signal, Sekunden, Liter und Automat je 10 – zusammen 40 Punkte')}
+   <p class="frage">Welches Signal fehlt oder fällt weg? <span class="klein">Gemeint ist das Signal, das den Fehler auslöst – nicht die Folgen.</span></p>
+   <div class="reihe" data-gruppe="a">${signale('data-f="a"',z.a,p&&p.a,s.sig,false)}</div>
+   <p class="frage">${b.sekFrage}</p>
+   <div class="zeile"><span class="was">Gas ohne Flamme</span>${feld('data-f="w" aria-label="Gas ohne Flamme in Sekunden"',z.w,p&&p.w,s.sek,false)}<span>s</span></div>
+   <p class="frage">Wie viel Liter Gas waren das höchstens? <span class="klein">(V̇<sub>E</sub> = 35,7 l/min)</span></p>
+   <div class="zeile"><span class="was">das sind</span>${feld('data-f="w2" aria-label="Gas ohne Flamme in Liter"',z.w2,p&&p.w2,s.lit,false)}<span>Liter</span></div>
+   <p class="frage">Was macht der Automat danach?</p>
+   <div class="satzwahl">${R.AUTOMAT.map(x=>knopf('data-f="g"',x.k,e(x.t),z.g,p&&p.g,s.aut,false)).join('')}</div>`;
+  if(s.p1){const br=R.bericht(t,R.zahl(p.w2));
+   h+=`<div class="merk"><b>Für euren Bericht – sag es nachher deinen Mitspielern:</b><br>${b.titel}: <b>${br.signal}</b><br>Gas ohne Flamme: <b>${br.gas}</b><br>Der Automat: <b>${br.was}</b></div>`;}
+  h+='</div>';
+  const ringFarbe=!!(p&&p.rc);
+  h+=`<div class="phase ${s.p1?'':'zu'}"><b>2 · Frag Tablet ${RG.von+1}</b> ${pkt('zweimal 10 Punkte',s.p1?'':'Teil 1')}
+   <p class="frage">Tablet ${RG.von+1} liest <b>${vb.titel}</b>. Diese Antwort kennt nur dein Mitspieler. Geh hin und frag: <b>„${R.RINGFRAGE}“</b></p>
+   <div class="ringfrage"><div class="zeile"><span class="was">Signal</span><div class="reihe">${signale(`data-f="rf"`,z.rf,p&&p.rf,s.ringF,!s.p1,undefined,ringFarbe)}</div></div>
+   <div class="zeile"><span class="was">Gas ohne Flamme</span>${feld(`data-f="rw" aria-label="Liter bei Tablet ${RG.von+1}"`,z.rw,p&&p.rw,s.ringW,!s.p1,ringFarbe)}<span>Liter</span></div></div>
+   <p class="frage">Jetzt prüfst du nach – wie das Gegenzeichnen auf der Baustelle: Lass dir den Ausdruck zeigen und frag, wie viele Sekunden das Gas ohne Flamme strömte. Passt das Signal zum Liter-Wert? Rechne selbst nach – mit 35,7 l/min.</p>
+   <div class="wahl">${[['stimmt','stimmt'],['nicht','stimmt nicht']].map(([v,tx])=>knopf('data-f="rc"',v,tx,z.rc,p&&p.rc,s.ringB,!s.p1,s.ringB&&s.ringA)).join('')}</div></div>`;
+  h+=`<div class="phase ${s.p2?'':'zu'}"><b>3 · Euer Bericht für den Chef</b> ${pkt('viermal 7,5 und 10 Punkte',s.p2?'':'Teil 2')}
+   <p class="frage">Setzt euch zusammen. Trag für die Ausdrucke deiner beiden Mitspieler ein, welches Signal gefehlt hat und wie viel Liter Gas ohne Flamme ausgeströmt sind:</p>`+
+   an.map((j,a)=>{const bj=F[j],f=z.f[j]||{a:'',w:''},pf=(p&&p.f[j])||{},ok=s.fremd[a],at=`data-f="f" data-g="${j}"`;
+    return `<div class="mitspieler"><h4>Tablet ${j+1}: ${bj.titel}</h4>
+     <div class="zeile"><span class="was">Signal</span><div class="reihe">${R.SIG.map(g=>knopf(at+` data-x="a" aria-label="Ausdruck ${j+1}: Signal ${g.t}"`,g.k,g.t,f.a,pf.a,ok[0],!s.p2)).join('')}</div></div>
+     <div class="zeile"><span class="was">Gas ohne Flamme</span>${feld(at+` data-x="w" aria-label="Ausdruck ${j+1}: Liter Gas ohne Flamme"`,f.w,pf.w,ok[1],!s.p2)}<span>Liter</span></div></div>`;}).join('')+
+   `<p class="frage"><b>Gemeinsame Frage:</b> ${R.SCHLUSSFRAGE}</p>
+   <div class="satzwahl">${R.SCHLUSS.map(x=>knopf('data-f="e"',x.k,e(x.t),z.e,p&&p.e,s.schluss,!s.p2)).join('')}</div></div>
+   <div class="phase"><b>Bericht für den Chef</b> ${s.p3?'<span class="hinweis-gruen">vollständig</span>':'<span class="klein">(füllt sich, sobald eure Antworten stimmen)</span>'}
+   <div class="rollen"><table class="vergleich"><tr><th>Ausdruck</th><th>Signal</th><th>Gas ohne Flamme</th><th>Was der Automat tut</th></tr>`+
+   [0,1,2].map(j=>{const eig=j===t,a=an.indexOf(j),ok=eig?[s.p1,s.p1]:[s.p2&&s.fremd[a][0],s.p2&&s.fremd[a][1]],wert=eig?(p&&p.w2):(p&&p.f[j]&&p.f[j].w);
+    const br=R.bericht(j,R.zahl(wert));
+    return `<tr data-zeile="${j}"><td><b>${j+1}</b> ${F[j].kurz}${eig?' <span class="klein">(deins)</span>':''}</td><td>${ok[0]?br.signal:'–'}</td><td>${ok[1]?br.gas:'–'}</td><td>${ok[0]&&ok[1]?br.was:'–'}</td></tr>`;}).join('')+
+   `</table></div>${s.p3?'<p class="klein" style="margin:8px 0 0">Antwort an den Chef: Keine Flamme gemeldet – kein Gas. Fehlt die Luftmeldung, gibt der Automat gar kein Gas frei. Kommt beim Start keine Flamme, strömt höchstens 5 s Gas, dann Störabschaltung. Geht die Flamme im Betrieb aus, sind die Ventile spätestens nach 1 s zu. Vor jedem Start bläst das Gebläse mindestens 20 s Luft durch den Brennraum. Der Bericht kommt in deine Planungsmappe (2.6) als Antwort auf „Was passiert, wenn die Flamme ausgeht?“.</p>':''}</div>
+   <div class="phase">${mitP?`<span class="gross">${Math.round(s.punkte)} von 100 Punkten</span> `:''}${s.p3?'<span class="hinweis-gruen">Alles richtig</span>':`<span class="klein">${mitP?'Die volle Punktzahl gibt es erst, wenn auch die Ergebnisse deiner Mitspieler stimmen.':'Fertig ist der Bericht, wenn alle Antworten stimmen.'}</span>`}
+   <div class="wahl" style="margin:10px 0 0"><button type="button" class="knopf haupt" data-r="pruefen">Prüfen</button></div>
+   <p class="rueck${rueck&&rueck.k?' '+rueck.k:''}" data-r="rueck">${rueck?rueck.t:''}</p></div>`;
+  const c=wurzel.querySelector('[data-r="teile"]');c.innerHTML=h;
+  c.querySelectorAll('button[data-f]').forEach(bt=>bt.onclick=()=>{lies();const d=bt.dataset,zz=Z[t];
+   if(d.f==='f'){zz.f[d.g]=zz.f[d.g]||{a:'',w:''};zz.f[d.g][d.x]=d.v;}else zz[d.f]=d.v;aenderung();teile();});
+  c.querySelectorAll('input[data-f]').forEach(inp=>inp.addEventListener('input',()=>{schreibFeld(inp);inp.classList.remove('ok','nein');aenderung();}));
+  c.querySelector('[data-r="pruefen"]').onclick=()=>pruefen();}
+ function schreibFeld(inp){if(t<0)return;const d=inp.dataset,v=String(inp.value).slice(0,12),zz=Z[t];
+  if(d.f==='f'){zz.f[d.g]=zz.f[d.g]||{a:'',w:''};zz.f[d.g].w=v;}else zz[d.f]=v;}
+ function lies(){if(t<0)return;wurzel.querySelectorAll('[data-r="teile"] input[data-f]').forEach(schreibFeld);}
+ // Rückmeldungen zu Teil 1
+ const SIGTEXT={leer:'Tipp noch an, welches Signal fehlt oder wegfällt.',
+  folge1:'Z, BV und FE fehlen auch – aber das sind nur die Folgen: Zündung und Gas schaltet der Automat erst nach dem Vorlüften ein. Welche Meldung kam nach dem Start des Gebläses nie?',
+  geblaese1:'Das Gebläse M läuft doch (2 bis 14 s). Was hätte dem Automaten melden müssen, dass Luft kommt?',
+  erlaubt:'STB/TR/GP sind an (0 bis 14 s) – sie haben den Start erlaubt. Welche Zeile bleibt leer, obwohl das Gebläse läuft?',
+  luft2:'LP meldet Luft (4 bis 41 s) – das Vorlüften hat geklappt. Welche Meldung kam nach dem Zünden nicht?',
+  gas2:'Z zündet ab 34 s, BV öffnet bei 36 s: Der Automat hat gezündet und das Gas geöffnet. Welche Meldung kam danach nicht?',
+  an2:'Dieses Signal ist bis zur Störung an. Welche Zeile bleibt ganz leer, obwohl Gas strömt?',
+  bv3:'BV geht bei 50 s aus – das ist schon die Antwort des Automaten. Welches Signal fiel genau da weg?',
+  z3:'Z geht bei 36 s aus – die Flamme brennt da schon, der Brenner braucht keinen Funken mehr. Das ist normal.',
+  weiter3:'Dieses Signal läuft nach 50 s weiter. Welches Signal fällt bei 50 s weg?'};
+ const WERTTEXT={leer:'Jetzt fehlen noch die Sekunden.',zahl:'Tipp nur eine Zahl ein, zum Beispiel 2,5.',
+  stoer1:'14 s ist der Zeitpunkt der Störung. Gefragt ist, wie lange Gas ohne Flamme strömte. Schau auf die Zeile BV.',
+  geblaese:'So lange lief nur das Gebläse. Gas strömt nur, wenn BV an ist.',
+  ts1:'Das ist eine Sicherheitszeit – und die beginnt erst, wenn BV öffnet. Hier ist BV nie an.',
+  nein1:'Schau auf die Zeile BV: Wann war das Gasventil offen?',
+  stoer2:'41 s ist der Zeitpunkt der Störung. Gefragt ist, wie lange BV offen war, ohne dass FE eine Flamme meldete. Lies Anfang und Ende ab.',
+  start2:'Bei 34 s beginnt nur die Zündung Z – das Gasventil BV öffnet erst danach. Wann öffnet BV, und wie lange bleibt es offen?',
+  bvauf:'Bei 36 s öffnet BV. Wie lange bleibt es offen?',
+  zuend:'7 s lang zündet Z (34 bis 41 s). Gas strömt aber erst, wenn BV offen ist – schau auf die Zeile BV.',
+  vorl:'Das ist das Vorlüften – da ist das Gas noch zu.',
+  gross:'3 s gilt für Brenner über 70 kW. Lies ab, wie lange BV offen war.',
+  alt:'10 s ist der alte Wert für Brenner ohne Gebläse. Das neue Gerät hat ein Gebläse.',
+  null2:'BV war offen, aber FE hat nie eine Flamme gemeldet – also strömte Gas ohne Flamme. Wie lange?',
+  nein2:'Lies in den Zeilen BV und FE ab: Wie lange war das Gasventil offen, ohne dass eine Flamme gemeldet wurde?',
+  null3:'Im Ausdruck enden FE und BV am selben Strich – er zeigt nur ganze Sekunden. Lies den Satz des Herstellers: Wie lange dürfen die Ventile nach dem Erlöschen höchstens offen sein?',
+  stoer3:'Bei 50 s geht die Flamme aus. Wie lange danach strömt höchstens noch Gas? Das sagt der Hersteller.',
+  ts3:'Das ist eine Sicherheitszeit für den Start. Hier lief der Brenner schon – dafür gilt die Angabe des Herstellers.',
+  betrieb:'So lange war das Gasventil mit Flamme offen. Gefragt ist die Zeit ohne Flamme.',
+  start3:'Bei 29 s beginnt die Zündung, bei 31 s öffnet BV, bei 32 s meldet FE die Flamme – das ist der normale Start. Gefragt ist, was nach dem Erlöschen bei 50 s passiert.',
+  nein3:'Lies den Satz des Herstellers in deinem Wissen noch einmal.',
+  literleer:'Die Sekunden stimmen. Jetzt fehlt noch, wie viel Liter Gas das waren.',
+  keingas:'Die Sekunden stimmen: 0 s. Ohne offenes Gasventil strömt kein Gas – also auch kein Liter.',
+  min:'Du hast Sekunden mal Liter pro Minute gerechnet. Eine Minute hat 60 s – teil noch durch 60.',
+  minute:'35,7 Liter strömen in einer ganzen Minute. Hier waren es nur Sekunden – rechne auf deine Sekunden um.',
+  nullgas:'Auch in wenigen Sekunden strömt Gas. Rechne: 35,7 Liter in 60 s – wie viel in deinen Sekunden?',
+  rechne:'Rechne noch einmal: 35,7 Liter in 60 s – wie viel in deinen Sekunden?'};
+ const AUTTEXT={nie:'Nie! Keine Flamme gemeldet – kein Gas. Schau dir die Zeile BV an.',
+  offen1:'Schau auf die Zeile BV: War das Gasventil überhaupt offen?',neu1:'Schau, was nach 14 s noch läuft: nichts mehr – kein neuer Start.',
+  offen2:'Schau auf die Zeile BV: Von 36 bis 41 s war das Gas offen – der Automat musste die Ventile schließen.',neu2:'Schau, was nach 41 s noch läuft: nichts mehr – kein neuer Start.',
+  neu3:'Schau, was nach 50 s läuft: Gebläse M und LP laufen weiter – der Automat versucht es noch einmal.'};
+ function pruefen(){if(t<0)return null;lies();P[t]=kopie(Z[t]);const s=gs(t),z=Z[t],RG=R.ring(t),n=RG.von+1;let k='nein',x;
+  if(s.p3){k='ok';x=mitP?'Alles richtig – 100 Punkte. Euer Bericht für den Chef ist fertig.':'Alles richtig – euer Bericht für den Chef ist fertig.';}
+  else if(!s.p1){
+   if(!z.a&&!String(z.w).trim()&&!String(z.w2).trim()&&!z.g){k='';x='Lies zuerst deinen Ausdruck Zeile für Zeile. Tipp dann das Signal an, das fehlt oder wegfällt.';}
+   else if(!s.sig){const hs=R.sigHinweis(t,z);x=SIGTEXT[hs]||'Das Signal stimmt noch nicht.';if(hs==='leer')k='';}
+   else if(!s.sek||!s.lit){const hw=R.wertHinweis(t,z);x=WERTTEXT[hw]||'Der Wert stimmt noch nicht.';if(hw==='leer'||hw==='literleer')k='';}
+   else if(!z.g){k='';x='Signal, Sekunden und Liter stimmen. Jetzt fehlt noch, was der Automat danach macht.';}
+   else x=AUTTEXT[R.autHinweis(t,z)]||'Was der Automat macht, stimmt noch nicht.';}
+  else if(!s.p2){const eigenL=F[t].liter,eigenS=F[t].sig;
+   if(!String(z.rw).trim()&&!z.rf&&!z.rc){k='';x=`Teil 1 stimmt. Jetzt frag Tablet ${n}: „${R.RINGFRAGE}“`;}
+   else if(!z.rc){k='';x='Prüf zuerst selbst nach: Rechne die Liter nach und tipp „stimmt“ oder „stimmt nicht“ an. Dann wieder „Prüfen“.';}
+   else if(s.ringA)x='Rechne noch einmal nach: Signal und Liter deines Mitspielers stimmen doch.';
+   else if(z.rc==='nicht'){k='';x=`Gut nachgeprüft: Da stimmt wirklich etwas nicht. Klärt es mit Tablet ${n} zusammen, verbessert ${!s.ringW&&!s.ringF?'Signal und Liter':s.ringW?'das Signal':'die Liter'} und prüft noch einmal.`;}
+   else if(!s.ringW&&eigenL!==RG.liter&&R.nahe(R.zahl(z.rw),eigenL,R.TOL))x=`Du hast „stimmt“ angetippt – aber das ist der Wert von deinem eigenen Ausdruck. Bei Tablet ${n} ging etwas anderes schief. Frag noch einmal nach.`;
+   else if(!s.ringF&&eigenS!==RG.sig&&z.rf===eigenS)x=`Du hast „stimmt“ angetippt – aber das ist das Signal von deinem eigenen Ausdruck. Lass dir den Ausdruck von Tablet ${n} zeigen.`;
+   else if(!s.ringW)x=`Du hast „stimmt“ angetippt – aber die Liter stimmen nicht. Rechne selbst nach und klärt es mit Tablet ${n} zusammen.`;
+   else x=`Du hast „stimmt“ angetippt – aber das Signal passt nicht zum Ausdruck. Lass ihn dir zeigen und klärt es mit Tablet ${n} zusammen.`;}
+  else if(!z.e&&R.andere(t).every(j=>{const f=z.f[j];return !f||(!f.a&&!String(f.w).trim());})){k='';x='Teil 2 stimmt. Jetzt setzt euch zusammen und tragt euren Bericht ein.';}
+  else if(s.fremd.flat().every(Boolean)&&!s.schluss)x='Der Bericht stimmt. Die gemeinsame Frage noch nicht: Was kann sich nach einem Fehlstart im Brennraum gesammelt haben – und was macht dann der nächste Zündfunke?';
+  else x='Noch nicht alles richtig. Fragt eure Mitspieler noch einmal – rot ist, was noch nicht stimmt.';
+  rueck={k,t:x};teile();aenderung();o.beiPunkte&&o.beiPunkte(besterStand());return s;}
+ if(t<0)startbild();else tablet();
+ return {waehleTablet,pruefen,tablet:()=>t,
+  setze:(i,f)=>{f(Z[i]);if(i===t&&t>=0)teile();aenderung();},
+  fuellen:i=>{Z[i]=R.richtig(i);if(i===t&&t>=0)teile();aenderung();},
+  stand:i=>gs(i),besterStand,zumAnfang,
+  exportiere:()=>{lies();return {t,Z:kopie(Z),P:kopie(P)};},
+  wechsel:()=>{lies();t=-1;aenderung();startbild();}};
+}
+
+const TM=bauStoerbericht(document.getElementById('team'),{mitPunkten:false});
+window.__seite={TM};
+</script>
+</body>
+</html>
