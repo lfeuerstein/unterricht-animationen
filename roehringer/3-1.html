@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>3.1 Welchen Weg nimmt das Wasser? Rohrsysteme – Haus Röhringer</title>
+<style>
+:root{--papier:#f4f1ea;--tinte:#22303a;--leise:#5d6b75;--linie:#d5cfc2;--karte:#fff;--akzent:#0b6b7d;--akzent-hell:#e1f0f2;--gold:#d99a1b;
+  --vl:#d0342c;--rl:#2f6fb7;--ring:#b0408a;--gut:#2e7d4f;--gut-hell:#e4f3e3;--schlecht:#c8371f;--schlecht-hell:#fde3df;--merk:#fffbe9;--merk-rand:#ecd9a0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation}
+body{margin:0;background:var(--papier);color:var(--tinte);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+.kopf{position:sticky;top:0;z-index:5;background:var(--papier);border-bottom:1px solid var(--linie);padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.kopf .titel{flex:1 1 360px;min-width:0}
+.kopf .ober{margin:0;font-size:13px;color:var(--leise)}
+.kopf h1{margin:0;font-size:20px;line-height:1.25}
+.kopf .stand{font-size:16px;white-space:nowrap;text-align:right}
+.kopf .stand small{display:block;font-size:12px;color:var(--leise)}
+.kurs{min-height:44px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--akzent);background:#fff;color:var(--akzent);font-weight:600;cursor:pointer;touch-action:manipulation}
+main{max-width:1040px;margin:0 auto;padding:14px 16px 60px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+h2{font-size:20px;margin:0 0 8px;line-height:1.25}
+h3{font-size:17px;margin:14px 0 6px}
+p{margin:0 0 10px}
+.klein{font-size:14px;color:var(--leise)}
+.sprech{border-left:5px solid var(--akzent);background:var(--akzent-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:0 0 12px}
+.sprech b.wer{display:block;font-size:13px;color:var(--akzent);letter-spacing:.3px;margin-bottom:2px}
+.merk{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 12px;margin:10px 0 0}
+.wahl{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.knopf,.wahl button{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;touch-action:manipulation}
+.wahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.knopf.haupt{background:var(--akzent);border-color:var(--akzent);color:#fff}
+.knopf:disabled,.wahl button:disabled{opacity:.45;cursor:default}
+svg{display:block;width:100%;height:auto}
+.rollen{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--leise);font-weight:600}
+.balken{height:12px;border-radius:6px;background:var(--akzent)}
+.balkenreihe{display:flex;min-width:60px}
+.zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.zwei{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}}
+/* Animation */
+.wegbild{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.messung{min-height:48px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--akzent-hell);font-size:17px}
+.messung b{font-size:19px}
+.hk-knopf{cursor:pointer}
+.lupe-ruf{cursor:pointer}
+.lupe{border:2px solid var(--tinte);border-radius:14px;padding:12px 14px;margin-top:12px;background:#fff}
+.lupe h3{margin:0 0 6px}
+.lupe ol{margin:8px 0 0;padding-left:22px}
+.lupe li{margin:3px 0}
+/* Aufgaben */
+.aufgabe{border:1px solid var(--linie);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:#fff}
+.aufgabe h3{margin:0 0 6px}
+.aufgabe .pkt{float:right;margin-left:10px;font-size:14px;color:var(--leise);font-weight:600}
+.aufgabe.fertig{border-color:var(--gut);box-shadow:0 0 0 2px var(--gut-hell)}
+.feld{display:inline-flex;align-items:center;gap:6px;margin:4px 16px 4px 0;font-size:17px}
+input.zahl{font:inherit;width:5.2em;min-height:44px;padding:6px 8px;border:1px solid var(--linie);border-radius:8px;background:#fff;color:var(--tinte)}
+input.zahl.ok{border-color:var(--gut);background:var(--gut-hell)}
+input.zahl.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+input.zahl:disabled{opacity:1;color:var(--tinte)}
+.rueck{display:block;margin-top:8px;font-size:15px}
+.rueck.ok{color:var(--gut);font-weight:600}
+.rueck.nein{color:var(--schlecht)}
+.satz{border:1px solid var(--linie);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+.satz p{margin:0 0 6px;font-style:italic}
+.satz.ok{border-color:var(--gut);background:var(--gut-hell)}
+.satz.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+.satz .wahl{margin:0}
+/* Zeichnen */
+svg.zeichnen{min-width:680px;touch-action:manipulation;background:#eef1ea;border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.gruppe{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 8px}
+.gruppe button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.gruppe .gname{font-size:14px;color:var(--leise);font-weight:600;min-width:110px}
+.pruefliste{list-style:none;padding:0;margin:10px 0 0;font-size:15px}
+.pruefliste li{padding:3px 0 3px 26px;position:relative}
+.pruefliste li::before{position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;text-align:center;line-height:18px}
+.pruefliste li.ok::before{content:"✓";background:var(--gut)}
+.pruefliste li.nein::before{content:"✗";background:var(--schlecht)}
+/* Team */
+.tablet{border:2px solid var(--tinte);border-radius:16px;padding:14px;background:#fff;margin-top:6px}
+.tablet h3{margin:0 0 6px}
+.phase{border-top:1px solid var(--linie);padding-top:10px;margin-top:12px}
+.phase.zu{opacity:.45}
+.phase label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.grosswahl{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}
+.grosswahl button{min-width:150px;min-height:96px;border-radius:16px;border:2px solid var(--tinte);background:#fff;cursor:pointer;font-size:18px;padding:10px 14px;touch-action:manipulation}
+.grosswahl button b{display:block;font-size:34px;line-height:1.1}
+.ok-text{color:var(--gut);font-weight:600}
+.hinweis-gruen{display:inline-block;background:var(--gut-hell);border:1px solid var(--gut);border-radius:8px;padding:2px 8px}
+.hinweis-orange{display:inline-block;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:2px 8px}
+@media (max-width:820px){body{font-size:16px}.kopf h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.leise{color:var(--leise);font-size:14px}
+.kennz{font-weight:700;color:var(--akzent);margin:0 0 2px}
+a.zurueck{color:var(--akzent)}
+h1{font-size:24px;margin:0 0 4px;line-height:1.2}
+.sprung{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.sprung a{display:inline-block;padding:9px 14px;border-radius:999px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-decoration:none;font-size:15px}
+section.karte{scroll-margin-top:10px}
+footer{margin-top:28px;font-size:13px;color:var(--leise);border-top:1px solid var(--linie);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+  <p class="leise"><a class="zurueck" href="index.html">← Haus Röhringer: alle Stationen</a></p>
+  <p class="kennz">3194 · 3.1</p>
+  <h1>3.1 Welchen Weg nimmt das Wasser? Rohrsysteme</h1>
+  <p class="leise">Haus Röhringer – Der Anbau kommt ans Netz. Animation und Zeichenübungen zum Arbeitsblatt 3.1, ohne Anmeldung und ohne Punkte.</p>
+  <div class="sprung"><a href="#animation">3.1.1 Animation</a><a href="#uebung">3.1.2 Übung</a><a href="#bonus">3.1.4 Bonus</a></div>
+
+  <section class="karte" id="animation">
+    <h2>3.1.1 Animation: Der Weg des Wassers – Zweirohr, Einrohr, Tichelmann</h2>
+    <p>Drei Heizkörper (HK) und ein Wärmeerzeuger (WE). Wähle das Rohrsystem und tippe auf einen Heizkörper. Die Animation zeigt den Weg, den das Wasser zu genau diesem Heizkörper nimmt, und misst ihn. Vorlauf rot, Rücklauf blau. Damit löst du die Aufgaben 1 bis 3 auf deinem Arbeitsblatt.</p>
+    <div id="weg"></div>
+  </section>
+
+  <section class="karte" id="uebung">
+    <h2>3.1.2 Übung: Rohrsysteme einzeichnen – Schulungsraum und Werkstatt</h2>
+    <p>Zeichne die Leitungen selbst: im Schulungsraum und in der Werkstatt je ein Zweirohrsystem, ein Einrohrsystem und ein Tichelmann-System. Stimmt dein Netz, läuft der Weg des Wassers über deine eigenen Leitungen.</p>
+    <div id="rz"></div>
+  </section>
+
+  <section class="karte" id="bonus">
+    <h2>3.1.4 Bonus: Die Wohnung über der Werkstatt</h2>
+    <p>Freiwillig: eine Wohnung mit Therme und fünf Heizkörpern, wieder je Zweirohr, Einrohr und Tichelmann.</p>
+    <div id="rz2"></div>
+  </section>
+
+  <footer>Diese Seite setzt keine Cookies, speichert nichts auf dem Gerät und lädt nichts von anderen Servern. Beim Aufruf verarbeitet der Anbieter GitHub technisch die IP-Adresse des Geräts.</footer>
+</main>
+<script>
+// ---------------------------------------------------------------- Weg des Wassers: Geometrie und Rechnung (ohne DOM)
+// Station 3.1, Haus Röhringer. Neu gezeichnet am 25.11.2026 (Grundlage: Mockup Reiter 4).
+// Maßstab: 1 m = 50 Bildpunkte. Die Geometrie ist so gewählt, dass beim Zweirohrsystem die Wege des Wassers
+// (Vorlauf und Rücklauf zusammen) genau 10 / 20 / 30 m sind – die Zahlen des Lehrers (A1-16, 18.10.2024):
+// Drossel an HK 1 = 20 m Rohr, an HK 2 = 10 m Rohr, alle kommen auf 30 m.
+// Rechnung: Weg(i) = 2·(Y.we − Y.hk) + ein(i) + aus(i) − X.vl − X.rl = 266 + 2·l(i) + 120 − 122 = 2·l(i) + 264 Bildpunkte.
+//   l = 118 / 368 / 618 → 500 / 1000 / 1500 Bildpunkte = 10 / 20 / 30 m.
+// Tichelmann: Weg = 2·X.wende + 54 Bildpunkte, für alle Heizkörper gleich; X.wende = 798 → 1650 Bildpunkte = 33 m.
+// Leitungen liegen nie übereinander (Kreuzen ist erlaubt), jede Ecke ist eine echte Ecke eines Pfades (kein Überstand).
+const WEG=(()=>{
+ const K=50;
+ const Y={hkOben:42,hk:82,ventil:101,vl:120,ring:132,rl:145,rueck:175,we:215,weUnten:281};
+ const X={vl:50,rl:72,wende:798,weL:28,weR:94};
+ const HK=[118,368,618].map((l,i)=>({n:'HK '+(i+1),l,b:120,ein:l+15,aus:l+105}));
+ const H=HK;
+ const vlWeg=i=>[[X.vl,Y.we],[X.vl,Y.vl],[H[i].ein,Y.vl],[H[i].ein,Y.hk]];
+ const vlBasis=[['vl',[[X.vl,Y.we],[X.vl,Y.vl],[H[2].ein,Y.vl],[H[2].ein,Y.hk]]],['vl',[[H[0].ein,Y.vl],[H[0].ein,Y.hk]]],['vl',[[H[1].ein,Y.vl],[H[1].ein,Y.hk]]]];
+ const SYS={
+  zwei:{name:'Zweirohrsystem',kurz:'Zweirohr',
+   basis:[...vlBasis,
+    ['rl',[[H[2].aus,Y.hk],[H[2].aus,Y.rl],[X.rl,Y.rl],[X.rl,Y.we]]],['rl',[[H[0].aus,Y.hk],[H[0].aus,Y.rl]]],['rl',[[H[1].aus,Y.hk],[H[1].aus,Y.rl]]]],
+   weg:i=>[['vl',vlWeg(i)],['rl',[[H[i].aus,Y.hk],[H[i].aus,Y.rl],[X.rl,Y.rl],[X.rl,Y.we]]]]},
+  tichel:{name:'Tichelmann-System',kurz:'Tichelmann',
+   basis:[...vlBasis,
+    ['rl',[[H[0].aus,Y.hk],[H[0].aus,Y.rl],[X.wende,Y.rl],[X.wende,Y.rueck],[X.rl,Y.rueck],[X.rl,Y.we]]],['rl',[[H[1].aus,Y.hk],[H[1].aus,Y.rl]]],['rl',[[H[2].aus,Y.hk],[H[2].aus,Y.rl]]]],
+   weg:i=>[['vl',vlWeg(i)],['rl',[[H[i].aus,Y.hk],[H[i].aus,Y.rl],[X.wende,Y.rl],[X.wende,Y.rueck],[X.rl,Y.rueck],[X.rl,Y.we]]]]},
+  ein:{name:'Einrohrsystem',kurz:'Einrohr',
+   // Ring mit Einrohrventilen: Unter jedem Heizkörper läuft der Ring weiter, ein Teil des Wassers geht durch den Heizkörper.
+   // Farben nach Temperatur: t60 … t45 im Ring, h45 … h35 = Rücklaufwasser der Heizkörper (Prinzipwerte, keine Berechnung).
+   basis:[['t60',[[X.vl,Y.we],[X.vl,Y.ring],[H[0].ein,Y.ring]]],['t60',[[H[0].ein,Y.ring],[H[0].ein,Y.hk]]],['t60',[[H[0].ein,Y.ring],[H[0].aus,Y.ring]]],['h45',[[H[0].aus,Y.hk],[H[0].aus,Y.ring]]],
+    ['t55',[[H[0].aus,Y.ring],[H[1].ein,Y.ring]]],['t55',[[H[1].ein,Y.ring],[H[1].ein,Y.hk]]],['t55',[[H[1].ein,Y.ring],[H[1].aus,Y.ring]]],['h40',[[H[1].aus,Y.hk],[H[1].aus,Y.ring]]],
+    ['t50',[[H[1].aus,Y.ring],[H[2].ein,Y.ring]]],['t50',[[H[2].ein,Y.ring],[H[2].ein,Y.hk]]],['t50',[[H[2].ein,Y.ring],[H[2].aus,Y.ring]]],['h35',[[H[2].aus,Y.hk],[H[2].aus,Y.ring]]],
+    ['t45',[[H[2].aus,Y.ring],[X.wende,Y.ring],[X.wende,Y.rueck],[X.rl,Y.rueck],[X.rl,Y.we]]]],
+   weg:i=>[['ring',[[X.vl,Y.we],[X.vl,Y.ring],[H[i].ein,Y.ring],[H[i].ein,Y.hk],[H[i].aus,Y.hk],[H[i].aus,Y.ring],[X.wende,Y.ring],[X.wende,Y.rueck],[X.rl,Y.rueck],[X.rl,Y.we]]]]}
+ };
+ const FARBE={vl:'#d0342c',rl:'#2f6fb7',ring:'#b0408a',t60:'#d0342c',t55:'#c4476a',t50:'#96529f',t45:'#2f6fb7',h45:'#4f86c6',h40:'#3f7bbf',h35:'#2f6fb7'};
+ const TEMP=[60,55,50],TEMP_ENDE=45,TEMP_HK_RUECK=[45,40,35];
+ const laenge=p=>p.reduce((s,q,i)=>i?s+Math.hypot(q[0]-p[i-1][0],q[1]-p[i-1][1]):0,0);
+ const wegPx=(sys,i)=>SYS[sys].weg(i).reduce((s,w)=>s+laenge(w[1]),0);
+ const wegMeter=(sys,i)=>wegPx(sys,i)/K;
+ const laengen=()=>({zwei:HK.map((h,i)=>wegMeter('zwei',i)),tichel:HK.map((h,i)=>wegMeter('tichel',i))});
+ const drossel=()=>{const L=laengen().zwei,m=Math.max(...L);return L.map(x=>m-x);};
+ // Wasser je Heizkörper (Worte statt erfundener Prozentwerte)
+ function wasser(sys,abgl){if(sys==='zwei'&&!abgl)return [['viel Wasser','warm'],['mittel','mittel'],['wenig Wasser','kalt']];
+  if(sys==='ein')return TEMP.map((t,i)=>['Vorlauf '+t+' °C',['warm','mittel','kalt'][i]]);return HK.map(()=>['gleich viel','mittel']);}
+ // Merksätze im Wortlaut des Lehrers (Vorschau Station 3.1, Arbeitsblatt Aufgabe 2 mit der Lösung)
+ const MERK={
+  zwei:'Der Weg des Wassers ist bei allen Heizkörpern unterschiedlich. Damit trotzdem jeder genug Wasser bekommt, werden die näher liegenden Heizkörper eingedrosselt. In der Fachsprache heißt diese Drosselung Voreinstellung. Alle Heizkörper werden „gleich schlecht“ gemacht.',
+  tichel:'Der Weg des Wassers ist bei allen Heizkörpern gleich lang. Deshalb braucht es keinen hydraulischen Abgleich.',
+  ein:'Das Rücklaufwasser jedes Heizkörpers wird dem Vorlauf wieder beigemischt.'};
+ const komma=(x,n)=>(+x).toFixed(n===undefined?1:n).replace('.',',');
+ const zahl=s=>{let t=String(s==null?'':s).trim().toLowerCase().replace(/\s+/g,'').replace(',','.').replace(/(meter|m|°c|°|grad|c)$/,'');
+  if(!/^-?\d+(\.\d+)?$/.test(t))return NaN;return parseFloat(t);};
+ const passt=(s,w,tol)=>Math.abs(zahl(s)-w)<=(tol===undefined?.15:tol);
+ // Eingebaute Aufgaben der Animation 3.1.1: a) 3 × 10 · b) 2 × 15 · c) 3 × 10 · d) 10 = 100 Punkte
+ const C_REIHE=['ein','zwei','tichel'];           // Reihenfolge der Merksätze in Aufgabe c (nicht die Reihenfolge der Knöpfe)
+ function bewerte(A){const L=laengen().zwei,Dr=drossel();
+  const a=[0,1,2].map(i=>passt((A.a||[])[i],L[i])),b=[0,1].map(i=>passt((A.b||[])[i],Dr[i])),c=C_REIHE.map((s,j)=>(A.c||[])[j]===s),d=passt(A.d,TEMP[2],.5);
+  return {a,b,c,d};}
+ const PUNKTE={a:10,b:15,c:10,d:10};
+ const punkte=G=>PUNKTE.a*G.a.filter(Boolean).length+PUNKTE.b*G.b.filter(Boolean).length+PUNKTE.c*G.c.filter(Boolean).length+(G.d?PUNKTE.d:0);
+ return {K,X,Y,HK,SYS,FARBE,TEMP,TEMP_ENDE,TEMP_HK_RUECK,MERK,C_REIHE,PUNKTE,laenge,wegPx,wegMeter,laengen,drossel,wasser,komma,zahl,passt,bewerte,punkte};
+})();
+
+// ---------------------------------------------------------------- SVG-Helfer (für Animation und Zeichenübungen)
+const SVGNS='http://www.w3.org/2000/svg';
+function svgEl(n,a,t){const e=document.createElementNS(SVGNS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!==undefined)e.textContent=t;return e;}
+const dstr=p=>p.map((q,i)=>(i?'L':'M')+q[0]+' '+q[1]).join(' ');
+
+// ---------------------------------------------------------------- Weg des Wassers: Bild und Bedienung (braucht WEG)
+// Tippen auf einen Heizkörper: Ein Wassertropfen läuft den Weg (Vorlauf, durch den Heizkörper, Rücklauf), die Anzeige zählt die Meter mit.
+// modus 'schueler': Längen erst nach dem Messen, Drossel-Meter erst, wenn o.drosselZahl() wahr ist, keine Merksätze.
+// modus 'beamer': alle Zahlen sofort, Merksatz des Lehrers je System.
+
+function bauWeg(wurzel,o){
+ o=Object.assign({modus:'schueler',systeme:['zwei','tichel','ein'],start:null,lupe:true,merk:false,abgleich:true,drosselZahl:()=>false,gemessen:null,beiMessung:null,beiWechsel:null},o||{});
+ const W=WEG,X=W.X,Y=W.Y,H=W.HK,beamer=o.modus==='beamer';
+ let sys=o.start||o.systeme[0],gew=-1,abgl=false,lauf=null,lupeAuf=false,lupe=null;
+ const gem={zwei:[0,0,0],tichel:[0,0,0],ein:[0,0,0]};
+ if(o.gemessen)for(const k in gem)if(Array.isArray(o.gemessen[k]))gem[k]=gem[k].map((x,i)=>o.gemessen[k][i]?1:0);
+ const reduziert=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(_){return false;}})();
+ wurzel.innerHTML='<div class="wahl" data-r="sys" role="group" aria-label="Rohrsystem"></div>'+
+  '<div class="wegbild"><svg data-r="svg" viewBox="-40 0 880 300" role="img" aria-label="Wärmeerzeuger und drei Heizkörper mit ihren Leitungen"></svg></div>'+
+  '<div class="wahl" data-r="abgl" role="group" aria-label="Voreinstellung der Ventile" style="margin-top:10px"></div>'+
+  '<div class="messung" data-r="mess" aria-live="polite"></div>'+
+  '<div class="zwei"><div data-r="tab"></div><div data-r="merk"></div></div>'+
+  '<div class="wahl" data-r="lupeknopf" style="margin-top:10px"></div><div data-r="lupe"></div>';
+ const $=r=>wurzel.querySelector('[data-r="'+r+'"]'),svg=$('svg'),k=W.komma;
+ let marke=null;
+ const dist=s=>Math.hypot(s.b[0]-s.a[0],s.b[1]-s.a[1]);
+ const vlM=i=>W.laenge(W.SYS[sys].weg(i)[0][1])/W.K,rlM=i=>W.laenge(W.SYS[sys].weg(i)[1][1])/W.K;
+ function messText(){const m=$('mess');
+  if(lauf){m.innerHTML='Das Wasser fließt durch '+H[lauf.i].n+' …'+(lauf.sys==='ein'?'':' <b>'+k(lauf.gezaehlt/W.K)+' m</b>');return;}
+  if(gew<0){m.innerHTML=sys==='ein'?'Tippe auf einen Heizkörper: Die Animation zeigt den Ring und wie warm der Vorlauf am Heizkörper ist.':'Tippe auf einen Heizkörper: Die Animation zeigt den Weg des Wassers zu genau diesem Heizkörper und misst ihn.';return;}
+  if(sys==='ein'){m.innerHTML='Vorlauf an '+H[gew].n+': <b>'+W.TEMP[gew]+' °C</b> · Das Wasser läuft im Ring durch alle Heizkörper nacheinander.';return;}
+  m.innerHTML='Weg des Wassers durch '+H[gew].n+': <b>'+k(W.wegMeter(sys,gew))+' m</b> <span class="klein">(Vorlauf '+k(vlM(gew))+' m + Rücklauf '+k(rlM(gew))+' m)</span>';}
+ function zeichne(){
+  svg.innerHTML='';const A=(n,a,t)=>svg.appendChild(svgEl(n,a,t)),S=W.SYS[sys];
+  A('style',{},'@keyframes wfl{to{stroke-dashoffset:-28}} .wfl{animation:wfl .9s linear infinite} @media (prefers-reduced-motion:reduce){.wfl{animation:none}}');
+  const rohr=(p,f,b,op)=>A('path',{d:dstr(p),fill:'none',stroke:W.FARBE[f],'stroke-width':b,'stroke-linejoin':'round','stroke-linecap':'round',opacity:op});
+  S.basis.forEach(b=>rohr(b[1],b[0],6,gew<0?.95:.3));
+  if(gew>=0&&!lauf)S.weg(gew).forEach(w=>{rohr(w[1],w[0],9,1);A('path',{d:dstr(w[1]),fill:'none',stroke:'#fff','stroke-width':2.6,'stroke-dasharray':'6 22','stroke-linecap':'round',class:'wfl',opacity:.95});});
+  // Pumpe im Vorlauf
+  A('circle',{cx:X.vl,cy:192,r:11,fill:'#fff',stroke:'#22303a','stroke-width':2});A('path',{d:'M'+(X.vl-7)+' 197 L'+X.vl+' 184 L'+(X.vl+7)+' 197 Z',fill:'#22303a'});
+  A('text',{x:X.vl-16,y:198,'text-anchor':'end','font-size':15,fill:'#5d6b75'},'Pumpe');
+  // Wärmeerzeuger
+  A('rect',{x:X.weL,y:Y.we,width:X.weR-X.weL,height:Y.weUnten-Y.we,rx:6,fill:'#fff',stroke:'#22303a','stroke-width':2});
+  A('text',{x:(X.weL+X.weR)/2,y:Y.we+40,'text-anchor':'middle','font-size':20,'font-weight':700,fill:'#22303a'},'WE');
+  A('text',{x:X.weR+10,y:Y.we+30,'font-size':15,fill:'#5d6b75'},'Wärmeerzeuger');
+  // Ventile am Vorlauf (Zwei- und Tichelmann) bzw. Einrohrventile am Ring
+  if(sys!=='ein')H.forEach((h,i)=>{const dr=sys==='zwei'&&abgl&&i<2,y=Y.ventil;
+   A('path',{d:`M${h.ein-8} ${y-9} L${h.ein+8} ${y-9} L${h.ein} ${y} Z M${h.ein-8} ${y+9} L${h.ein+8} ${y+9} L${h.ein} ${y} Z`,fill:dr?'#d99a1b':'#fff',stroke:'#22303a','stroke-width':1.6,'stroke-linejoin':'round'});
+   if(dr)A('text',{x:h.ein+12,y:y+5,'font-size':15,'font-weight':700,fill:'#8a5a00'},'Drossel');});
+  else{H.forEach(h=>A('circle',{cx:h.aus,cy:Y.ring,r:5,fill:'#fff',stroke:'#22303a','stroke-width':1.6}));
+   if(o.lupe){const g=svgEl('g',{class:'lupe-ruf',role:'button',tabindex:0,'aria-label':'Lupe: Einrohrventil ansehen'});
+    g.appendChild(svgEl('circle',{cx:H[0].aus,cy:Y.ring,r:19,fill:'none',stroke:'#22303a','stroke-width':2,'stroke-dasharray':'4 3'}));
+    g.appendChild(svgEl('line',{x1:H[0].aus+13,y1:Y.ring+14,x2:H[0].aus+25,y2:Y.ring+27,stroke:'#22303a','stroke-width':4,'stroke-linecap':'round'}));
+    g.appendChild(svgEl('text',{x:H[0].aus+29,y:Y.ring+32,'font-size':15,'font-weight':700,fill:'#22303a'},'Lupe'));
+    g.onclick=()=>zeigeLupe(true);g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();zeigeLupe(true);}};svg.appendChild(g);}
+   [[ (X.vl+H[0].ein)/2+8,'60 °C'],[(H[0].aus+H[1].ein)/2,'55 °C'],[(H[1].aus+H[2].ein)/2,'50 °C'],[(H[2].aus+X.wende)/2,'45 °C']].forEach(([x,t],j)=>
+    A('text',{x,y:Y.ring-10,'text-anchor':'middle','font-size':16,'font-weight':700,fill:W.FARBE[['t60','t55','t50','t45'][j]],'paint-order':'stroke',stroke:'#fbfaf6','stroke-width':4},t));}
+  // Heizkörper
+  const was=W.wasser(sys,abgl),FUELL={warm:'#f6b9a8',mittel:'#fbe3c4',kalt:'#cfe0f5'};
+  H.forEach((h,i)=>{const g=svgEl('g',{class:'hk-knopf',role:'button',tabindex:0,'aria-label':h.n+' antippen','data-hk':i});
+   g.appendChild(svgEl('rect',{x:h.l,y:Y.hkOben,width:h.b,height:Y.hk-Y.hkOben,rx:4,fill:FUELL[was[i][1]],stroke:i===gew?'#22303a':'#8a8478','stroke-width':i===gew?3.5:1.6}));
+   for(let x=h.l+12;x<h.l+h.b;x+=12)g.appendChild(svgEl('line',{x1:x,y1:Y.hkOben+4,x2:x,y2:Y.hk-4,stroke:'#8a8478','stroke-width':.8,opacity:.6}));
+   g.appendChild(svgEl('text',{x:h.l+h.b/2,y:Y.hkOben-10,'text-anchor':'middle','font-size':19,'font-weight':700,fill:'#22303a'},h.n));
+   g.appendChild(svgEl('text',{x:h.l+h.b/2,y:Y.hkOben+26,'text-anchor':'middle','font-size':16,fill:'#22303a','paint-order':'stroke',stroke:'#fff','stroke-width':3},was[i][0]));
+   g.onclick=()=>waehle(i);g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();waehle(i);}};svg.appendChild(g);});
+  // laufender Wassertropfen
+  if(lauf){A('path',{d:dstr(lauf.pfad),fill:'none',stroke:'#7a8a96','stroke-width':3,'stroke-dasharray':'2 7',opacity:.8});
+   marke=A('circle',{cx:lauf.pos[0],cy:lauf.pos[1],r:9,fill:'#2aa7c9',stroke:'#fff','stroke-width':3});}else marke=null;
+  tabelle();messText();knoepfe();
+ }
+ function tabelle(){const t=$('tab');
+  if(sys==='ein'){t.innerHTML='<table><tr><th>Heizkörper</th><th>Platz im Ring</th><th>Vorlauf am Heizkörper</th></tr>'+H.map((h,i)=>`<tr${i===gew?' style="font-weight:700"':''}><td>${h.n}</td><td>${i+1}.</td><td>${W.TEMP[i]} °C</td></tr>`).join('')+'</table><p class="klein" style="margin-top:6px">Temperaturen sind Prinzipwerte, keine Berechnung.</p>';}
+  else{const L=H.map((h,i)=>W.wegMeter(sys,i)),max=Math.max(...L),Dr=W.drossel(),mit=sys==='zwei'&&abgl,zahl=beamer||o.drosselZahl();
+   t.innerHTML='<table><tr><th>Heizkörper</th><th>Weg des Wassers</th>'+(mit?'<th>Drossel am Ventil</th>':'')+'<th style="width:34%"></th></tr>'+
+    H.map((h,i)=>{const da=beamer||gem[sys][i],w=Math.round(L[i]/max*100),dw=mit&&da?Math.round(Dr[i]/max*100):0;
+     return `<tr data-zeile="${i}"${i===gew?' style="font-weight:700"':''}><td>${h.n}</td><td>${da?k(L[i])+' m':'<span class="klein">antippen</span>'}</td>`+
+      (mit?`<td>${i===2?'keine':zahl?'wie '+k(Dr[i],0)+' m Rohr':'wie ? m Rohr'}</td>`:'')+
+      `<td>${da?`<div class="balkenreihe"><div class="balken" style="width:${w}%${dw?';border-radius:6px 0 0 6px':''}"></div>${dw?`<div class="balken" style="width:${dw}%;background:var(--gold);border-radius:0 6px 6px 0"></div>`:''}</div>`:''}</td></tr>`;}).join('')+'</table>'+
+    '<p class="klein" style="margin-top:6px">Weg des Wassers = Vorlauf und Rücklauf zusammen, im Bild gemessen.'+(mit?' Gelb: Die Voreinstellung bremst wie ein zusätzliches Stück Rohr.':'')+'</p>';}
+  $('merk').innerHTML=o.merk?`<div class="merk" style="margin:0"><b>Merksatz ${W.SYS[sys].name}</b><br>${W.MERK[sys]}</div>`:'';}
+ function knoepfe(){
+  $('sys').innerHTML=o.systeme.length>1?o.systeme.map(x=>`<button type="button" aria-pressed="${x===sys}" data-sys="${x}">${W.SYS[x].name}</button>`).join(''):'';
+  $('sys').querySelectorAll('button').forEach(b=>b.onclick=()=>setzeSystem(b.dataset.sys));
+  const a=$('abgl');a.innerHTML=sys==='zwei'&&o.abgleich?`<button type="button" aria-pressed="${!abgl}" data-a="0">ohne Voreinstellung</button><button type="button" aria-pressed="${abgl}" data-a="1">mit Voreinstellung der Ventile</button>`:'';
+  a.querySelectorAll('button').forEach(b=>b.onclick=()=>{abgl=b.dataset.a==='1';zeichne();o.beiWechsel&&o.beiWechsel();});
+  const l=$('lupeknopf');l.innerHTML=o.lupe&&sys==='ein'?`<button type="button" class="knopf" aria-pressed="${lupeAuf}">${lupeAuf?'Lupe schließen':'Lupe: Einrohrventil ansehen'}</button>`:'';
+  const lb=l.querySelector('button');if(lb)lb.onclick=()=>zeigeLupe(!lupeAuf);}
+ function setzeSystem(x){if(!o.systeme.includes(x))return;lauf=null;sys=x;gew=-1;if(sys!=='ein')zeigeLupe(false,true);zeichne();o.beiWechsel&&o.beiWechsel();}
+ function waehle(i){gew=i;const teile=W.SYS[sys].weg(i),seg=[];const add=(p,z)=>{for(let j=1;j<p.length;j++)seg.push({a:p[j-1],b:p[j],z});};
+  let pfad;
+  if(sys==='ein'){add(teile[0][1],true);pfad=teile[0][1];}
+  else{add(teile[0][1],true);seg.push({a:[H[i].ein,Y.hk],b:[H[i].aus,Y.hk],z:false});add(teile[1][1],true);pfad=[...teile[0][1],...teile[1][1]];}
+  lauf={i,sys,seg,pfad,gesamt:seg.reduce((s,x)=>s+dist(x),0),t0:null,pos:seg[0].a.slice(),gezaehlt:0};
+  if(reduziert){fertig();return;}
+  zeichne();requestAnimationFrame(schritt);}
+ function schritt(t){if(!lauf)return;if(lauf.t0===null)lauf.t0=t;const s=(t-lauf.t0)/1000*400;
+  if(s>=lauf.gesamt){fertig();return;}
+  let rest=s,gz=0;for(const x of lauf.seg){const d=dist(x);if(rest<=d){const f=d?rest/d:0;lauf.pos=[x.a[0]+(x.b[0]-x.a[0])*f,x.a[1]+(x.b[1]-x.a[1])*f];if(x.z)gz+=rest;break;}rest-=d;if(x.z)gz+=d;}
+  lauf.gezaehlt=gz;if(marke){marke.setAttribute('cx',lauf.pos[0]);marke.setAttribute('cy',lauf.pos[1]);}messText();requestAnimationFrame(schritt);}
+ function fertig(){if(!lauf)return;const l=lauf;lauf=null;gem[l.sys][l.i]=1;zeichne();o.beiMessung&&o.beiMessung(l.sys,l.i);}
+ function zeigeLupe(an,still){lupeAuf=!!an;const c=$('lupe');
+  if(lupeAuf){if(!lupe)lupe=bauLupe(c);c.hidden=false;lupe.start();if(!still)try{c.scrollIntoView({block:'nearest',behavior:'smooth'});}catch(_){}}
+  else{if(lupe)lupe.stop();c.hidden=true;}knoepfe();}
+ zeichne();
+ return {setzeSystem,waehle,fertigMessen:()=>fertig(),abgleich:b=>{abgl=!!b;zeichne();},lupe:b=>zeigeLupe(b,true),
+  zustand:()=>({sys,gew,abgl,lauf:!!lauf,lupe:lupeAuf}),gemessen:()=>JSON.parse(JSON.stringify(gem)),neu:()=>zeichne()};
+}
+
+// ---------------------------------------------------------------- Lupe „Einrohrventil“ (Venturi-Düse) an HK 1
+// Ring kommt mit 60 °C. Vor der Düse geht ein Teil des Wassers nach oben in den Heizkörper. In der Düse ist das Rohr eng: schnelle Strömung,
+// kleiner Druck – dort mündet der Rücklauf des Heizkörpers (45 °C) und wird angesaugt. Mischung 55 °C weiter zu HK 2 (Prinzipwerte).
+function bauLupe(c){
+ c.innerHTML='<div class="lupe"><h3>Lupe: Das Einrohrventil an HK 1 (Venturi-Düse)</h3>'+
+  '<svg viewBox="0 0 640 330" role="img" aria-label="Einrohrventil mit Düse, Vorlauf zum Heizkörper und angesaugtem Rücklauf"></svg>'+
+  '<ol><li>Vor der Düse ist das Rohr weit: Das Wasser strömt <b>langsam</b>, der Druck ist <b>groß</b>.</li>'+
+  '<li>In der Düse ist das Rohr eng: Das Wasser strömt <b>schnell</b>, der Druck ist <b>klein</b>.</li>'+
+  '<li>Am kleinen Druck wird das <b>Rücklaufwasser des Heizkörpers angesaugt</b>. So fließt Wasser durch den Heizkörper.</li></ol>'+
+  '<p class="klein" style="margin:6px 0 0">Temperaturen sind Prinzipwerte, keine Berechnung.</p></div>';
+ const s=c.querySelector('svg'),A=(n,a,t)=>s.appendChild(svgEl(n,a,t));
+ const MY=210,HW0=18,HWE=8,X0=20,X1=620,DA=300,DB=360,DC=420,DD=500,XV=200,XR=400;
+ const hw=x=>x<DA?HW0:x<DB?HW0+(HWE-HW0)*(x-DA)/(DB-DA):x<DC?HWE:x<DD?HWE+(HW0-HWE)*(x-DC)/(DD-DC):HW0;
+ // Rohr
+ const oben=[[X0,MY-HW0],[XV-7,MY-HW0]],oben2=[[XV+7,MY-HW0],[DA,MY-HW0],[DB,MY-HWE],[XR-7,MY-HWE]],oben3=[[XR+7,MY-HWE],[DC,MY-HWE],[DD,MY-HW0],[X1,MY-HW0]];
+ const unten=[[X0,MY+HW0],[DA,MY+HW0],[DB,MY+HWE],[DC,MY+HWE],[DD,MY+HW0],[X1,MY+HW0]];
+ A('path',{d:dstr([...oben,...oben2,...oben3,...unten.slice().reverse()])+' Z',fill:'#eef4fb'});
+ A('rect',{x:XV-7,y:62,width:14,height:MY-HW0-62+1,fill:'#fde7e4'});A('rect',{x:XR-7,y:62,width:14,height:MY-HWE-62+1,fill:'#e3edf8'});
+ [oben,oben2,oben3,unten].forEach(p=>A('path',{d:dstr(p),fill:'none',stroke:'#22303a','stroke-width':2.2,'stroke-linejoin':'round'}));
+ [[XV-7,62,XV-7,MY-HW0],[XV+7,62,XV+7,MY-HW0],[XR-7,62,XR-7,MY-HWE],[XR+7,62,XR+7,MY-HWE]].forEach(q=>A('line',{x1:q[0],y1:q[1],x2:q[2],y2:q[3],stroke:'#22303a','stroke-width':2.2}));
+ // Heizkörper
+ A('rect',{x:150,y:18,width:300,height:44,rx:5,fill:'#fbe3c4',stroke:'#22303a','stroke-width':2});
+ for(let x=162;x<450;x+=12)A('line',{x1:x,y1:22,x2:x,y2:58,stroke:'#8a8478','stroke-width':.8,opacity:.6});
+ A('text',{x:300,y:14,'text-anchor':'middle','font-size':15,'font-weight':700,fill:'#22303a'},'HK 1');
+ // Beschriftung
+ const T=(x,y,t,a,f,w)=>A('text',{x,y,'text-anchor':a||'start','font-size':f||14,'font-weight':w||400,fill:'#22303a','paint-order':'stroke',stroke:'#fff','stroke-width':3},t);
+ T(X0,MY-HW0-10,'Ring kommt mit 60 °C →','start',14,700);T(X1,MY-HW0-10,'→ 55 °C weiter zu HK 2','end',14,700);
+ T(XV-14,120,'60 °C','end',14,700);T(XV-14,138,'zum Heizkörper','end',13);
+ T(XR+14,112,'45 °C','start',14,700);T(XR+14,130,'Rücklaufwasser des','start',13);T(XR+14,146,'Heizkörpers wird','start',13);T(XR+14,162,'angesaugt','start',13,700);
+ A('text',{x:432,y:MY+HWE+18,'font-size':13,'font-weight':700,fill:'#22303a'},'Düse');
+ // Druckanzeigen
+ const druck=(x,yRohr,h,z1,z2)=>{A('line',{x1:x,y1:yRohr,x2:x,y2:248,stroke:'#22303a','stroke-width':2});A('rect',{x:x-14,y:248,width:28,height:70,rx:3,fill:'#fff',stroke:'#22303a','stroke-width':2});
+  A('rect',{x:x-11,y:318-3-h,width:22,height:h,fill:'#2aa7c9'});T(x+22,272,z1,'start',14,700);T(x+22,292,z2,'start',14,700);};
+ druck(110,MY+HW0,58,'langsam','Druck groß');druck(375,MY+HWE,14,'schnell','Druck klein');
+ // Wasserteilchen
+ const lagen=[],zweig=[];const g=svgEl('g',{});s.appendChild(g);
+ for(let i=0;i<64;i++){const e=svgEl('circle',{r:3.2,fill:'#d0342c'});g.appendChild(e);lagen.push({x:X0+(X1-X0)*i/64,f:((i*37)%13)/13*1.5-.75,e});}
+ const zpfad=[[XV,MY-HW0],[XV,66],[XV,40],[XR,40],[XR,66],[XR,MY-HWE]],zl=[];let zsum=0;for(let j=1;j<zpfad.length;j++){const d=Math.hypot(zpfad[j][0]-zpfad[j-1][0],zpfad[j][1]-zpfad[j-1][1]);zl.push(d);zsum+=d;}
+ for(let i=0;i<16;i++){const e=svgEl('circle',{r:3.2,fill:'#d0342c'});g.appendChild(e);zweig.push({u:zsum*i/16,e});}
+ const zpos=u=>{for(let j=0;j<zl.length;j++){if(u<=zl[j]){const f=u/zl[j],a=zpfad[j],b=zpfad[j+1];return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,j];}u-=zl[j];}return [XR,MY-HWE,4];};
+ const ZF=['#d0342c','#d0342c','#c4476a','#4f86c6','#4f86c6'];
+ let an=false,zuletzt=null;
+ function bild(){lagen.forEach(p=>{p.e.setAttribute('cx',p.x);p.e.setAttribute('cy',MY+p.f*hw(p.x));p.e.setAttribute('fill',p.x<XR?'#d0342c':'#c4476a');});
+  zweig.forEach(p=>{const q=zpos(p.u);p.e.setAttribute('cx',q[0]);p.e.setAttribute('cy',q[1]);p.e.setAttribute('fill',ZF[q[2]]);});}
+ function takt(t){if(!an)return;const dt=zuletzt===null?0:Math.min(.05,(t-zuletzt)/1000);zuletzt=t;
+  lagen.forEach(p=>{p.x+=34*HW0/hw(p.x)*dt;if(p.x>X1)p.x-=X1-X0;});zweig.forEach(p=>{p.u=(p.u+30*dt)%zsum;});bild();requestAnimationFrame(takt);}
+ bild();
+ let still=false;try{still=matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(_){}
+ return {start:()=>{if(an||still)return;an=true;zuletzt=null;requestAnimationFrame(takt);},stop:()=>{an=false;},laeuft:()=>an};
+}
+
+// ---------------------------------------------------------------- Rohrsysteme einzeichnen: Grundrisse, Musterlösungen, Prüfung (ohne DOM)
+// Übernommen aus dem Mockup (Reiter 5, 24.11.2026), Prüfregeln unverändert. Wunsch des Lehrers 24.11.2026 20:11: „Schüler müssen selber die
+// Leitungen einzeichnen … einmal ein Einrohr, einmal ein Zweirohr und einmal ein Tichelmann-System … Ähnlich wie bei der Elektroverdrahtung.“
+// Raster: 1 Schritt = 0,25 m. Leitungen nur waagerecht/senkrecht, nie übereinander; Kreuzen ist erlaubt (keine Verbindung).
+// Verbunden wird nur an Anschlüssen (Punkten) und dort, wo eine Leitung auf einer Leitung derselben Farbe beginnt oder endet (T-Stück).
+// Übungen (Nummer = Stelle in UEB + 1): 1–3 Schulungsraum, 4–6 Werkstatt (Lernpaket 3.1.2), 7–9 Wohnung (Bonus 3.1.4); je Zweirohr, Einrohr, Tichelmann.
+const RZK=(()=>{
+const M=.25,TOL=.10;
+const SZ={
+ raum1:{name:'Schulungsraum',C:32,R:20,we:{vl:[3,20],rl:[5,20]},
+  hk:[{n:'HK 1',a:[4,0],b:[10,0]},{n:'HK 2',a:[20,0],b:[26,0]},{n:'HK 3',a:[32,8],b:[32,14]}],
+  tuer:[['u',21,25]],waende:[],raeume:[['Schulungsraum im Betrieb',16,10]]},
+ raum2:{name:'Werkstatt',C:36,R:22,we:{vl:[33,22],rl:[31,22]},
+  hk:[{n:'HK 1',a:[36,12],b:[36,6]},{n:'HK 2',a:[26,0],b:[20,0]},{n:'HK 3',a:[12,0],b:[6,0]},{n:'HK 4',a:[0,8],b:[0,14]}],
+  tuer:[['u',10,17]],waende:[],raeume:[['Werkstatt',18,11]]},
+ wohnung:{name:'Wohnung',C:44,R:30,we:{vl:[41,14],rl:[41,16],kasten:[42.1,13,2.6,4]},
+  hk:[{n:'HK 1',a:[38,0],b:[32,0]},{n:'HK 2',a:[23,0],b:[19,0]},{n:'HK 3',a:[11,0],b:[5,0]},{n:'HK 4',a:[8,30],b:[16,30]},{n:'HK 5',a:[33,30],b:[39,30]}],
+  tuer:[['l',13.4,16.6]],
+  waende:[[-.8,12.5,9,12.5],[12,12.5,19.5,12.5],[22,12.5,33,12.5],[36,12.5,44.8,12.5],[-.8,17.5,20,17.5],[23,17.5,31,17.5],[34,17.5,44.8,17.5],[15.5,-.8,15.5,12.5],[26.5,-.8,26.5,12.5],[28.5,17.5,28.5,30.8]],
+  raeume:[['Schlafen',7.5,7.5],['Bad',21,7.5],['Küche',35.5,7.5],['Flur',20,15.3],['Wohnen / Essen',14,23.5],['Kind',36.5,23.5]]}
+};
+const ORT={raum1:'Dein Chef: „Bevor du bei Röhringers planst, üb das hier bei uns im Schulungsraum.“ Drei Heizkörper, der Anschluss vom Wärmeerzeuger kommt unten links aus dem Boden.',
+ raum2:'Jetzt die Werkstatt: vier Heizkörper an drei Wänden, der Anschluss kommt unten rechts aus dem Boden.',
+ wohnung:'Die Wohnung über der Werkstatt hat eine eigene Therme (WE) im Flur. Fünf Heizkörper in fünf Räumen. Die Leitungen liegen im Estrich und dürfen durch die Innenwände gehen.'};
+const SYSTEM={zwei:{name:'Zweirohrsystem',kurz:'Zweirohr',text:'Schließ alle Heizkörper im <strong>Zweirohrsystem</strong> an: Jeder Heizkörper bekommt einen Vorlauf (rot) und einen Rücklauf (blau). Der Rücklauf geht auf kurzem Weg zurück zum Anschluss.'},
+ ein:{name:'Einrohrsystem',kurz:'Einrohr',text:'Schließ alle Heizkörper im <strong>Einrohrsystem</strong> an: eine Ringleitung vom Vorlauf-Anschluss zum Rücklauf-Anschluss. Alle Heizkörper hängen hintereinander an diesem Ring.'},
+ tichel:{name:'Tichelmann-System',kurz:'Tichelmann',text:'Schließ alle Heizkörper nach <strong>Tichelmann</strong> an: Vorlauf rot, Rücklauf blau – und der Weg des Wassers soll durch jeden Heizkörper gleich lang sein.'}};
+const STIFT={vl:{n:'Vorlauf',c:'#d0342c'},rl:{n:'Rücklauf',c:'#2f6fb7'},ring:{n:'Ringleitung',c:'#b0408a'},radierer:{n:'Radierer',c:'#5d6b75'}};
+const UEB=[];['raum1','raum2','wohnung'].forEach(s=>['zwei','ein','tichel'].forEach(y=>UEB.push({s,y})));
+// Musterlösungen (eine von vielen richtigen)
+const LOES={
+ raum1:{zwei:[['vl',[[3,20],[3,2],[30,2],[30,8],[32,8]]],['vl',[[4,2],[4,0]]],['vl',[[20,2],[20,0]]],['rl',[[32,14],[29,14],[29,3],[5,3],[5,20]]],['rl',[[10,0],[10,3]]],['rl',[[26,0],[26,3]]]],
+  tichel:[['vl',[[3,20],[3,2],[30,2],[30,8],[32,8]]],['vl',[[4,2],[4,0]]],['vl',[[20,2],[20,0]]],['rl',[[10,0],[10,3],[28,3],[28,17],[5,17],[5,20]]],['rl',[[26,0],[26,3]]],['rl',[[32,14],[28,14]]]],
+  ein:[['ring',[[3,20],[3,2],[30,2],[30,17],[5,17],[5,20]]],['ring',[[4,2],[4,0]]],['ring',[[10,2],[10,0]]],['ring',[[20,2],[20,0]]],['ring',[[26,2],[26,0]]],['ring',[[30,8],[32,8]]],['ring',[[30,14],[32,14]]]]},
+ raum2:{zwei:[['vl',[[33,22],[33,2],[2,2],[2,8],[0,8]]],['vl',[[33,12],[36,12]]],['vl',[[26,2],[26,0]]],['vl',[[12,2],[12,0]]],['rl',[[0,14],[3,14],[3,3],[31,3],[31,22]]],['rl',[[36,6],[31,6]]],['rl',[[20,0],[20,3]]],['rl',[[6,0],[6,3]]]],
+  tichel:[['vl',[[33,22],[33,2],[2,2],[2,8],[0,8]]],['vl',[[33,12],[36,12]]],['vl',[[26,2],[26,0]]],['vl',[[12,2],[12,0]]],['rl',[[36,6],[32,6],[32,3],[3,3],[3,19],[31,19],[31,22]]],['rl',[[20,0],[20,3]]],['rl',[[6,0],[6,3]]],['rl',[[0,14],[3,14]]]],
+  ein:[['ring',[[33,22],[33,2],[2,2],[2,19],[31,19],[31,22]]],['ring',[[33,12],[36,12]]],['ring',[[33,6],[36,6]]],['ring',[[26,2],[26,0]]],['ring',[[20,2],[20,0]]],['ring',[[12,2],[12,0]]],['ring',[[6,2],[6,0]]],['ring',[[2,8],[0,8]]],['ring',[[2,14],[0,14]]]]},
+ wohnung:{zwei:[['vl',[[41,14],[41,2],[11,2],[11,0]]],['vl',[[38,2],[38,0]]],['vl',[[23,2],[23,0]]],['vl',[[41,14],[39,14],[39,30]]],['vl',[[39,28],[16,28],[16,30]]],
+   ['rl',[[5,0],[5,3],[40,3],[40,16],[41,16]]],['rl',[[32,0],[32,3]]],['rl',[[19,0],[19,3]]],['rl',[[8,30],[8,26],[41,26],[41,16]]],['rl',[[33,30],[33,26]]]],
+  tichel:[['vl',[[41,14],[41,2],[2,2],[2,28],[33,28],[33,30]]],['vl',[[38,2],[38,0]]],['vl',[[23,2],[23,0]]],['vl',[[11,2],[11,0]]],['vl',[[8,28],[8,30]]],
+   ['rl',[[32,0],[32,3],[3,3],[3,27],[40,27],[40,16],[41,16]]],['rl',[[19,0],[19,3]]],['rl',[[5,0],[5,3]]],['rl',[[16,30],[16,27]]],['rl',[[39,30],[39,27]]]],
+  ein:[['ring',[[41,14],[41,2],[2,2],[2,28],[40,28],[40,16],[41,16]]],['ring',[[38,2],[38,0]]],['ring',[[32,2],[32,0]]],['ring',[[23,2],[23,0]]],['ring',[[19,2],[19,0]]],['ring',[[11,2],[11,0]]],['ring',[[5,2],[5,0]]],['ring',[[8,28],[8,30]]],['ring',[[16,28],[16,30]]],['ring',[[33,28],[33,30]]],['ring',[[39,28],[39,30]]]]}
+};
+
+// ================================================================ Rechenteil
+const pk=p=>p[0]+','+p[1];
+const kk=(a,b)=>{const x=pk(a),y=pk(b);return x<y?x+'|'+y:y+'|'+x;};
+function einheiten(p){const o=[p[0].slice()];for(let i=1;i<p.length;i++){let [c,r]=o[o.length-1];const [tc,tr]=p[i],dc=Math.sign(tc-c),dr=Math.sign(tr-r);while(c!==tc||r!==tr){c+=dc;r+=dr;o.push([c,r]);}}return o;}
+function kantenVon(list){const s=new Set();list.forEach(st=>{const e=einheiten(st.p);for(let i=1;i<e.length;i++)s.add(kk(e[i-1],e[i]));});return s;}
+function netz(S,st){
+ const term=new Map([[pk(S.we.vl),'VL'],[pk(S.we.rl),'RL']]);
+ S.hk.forEach((h,i)=>{term.set(pk(h.a),'H'+i+'a');term.set(pk(h.b),'H'+i+'b');});
+ const exp=st.map(s=>einheiten(s.p)),enden=new Set();
+ st.forEach((s,i)=>{const e=exp[i];enden.add(pk(e[0])+':'+s.f);enden.add(pk(e[e.length-1])+':'+s.f);});
+ const key=(i,p)=>{const k=pk(p);if(term.has(k))return 'T:'+term.get(k);if(enden.has(k+':'+st[i].f))return 'J:'+k+':'+st[i].f;return 'S:'+i+':'+k;};
+ const adj=new Map(),pos=new Map();
+ const add=(a,b)=>{if(!adj.has(a))adj.set(a,[]);if(!adj.has(b))adj.set(b,[]);adj.get(a).push(b);adj.get(b).push(a);};
+ exp.forEach((e,i)=>{for(let j=0;j<e.length;j++){const k=key(i,e[j]);pos.set(k,e[j]);if(j)add(key(i,e[j-1]),k);}});
+ let lose=0;st.forEach((s,i)=>{const e=exp[i];[e[0],e[e.length-1]].forEach(p=>{const k=key(i,p);if(k[0]!=='T'&&(adj.get(k)||[]).length<2)lose++;});});
+ return {adj,pos,exp,key,lose};
+}
+function bfs(adj,start){const d=new Map([[start,0]]),v=new Map(),q=[start];for(let n=0;n<q.length;n++){const a=q[n];for(const b of adj.get(a)||[])if(!d.has(b)){d.set(b,d.get(a)+1);v.set(b,a);q.push(b);}}return {d,v};}
+const kette=(v,ziel)=>{const p=[];for(let k=ziel;k!==undefined;k=v.get(k))p.push(k);return p.reverse();};
+const komma=x=>x.toFixed(1).replace('.',',');
+const T_LOSE='Eine Leitung endet im Leeren – jede Leitung beginnt und endet an einem Anschluss oder an einem Abzweig.';
+
+function pruefeZwei(S,st,tichel){
+ const N=netz(S,st),Z=[],adj=N.adj,P=k=>N.pos.get(k);
+ const hatV=adj.has('T:VL'),hatR=adj.has('T:RL');
+ Z.push([hatV&&hatR,hatV&&hatR?'Vorlauf und Rücklauf sind am Anschluss angeschlossen':!hatV&&!hatR?'Am Anschluss vom Wärmeerzeuger ist noch nichts angeschlossen.':hatV?'Am Rücklauf-Anschluss (blau) fehlt die Leitung.':'Am Vorlauf-Anschluss (rot) fehlt die Leitung.']);
+ Z.push([!N.lose,N.lose?T_LOSE:'Keine Leitung endet im Leeren']);
+ if(!hatV||!hatR)return {ok:false,zeilen:Z};
+ const A=bfs(adj,'T:VL'),B=bfs(adj,'T:RL'),kurz=A.d.has('T:RL');
+ Z.push([!kurz,kurz?'Vorlauf und Rücklauf sind direkt miteinander verbunden – das Wasser fließt an den Heizkörpern vorbei zurück (Kurzschluss).':'Vorlauf und Rücklauf sind nirgends direkt verbunden']);
+ if(kurz)return {ok:false,zeilen:Z};
+ let farbe=true,frei=false;
+ st.forEach((s,i)=>{const k=N.key(i,N.exp[i][0]);if(A.d.has(k)){if(s.f!=='vl')farbe=false;}else if(B.d.has(k)){if(s.f!=='rl')farbe=false;}else frei=true;});
+ Z.push([farbe,farbe?'Farben stimmen: Vorlauf rot, Rücklauf blau':'Eine Leitung hat die falsche Farbe: Was am Vorlauf-Anschluss hängt, ist Vorlauf (rot); was zum Rücklauf-Anschluss führt, ist Rücklauf (blau).']);
+ if(frei)Z.push([false,'Eine Leitung hat keine Verbindung zum Anschluss vom Wärmeerzeuger.']);
+ const wege=[];let alle=true;
+ S.hk.forEach((h,i)=>{const a='T:H'+i+'a',b='T:H'+i+'b',av=A.d.has(a),bv=A.d.has(b),ar=B.d.has(a),br=B.d.has(b);let t;
+  if((av&&br)||(bv&&ar)){const v=av?a:b,r=av?b:a;wege.push({i,n:h.n,m:(A.d.get(v)+B.d.get(r))*M,vl:A.d.get(v)*M,rl:B.d.get(r)*M,pf:[kette(A.v,v).map(P),kette(B.v,r).map(P).reverse()]});Z.push([true,h.n+': Vorlauf und Rücklauf angeschlossen']);return;}
+  if(av&&bv)t='Beide Anschlüsse hängen am Vorlauf – so fließt kein Wasser durch den Heizkörper.';
+  else if(ar&&br)t='Beide Anschlüsse hängen am Rücklauf – so fließt kein Wasser durch den Heizkörper.';
+  else if(av||bv)t='Der Rücklauf fehlt noch.';else if(ar||br)t='Der Vorlauf fehlt noch.';else t='noch nicht angeschlossen.';
+  alle=false;Z.push([false,h.n+': '+t]);});
+ let ok=alle&&farbe&&!frei&&!N.lose;
+ if(alle){const m=wege.map(w=>w.m),max=Math.max(...m),min=Math.min(...m),gleich=(max-min)/max<=TOL;
+  if(tichel){Z.push([gleich,gleich?`Der Weg des Wassers ist bei allen Heizkörpern gleich lang (${komma(min)} bis ${komma(max)} m, Unterschied unter 10 %)`:`Die Wege sind unterschiedlich lang (${komma(min)} bis ${komma(max)} m). Bei Tichelmann beginnt der Rücklauf am ersten Heizkörper und läuft in Fließrichtung weiter bis hinter den letzten – wer den kürzesten Vorlauf hat, bekommt den längsten Rücklauf.`]);ok=ok&&gleich;}
+  else{Z.push([!gleich,gleich?`Richtig angeschlossen – aber die Wege sind fast gleich lang (${komma(min)} bis ${komma(max)} m): Das ist schon die Verlegung nach Tichelmann. Hier ist das einfache Zweirohrsystem gefragt: Rücklauf auf kurzem Weg zurück.`:`Zweirohrsystem: Der Weg des Wassers ist je Heizkörper unterschiedlich lang (${komma(min)} bis ${komma(max)} m)`]);ok=ok&&!gleich;}}
+ return {ok,zeilen:Z,wege:ok?wege:[],rohr:kantenVon(st).size*M};
+}
+function pruefeEin(S,st){
+ const N=netz(S,st),Z=[],adj=N.adj,P=k=>N.pos.get(k);
+ const hatV=adj.has('T:VL'),hatR=adj.has('T:RL');
+ Z.push([hatV&&hatR,hatV&&hatR?'Der Ring beginnt am Vorlauf-Anschluss und endet am Rücklauf-Anschluss':'Der Ring muss am Vorlauf-Anschluss (rot) beginnen und am Rücklauf-Anschluss (blau) enden.']);
+ Z.push([!N.lose,N.lose?T_LOSE:'Keine Leitung endet im Leeren']);
+ if(!hatV||!hatR||N.lose)return {ok:false,zeilen:Z};
+ const A=bfs(adj,'T:VL');let wege=[],ok=true,art;
+ if(A.d.has('T:RL')){ // Ring mit Abzweigen: Der Heizkörper hängt mit Zulauf und Ablauf am Ring, dazwischen läuft der Ring weiter
+  art='abzweig';let kanten=0;for(const k of A.d.keys())kanten+=adj.get(k).length;
+  const baum=kanten/2===A.d.size-1;
+  Z.push([baum,baum?'Genau ein Ring vom Vorlauf zum Rücklauf':'Die Leitung bildet eine Schleife oder teilt sich in zwei Wege – beim Einrohrsystem gibt es genau einen Ring.']);
+  if(!baum)return {ok:false,zeilen:Z};
+  const ring=kette(A.v,'T:RL'),idx=new Map(ring.map((k,i)=>[k,i]));
+  const dock=k=>{const w=[k];while(!idx.has(k)){k=A.v.get(k);w.push(k);}return {i:idx.get(k),w};};
+  const iv=[];
+  S.hk.forEach((h,i)=>{const a='T:H'+i+'a',b='T:H'+i+'b';
+   if(!A.d.has(a)||!A.d.has(b)){Z.push([false,h.n+': hängt noch nicht mit beiden Anschlüssen am Ring.']);ok=false;return;}
+   const da=dock(a),db=dock(b);
+   if(da.i===db.i){Z.push([false,h.n+': Beide Anschlüsse gehen an derselben Stelle auf den Ring – so fließt kein Wasser durch den Heizkörper.']);ok=false;return;}
+   const [e,f]=da.i<db.i?[da,db]:[db,da];iv.push({i,von:e.i,bis:f.i,ein:e.w,aus:f.w});Z.push([true,h.n+': hängt mit Zulauf und Ablauf am Ring']);});
+  if(ok){iv.sort((x,y)=>x.von-y.von);let hinter=true;for(let j=1;j<iv.length;j++)if(iv[j].von<iv[j-1].bis)hinter=false;
+   Z.push([hinter,hinter?'Alle Heizkörper liegen hintereinander am Ring':'Zwei Heizkörper hängen nebeneinander am Ring – beim Einrohrsystem kommt erst der eine, dann der nächste.']);ok=hinter;
+   if(ok)wege=iv.map((v,j)=>({i:v.i,n:S.hk[v.i].n,nr:j,temp:60-5*j,m:(ring.length-1)*M,pf:[[...ring.slice(0,v.von+1),...v.ein.slice().reverse().slice(1)].map(P),[...v.aus,...ring.slice(v.bis+1)].map(P)]}));}
+ }else{ // Reihe: Das ganze Wasser fließt durch jeden Heizkörper
+  art='reihe';let cur='T:VL',fehler=null;const folge=[],weg=[];
+  for(let n=0;n<=S.hk.length;n++){const B=bfs(adj,cur),T=[...B.d.keys()].filter(k=>k[0]==='T'&&k!==cur);
+   if(T.length!==1){fehler=T.length?'Die Leitung teilt sich auf mehrere Anschlüsse auf – beim Einrohrsystem gibt es nur einen Ring, die Heizkörper liegen hintereinander.':'Der Ring ist nicht geschlossen: Es fehlt eine Strecke.';break;}
+   const t=T[0];weg.push(...kette(B.v,t).map(P));if(t==='T:RL')break;
+   const i=+t.slice(3,-1);if(folge.includes(i)){fehler='Ein Heizkörper liegt zweimal im Ring.';break;}folge.push(i);cur='T:H'+i+(t.slice(-1)==='a'?'b':'a');
+   if(!adj.has(cur)){fehler=S.hk[i].n+': Der Ablauf fehlt noch.';break;}}
+  if(!fehler&&folge.length<S.hk.length)fehler='Nicht alle Heizkörper liegen im Ring: '+S.hk.filter((h,i)=>!folge.includes(i)).map(h=>h.n).join(', ')+' fehlt.';
+  Z.push([!fehler,fehler||'Ein Ring, alle Heizkörper hintereinander – das ganze Wasser fließt durch jeden Heizkörper']);ok=!fehler;
+  if(ok)wege=folge.map((i,j)=>({i,n:S.hk[i].n,nr:j,temp:60-5*j,m:(weg.length-folge.length-1)*M,pf:[weg]}));
+ }
+ return {ok,zeilen:Z,wege,art,rohr:kantenVon(st).size*M};
+}
+function pruefe(S,sysName,st){if(!st.length)return {ok:false,zeilen:[[false,'Es ist noch keine Leitung gezeichnet.']]};return sysName==='ein'?pruefeEin(S,st):pruefeZwei(S,st,sysName==='tichel');}
+const alsStrokes=l=>l.map(([f,p])=>({f,p:p.map(q=>q.slice())}));
+
+// Saubere Ecken (Regel des Lehrers 23.11.2026): doppelte Punkte und Punkte mitten auf einer Geraden entfallen; die Leitung bleibt dieselbe.
+function sauber(p){const o=[];for(const q of p){const l=o[o.length-1];if(l&&l[0]===q[0]&&l[1]===q[1])continue;o.push([q[0],q[1]]);}
+ for(let i=o.length-2;i>=1;i--){const a=o[i-1],b=o[i],c=o[i+1];
+  const zw=(a[0]===b[0]&&b[0]===c[0])?(b[1]-a[1])*(c[1]-b[1])>0:(a[1]===b[1]&&b[1]===c[1])?(b[0]-a[0])*(c[0]-b[0])>0:false;if(zw)o.splice(i,1);}
+ return o;}
+// Wie oft liegt eine Rasterkante doppelt? 0 = nichts liegt übereinander.
+function ueberlappung(st){const s=new Set();let n=0;st.forEach(x=>{const e=einheiten(x.p);for(let i=1;i<e.length;i++){const k=kk(e[i-1],e[i]);if(s.has(k))n++;else s.add(k);}});return n;}
+// Kurzschrift für den Spielstand (Moodle: höchstens 4096 Zeichen): „v3.20_3.2_30.2~r…“
+const FK={vl:'v',rl:'r',ring:'g'},FR={v:'vl',r:'rl',g:'ring'};
+function kodiere(st){return st.map(s=>FK[s.f]+s.p.map(q=>q[0]+'.'+q[1]).join('_')).join('~');}
+function dekodiere(t,S){if(typeof t!=='string'||!t)return [];const o=[];
+ for(const teil of t.split('~')){const f=FR[teil[0]];if(!f)return null;const p=teil.slice(1).split('_').map(x=>x.split('.').map(Number));
+  if(p.length<2||p.some(q=>q.length!==2||!Number.isInteger(q[0])||!Number.isInteger(q[1])||(S&&(q[0]<0||q[1]<0||q[0]>S.C||q[1]>S.R))))return null;
+  for(let i=1;i<p.length;i++)if(p[i][0]!==p[i-1][0]&&p[i][1]!==p[i-1][1])return null;o.push({f,p});}
+ return o;}
+return {SZ,ORT,SYSTEM,STIFT,UEB,LOES,M,TOL,pruefe,alsStrokes,einheiten,kantenVon,kk,pk,sauber,ueberlappung,kodiere,dekodiere,komma};
+})();
+
+// ---------------------------------------------------------------- Rohrsysteme einzeichnen: Bild und Bedienung (braucht RZK, svgEl)
+// Bedienung wie im Mockup (Reiter 5): Stift wählen, Anschluss antippen, Ecken auf der freien Fläche, am Ziel beenden. Tippt man auf eine Leitung
+// derselben Farbe, entsteht dort ein Abzweig. Nie übereinander: Ein Stück, das auf einer vorhandenen Leitung läge, wird abgelehnt.
+// iPad: Ein Tipp zählt erst beim Loslassen und nur, wenn der Finger kaum gewandert ist – so setzt Rollen der Seite keine Punkte.
+// o: {uebungen:[Stellen in RZK.UEB], gruppen:[{titel,idx:[…]}], punkte:{stelle:Punkte}|null, lehrer:bool, stand:{g,n,z}|null,
+//     beiAenderung(), beiGeloest(stelle)}
+function bauRZ(wurzel,o){
+ o=Object.assign({uebungen:[0],gruppen:null,punkte:null,lehrer:false,stand:null,beiAenderung:null,beiGeloest:null},o||{});
+ const K=RZK,U=20,OX=84,OY=70,I=16,D=12,IDX=o.uebungen.slice();
+ let nr=IDX[0],stift='vl',strokes=[],aktiv=null,erg=null,geloest=false,wahl=0,meldung='';
+ const fertig=new Set(),zeich={};
+ if(o.stand&&typeof o.stand==='object'){
+  (Array.isArray(o.stand.g)?o.stand.g:[]).forEach(i=>{if(IDX.includes(i))fertig.add(i);});
+  if(o.stand.z&&typeof o.stand.z==='object')for(const k in o.stand.z){const i=+k;if(IDX.includes(i)){const s=K.dekodiere(o.stand.z[k],K.SZ[K.UEB[i].s]);if(s)zeich[i]=s;}}
+  if(IDX.includes(o.stand.n))nr=o.stand.n;}
+ wurzel.innerHTML='<div data-r="uebungen" role="group" aria-label="Übung wählen"></div>'+
+  '<div class="sprech" data-r="aufgabe"></div>'+
+  '<div class="wahl" data-r="stifte" role="group" aria-label="Stift wählen"></div>'+
+  '<div class="rollen"><svg data-r="svg" class="zeichnen" role="img" aria-label="Grundriss zum Einzeichnen der Leitungen"></svg></div>'+
+  '<div class="merk" data-r="status" aria-live="polite"></div>'+
+  '<div class="wahl" style="margin-top:10px"><button type="button" class="knopf haupt" data-k="pruefen">Prüfen</button><button type="button" class="knopf" data-k="zurueck">Rückgängig</button>'+
+  '<button type="button" class="knopf" data-k="leeren">Alle Leitungen löschen</button>'+(o.lehrer?'<button type="button" class="knopf" data-k="loesung">Musterlösung zeigen</button>':'')+
+  '<button type="button" class="knopf haupt" data-k="weiter" hidden>Weiter zur nächsten Übung</button></div>'+
+  '<p class="klein">So ziehst du eine Leitung: Stift wählen, einen Anschluss (Punkt) antippen, für Ecken auf die freie Fläche tippen, am Ziel-Anschluss beenden. '+
+  'Leitungen laufen nur waagerecht und senkrecht und nie übereinander; kreuzen dürfen sie sich. Tippst du auf eine Leitung derselben Farbe, entsteht dort ein Abzweig (T-Stück). '+
+  'Der Radierer löscht eine Leitung. Tipp: Halte das iPad quer, dann ist der Grundriss größer.</p><div data-r="ergebnis"></div>';
+ const $=r=>wurzel.querySelector('[data-r="'+r+'"]'),svg=$('svg');
+ const S0=()=>K.SZ[K.UEB[nr].s],X=c=>OX+c*U,Y=r=>OY+r*U;
+ const terminals=S=>[S.we.vl,S.we.rl,...S.hk.flatMap(h=>[h.a,h.b])];
+ const istTerminal=(c,r)=>terminals(S0()).some(t=>t[0]===c&&t[1]===r);
+ const aufLeitung=(c,r,f)=>strokes.some(s=>s.f===f&&K.einheiten(s.p).some(q=>q[0]===c&&q[1]===r));
+ function frei(von,pts){const belegt=K.kantenVon(aktiv?[...strokes,aktiv]:strokes),e=K.einheiten([von,...pts]);for(let i=1;i<e.length;i++)if(belegt.has(K.kk(e[i-1],e[i])))return false;return true;}
+ const geaendert=()=>{zeich[nr]=strokes;o.beiAenderung&&o.beiAenderung();};
+ const abschluss=s=>{s.p=K.sauber(s.p);strokes.push(s);};
+ function lade(i){if(!IDX.includes(i))return;zeich[nr]=strokes;nr=i;strokes=(zeich[i]||[]).map(s=>({f:s.f,p:s.p.map(q=>q.slice())}));aktiv=null;erg=null;geloest=false;wahl=0;meldung='';
+  stift=K.UEB[nr].y==='ein'?'ring':'vl';if(fertig.has(nr)&&strokes.length){const e=K.pruefe(S0(),K.UEB[nr].y,strokes);if(e.ok){erg=e;geloest=true;wahl=e.wege[0].i;}}
+  zeichne();o.beiAenderung&&o.beiAenderung();}
+ function tipp(c,r){
+  if(geloest)return;erg=null;meldung='';
+  if(stift==='radierer'){for(let i=strokes.length-1;i>=0;i--)if(K.einheiten(strokes[i].p).some(q=>q[0]===c&&q[1]===r)){strokes.splice(i,1);geaendert();break;}zeichne();return;}
+  const ziel=istTerminal(c,r)||aufLeitung(c,r,stift);
+  if(!aktiv){
+   if(!ziel)meldung='Beginne an einem Anschluss (Punkt) oder auf einer Leitung derselben Farbe – dort entsteht ein Abzweig.';
+   else aktiv={f:stift,p:[[c,r]]};
+  }else{
+   const [lc,lr]=aktiv.p[aktiv.p.length-1];
+   if(c===lc&&r===lr){if(aktiv.p.length===1)aktiv=null;zeichne();return;}
+   if(ziel){
+    const wege=c===lc||r===lr?[[[c,r]]]:[[[c,lr],[c,r]],[[lc,r],[c,r]]],w=wege.find(x=>frei([lc,lr],x));
+    if(!w)meldung='Dort liegt schon eine Leitung – Leitungen nie übereinander zeichnen. Setz selbst eine Ecke.';
+    else{aktiv.p.push(...w);abschluss(aktiv);aktiv=null;geaendert();}
+   }else{
+    if(Math.abs(c-lc)>=Math.abs(r-lr))r=lr;else c=lc;
+    if(c===lc&&r===lr){zeichne();return;}
+    if(!frei([lc,lr],[[c,r]]))meldung='Dort liegt schon eine Leitung – Leitungen nie übereinander zeichnen.';
+    else{aktiv.p.push([c,r]);if(istTerminal(c,r)||aufLeitung(c,r,stift)){abschluss(aktiv);aktiv=null;geaendert();}}
+   }
+  }
+  zeichne();
+ }
+ function zurueck(){if(geloest)return;erg=null;meldung='';if(aktiv){aktiv.p.pop();if(!aktiv.p.length)aktiv=null;}else{strokes.pop();geaendert();}zeichne();}
+ function leeren(){strokes=[];aktiv=null;erg=null;geloest=false;meldung='';geaendert();zeichne();}
+ function loesung(){strokes=K.alsStrokes(K.LOES[K.UEB[nr].s][K.UEB[nr].y]);aktiv=null;geloest=false;erg=null;meldung='';geaendert();return pruefen();}
+ function pruefen(){aktiv=null;erg=K.pruefe(S0(),K.UEB[nr].y,strokes);geloest=erg.ok;let neu=false;
+  if(geloest){wahl=erg.wege[0].i;if(!fertig.has(nr)){fertig.add(nr);neu=true;}}
+  zeich[nr]=strokes;zeichne();o.beiAenderung&&o.beiAenderung();if(neu&&o.beiGeloest)o.beiGeloest(nr);return erg;}
+ function gitter(ev){const pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const q=pt.matrixTransform(svg.getScreenCTM().inverse()),S=S0();
+  let best=null,bd=.75*U;for(const t of terminals(S)){const d=Math.hypot(q.x-X(t[0]),q.y-Y(t[1]));if(d<bd){bd=d;best=t;}}
+  if(best)return best.slice();
+  return [Math.max(0,Math.min(S.C,Math.round((q.x-OX)/U))),Math.max(0,Math.min(S.R,Math.round((q.y-OY)/U)))];}
+ const dpf=p=>p.map((q,i)=>(i?'L':'M')+X(q[0])+' '+Y(q[1])).join(' ');
+ const nameKurz=i=>(i+1)+' '+K.SYSTEM[K.UEB[i].y].kurz;
+ function zeichne(){
+  const S=S0(),u=K.UEB[nr],w=S.C*U,h=S.R*U;
+  svg.setAttribute('viewBox',`0 0 ${w+2*OX} ${h+2*OY}`);svg.innerHTML='';
+  const A=(n,a,t)=>svg.appendChild(svgEl(n,a,t)),linie=(p,c,b)=>A('line',{x1:p[0],y1:p[1],x2:p[2],y2:p[3],stroke:c,'stroke-width':b});
+  A('style',{},'@keyframes rzfl{to{stroke-dashoffset:-28}} .rzfl{animation:rzfl .9s linear infinite} @media (prefers-reduced-motion:reduce){.rzfl{animation:none}}');
+  const defs=A('defs',{}),pat=svgEl('pattern',{id:'rz-raster-'+nr,x:OX-U/2,y:OY-U/2,width:U,height:U,patternUnits:'userSpaceOnUse'});pat.appendChild(svgEl('circle',{cx:U/2,cy:U/2,r:1.2,fill:'#c9c2b2'}));defs.appendChild(pat);
+  A('rect',{x:OX-I,y:OY-I,width:w+2*I,height:h+2*I,fill:'#fbfaf6'});
+  A('rect',{x:OX-U/2,y:OY-U/2,width:w+U,height:h+U,fill:'url(#rz-raster-'+nr+')'});
+  A('rect',{x:OX-I-D/2,y:OY-I-D/2,width:w+2*I+D,height:h+2*I+D,fill:'none',stroke:'#6b6b6b','stroke-width':D});
+  const wand=(s,a,b)=>s==='o'?[X(a),OY-I-D/2,X(b),OY-I-D/2]:s==='u'?[X(a),OY+h+I+D/2,X(b),OY+h+I+D/2]:s==='l'?[OX-I-D/2,Y(a),OX-I-D/2,Y(b)]:[OX+w+I+D/2,Y(a),OX+w+I+D/2,Y(b)];
+  S.tuer.forEach(([s,a,b])=>linie(wand(s,a,b),'#fbfaf6',D+1));
+  S.waende.forEach(q=>linie([X(q[0]),Y(q[1]),X(q[2]),Y(q[3])],'#6b6b6b',6));
+  S.raeume.forEach(([t,c,r])=>A('text',{x:X(c),y:Y(r),'text-anchor':'middle','font-size':15,fill:'#8a8478'},t));
+  // Heizkörper mit Fenster dahinter
+  S.hk.forEach((k,i)=>{const s=k.a[1]===0&&k.b[1]===0?'o':k.a[1]===S.R&&k.b[1]===S.R?'u':k.a[0]===0?'l':'r',quer=s==='o'||s==='u';
+   const lo=Math.min(quer?k.a[0]:k.a[1],quer?k.b[0]:k.b[1]),hi=Math.max(quer?k.a[0]:k.a[1],quer?k.b[0]:k.b[1]),mi=(lo+hi)/2;
+   linie(wand(s,lo-1,hi+1),'#59a7d9',D-5);
+   const g=svgEl('g',{style:geloest?'cursor:pointer':'','data-hk':i});
+   const r=s==='o'?[X(lo),OY-I+2,(hi-lo)*U,10]:s==='u'?[X(lo),OY+h+I-12,(hi-lo)*U,10]:s==='l'?[OX-I+2,Y(lo),10,(hi-lo)*U]:[OX+w+I-12,Y(lo),10,(hi-lo)*U];
+   g.appendChild(svgEl('rect',{x:r[0],y:r[1],width:r[2],height:r[3],rx:2,fill:geloest&&i===wahl?'#f6b9a8':'#fff',stroke:'#22303a','stroke-width':geloest&&i===wahl?2.6:1.5}));
+   const tx=s==='o'?[X(mi),OY-I-D-9,'middle']:s==='u'?[X(mi),OY+h+I+D+20,'middle']:s==='l'?[OX-I-D-7,Y(mi)+5,'end']:[OX+w+I+D+7,Y(mi)+5,'start'];
+   g.appendChild(svgEl('text',{x:tx[0],y:tx[1],'text-anchor':tx[2],'font-size':15,'font-weight':700,fill:'#22303a'},k.n));
+   if(geloest)g.onclick=()=>{wahl=i;zeichne();};
+   svg.appendChild(g);});
+  // Anschluss vom Wärmeerzeuger
+  if(S.we.kasten){const q=S.we.kasten;A('rect',{x:X(q[0]),y:Y(q[1]),width:q[2]*U,height:q[3]*U,rx:5,fill:'#fff',stroke:'#22303a','stroke-width':2});A('text',{x:X(q[0]+q[2]/2),y:Y(q[1]+q[3]/2)+6,'text-anchor':'middle','font-size':17,'font-weight':700,fill:'#22303a'},'WE');
+   linie([X(S.we.vl[0]),Y(S.we.vl[1]),X(q[0]),Y(S.we.vl[1])],'#d0342c',4);linie([X(S.we.rl[0]),Y(S.we.rl[1]),X(q[0]),Y(S.we.rl[1])],'#2f6fb7',4);}
+  else{const yy=OY+h+I+D+20,li=S.we.vl[0]<S.C/2,mn=Math.min(S.we.vl[0],S.we.rl[0]),mx=Math.max(S.we.vl[0],S.we.rl[0]);
+   A('text',{x:X(S.we.vl[0]),y:yy,'text-anchor':'middle','font-size':14,'font-weight':700,fill:'#d0342c'},'VL');A('text',{x:X(S.we.rl[0]),y:yy,'text-anchor':'middle','font-size':14,'font-weight':700,fill:'#2f6fb7'},'RL');
+   A('text',{x:li?X(mx+1.4):X(mn-1.4),y:yy,'text-anchor':li?'start':'end','font-size':14,fill:'#5d6b75'},'Anschluss vom Wärmeerzeuger');}
+  // Leitungen
+  const blass=geloest?.35:1;
+  strokes.forEach(s=>A('path',{d:dpf(s.p),fill:'none',stroke:K.STIFT[s.f].c,'stroke-width':5,'stroke-linejoin':'round','stroke-linecap':'round',opacity:blass}));
+  strokes.forEach(s=>[s.p[0],s.p[s.p.length-1]].forEach(q=>{if(!istTerminal(q[0],q[1]))A('circle',{cx:X(q[0]),cy:Y(q[1]),r:5,fill:K.STIFT[s.f].c,opacity:blass});}));
+  if(aktiv){if(aktiv.p.length>1)A('path',{d:dpf(aktiv.p),fill:'none',stroke:K.STIFT[aktiv.f].c,'stroke-width':5,'stroke-linejoin':'round','stroke-linecap':'round'});
+   const q=aktiv.p[aktiv.p.length-1];A('circle',{cx:X(q[0]),cy:Y(q[1]),r:9,fill:'none',stroke:K.STIFT[aktiv.f].c,'stroke-width':2.5});}
+  // Weg des Wassers über das eigene Netz
+  if(geloest){const wg=erg.wege.find(x=>x.i===wahl)||erg.wege[0],k=S.hk[wg.i],teile=u.y==='ein'?wg.pf.map(p=>[p,K.STIFT.ring.c]):[[wg.pf[0],K.STIFT.vl.c],[wg.pf[1],K.STIFT.rl.c]];
+   teile.forEach(([p,c])=>{A('path',{d:dpf(p),fill:'none',stroke:c,'stroke-width':8,'stroke-linejoin':'round','stroke-linecap':'round'});A('path',{d:dpf(p),fill:'none',stroke:'#fff','stroke-width':2.4,'stroke-dasharray':'6 22','stroke-linecap':'round',class:'rzfl'});});
+   if(wg.pf.length===2)A('path',{d:dpf([k.a,k.b]),fill:'none',stroke:'#e2725b','stroke-width':3,'stroke-dasharray':'3 5'});}
+  // Anschlüsse
+  A('circle',{cx:X(S.we.vl[0]),cy:Y(S.we.vl[1]),r:7.5,fill:'#d0342c',stroke:'#fff','stroke-width':2});A('circle',{cx:X(S.we.rl[0]),cy:Y(S.we.rl[1]),r:7.5,fill:'#2f6fb7',stroke:'#fff','stroke-width':2});
+  S.hk.forEach(k=>[k.a,k.b].forEach(q=>A('circle',{cx:X(q[0]),cy:Y(q[1]),r:6,fill:'#fff',stroke:'#22303a','stroke-width':2})));
+  // Übungswahl, Aufgabe, Stifte
+  const gr=o.gruppen||[{titel:'',idx:IDX}],pk=i=>o.punkte&&o.punkte[i]?' · '+o.punkte[i]+' P.':'';
+  $('uebungen').innerHTML=gr.map(g=>`<div class="gruppe">${g.titel?`<span class="gname">${g.titel}</span>`:''}${g.idx.map(i=>`<button type="button" class="knopf" aria-pressed="${i===nr}" data-ueb="${i}">${fertig.has(i)?'✓ ':''}${nameKurz(i)}${pk(i)}</button>`).join('')}</div>`).join('');
+  $('uebungen').querySelectorAll('button').forEach(b=>{b.onclick=()=>lade(+b.dataset.ueb);});
+  $('aufgabe').innerHTML=`<b class="wer">ÜBUNG ${nr+1} · ${S.name.toUpperCase()} · ${K.SYSTEM[u.y].name.toUpperCase()}${o.punkte&&o.punkte[nr]?' · '+o.punkte[nr]+' PUNKTE':''}</b>${K.ORT[u.s]} ${K.SYSTEM[u.y].text}`;
+  const stifte=u.y==='ein'?['ring','radierer']:['vl','rl','radierer'];
+  $('stifte').innerHTML=stifte.map(k=>`<button type="button" aria-pressed="${k===stift}" data-stift="${k}"><i style="display:inline-block;width:16px;height:7px;border-radius:3px;background:${K.STIFT[k].c};vertical-align:2px;margin-right:6px"></i>${K.STIFT[k].n}${k==='vl'?' (rot)':k==='rl'?' (blau)':''}</button>`).join('');
+  $('stifte').querySelectorAll('button').forEach(b=>b.onclick=()=>setzeStift(b.dataset.stift));
+  let t;
+  if(meldung)t=meldung;
+  else if(geloest)t='<b>Richtig!</b>'+(o.punkte&&o.punkte[nr]?' Diese Übung bringt dir '+o.punkte[nr]+' Punkte.':'')+' Tippe auf einen Heizkörper: Der Weg des Wassers läuft über deine Leitungen.';
+  else if(erg)t='<b>Noch nicht fertig.</b> Die Liste unten zeigt, was stimmt und was noch fehlt. Du kannst einfach weiterzeichnen.';
+  else if(stift==='radierer')t='Radierer: Tippe auf eine Leitung, um sie zu löschen.';
+  else if(aktiv)t='Leitung wird gezogen: Für Ecken auf die freie Fläche tippen, am Ziel-Anschluss beenden. Den Anfang noch einmal antippen bricht ab.';
+  else if(fertig.has(nr)&&!strokes.length)t='✓ Diese Übung hast du schon gelöst. Du kannst sie noch einmal zeichnen.';
+  else if(!strokes.length)t=u.y==='ein'?'Tippe den roten Vorlauf-Anschluss an und zieh den Ring von Heizkörper zu Heizkörper bis zum blauen Rücklauf-Anschluss.':'Fang mit dem Vorlauf an: Tippe den roten Anschluss an und zieh die Leitung zu den Heizkörpern.';
+  else t='Weiterzeichnen oder „Prüfen“ antippen.';
+  $('status').innerHTML=t;
+  const pos=IDX.indexOf(nr);wurzel.querySelector('[data-k="weiter"]').hidden=!(geloest&&pos<IDX.length-1);
+  let e='';
+  if(erg){e='<ul class="pruefliste">'+erg.zeilen.map(z=>`<li class="${z[0]?'ok':'nein'}">${z[1]}</li>`).join('')+'</ul>';
+   if(geloest){const max=Math.max(...erg.wege.map(x=>x.m));
+    e+='<div class="rollen" style="margin-top:12px"><table><tr><th>Heizkörper</th>'+(u.y==='ein'?'<th>Platz im Ring</th><th>Vorlauf am Heizkörper</th>':'<th>Vorlauf</th><th>Rücklauf</th><th>Weg des Wassers</th><th style="width:28%"></th>')+'</tr>'+
+     erg.wege.map(x=>`<tr style="cursor:pointer${x.i===wahl?';font-weight:700':''}" data-wahl="${x.i}"><td>${x.n}</td>`+(u.y==='ein'?`<td>${x.nr+1}.</td><td>${x.temp} °C</td>`:`<td>${K.komma(x.vl)} m</td><td>${K.komma(x.rl)} m</td><td>${K.komma(x.m)} m</td><td><div class="balken" style="width:${Math.round(x.m/max*100)}%;opacity:${x.i===wahl?1:.5}"></div></td>`)+'</tr>').join('')+
+     `</table></div><p class="klein" style="margin-top:6px">Rohrbedarf deiner Lösung: ${K.komma(erg.rohr)} m. Ein Rasterschritt = 0,25 m.${u.y==='ein'?' Temperaturen sind Prinzipwerte, keine Berechnung.':''}</p>`+
+     (erg.art==='reihe'?'<p class="klein">Du hast die Heizkörper in Reihe gezeichnet. In der Praxis sitzt an jedem Heizkörper ein Einrohrventil, durch das ein Teil des Wassers am Heizkörper vorbeiläuft.</p>':'');}}
+  $('ergebnis').innerHTML=e;
+  $('ergebnis').querySelectorAll('tr[data-wahl]').forEach(z=>z.onclick=()=>{wahl=+z.dataset.wahl;zeichne();});
+ }
+ function setzeStift(k){stift=k;aktiv=null;meldung='';zeichne();}
+ // Tippen: zählt beim Loslassen, wenn der Finger kaum gewandert ist
+ let unten=null;
+ svg.addEventListener('pointerdown',ev=>{if(geloest)return;unten={x:ev.clientX,y:ev.clientY};if(ev.pointerType==='mouse')ev.preventDefault();});
+ svg.addEventListener('pointerup',ev=>{if(!unten||geloest){unten=null;return;}const weit=Math.hypot(ev.clientX-unten.x,ev.clientY-unten.y);unten=null;if(weit>14)return;const g=gitter(ev);tipp(g[0],g[1]);});
+ svg.addEventListener('pointercancel',()=>{unten=null;});
+ svg.addEventListener('pointermove',ev=>{if(ev.pointerType!=='mouse'||!aktiv||geloest)return;let [c,r]=gitter(ev);const [lc,lr]=aktiv.p[aktiv.p.length-1];if(!(istTerminal(c,r)||aufLeitung(c,r,stift))){if(Math.abs(c-lc)>=Math.abs(r-lr))r=lr;else c=lc;}
+  const alt=svg.querySelector('[data-vorschau]');if(alt)alt.remove();if(c!==lc&&r!==lr)return;svg.appendChild(svgEl('path',{d:dpf([[lc,lr],[c,r]]),fill:'none',stroke:K.STIFT[aktiv.f].c,'stroke-width':4,'stroke-dasharray':'6 6',opacity:.7,'data-vorschau':1,'pointer-events':'none'}));});
+ const knopf=k=>wurzel.querySelector('[data-k="'+k+'"]');
+ knopf('pruefen').onclick=()=>pruefen();knopf('zurueck').onclick=zurueck;knopf('leeren').onclick=leeren;knopf('weiter').onclick=()=>{const p=IDX.indexOf(nr);if(p<IDX.length-1){lade(IDX[p+1]);try{wurzel.scrollIntoView({block:'start'});}catch(_){}}};
+ if(o.lehrer)knopf('loesung').onclick=loesung;
+ strokes=(zeich[nr]||[]).map(s=>({f:s.f,p:s.p.map(q=>q.slice())}));stift=K.UEB[nr].y==='ein'?'ring':'vl';
+ if(fertig.has(nr)&&strokes.length){const e=K.pruefe(S0(),K.UEB[nr].y,strokes);if(e.ok){erg=e;geloest=true;wahl=e.wege[0].i;}}
+ zeichne();
+ function exportiere(){zeich[nr]=strokes;const z={};IDX.forEach(i=>{if(zeich[i]&&zeich[i].length)z[i]=K.kodiere(zeich[i]);});return {g:[...fertig].sort((a,b)=>a-b),n:nr,z};}
+ return {lade,tipp,pruefen,loesung,leeren,zurueck,setzeStift,waehle:i=>{wahl=i;zeichne();},fertig:()=>new Set(fertig),exportiere,
+  zustand:()=>({nr,stift,strokes,aktiv,erg,geloest,wahl,meldung,fertig:[...fertig]})};
+}
+// Stufen zum Kürzen des Spielstands (Moodle: höchstens 4096 Zeichen): erst Zeichnungen gelöster Übungen, dann alle außer der aktuellen, dann alle
+const RZ_STUFEN=[d=>{if(d&&d.r&&d.r.z)(d.r.g||[]).forEach(i=>{delete d.r.z[i];});return d;},d=>{if(d&&d.r&&d.r.z){const n=d.r.n;for(const k in d.r.z)if(+k!==n)delete d.r.z[k];}return d;},d=>{if(d&&d.r)d.r.z={};return d;}];
+
+const W=bauWeg(document.getElementById('weg'),{modus:'schueler',systeme:['zwei','tichel','ein'],start:'zwei',lupe:true,drosselZahl:()=>false});
+const R1=bauRZ(document.getElementById('rz'),{uebungen:[0,1,2,3,4,5],gruppen:[{titel:'Schulungsraum',idx:[0,1,2]},{titel:'Werkstatt',idx:[3,4,5]}]});
+const R2=bauRZ(document.getElementById('rz2'),{uebungen:[6,7,8],gruppen:[{titel:'Wohnung',idx:[6,7,8]}]});
+window.__seite={W,R1,R2};
+</script>
+</body>
+</html>
