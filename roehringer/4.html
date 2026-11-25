@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>4 Meldung an den Chef: das Übergabeprotokoll – Haus Röhringer</title>
+<style>
+:root{--papier:#f4f1ea;--tinte:#22303a;--leise:#5d6b75;--linie:#d5cfc2;--karte:#fff;--akzent:#0b6b7d;--akzent-hell:#e1f0f2;--gold:#d99a1b;
+  --vl:#d0342c;--rl:#2f6fb7;--ring:#b0408a;--gut:#2e7d4f;--gut-hell:#e4f3e3;--schlecht:#c8371f;--schlecht-hell:#fde3df;--merk:#fffbe9;--merk-rand:#ecd9a0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation}
+body{margin:0;background:var(--papier);color:var(--tinte);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+.kopf{position:sticky;top:0;z-index:5;background:var(--papier);border-bottom:1px solid var(--linie);padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.kopf .titel{flex:1 1 360px;min-width:0}
+.kopf .ober{margin:0;font-size:13px;color:var(--leise)}
+.kopf h1{margin:0;font-size:20px;line-height:1.25}
+.kopf .stand{font-size:16px;white-space:nowrap;text-align:right}
+.kopf .stand small{display:block;font-size:12px;color:var(--leise)}
+.kurs{min-height:44px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--akzent);background:#fff;color:var(--akzent);font-weight:600;cursor:pointer;touch-action:manipulation}
+main{max-width:1040px;margin:0 auto;padding:14px 16px 60px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+h2{font-size:20px;margin:0 0 8px;line-height:1.25}
+h3{font-size:17px;margin:14px 0 6px}
+p{margin:0 0 10px}
+.klein{font-size:14px;color:var(--leise)}
+.sprech{border-left:5px solid var(--akzent);background:var(--akzent-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:0 0 12px}
+.sprech b.wer{display:block;font-size:13px;color:var(--akzent);letter-spacing:.3px;margin-bottom:2px}
+.merk{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 12px;margin:10px 0 0}
+.wahl{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.knopf,.wahl button{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;touch-action:manipulation}
+.wahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.knopf.haupt{background:var(--akzent);border-color:var(--akzent);color:#fff}
+.knopf:disabled,.wahl button:disabled{opacity:.45;cursor:default}
+svg{display:block;width:100%;height:auto}
+.rollen{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--leise);font-weight:600}
+.balken{height:12px;border-radius:6px;background:var(--akzent)}
+.balkenreihe{display:flex;min-width:60px}
+.zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.zwei{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}}
+/* Animation */
+.wegbild{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.messung{min-height:48px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--akzent-hell);font-size:17px}
+.messung b{font-size:19px}
+.hk-knopf{cursor:pointer}
+.lupe-ruf{cursor:pointer}
+.lupe{border:2px solid var(--tinte);border-radius:14px;padding:12px 14px;margin-top:12px;background:#fff}
+.lupe h3{margin:0 0 6px}
+.lupe ol{margin:8px 0 0;padding-left:22px}
+.lupe li{margin:3px 0}
+/* Aufgaben */
+.aufgabe{border:1px solid var(--linie);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:#fff}
+.aufgabe h3{margin:0 0 6px}
+.aufgabe .pkt{float:right;margin-left:10px;font-size:14px;color:var(--leise);font-weight:600}
+.aufgabe.fertig{border-color:var(--gut);box-shadow:0 0 0 2px var(--gut-hell)}
+.feld{display:inline-flex;align-items:center;gap:6px;margin:4px 16px 4px 0;font-size:17px}
+input.zahl{font:inherit;width:5.2em;min-height:44px;padding:6px 8px;border:1px solid var(--linie);border-radius:8px;background:#fff;color:var(--tinte)}
+input.zahl.ok{border-color:var(--gut);background:var(--gut-hell)}
+input.zahl.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+input.zahl:disabled{opacity:1;color:var(--tinte)}
+.rueck{display:block;margin-top:8px;font-size:15px}
+.rueck.ok{color:var(--gut);font-weight:600}
+.rueck.nein{color:var(--schlecht)}
+.satz{border:1px solid var(--linie);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+.satz p{margin:0 0 6px;font-style:italic}
+.satz.ok{border-color:var(--gut);background:var(--gut-hell)}
+.satz.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+.satz .wahl{margin:0}
+/* Zeichnen */
+svg.zeichnen{min-width:680px;touch-action:manipulation;background:#eef1ea;border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.gruppe{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 8px}
+.gruppe button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.gruppe .gname{font-size:14px;color:var(--leise);font-weight:600;min-width:110px}
+.pruefliste{list-style:none;padding:0;margin:10px 0 0;font-size:15px}
+.pruefliste li{padding:3px 0 3px 26px;position:relative}
+.pruefliste li::before{position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;text-align:center;line-height:18px}
+.pruefliste li.ok::before{content:"✓";background:var(--gut)}
+.pruefliste li.nein::before{content:"✗";background:var(--schlecht)}
+/* Team */
+.tablet{border:2px solid var(--tinte);border-radius:16px;padding:14px;background:#fff;margin-top:6px}
+.tablet h3{margin:0 0 6px}
+.phase{border-top:1px solid var(--linie);padding-top:10px;margin-top:12px}
+.phase.zu{opacity:.45}
+.phase label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.grosswahl{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}
+.grosswahl button{min-width:150px;min-height:96px;border-radius:16px;border:2px solid var(--tinte);background:#fff;cursor:pointer;font-size:18px;padding:10px 14px;touch-action:manipulation}
+.grosswahl button b{display:block;font-size:34px;line-height:1.1}
+.ok-text{color:var(--gut);font-weight:600}
+.hinweis-gruen{display:inline-block;background:var(--gut-hell);border:1px solid var(--gut);border-radius:8px;padding:2px 8px}
+.hinweis-orange{display:inline-block;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:2px 8px}
+@media (max-width:820px){body{font-size:16px}.kopf h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Station 3.2 – Ergänzungen zu basis.css (Reiter, Animation, Auswahl, Rechentrainer, Strangliste) */
+.reiter{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.reiter button{min-height:48px;padding:6px 16px;border-radius:12px;border:1.5px solid var(--linie);background:#fff;color:var(--tinte);font-size:16px;font-weight:600;cursor:pointer;touch-action:manipulation;text-align:left}
+.reiter button[aria-selected="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.reiter button small{display:block;font-size:12px;font-weight:400;opacity:.85}
+.dr-zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.dr-zwei{grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);align-items:start}}
+.dr-bild{margin:0}
+.dr-gruppe{align-items:center;margin:0 0 8px}
+.gname{font-size:14px;color:var(--leise);font-weight:600;margin-right:2px}
+.dr-svg{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.dr-info{margin:8px 0 0}
+.dr-fuss{margin:8px 0 0}
+.dr-rechts .karte{margin:0}
+/* Sprechblase des Chefs: hochkant oben, quer in der rechten Spalte (damit Regler und Bild ganz auf den Schirm passen) */
+.chef-rechts{margin:0 0 12px}
+@media (min-width:900px){.chef-oben{display:none}}
+@media (max-width:899px){.chef-rechts{display:none}}
+/* Auswahlantworten */
+.optionen{display:flex;flex-direction:column;gap:8px;margin:6px 0 8px}
+.optionen button{min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-align:left;font-size:16px;cursor:pointer;touch-action:manipulation}
+.optionen.quer{flex-direction:row;flex-wrap:wrap}
+.optionen button[aria-pressed="true"]{border-color:var(--tinte);box-shadow:inset 0 0 0 2px var(--tinte)}
+.optionen button.ok{background:var(--gut-hell);border-color:var(--gut);box-shadow:inset 0 0 0 2px var(--gut)}
+.optionen button.nein{background:var(--schlecht-hell);border-color:var(--schlecht);box-shadow:inset 0 0 0 2px var(--schlecht)}
+.optionen button:disabled{cursor:default}
+.optionen button:disabled:not(.ok){opacity:.5}
+.aufgabe.gesperrt .optionen,.aufgabe.gesperrt .feld,.aufgabe.gesperrt .wahl{opacity:.45}
+.sperre{display:block;font-size:15px;color:#7a4d00;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:6px 10px;margin:6px 0}
+.lsatz{font-style:italic;line-height:2;margin:4px 0 8px}
+.lluecke{display:inline-block;min-width:7em;padding:0 8px;border-bottom:2px solid var(--tinte);font-style:normal;font-weight:700;text-align:center}
+.lluecke.ok{color:var(--gut);border-color:var(--gut)}
+.lluecke.nein{color:var(--schlecht);border-color:var(--schlecht)}
+.weiter{margin:4px 0 0}
+/* Rechentrainer */
+.rt-leiste{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.rt-leiste .reiter{margin:0}
+.rt-karten{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.rt-karten .aufgabe{margin:0}
+.rt-karten .breit{grid-column:1/-1}
+.feldzeile{margin:6px 0}
+.feldzeile .optionen{margin:6px 0 0}
+.aufgabe .nr{display:inline-block;min-width:2.2em;font-weight:700;color:var(--akzent)}
+.aufgabe .gegeben{font-size:18px}
+.rt-skizze{max-width:640px;margin:6px 0 10px;border:1px solid var(--linie);border-radius:10px;overflow:hidden;background:#fffef9}
+.merkzeile{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 14px;margin:0 0 12px;font-size:17px}
+.merkzeile p{margin:2px 0}
+.geuebt{font-size:13px;color:var(--gut);font-weight:600;margin-left:6px}
+/* Strangliste (Dreier-Team) */
+.strangliste td,.strangliste th{padding:6px 6px}
+.strangliste td.zahl{text-align:right;white-space:nowrap}
+.strangliste tr.eigen td{background:#fff8d6}
+.strangliste tr.chef td{color:var(--leise)}
+.skizze-chef svg{border:1px solid var(--linie);border-radius:10px}
+@media (min-width:900px){.tablet .dr-zwei>div:first-child{position:sticky;top:104px}}
+a.kurs{display:inline-flex;align-items:center;text-decoration:none}
+.merksatz{font-size:19px;line-height:1.45}
+.meldung{border-left:5px solid var(--gut);background:var(--gut-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0 0}
+
+/* Station 3.3 – Ergänzungen zu basis.css und s32.css (Ventildiagramm mit Ziehlinien, Planungsskizze, Einstellwert ablesen, Hersteller-Team) */
+/* Ventildiagramm */
+.vd-flaeche{position:relative}
+.vd-svg{background:#fff;border:1px solid var(--linie);border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.vd-griff{position:absolute;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;z-index:2}
+.vd-griff-y{left:0;top:12.34%;width:12.8%;height:69.8%;cursor:ns-resize}
+.vd-griff-x{left:10.94%;width:78.13%;top:79.57%;height:14.04%;cursor:ew-resize}
+.vd-gross .vd-griff{display:none}
+.vd-gross .vd-svg{border-color:var(--tinte);border-width:2px}
+.vd-knoepfe{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:8px 0 0}
+.vd-paar{display:inline-flex;align-items:center;gap:6px}
+.vd-name{font-weight:700;color:var(--leise);min-width:1.6em}
+.vd-k{min-width:52px;font-size:22px;font-weight:700;padding:2px 0;line-height:1}
+.vd-wert{display:inline-block;min-width:6.4em;text-align:center;font-size:17px}
+.vd-lupe{min-width:96px}
+.vd-quelle{margin:6px 0 0}
+/* linke Spalte bleibt quer stehen, während rechts gearbeitet wird */
+@media (min-width:900px){.ea-links,.pz-links,.ht-links{position:sticky;top:calc(var(--kopf,0px) + 8px)}}
+/* Einstellwert ablesen */
+.ea-bild{margin:0}
+.ea-leiste{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:0 0 8px}
+.ea-leiste .wahl{margin:0}
+.ea-info{margin:0 0 8px}
+.ea-merk{margin:0 0 12px}
+.ea-merk summary{cursor:pointer;min-height:44px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;list-style:revert}
+.ea-hk{border:1px solid var(--linie);border-radius:10px;padding:8px 10px;margin:8px 0;background:#fcfbf8}
+.ea-hk.aktiv{border-color:var(--akzent);box-shadow:0 0 0 2px var(--akzent-hell);background:#fff}
+.ea-hk.fertig{border-color:var(--gut);background:var(--gut-hell)}
+.ea-hk-kopf{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
+.ea-werte{font-size:16px}
+.ea-hk label{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 12px 4px 0}
+/* Planungsskizze */
+.pz-bild{margin:0}
+.pz-legende{margin:6px 0 0}
+.pz-gelb{background:#fff59d;padding:0 4px;border-radius:3px;font-weight:700}
+.pz-saeulen{margin:12px 0 0;padding:8px 10px}
+.pz-formel{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:6px 0}
+.pz-mdot{font-size:24px;font-weight:700}
+.pz-bruch{display:flex;flex-direction:column;min-width:230px}
+.pz-zone{min-height:60px;border:2px dashed #b9c3cc;border-radius:10px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;padding:4px 8px;background:#fcfbf8}
+.pz-zone.ok{border-style:solid;border-color:var(--gut);background:var(--gut-hell)}
+.pz-zone.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+.pz-strich{height:3px;background:var(--tinte);margin:5px 0;border-radius:2px}
+.pz-ablage{margin:8px 0 0;justify-content:flex-start;min-height:64px}
+.pz-mal{font-size:24px;font-weight:700}
+.pz-kachel{min-width:60px;min-height:50px;font-size:24px;font-weight:700;border:2px solid var(--tinte);border-radius:10px;background:#fff;color:var(--tinte);cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.pz-kachel.gewaehlt{background:var(--akzent-hell);border-color:var(--akzent);box-shadow:0 0 0 3px var(--akzent-hell)}
+.pz-kachel.zieht{position:relative;z-index:30;box-shadow:0 8px 18px rgba(0,0,0,.25);cursor:grabbing}
+.pz-kachel:disabled{cursor:default;opacity:1}
+input.zahl.breit{width:6.4em}
+.aufgabe.gesperrt h3{color:var(--leise)}
+/* Hersteller-Team */
+.ht-klein{display:block;font-size:13px;color:var(--leise);font-weight:400;margin-top:4px}
+.ht-werkzeug{margin:0}
+.ht-kv td,.ht-kv th{padding:3px 6px;font-size:14px}
+.ht-anbau td,.ht-anbau th{font-size:14px}
+.tablet .phase label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+/* Beamer */
+.bm-reiter{margin:0 0 10px}
+.bm-tabelle td,.bm-tabelle th{font-size:17px}
+/* breitere Bildspalte quer (Skizze und Diagramm brauchen Platz) */
+@media (min-width:900px){.dr-zwei.ea,.dr-zwei.pz{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}.ht-zwei{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+ .tablet .dr-zwei>.ht-links{top:calc(var(--kopf,0px) + 8px)}}
+
+/* Station 3.4 – Ergänzungen zu basis.css und s32.css (Kennlinien-Baustein, Kennlinienfeld-Animation, Anlagenkennlinie zeichnen, Pumpen-Team) */
+/* Kennlinien-Baustein */
+.kl-flaeche{position:relative}
+.kl-svg{background:#fff;border:1px solid var(--linie);border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.kl-griff{position:absolute;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;z-index:2}
+.kl-griff[data-griff="y"]{cursor:ns-resize}.kl-griff[data-griff="x"]{cursor:ew-resize}
+.kl-gross .kl-griff{display:none}
+.kl-gross .kl-svg{border-color:var(--tinte);border-width:2px}
+.kl-knoepfe{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 0}
+.kl-paar{display:inline-flex;align-items:center;gap:6px}
+.kl-name{font-weight:700;color:var(--leise);min-width:1.4em}
+.kl-k{min-width:52px;font-size:22px;font-weight:700;padding:2px 0;line-height:1}
+.kl-wert{display:inline-block;min-width:6.6em;text-align:center;font-size:17px}
+.kl-lupe{min-width:96px}
+.kl-quelle{margin:6px 0 0}
+.z34-bild{display:block;width:100%;height:auto;border:1px solid var(--linie);border-radius:10px;background:#fff}
+/* Animation 3.4.1: Haus | Kennlinienfeld | Anzeigen und Aufgaben (quer), Haus und Feld nebeneinander, Aufgaben darunter (hochkant) */
+.kf-gitter{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:600px){.kf-gitter{grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr)}.kf-rechts{grid-column:1/-1}}
+@media (min-width:900px){.kf-gitter{grid-template-columns:minmax(0,.8fr) minmax(0,1.08fr) minmax(0,1fr);align-items:start}.kf-rechts{grid-column:auto}
+ .kf-haus,.kf-diagr{position:sticky;top:calc(var(--kopf,0px) + 8px)}}
+.kf-gitter>.karte{margin:0;padding:10px}
+.kf-haus-svg{display:block;width:100%;height:auto;border:1px solid var(--linie);border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.kf-ziel{cursor:pointer;outline:none}
+.kf-ziel:focus-visible{fill-opacity:.12;fill:#0b6b7d}
+.kf-pumpe,.kf-stufen,.kf-ventile,.kf-schalter{margin:8px 0 0;gap:6px}
+.kf-pumpe button,.kf-stufen button,.kf-ventile button,.kf-schalter button{padding:6px 9px;font-size:15px}
+.kf-legende{margin:6px 0 0;font-size:13px}
+.kf-streifen-titel{margin:6px 0 2px;font-size:13px;font-weight:700;color:var(--leise)}
+.kf-rechts .karte{margin:0 0 12px}
+.kf-anzeigen{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;padding:10px 12px}
+.kf-anz span{display:block;font-size:13px;color:var(--leise)}
+.kf-anz b{display:block;font-size:19px;line-height:1.2}
+.kf-anz small{display:block;font-size:12px;color:var(--leise)}
+.kf-feld span{margin-right:4px}
+.kf-zeile{margin:6px 0}
+.kf-zeile .gname{display:block;margin:0 0 2px}
+.kf-satz{line-height:2.3}
+.kf-luecke{min-height:44px;min-width:6.5em;background:#fff;border:0;border-bottom:2px solid var(--tinte);border-radius:4px 4px 0 0;cursor:pointer;font:inherit;font-style:normal;font-weight:700;color:var(--tinte);touch-action:manipulation}
+.kf-luecke:disabled{cursor:default}
+.kf-woerter{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.kf-wort{min-height:44px;padding:6px 14px;border-radius:10px;border:2px solid var(--tinte);background:#fff;color:var(--tinte);font-size:16px;font-weight:600;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.kf-wort.gewaehlt{background:var(--akzent-hell);border-color:var(--akzent);box-shadow:0 0 0 3px var(--akzent-hell)}
+.kf-geist{position:fixed;z-index:50;pointer-events:none;box-shadow:0 8px 18px rgba(0,0,0,.25);cursor:grabbing}
+.kf-vormachen{margin:6px 0 4px;padding-left:22px}
+.kf-vormachen li{margin:3px 0}
+.kf-bild{margin-top:14px}
+/* Übung 3.4.2 Anlagenkennlinie zeichnen */
+@media (min-width:900px){.dr-zwei.ak{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}.ak-links{position:sticky;top:calc(var(--kopf,0px) + 8px)}}
+.ak-links .karte{margin:0}
+.ak-werkzeug{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:8px 0 0}
+.ak-werkzeug .gname{margin:0}
+.ak-werkzeug button{padding:6px 10px;font-size:15px}
+.ak-zeichne{font-size:14px;margin:6px 0 0}
+.ak-farbe{display:inline-block;width:22px;height:4px;border-radius:2px;vertical-align:middle;margin-right:4px}
+.ak-tab{font-size:15px;margin:6px 0 8px}
+.ak-tab td,.ak-tab th{padding:4px 6px;text-align:right;white-space:nowrap}
+.ak-tab th:first-child,.ak-tab td:first-child{text-align:left}
+.aufgabe.aktiv{border-color:var(--akzent);box-shadow:0 0 0 2px var(--akzent-hell)}
+.ak-runde{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 12px}
+.ak-runde .hinweis-orange{font-weight:600}
+.ak-pfeile button{min-width:48px;font-size:18px;font-weight:700}
+/* Dreier-Team 3.4.2 */
+.rp-zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.rp-zwei{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:start}.rp-links{position:sticky;top:calc(var(--kopf,0px) + 8px)}}
+.rp-tab td,.rp-tab th{padding:4px 6px;font-size:14px}
+.rp-tab td.zahl{text-align:right;white-space:nowrap}
+.rp-diagramm{margin:8px 0}
+.rp-schluss svg{margin:8px 0}
+
+/* Abschnitt 4 – Ergänzungen zu basis.css, s32.css, s33.css und s34.css (Dreier-Team 4.1 „Übergabe an den Chef“, öffentliche Seite 4.html) */
+.ue4-zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.ue4-zwei{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}.ue4-zwei.ue4-pumpe{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}}
+.ue4-feld{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.ue4-zwei>.ht-links .karte{margin:0}
+.ue4-tab td,.ue4-tab th{padding:4px 6px;font-size:14px}
+.ue4-tab td.zahl{text-align:right;white-space:nowrap}
+.ue4-kasten{margin:8px 0}
+.ue4-kasten label{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:4px 0}
+.ue4-kasten .optionen{margin:4px 0 2px}
+/* Einstellwerte aller drei Hersteller (zwölf Felder) */
+.ue4-ein-rahmen{border:1px solid var(--linie);border-radius:10px;padding:4px 6px;background:#fcfbf8;display:inline-block;max-width:100%}
+.ue4-ein-rahmen.fertig{border-color:var(--gut);background:var(--gut-hell)}
+.ue4-ein{width:auto}
+.ue4-ein td,.ue4-ein th{padding:4px 5px;border-bottom:0}
+.ue4-ein input.zahl{width:4.2em}
+select.ue4-sel{font:inherit;min-height:44px;min-width:4.2em;padding:6px 8px;border:1px solid var(--linie);border-radius:8px;background:#fff;color:var(--tinte)}
+select.ue4-sel.ok{border-color:var(--gut);background:var(--gut-hell)}
+select.ue4-sel.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+select.ue4-sel:disabled{opacity:1;color:var(--tinte)}
+/* Mehrfachwahl: Kästchen zum Ankreuzen */
+.optionen.mehr button{position:relative;padding-left:42px}
+.optionen.mehr button::before{content:"";position:absolute;left:12px;top:50%;width:18px;height:18px;margin-top:-11px;border:2px solid var(--tinte);border-radius:4px;background:#fff}
+.optionen.mehr button[aria-pressed="true"]::after{content:"";position:absolute;left:18px;top:50%;width:6px;height:11px;margin-top:-9px;border:solid var(--tinte);border-width:0 3px 3px 0;transform:rotate(45deg)}
+/* Übergabeprotokoll */
+.ue4-protokoll{margin-top:14px}
+.ue4-prot td,.ue4-prot th{padding:5px 4px;font-size:14px;vertical-align:top}
+.ue4-prot th{font-size:12.5px;line-height:1.25}
+.ue4-prot th.zahl{text-align:right}
+.ue4-prot .mitte{text-align:center;padding-left:8px;padding-right:8px}
+.ue4-prot td.mitte{font-weight:600}
+.ue4-anlage{width:auto;max-width:100%;font-size:15px}
+.ue4-anlage th{font-size:14px;color:var(--leise);font-weight:600;padding:4px 12px 4px 0;vertical-align:top;white-space:normal}
+.ue4-anlage td{padding:4px 0}
+.ue4-gemeinsam{max-width:760px}
+@media (max-width:899px){.ue4-prot td,.ue4-prot th{padding:4px 3px;font-size:13px}.ue4-prot th{font-size:12px}}
+
+.leise{color:var(--leise);font-size:14px}
+.kennz{font-weight:700;color:var(--akzent);margin:0 0 2px}
+a.zurueck{color:var(--akzent)}
+h1{font-size:24px;margin:0 0 4px;line-height:1.2}
+.sprung{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.sprung a{display:inline-block;padding:9px 14px;border-radius:999px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-decoration:none;font-size:15px}
+section.abschnitt{scroll-margin-top:10px;margin:0 0 22px}
+section.abschnitt>h2{margin:8px 0 2px}
+section.abschnitt .ue4-zwei>.karte{margin:0}
+footer{margin-top:28px;font-size:13px;color:var(--leise);border-top:1px solid var(--linie);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+  <p class="leise"><a class="zurueck" href="index.html">← Haus Röhringer: alle Stationen</a></p>
+  <p class="kennz">3194 · 4</p>
+  <h1>4 Meldung an den Chef: das Übergabeprotokoll</h1>
+  <p class="leise">Haus Röhringer – Der Anbau kommt ans Netz. Das Übergabeprotokoll zum Arbeitsblatt 4, ohne Anmeldung und ohne Punkte.</p>
+  <div class="sprech"><b class="wer">DEIN CHEF</b>„So, ihr drei. Bevor ich das Angebot unterschreibe, will ich eure Ergebnisse sehen: welches Rohrsystem, wie viel Wasser jeder Heizkörper braucht, wie die Ventile eingestellt werden – und ob die alte Pumpe bleiben kann. Jeder bringt seinen Teil mit. Am Ende hat jeder von euch das ganze Protokoll, und jeder schickt mir seine eigene Meldung.“</div>
+  <p>Hier füllst du die Teile der drei Tablets und den gemeinsamen Teil nacheinander aus – jeder Teil hat einen eigenen Prüfen-Knopf. Du brauchst deine Arbeitsblätter 3.1 bis 3.4 und den Taschenrechner. Wenn alles stimmt, erscheint unten euer ganzes Übergabeprotokoll.</p>
+  <div class="sprung"><a href="#teil1">1 Rohrsystem und Wasser</a><a href="#teil2">2 Druck</a><a href="#teil3">3 Pumpe</a><a href="#gemeinsam">4 Gemeinsam</a></div>
+  <div id="protokoll"></div>
+  <footer>Diese Seite setzt keine Cookies, speichert nichts auf dem Gerät und lädt nichts von anderen Servern. Beim Aufruf verarbeitet der Anbieter GitHub technisch die IP-Adresse des Geräts.</footer>
+</main>
+<script>
+// ---------------------------------------------------------------- Zahlen lesen und schreiben (deutsch), für Station 3.2 (ohne DOM)
+// Eingaben dürfen Komma oder Punkt haben, mit oder ohne Einheit, mit Leerzeichen als Tausendertrenner („10 000“).
+// „2.700“ ist doppeldeutig (Tausenderpunkt oder Dezimalpunkt): Dann gilt die Lesart, die näher am erwarteten Wert liegt.
+const ZAHL=(()=>{
+ const EINHEIT=/\s*(mws|m\s*ws|meter|m|bar|mbar|hpa|kpa|pa\/m|pa|kg\/h|m\/s|°c|°|%)\.?$/i;
+ function lies(s,soll){
+  let t=String(s==null?'':s).trim().toLowerCase();
+  for(let i=0;i<2;i++)t=t.replace(EINHEIT,'');
+  t=t.replace(/[\s  ']/g,'');
+  if(!t)return NaN;
+  let m;
+  if((m=/^(-?)(\d{1,3}(?:\.\d{3})+),(\d+)$/.exec(t)))return parseFloat(m[1]+m[2].replace(/\./g,'')+'.'+m[3]);   // 2.700,5
+  if(/^-?\d{1,3}(\.\d{3})+$/.test(t)){const dez=parseFloat(t),tau=parseFloat(t.replace(/\./g,''));                // 2.700 → 2,7 oder 2700
+   if(soll===undefined||!isFinite(soll)||soll===0)return dez;
+   const ab=x=>Math.abs(Math.log(Math.abs(x)||1e-12)-Math.log(Math.abs(soll)));return ab(tau)<ab(dez)?tau:dez;}
+  t=t.replace(',','.');
+  if(!/^-?(\d+(\.\d+)?|\.\d+)$/.test(t))return NaN;
+  return parseFloat(t);}
+ // deutsch schreiben: n Nachkommastellen (ohne n: so wenige wie nötig, höchstens 3), ab 10 000 mit schmalem Leerzeichen
+ function text(x,n){if(!isFinite(x))return '';let s;
+  if(n===undefined){s=String(Math.round(x*1000)/1000);}else s=(+x).toFixed(n);
+  let [g,k]=s.split('.');const neg=g.startsWith('-');if(neg)g=g.slice(1);
+  if(g.length>4)g=g.replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+  return (neg?'-':'')+g+(k?','+k:'');}
+ const gleich=(a,b,rel)=>Math.abs(a-b)<=Math.max(1e-9,Math.abs(b)*(rel||1e-9));
+ return {lies,text,gleich};
+})();
+
+// ---------------------------------------------------------------- SVG-Helfer (für Animation und Zeichenübungen)
+const SVGNS='http://www.w3.org/2000/svg';
+function svgEl(n,a,t){const e=document.createElementNS(SVGNS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!==undefined)e.textContent=t;return e;}
+const dstr=p=>p.map((q,i)=>(i?'L':'M')+q[0]+' '+q[1]).join(' ');
+
+// ---------------------------------------------------------------- Station 3.3: Anbau, Ventile und Diagramme (ohne DOM)
+// Zahlen des Lehrbeispiels (Skizze vom Chef): Heizlast 965 / 605 / 907 / 1419 W, Wege 18 / 20 / 30 / 34 m, 60/50 °C → Spreizung 10 K,
+// c = 1,163 Wh/(kg·K), 1 kg Wasser ≙ 1 Liter. Rohr aus Station 3.2: Δp = l · R · 1,5 mit R = 100 Pa/m → 2,7 / 3,0 / 4,5 / 5,1 kPa.
+// Ventilautorität 50 % am ungünstigsten Strang (HK 2.2): 5,1 + 5,1 = 10,2 kPa; jedes Ventil baut 10,2 kPa − Rohr ab (7,5 / 7,2 / 5,7 / 5,1).
+// kv-Werte der Datenblätter (Regeldifferenz 2 K): Heimeier V-exact II 1–8, Danfoss RTD-N 15 1–7 und N, Oventrop AV 9 1–9; Heimeier auch 1 K.
+// kv = V̇ / √Δp (V̇ in m³/h, Δp in bar). „Lage“ = Stelle zwischen zwei Linien im doppelt-logarithmischen Diagramm (logarithmisch geteilt).
+// Einstellregel: stufenlos (Heimeier, Oventrop) → Zwischenwert auf eine Stelle; feste Linien (Danfoss) → nächsthöhere Linie, über N: „reicht knapp nicht“.
+const VK=(()=>{
+ const C=1.163,SPREIZUNG=10,R=100,ZU=1.5;
+ const REIHE=['1.1','1.2','2.1','2.2'];
+ const HK={'1.1':{n:'HK 1.1 Arbeitszimmer',raum:'Arbeitszimmer',q:965,l:18},'1.2':{n:'HK 1.2 Gästezimmer',raum:'Gästezimmer',q:605,l:20},
+  '2.1':{n:'HK 2.1 Zimmer 1',raum:'Zimmer 1',q:907,l:30},'2.2':{n:'HK 2.2 Zimmer 2',raum:'Zimmer 2',q:1419,l:34}};
+ const r1=x=>Math.round(x*10+1e-9)/10,r2=x=>Math.round(x*100+1e-9)/100,r3=x=>Math.round(x*1000+1e-9)/1000;
+ const lhExakt=k=>HK[k].q/(C*SPREIZUNG),lh=k=>Math.round(lhExakt(k));
+ const rohrPa=k=>HK[k].l*R*ZU,rohrKpa=k=>rohrPa(k)/1000;
+ const SCHLECHT=REIHE.reduce((m,k)=>rohrPa(k)>rohrPa(m)?k:m,REIHE[0]);
+ const GESAMT_PA=2*rohrPa(SCHLECHT),GESAMT=GESAMT_PA/1000;
+ const ventilPa=k=>GESAMT_PA-rohrPa(k),ventilKpa=k=>ventilPa(k)/1000;
+ const SUMME=REIHE.reduce((s,k)=>s+lh(k),0);
+ // Zahl lesen wie ZAHL.lies, dazu die Einheiten der Station 3.3 (l/h, l/s, m³/h, Wh/(kg·K), W)
+ const zahl=(s,soll)=>{let t=String(s==null?'':s).trim();for(let i=0;i<2;i++)t=t.replace(/\s*(l\/h|l\/s|m³\/h|m3\/h|kg\/h|wh\/\(kg\s*[·*.]?\s*k\)|wh\/kgk|kpa|mbar|bar|pa|w)\.?$/i,'');return ZAHL.lies(t,soll);};
+ const kvAus=(q,kpa)=>q/1000/Math.sqrt(kpa/100);           // q in l/h, Δp in kPa → kv in m³/h
+ const kv=k=>kvAus(lh(k),ventilKpa(k));
+ const ls=q=>q/3600;
+ const STUFEN=n=>Array.from({length:n},(_,i)=>String(i+1));
+ const VENTIL={
+  heimeier2:{name:'Heimeier V-exact II',kurz:'Heimeier',xp:'2 K',stufenlos:true,stufen:STUFEN(8),kv:[0.049,0.090,0.150,0.265,0.330,0.470,0.590,0.670]},
+  heimeier1:{name:'Heimeier V-exact II',kurz:'Heimeier',xp:'1 K',stufenlos:true,stufen:STUFEN(8),kv:[0.049,0.082,0.130,0.215,0.246,0.303,0.335,0.343]},
+  danfoss:{name:'Danfoss RTD-N 15',kurz:'Danfoss',xp:'2 K',stufenlos:false,stufen:[...STUFEN(7),'N'],kv:[0.04,0.08,0.12,0.18,0.25,0.32,0.38,0.53]},
+  oventrop:{name:'Oventrop AV 9',kurz:'Oventrop',xp:'2 K',stufenlos:true,stufen:STUFEN(9),kv:[0.05,0.09,0.14,0.20,0.26,0.32,0.43,0.57,0.67]}};
+ // Lage: 1 = Linie 1 … n = letzte Linie (Danfoss: 8 = N); zwischen zwei Linien logarithmisch, an den Enden verlängert
+ function lage(v,k){const a=VENTIL[v].kv,n=a.length;let i=0;while(i<n-2&&k>a[i+1])i++;return i+1+Math.log(k/a[i])/Math.log(a[i+1]/a[i]);}
+ const lageHK=(v,k)=>lage(v,kv(k));
+ // Einstellwert nach der Regel des Kurses
+ function einstellwert(v,k){const V=VENTIL[v];
+  if(V.stufenlos)return {wert:r1(lage(v,k)),text:r1(lage(v,k)).toFixed(1).replace('.',',')};
+  const i=V.kv.findIndex(x=>x>=k-1e-12);return i<0?{wert:'knapp',text:'N, reicht knapp nicht'}:{wert:V.stufen[i],text:V.stufen[i]};}
+ const durchflussBei=(v,i,kpa)=>VENTIL[v].kv[i]*1000*Math.sqrt(kpa/100);   // l/h, die Stufe i (0 = Linie 1) bei Δp lässt durch
+ const druckFuer=(v,i,q)=>Math.pow(q/1000/VENTIL[v].kv[i],2)*100;          // kPa, die Stufe i braucht für q l/h
+ // zwischen welchen Linien liegt kv? → [untere, obere] als Index (−1 = unter Linie 1, n = über der letzten)
+ function zwischen(v,k){const a=VENTIL[v].kv;let i=a.findIndex(x=>x>=k-1e-12);if(i<0)return [a.length-1,a.length];return [i-1,i];}
+
+ // -------------------------------------------------------------- Diagramme (viewBox 0 0 640 470, Zeichenfläche 70…570 × 58…386, beide Achsen logarithmisch)
+ // x: Durchfluss in der Einheit des Herstellers (f = Faktor von l/h), y: Δp links in der Einheit des Herstellers (f = Faktor von kPa), y2: rechte Achse (Faktor von links)
+ const RAHMEN={x0:70,x1:570,y0:58,y1:386,b:640,h:470};
+ const DIAGRAMM={
+  heimeier2:{ventil:'heimeier2',titel:'Heimeier V-exact II · Regeldifferenz 2 K',untertitel:'Einstellwerte 1–8 · gestrichelt: Zwischenmarkierungen 1,5 … 7,5',zwischen:true,
+   x:{min:10,max:500,f:1,einheit:'kg/h',schritt:1,stellen:0,name:'ṁ',text:'Massenstrom ṁ in kg/h (1 kg ≙ 1 l)',marken:[10,20,50,100,200,500]},
+   y:{min:1,max:50,f:1,einheit:'kPa',schritt:0.1,stellen:1,text:'Druckverlust am Ventil Δp in kPa',marken:[1,2,5,10,20,50]},
+   y2:{f:10,einheit:'mbar',text:'Δp in mbar'},
+   quelle:'Neu gezeichnet aus den kv-Werten (2 K) des Datenblatts IMI Heimeier „V-exact II“, Technische Daten. Gestrichelt: Zwischenmarkierungen 1,5 … 7,5 (Annahme: geometrisches Mittel der Nachbarstufen).'},
+  heimeier1:{ventil:'heimeier1',titel:'Heimeier V-exact II · Regeldifferenz 1 K',untertitel:'Einstellwerte 1–8',zwischen:false,
+   x:{min:10,max:500,f:1,einheit:'kg/h',schritt:1,stellen:0,name:'ṁ',text:'Massenstrom ṁ in kg/h (1 kg ≙ 1 l)',marken:[10,20,50,100,200,500]},
+   y:{min:1,max:50,f:1,einheit:'kPa',schritt:0.1,stellen:1,text:'Druckverlust am Ventil Δp in kPa',marken:[1,2,5,10,20,50]},
+   y2:{f:10,einheit:'mbar',text:'Δp in mbar'},
+   quelle:'Neu gezeichnet aus den kv-Werten (1 K) des Datenblatts IMI Heimeier „V-exact II“, Technische Daten.'},
+  danfoss:{ventil:'danfoss',titel:'Danfoss RTD-N 15',untertitel:'Linien 1–7 und N (ganz offen) – Linien nur für ganze Stufen',zwischen:false,
+   x:{min:10,max:1000,f:1,einheit:'l/h',schritt:1,stellen:0,name:'Q',text:'Durchfluss Q in l/h',marken:[10,20,50,100,200,500,1000]},
+   y:{min:1,max:100,f:1,einheit:'kPa',schritt:0.1,stellen:1,text:'Druckverlust am Ventil Δp in kPa',marken:[1,2,5,10,20,50,100]},
+   y2:{f:0.01,einheit:'bar',text:'Δp in bar'},
+   quelle:'Neu gezeichnet aus den kv-Werten des Datenblatts Danfoss „Presetting valves type RTD-N“ (12/2001).'},
+  oventrop:{ventil:'oventrop',titel:'Oventrop AV 9 · Regeldifferenz 2 K',untertitel:'Einstellwerte 1–9 · Durchfluss in Liter je SEKUNDE',zwischen:false,
+   x:{min:0.002,max:0.2,f:1/3600,einheit:'l/s',schritt:0.001,stellen:3,name:'V̇',text:'Durchfluss V̇ in l/s – Liter je SEKUNDE',marken:[0.002,0.005,0.01,0.02,0.05,0.1,0.2]},
+   y:{min:10,max:1000,f:10,einheit:'mbar',schritt:1,stellen:0,text:'Druckverlust am Ventil Δp in mbar',marken:[10,20,50,100,200,500,1000]},
+   y2:{f:0.1,einheit:'kPa',text:'Δp in kPa'},
+   quelle:'Neu gezeichnet aus den kv-Werten (2 K) des Datenblatts Oventrop „Thermostatic radiator valves“, Chart 5 (2018).'}};
+ const lg=Math.log10;
+ const px=(d,X)=>RAHMEN.x0+(RAHMEN.x1-RAHMEN.x0)*lg(X/d.x.min)/lg(d.x.max/d.x.min);
+ const py=(d,Y)=>RAHMEN.y1-(RAHMEN.y1-RAHMEN.y0)*lg(Y/d.y.min)/lg(d.y.max/d.y.min);
+ const xAus=(d,p)=>d.x.min*Math.pow(d.x.max/d.x.min,(p-RAHMEN.x0)/(RAHMEN.x1-RAHMEN.x0));
+ const yAus=(d,p)=>d.y.min*Math.pow(d.y.max/d.y.min,(RAHMEN.y1-p)/(RAHMEN.y1-RAHMEN.y0));
+ // Achswert ↔ Physik: X = l/h · f, Y = kPa · f
+ const zuX=(d,q)=>q*d.x.f,zuY=(d,kpa)=>kpa*d.y.f,ausX=(d,X)=>X/d.x.f,ausY=(d,Y)=>Y/d.y.f;
+ const rasten=(a,w)=>{const s=a.schritt;const r=Math.round(w/s)*s;return Math.min(a.max,Math.max(a.min,+r.toFixed(a.stellen)));};
+ // Linien gesetzt, wie verlangt? Je eine Rasterstufe Spielraum (Δp ±0,1 kPa bzw. ±1 mbar, Durchfluss ±1 kg/h bzw. l/h, Oventrop ±0,001 l/s)
+ const linienOk=(d,Y,X,kpa,q)=>Y!=null&&X!=null&&Math.abs(Y-zuY(d,kpa))<=d.y.schritt+1e-9&&Math.abs(X-zuX(d,q))<=d.x.schritt+1e-9;
+ // Kennlinie für kv: von Δp = y.min bis y.max (gerade im doppelt-logarithmischen Netz), ungeclippt in Bildpunkten
+ function linie(d,k){const p=Y=>{const kpa=ausY(d,Y);return [px(d,zuX(d,k*1000*Math.sqrt(kpa/100))),py(d,Y)];};const [a,b]=[p(d.y.min),p(d.y.max)];return {x1:a[0],y1:a[1],x2:b[0],y2:b[1]};}
+ function linien(d){const V=VENTIL[d.ventil],o=V.kv.map((k,i)=>({kv:k,name:V.stufen[i],voll:true}));
+  if(d.zwischen)for(let i=0;i<V.kv.length-1;i++)o.push({kv:Math.sqrt(V.kv[i]*V.kv[i+1]),name:String(i+1)+',5',voll:false});
+  return o.map(l=>Object.assign(l,linie(d,l.kv)));}
+ // Gitter: 1…9 je Zehnerstufe
+ function gitter(a){const o=[];for(let e=Math.floor(lg(a.min))-1;e<=Math.ceil(lg(a.max));e++)for(let m=1;m<=9;m++){const v=+(m*Math.pow(10,e)).toPrecision(6);if(v>=a.min*0.9999&&v<=a.max*1.0001)o.push(v);}return o;}
+ return {C,SPREIZUNG,R,ZU,REIHE,HK,r1,r2,r3,zahl,lhExakt,lh,rohrPa,rohrKpa,SCHLECHT,GESAMT_PA,GESAMT,ventilPa,ventilKpa,SUMME,kvAus,kv,ls,
+  VENTIL,lage,lageHK,einstellwert,durchflussBei,druckFuer,zwischen,RAHMEN,DIAGRAMM,px,py,xAus,yAus,zuX,zuY,ausX,ausY,rasten,linienOk,linie,linien,gitter};
+})();
+
+// erzeugt von bauen-3-4.mjs aus Skripte/vorschau-3-4/zahlen-3-4.js (Rechenblatt der Vorschau) – nicht von Hand ändern
+// ohne die Zahlen von Probe-Test und Kapiteltest; Z34_RUNDEN = Übungsrunden „Neue Zahlen“ der Übung 3.4.2 (beim Bau gegen die Testzahlen geprüft)
+const Z34={"bestand":{"liste":[{"nr":"A1","raum":"Wohnzimmer","g":"EG","W":2090,"l":16,"Vlh":179.7,"rohrPa":2400},{"nr":"A2","raum":"Küche/Essen","g":"EG","W":1280,"l":14,"Vlh":110.1,"rohrPa":2100},{"nr":"A3","raum":"Flur","g":"EG","W":470,"l":10,"Vlh":40.4,"rohrPa":1500},{"nr":"A4","raum":"Gäste-WC","g":"EG","W":300,"l":12,"Vlh":25.8,"rohrPa":1800},{"nr":"A5","raum":"Schlafzimmer","g":"OG","W":1060,"l":24,"Vlh":91.1,"rohrPa":3600},{"nr":"A6","raum":"Kinderzimmer 1","g":"OG","W":920,"l":26,"Vlh":79.1,"rohrPa":3900},{"nr":"A7","raum":"Kinderzimmer 2","g":"OG","W":920,"l":28,"Vlh":79.1,"rohrPa":4200},{"nr":"A8","raum":"Bad","g":"OG","W":1100,"l":30,"Vlh":94.6,"rohrPa":4500}],"QB":8140,"VB":699.91,"VBrund":700,"QA":3896,"VA":335,"Vges":1035,"Vges_m3h":1.035,"Qges":12036,"qWm2_bei145":56.1},"gegenprobe15K":{"VB":466.6,"Vges":801.6},"strang":{"bestand":"Bad","l":30,"rohrPa":4500,"mitVentilPa":9000,"anbauPa":10200,"ganzesHausPa":10200},"pumpe":{"1":{"q":0.6889,"H0":1.898,"Vnull":2.088,"werte":[[0,1.898],[0.5,1.698],[1,1.337],[1.5,0.817],[2,0.136]]},"2":{"q":0.8519,"H0":2.903,"Vnull":2.582,"werte":[[0,2.903],[0.5,2.674],[1,2.284],[1.5,1.735],[2,1.026],[2.5,0.157]]},"3":{"q":1,"H0":4,"Vnull":3.031,"werte":[[0,4],[0.5,3.745],[1,3.33],[1.5,2.755],[2,2.02],[2.5,1.125],[3,0.07]]}},"auslegung":{"V":1.035,"H":1.02,"H_981":1.04,"k":0.9522,"stufeBeiV":{"1":1.306,"2":2.251,"3":3.295},"anlagenkennlinie":[[0.25,0.06],[0.5,0.238],[0.75,0.536],[1,0.952],[1.035,1.02],[1.25,1.488],[1.5,2.142],[1.75,2.916],[2,3.809]]},"betriebspunkt":{"1":{"V":1.13,"H":1.217,"P":31.5},"2":{"V":1.398,"H":1.861,"P":48},"3":{"V":1.641,"H":2.564,"P":65.8}},"mehrWasser":{"1":0.092,"3":0.586},"vorher":{"V":0.7,"H":0.9,"k":1.8367,"bp3":{"V":1.283,"H":3.024,"P":63.7},"bp1":{"V":0.884,"H":1.435,"P":30.5}},"danfoss":{"H":1.04,"stufe1":1.306},"ablesen":{"s1_0":1.9,"s1_1":1.337,"s2_1":2.284,"s3_1":3.33,"s3_2":2.02},"leistung":{"Pab_ausl":2.93,"Pab_bp3":11.69,"Pab_bp1":3.82,"Pel_bp3":65.8,"Pel_bp1":31.5,"Pel_s3_V0":56,"Pel_s1_V0":27},"teillast":{"s3":{"V":0.943,"H":3.386,"P":61.7},"s1":{"V":0.649,"H":1.607,"P":29.6}},"bonus":{"H0_s2":2.903,"H0_s1":1.898,"halbe":{"V":0.5,"dp":0.25,"P":0.125}},"modell41":{"1":{"K":13,"ungeregelt":{"V":0.374,"H":1.814,"jeHK":0.374,"ventil":1.744,"P":33},"dpc":{"V":0.277,"H":1,"jeHK":0.277,"ventil":0.962,"P":5.5},"dpv":{"V":0.216,"H":0.608,"jeHK":0.216,"ventil":0.585,"P":3.9}},"2":{"K":3.625,"ungeregelt":{"V":0.65,"H":1.532,"jeHK":0.325,"ventil":1.321,"P":35.2},"dpc":{"V":0.525,"H":1,"jeHK":0.263,"ventil":0.862,"P":8.2},"dpv":{"V":0.447,"H":0.723,"jeHK":0.223,"ventil":0.624,"P":6}},"3":{"K":1.889,"ungeregelt":{"V":0.826,"H":1.289,"jeHK":0.275,"ventil":0.948,"P":36.6},"dpc":{"V":0.728,"H":1,"jeHK":0.243,"ventil":0.735,"P":10.4},"dpv":{"V":0.664,"H":0.832,"jeHK":0.221,"ventil":0.612,"P":8.5}},"4":{"K":1.281,"ungeregelt":{"V":0.933,"H":1.116,"jeHK":0.233,"ventil":0.681,"P":37.5},"dpc":{"V":0.883,"H":1,"jeHK":0.221,"ventil":0.61,"P":12.1},"dpv":{"V":0.85,"H":0.925,"jeHK":0.212,"ventil":0.564,"P":11.1}},"5":{"K":1,"ungeregelt":{"V":1,"H":1,"jeHK":0.2,"ventil":0.5,"P":38},"dpc":{"V":1,"H":1,"jeHK":0.2,"ventil":0.5,"P":13.4},"dpv":{"V":1,"H":1,"jeHK":0.2,"ventil":0.5,"P":13.4}}},"ue42":{"pumpe":[[0,320],[0.5,300],[1,260],[1.5,200],[2,120],[2.5,20]],"anlage":[[0.5,27.5],[1,110],[1.5,247.5],[2,440]],"bp1":{"V":1.395,"dp":214.2},"bp2":{"V":1.114,"dp":248.1},"gedrosselt":[[0.5,50],[1,200],[1.25,312.5]],"dpv_bei0":107.1}};
+const Z34_RUNDEN=[[260,0,40,60,[0.4,1.5,2],120,1.4],[260,0,40,60,[0.6,1.2,2],130,1.4],[260,20,20,60,[0.8,1.2,2],130,1.4],[260,20,20,70,[0.5,1.4,1.8],130,1.4],[260,20,20,70,[0.6,1.4,1.8],170,1.4],[260,20,20,170,[0.6,1.2,1.4],260,1.2],[260,30,20,60,[0.8,1.5,2],120,1.4],[260,40,20,60,[0.8,1.5,2],120,1.4],[260,40,40,60,[0.4,1.2,2],130,1.25],[260,40,40,60,[0.6,1.6,1.8],130,1.3],[260,40,40,60,[0.4,1.2,2],130,1.4],[260,40,40,130,[0.6,1.4,1.6],220,1.2],[260,40,40,130,[0.5,1.5,1.6],220,1.25],[260,40,40,130,[0.5,1.2,1.4],220,1.3],[280,0,20,120,[0.5,1.5,1.8],210,1.3],[280,0,20,120,[0.8,1.5,1.6],220,1.2],[280,0,20,120,[0.6,1.5,1.8],220,1.25],[280,0,20,120,[0.6,1.6,1.8],220,1.3],[280,0,40,100,[0.8,1.6,1.8],190,1.25],[280,0,40,100,[0.6,1.6,1.8],190,1.3],[280,0,40,100,[0.8,1.5,1.6],190,1.4],[280,0,60,170,[0.8,1.4,1.5],270,1.2],[280,10,40,60,[0.4,1.8,2],130,1.4],[280,10,40,130,[0.8,1.5,1.6],190,1.25],[280,10,40,130,[0.4,1.4,1.5],190,1.3],[280,10,40,130,[0.6,1.5,1.6],190,1.4],[280,10,60,70,[0.6,1.6,1.8],170,1.2],[280,10,60,70,[0.6,1.2,1.6],170,1.4],[280,20,40,60,[0.8,1.2,2],120,1.4],[280,20,40,60,[0.6,1.5,2],130,1.4],[280,30,20,60,[0.4,1.6,2],130,1.4],[280,30,20,70,[0.4,1.4,1.8],130,1.4],[280,30,20,100,[0.6,1.2,1.6],190,1.2],[280,30,20,100,[0.4,1.5,1.6],190,1.25],[280,30,20,100,[0.6,1.5,1.6],190,1.3],[280,30,20,100,[0.5,1.5,1.6],190,1.4],[280,30,20,130,[0.5,1.5,1.6],190,1.2],[280,30,20,130,[0.5,1.5,1.6],190,1.25],[280,30,20,130,[0.4,1.4,1.5],190,1.3],[280,30,20,130,[0.8,1.4,1.5],190,1.4],[280,40,20,60,[0.8,1.2,1.8],130,1.4],[300,0,20,100,[0.4,1.5,1.8],170,1.4],[300,0,20,130,[0.6,1.5,1.6],230,1.2],[300,0,20,130,[0.8,1.5,1.6],230,1.3],[300,0,20,170,[0.4,1.4,1.5],230,1.3],[300,0,20,170,[0.8,1.4,1.5],240,1.2],[300,0,60,60,[0.6,1.5,2],130,1.4],[300,0,60,130,[0.4,1.4,1.5],190,1.25],[300,0,60,130,[0.6,1.4,1.6],190,1.3],[300,0,60,130,[0.4,1.4,1.5],190,1.4],[300,10,20,120,[0.5,1.5,1.6],210,1.25],[300,10,20,120,[0.8,1.5,1.6],210,1.3],[300,10,20,120,[0.5,1.5,1.6],220,1.2],[300,10,20,120,[0.5,1.2,1.8],220,1.25],[300,10,20,120,[0.6,1.2,1.6],220,1.3],[300,10,20,170,[0.4,1.4,1.5],230,1.2],[300,10,20,170,[0.6,1.4,1.5],230,1.3],[300,10,40,100,[0.8,1.2,1.8],190,1.25],[300,10,40,100,[0.8,1.6,1.8],190,1.3],[300,10,40,100,[0.5,1.6,1.8],190,1.4],[300,10,60,120,[0.6,1.6,1.8],190,1.2],[300,10,60,120,[0.5,1.4,1.8],190,1.25],[300,10,60,120,[0.8,1.5,1.6],190,1.3],[300,10,60,120,[0.4,1.4,1.5],190,1.4],[300,10,60,130,[0.8,1.4,1.5],190,1.2],[300,10,60,130,[0.5,1.4,1.6],190,1.25],[300,10,60,130,[0.4,1.4,1.5],190,1.3],[300,10,60,130,[0.6,1.4,1.5],190,1.4],[300,20,40,60,[0.6,1.5,2],130,1.4],[300,20,40,130,[0.8,1.2,1.5],190,1.2],[300,20,40,130,[0.6,1.5,1.6],190,1.25],[300,20,40,130,[0.4,1.4,1.6],190,1.3],[300,20,60,170,[0.5,1.2,1.4],270,1.2],[300,30,40,60,[0.5,1.5,2],130,1.4],[300,30,40,130,[0.4,1.4,1.5],190,1.2],[300,30,40,130,[0.6,1.4,1.6],190,1.25],[300,30,40,130,[0.4,1.4,1.5],190,1.3],[300,30,40,130,[0.5,1.4,1.6],190,1.4],[300,30,60,70,[0.4,1.2,1.6],170,1.4],[300,30,60,170,[0.4,1.2,1.4],260,1.2],[300,40,20,100,[0.4,1.2,1.8],190,1.25],[300,40,20,100,[0.4,1.2,1.8],190,1.3],[300,40,20,100,[0.4,1.5,1.6],190,1.4],[300,40,40,170,[0.6,1.2,1.4],270,1.2],[340,0,40,130,[0.5,1.5,1.6],230,1.25],[340,0,40,130,[0.8,1.5,1.6],230,1.3],[340,0,40,170,[0.8,1.2,1.5],230,1.25],[340,0,40,170,[0.5,1.2,1.5],230,1.3],[340,0,40,170,[0.4,1.4,1.5],240,1.25],[340,10,40,120,[0.6,1.5,1.6],220,1.25],[340,10,40,120,[0.4,1.6,1.8],220,1.3],[340,20,40,120,[0.4,1.6,1.8],210,1.25],[340,20,40,120,[0.6,1.5,1.6],220,1.25],[340,20,40,120,[0.5,1.5,1.6],220,1.3],[340,20,60,100,[0.6,1.5,1.6],190,1.25],[340,20,60,100,[0.4,1.2,1.8],190,1.3],[340,20,60,100,[0.4,1.2,1.8],190,1.4],[340,30,20,130,[0.6,1.2,1.6],230,1.25],[340,30,20,130,[0.6,1.5,1.6],230,1.3],[340,30,20,170,[0.4,1.4,1.5],240,1.25],[340,30,60,130,[0.8,1.4,1.6],190,1.25],[340,30,60,130,[0.8,1.4,1.6],190,1.3],[340,30,60,130,[0.4,1.4,1.5],190,1.4],[340,40,20,120,[0.8,1.2,1.6],220,1.25],[340,40,20,120,[0.5,1.6,1.8],220,1.3],[340,40,60,120,[0.6,1.4,1.6],190,1.2],[340,40,60,120,[0.6,1.4,1.5],190,1.25],[340,40,60,120,[0.6,1.5,1.6],190,1.3],[340,40,60,120,[0.8,1.6,1.8],190,1.4],[360,0,40,100,[0.8,1.2,1.8],190,1.4],[360,0,60,170,[0.4,1.4,1.5],240,1.2],[360,10,40,130,[0.5,1.2,1.6],190,1.4],[360,20,40,130,[0.5,1.5,1.6],230,1.25],[360,20,40,170,[0.5,1.4,1.5],240,1.25],[360,30,20,100,[0.6,1.2,1.8],190,1.4],[360,30,40,120,[0.5,1.5,1.6],220,1.25],[360,30,40,120,[0.5,1.2,1.8],220,1.3],[360,30,40,170,[0.5,1.4,1.5],240,1.25],[360,40,20,130,[0.8,1.2,1.6],230,1.3],[360,40,20,170,[0.8,1.4,1.5],230,1.3],[360,40,60,60,[0.4,1.4,2],130,1.4],[360,40,60,130,[0.8,1.5,1.6],190,1.25],[360,40,60,130,[0.6,1.2,1.6],190,1.3],[360,40,60,130,[0.6,1.5,1.6],190,1.4],[360,40,60,130,[0.4,1.5,1.6],210,1.2],[360,40,60,130,[0.8,1.2,1.5],210,1.25],[360,40,60,130,[0.8,1.5,1.6],210,1.3],[380,0,60,130,[0.8,1.5,1.6],190,1.4],[380,10,40,100,[0.4,1.5,1.8],190,1.4],[380,10,60,170,[0.6,1.4,1.5],240,1.25],[380,20,40,100,[0.6,1.5,1.8],190,1.4],[380,20,60,70,[0.4,1.4,1.8],170,1.4],[380,20,60,170,[0.4,1.4,1.5],240,1.2],[380,30,40,170,[0.5,1.4,1.5],260,1.2]];
+
+// ---------------------------------------------------------------- Kennlinien-Baustein der Station 3.4 (gemeinsam für Animation 3.4.1, Übung 3.4.2 und Dreier-Team)
+// KL (ohne DOM): Rasten, Schnittpunkt zweier Kurven numerisch (Abtasten + Bisektion), glatte Kurve durch gesetzte Punkte (monoton, ohne Überschwingen).
+// bauKennlinien(wurzel,o) (braucht ZAHL, svgEl): Diagramm mit Achsen und Raster wie Millimeterpapier, Kurven aus Formel oder Wertetabelle, Punkte,
+// Hilfslinien, zwei Ziehlinien mit Rasten (Griffe an den Achsen als durchsichtige HTML-Streifen mit touch-action:none – Wischen über dem Bild rollt
+// die Seite weiter), Feinknöpfe − / + (gedrückt halten = weiterzählen), Lupe (Ausschnitt um einen Punkt) und Tippen ins Raster (für Punkte).
+const KL=(()=>{
+ const rund=(v,n)=>{v=+v;return +(v+(v>=0?1e-9:-1e-9)).toFixed(n==null?6:n);}; // kleiner Zuschlag: 1,035 → 1,04 (nicht 1,03 wegen der Gleitkommadarstellung)
+ const rasten=(v,s,min,max)=>{let r=rund(Math.round(v/s)*s,6);if(min!=null&&r<min)r=min;if(max!=null&&r>max)r=max;return r;};
+ // Nullstelle von h zwischen a und b (Vorzeichenwechsel nötig) – Bisektion
+ function nullstelle(h,a,b,n){let fa=h(a),fb=h(b);if(!isFinite(fa)||!isFinite(fb))return null;if(fa===0)return a;if(fb===0)return b;if(fa*fb>0)return null;
+  for(let i=0;i<(n||90);i++){const m=(a+b)/2,fm=h(m);if(fm===0)return m;if(fa*fm<0){b=m;fb=fm;}else{a=m;fa=fm;}}return (a+b)/2;}
+ // erster Schnitt der Kurven f und g zwischen a und b: grob abtasten, dann Bisektion
+ function schnitt(f,g,a,b,teile){teile=teile||400;const h=x=>f(x)-g(x);let x0=a,h0=h(a);
+  for(let i=1;i<=teile;i++){const x1=a+(b-a)*i/teile,h1=h(x1);
+   if(isFinite(h0)&&isFinite(h1)&&(h0===0||h0*h1<0)){const x=h0===0?x0:nullstelle(h,x0,x1);return {x,y:f(x)};}x0=x1;h0=h1;}
+  return null;}
+ // glatte Kurve durch Punkte (nach x sortiert): monotone kubische Hermite-Interpolation (Fritsch-Carlson) – kein Überschwingen zwischen den Punkten
+ function glatt(pp){const p=(pp||[]).slice().sort((u,v)=>u[0]-v[0]).filter((q,i,a)=>!i||q[0]>a[i-1][0]+1e-9),n=p.length;if(n<2)return null;
+  const x=p.map(q=>q[0]),y=p.map(q=>q[1]),d=[],m=new Array(n);
+  for(let i=0;i<n-1;i++)d.push((y[i+1]-y[i])/(x[i+1]-x[i]));
+  m[0]=d[0];m[n-1]=d[n-2];for(let i=1;i<n-1;i++)m[i]=d[i-1]*d[i]<=0?0:(d[i-1]+d[i])/2;
+  for(let i=0;i<n-1;i++){if(d[i]===0){m[i]=0;m[i+1]=0;continue;}const a=m[i]/d[i],b=m[i+1]/d[i],s=a*a+b*b;if(s>9){const t=3/Math.sqrt(s);m[i]=t*a*d[i];m[i+1]=t*b*d[i];}}
+  const f=v=>{if(v<x[0]-1e-9||v>x[n-1]+1e-9)return NaN;let i=0;while(i<n-2&&v>x[i+1])i++;const h=x[i+1]-x[i],t=(v-x[i])/h,t2=t*t,t3=t2*t;
+   return (2*t3-3*t2+1)*y[i]+(t3-2*t2+t)*h*m[i]+(-2*t3+3*t2)*y[i+1]+(t3-t2)*h*m[i+1];};
+  f.von=x[0];f.bis=x[n-1];return f;}
+ // Werte eines Rasters von min bis max (ohne Rundungsfehler)
+ const reihe=(min,max,s)=>{const n=Math.round((max-min)/s),r=[];for(let i=0;i<=n;i++)r.push(rund(min+i*s,6));return r;};
+ const vielfaches=(v,s)=>Math.abs(v/s-Math.round(v/s))<1e-6;
+ return {rund,rasten,nullstelle,schnitt,glatt,reihe,vielfaches};
+})();
+
+// o: {kennung, w, h, rand:{l,r,o,u}, titel, untertitel, quelle,
+//     x/y: {min,max,raster,haupt,marken,stellen,text,name,einheit,rasten,markenText(v)}, y2: {f,text,stellen} (rechte Achse, Wert = y·f),
+//     griffe:{x,y}, knoepfe, lupe, lupeFaktor, tippen(x,y,ev), beiLinien(zustand,ende), lupeZentrum() → {x,y}|null}
+function bauKennlinien(wurzel,o){
+ o=Object.assign({kennung:'kl',w:640,h:470,rand:null,titel:'',untertitel:'',quelle:'',x:null,y:null,y2:null,griffe:null,knoepfe:false,lupe:false,lupeFaktor:4,
+  tippen:null,beiLinien:null,lupeZentrum:null,aria:''},o||{});
+ const ax=o.x,ay=o.y,W=o.w,H=o.h,T=ZAHL.text,ROT='#d32f2f';
+ const R=Object.assign({l:64,r:o.y2?58:16,o:o.titel?(o.untertitel?50:34):12,u:50},o.rand||{}),X0=R.l,X1=W-R.r,Y0=R.o,Y1=H-R.u;
+ const gr=Object.assign({x:false,y:false},o.griffe||{}),gesperrt={x:false,y:false};
+ const px=v=>X0+(v-ax.min)/(ax.max-ax.min)*(X1-X0),py=v=>Y1-(v-ay.min)/(ay.max-ay.min)*(Y1-Y0);
+ const xAus=p=>ax.min+(p-X0)/(X1-X0)*(ax.max-ax.min),yAus=p=>ay.min+(Y1-p)/(Y1-Y0)*(ay.max-ay.min);
+ let kurven=[],punkte=[],hilfen=[],texte=[],LX=null,LY=null,lupe=false,stilX={},stilY={},yLinie=null,xLinie=null;
+ const proz=(a,b)=>(a/b*100).toFixed(3)+'%';
+ const knopfPaar=(ach,a)=>`<span class="kl-paar" data-paar="${ach}"><span class="kl-name">${a.name||''}</span><button type="button" class="knopf kl-k" data-s="${ach}" data-d="-1" aria-label="${ach==='y'?'waagrechte Linie tiefer':'senkrechte Linie nach links'}">−</button>`+
+  `<b class="kl-wert" data-r="${ach}wert" aria-live="polite">–</b><button type="button" class="knopf kl-k" data-s="${ach}" data-d="1" aria-label="${ach==='y'?'waagrechte Linie höher':'senkrechte Linie nach rechts'}">+</button></span>`;
+ wurzel.innerHTML=`<div class="kl" data-kl="${o.kennung}"><div class="kl-flaeche"><svg viewBox="0 0 ${W} ${H}" class="kl-svg" role="img" data-r="svg"></svg>`+
+  // Griffe: links bis kurz vor die Δp-Achse, unten ab kurz unter der V̇-Achse – Tippen auf die Achsen selbst (V̇ = 0, Δp = 0) setzt Punkte
+  (gr.y?`<div class="kl-griff" data-griff="y" aria-hidden="true" style="left:0;top:${proz(Y0-8,H)};width:${proz(X0-9,W)};height:${proz(Y1-Y0+16,H)}"></div>`:'')+
+  (gr.x?`<div class="kl-griff" data-griff="x" aria-hidden="true" style="left:${proz(X0-8,W)};top:${proz(Y1+9,H)};width:${proz(X1-X0+16,W)};height:${proz(Math.min(R.u-9,44),H)}"></div>`:'')+'</div>'+
+  (o.knoepfe&&(gr.x||gr.y||o.lupe)?'<div class="kl-knoepfe">'+(gr.y?knopfPaar('y',ay):'')+(gr.x?knopfPaar('x',ax):'')+
+   (o.lupe?'<button type="button" class="knopf kl-lupe" data-r="lupe" aria-pressed="false">Lupe</button>':'')+'</div>':'')+
+  (o.quelle?`<p class="klein kl-quelle">${o.quelle}</p>`:'')+'</div>';
+ const svg=wurzel.querySelector('[data-r="svg"]'),fl=wurzel.querySelector('.kl-flaeche');
+ const A=(p,n,a,t)=>{const e=svgEl(n,a,t);p.appendChild(e);return e;};
+ const ns={'vector-effect':'non-scaling-stroke'};
+ let dyn=null,kl=null,zu=null;
+ const idClip=o.kennung+'-clip';
+ function zeichneFest(){svg.innerHTML='';svg.setAttribute('aria-label',o.aria||o.titel||'Diagramm');
+  A(svg,'rect',{x:0,y:0,width:W,height:H,fill:'#fff'});
+  if(o.titel)A(svg,'text',{x:X0,y:20,'font-size':16,'font-weight':700,fill:'#1d2a33'},o.titel);
+  if(o.untertitel)A(svg,'text',{x:X0,y:38,'font-size':12.5,fill:'#5b6b77'},o.untertitel);
+  const g=A(svg,'g',{'data-r':'kl-gitter'});
+  KL.reihe(ax.min,ax.max,ax.raster).forEach(v=>{const h=KL.vielfaches(v-ax.min,ax.haupt||ax.marken);A(g,'line',Object.assign({x1:px(v),y1:Y0,x2:px(v),y2:Y1,stroke:h?'#9aa7b1':'#dde3e8','stroke-width':h?1.1:0.7},ns));});
+  KL.reihe(ay.min,ay.max,ay.raster).forEach(v=>{const h=KL.vielfaches(v-ay.min,ay.haupt||ay.marken);A(g,'line',Object.assign({x1:X0,y1:py(v),x2:X1,y2:py(v),stroke:h?'#9aa7b1':'#dde3e8','stroke-width':h?1.1:0.7},ns));});
+  A(svg,'rect',Object.assign({x:X0,y:Y0,width:X1-X0,height:Y1-Y0,fill:'none',stroke:'#1d2a33','stroke-width':1.5},ns));
+  const fs=o.schrift||13;
+  KL.reihe(ax.min,ax.max,ax.marken).forEach(v=>A(svg,'text',{x:px(v),y:Y1+fs+4,'font-size':fs,'text-anchor':'middle',fill:'#1d2a33'},ax.markenText?ax.markenText(v):T(v,ax.stellen)));
+  KL.reihe(ay.min,ay.max,ay.marken).forEach(v=>{A(svg,'text',{x:X0-5,y:py(v)+fs*0.35,'font-size':fs,'text-anchor':'end',fill:'#1d2a33'},ay.markenText?ay.markenText(v):T(v,ay.stellen));
+   if(o.y2)A(svg,'text',{x:X1+5,y:py(v)+fs*0.35,'font-size':fs,fill:'#1d2a33'},T(KL.rund(v*o.y2.f,6),o.y2.stellen));});
+  if(ax.text)A(svg,'text',{x:(X0+X1)/2,y:Y1+fs*2+10,'font-size':fs+0.5,'text-anchor':'middle',fill:'#1d2a33'},ax.text);
+  const ym=(Y0+Y1)/2;
+  if(ay.text)A(svg,'text',{x:fs,y:ym,'font-size':fs+0.5,'text-anchor':'middle',fill:'#1d2a33',transform:`rotate(-90 ${fs} ${ym})`},ay.text);
+  if(o.y2&&o.y2.text)A(svg,'text',{x:W-fs*0.6,y:ym,'font-size':fs+0.5,'text-anchor':'middle',fill:'#1d2a33',transform:`rotate(90 ${W-fs*0.6} ${ym})`},o.y2.text);
+  const cp=A(A(svg,'defs',{}),'clipPath',{id:idClip});A(cp,'rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0});
+  kl=A(svg,'g',{'clip-path':`url(#${idClip})`,'data-r':'kl-kurven'});zu=A(svg,'g',{'data-r':'kl-oben'});dyn=A(svg,'g',{'data-r':'kl-beweglich'});}
+ const m=()=>lupe?1/o.lupeFaktor:1;
+ // eine Kurve als Linienzug (Formel f oder Punkte, glatt = monotone Interpolation)
+ function linienzug(k){const f=k.f||(k.punkte?(k.glatt===false?null:KL.glatt(k.punkte)):null);
+  if(!f&&k.punkte){return [k.punkte.slice().sort((a,b)=>a[0]-b[0]).map(q=>[px(q[0]),py(q[1])])];}
+  if(!f)return [];const von=Math.max(ax.min,k.von!=null?k.von:(f.von!=null?f.von:ax.min)),bis=Math.min(ax.max,k.bis!=null?k.bis:(f.bis!=null?f.bis:ax.max));
+  const n=k.n||180,zuege=[];let z=[];
+  for(let i=0;i<=n;i++){const v=von+(bis-von)*i/n,y=f(v);if(y==null||!isFinite(y)){if(z.length>1)zuege.push(z);z=[];continue;}
+   const yc=Math.max(ay.min-(ay.max-ay.min)*0.5,Math.min(ay.max+(ay.max-ay.min)*0.5,y));z.push([px(v),py(yc)]);}
+  if(z.length>1)zuege.push(z);return zuege;}
+ function zeichne(){if(!dyn)return;kl.innerHTML='';zu.innerHTML='';dyn.innerHTML='';const s=m();
+  kurven.forEach(k=>{if(k.sichtbar===false)return;linienzug(k).forEach(z=>A(kl,'polyline',Object.assign({points:z.map(q=>q[0].toFixed(2)+','+q[1].toFixed(2)).join(' '),fill:'none',stroke:k.farbe||'#1d2a33',
+    'stroke-width':k.breite||2,'stroke-dasharray':k.strich||'none','stroke-linejoin':'round','stroke-linecap':'round',opacity:k.deckkraft==null?1:k.deckkraft,'data-kurve':k.id||''},ns)));
+   if(k.name&&k.nameBei){const [x,y]=k.nameBei;A(zu,'text',{x:px(x),y:py(y),'font-size':(k.schrift||13)*s,'font-weight':700,fill:k.farbe||'#1d2a33','text-anchor':k.anker||'start',
+    'paint-order':'stroke',stroke:'#fff','stroke-width':3.5*s,'stroke-linejoin':'round','data-name':k.id||''},k.name);}});
+  hilfen.forEach(h=>A(zu,'line',Object.assign({x1:px(h.x1),y1:py(h.y1),x2:px(h.x2),y2:py(h.y2),stroke:h.farbe||'#b26a00','stroke-width':h.breite||1.6,'stroke-dasharray':h.strich||'5 4','data-hilfe':h.id||''},ns)));
+  // Ziehlinien
+  const x=LX==null?null:px(LX),y=LY==null?null:py(LY);
+  if(y!=null){const sy=Object.assign({farbe:ROT,strich:'6 4',breite:1.8},stilY);let seg=yLinie?yLinie(LY,LX):null;
+   if(!seg)seg={x1:ax.min,y1:LY,x2:LX!=null&&!sy.ganz?LX:ax.max,y2:LY};
+   A(dyn,'line',Object.assign({x1:px(seg.x1),y1:py(seg.y1),x2:px(seg.x2),y2:py(seg.y2),stroke:sy.farbe,'stroke-width':sy.breite,'stroke-dasharray':sy.strich,'data-linie':'y'},ns));}
+  if(x!=null){const sx=Object.assign({farbe:ROT,strich:'6 4',breite:1.8},stilX);let seg=xLinie?xLinie(LX,LY):null;
+   if(!seg)seg={x1:LX,y1:ay.min,x2:LX,y2:LY!=null&&!sx.ganz?LY:ay.max};
+   A(dyn,'line',Object.assign({x1:px(seg.x1),y1:py(seg.y1),x2:px(seg.x2),y2:py(seg.y2),stroke:sx.farbe,'stroke-width':sx.breite,'stroke-dasharray':sx.strich,'data-linie':'x'},ns));}
+  if(x!=null&&y!=null&&!yLinie&&!xLinie)A(dyn,'circle',Object.assign({cx:x,cy:y,r:4.5*s,fill:ROT,stroke:'#fff','stroke-width':1.2,'data-r':'schnitt'},ns));
+  punkte.forEach(p=>{if(p.x==null||p.y==null)return;const cx=px(p.x),cy=py(p.y),r=(p.r||5)*s,f=p.farbe||'#1d2a33';
+   if(p.form==='kreuz')A(dyn,'path',Object.assign({d:`M${cx-r} ${cy-r}L${cx+r} ${cy+r}M${cx-r} ${cy+r}L${cx+r} ${cy-r}`,stroke:f,'stroke-width':p.breite||2.2,fill:'none','data-punkt':p.id||''},ns));
+   else A(dyn,'circle',Object.assign({cx,cy,r,fill:p.form==='ring'?'#fff':f,stroke:p.form==='ring'?f:'#fff','stroke-width':p.form==='ring'?2:1.3,'data-punkt':p.id||''},ns));
+   if(p.gewaehlt)A(dyn,'circle',Object.assign({cx,cy,r:r*2.1,fill:'none',stroke:'#0b6b7d','stroke-width':2,'stroke-dasharray':'3 2','data-r':'gewaehlt'},ns));
+   if(p.name)A(dyn,'text',{x:cx+(p.dx==null?8:p.dx)*s,y:cy+(p.dy==null?-8:p.dy)*s,'font-size':(p.schrift||13)*s,'font-weight':700,fill:f,'text-anchor':p.anker||'start',
+    'paint-order':'stroke',stroke:'#fff','stroke-width':3.5*s,'stroke-linejoin':'round'},p.name);});
+  texte.forEach(t=>A(dyn,'text',{x:px(t.x),y:py(t.y),'font-size':(t.schrift||12)*s,fill:t.farbe||'#5b6b77','text-anchor':t.anker||'start','font-weight':t.fett?700:400,
+   'paint-order':'stroke',stroke:'#fff','stroke-width':3*s,'stroke-linejoin':'round'},t.t));
+  // Griffe an den Achsen
+  if(!lupe){const an=c=>c!=null;
+   if(gr.y&&!gesperrt.y){const gy=y!=null?y:(Y0+Y1)/2,fa=stilY.farbe||ROT;
+    A(dyn,'polygon',{points:`${X0-1},${gy} ${X0-15},${gy-9} ${X0-15},${gy+9}`,fill:an(y)?fa:'#fff',stroke:fa,'stroke-width':2,'data-r':'griff-y'});
+    if(!an(y))A(dyn,'text',{x:X0+6,y:gy+5,'font-size':13,fill:fa,'font-weight':700},'◂ ziehen');}
+   if(gr.x&&!gesperrt.x){const gx=x!=null?x:(X0+X1)/2,fa=stilX.farbe||ROT;
+    A(dyn,'polygon',{points:`${gx},${Y1+1} ${gx-9},${Y1+15} ${gx+9},${Y1+15}`,fill:an(x)?fa:'#fff',stroke:fa,'stroke-width':2,'data-r':'griff-x'});
+    if(!an(x))A(dyn,'text',{x:gx,y:Y1-8,'font-size':13,fill:fa,'font-weight':700,'text-anchor':'middle'},'ziehen ▾');}}
+  const yw=wurzel.querySelector('[data-r="ywert"]'),xw=wurzel.querySelector('[data-r="xwert"]');
+  if(yw){const t=LY==null?'? '+(ay.einheit||''):T(LY,ay.wertStellen!=null?ay.wertStellen:ay.stellen)+' '+(ay.einheit||'');if(yw.textContent!==t)yw.textContent=t;}
+  if(xw){const t=LX==null?'? '+(ax.einheit||''):T(LX,ax.wertStellen!=null?ax.wertStellen:ax.stellen)+' '+(ax.einheit||'');if(xw.textContent!==t)xw.textContent=t;}
+  wurzel.querySelectorAll('[data-paar]').forEach(e=>{e.hidden=!!gesperrt[e.dataset.paar];});
+  const lb=wurzel.querySelector('[data-r="lupe"]');if(lb){lb.disabled=!zentrum();lb.setAttribute('aria-pressed',String(lupe));lb.textContent=lupe?'Lupe aus':'Lupe';}
+  if(lupe)ausschnitt();}
+ // Lupe: viewBox ein Viertel so groß um den Mittelpunkt (Ziehlinien-Schnitt oder lupeZentrum)
+ function zentrum(){if(o.lupeZentrum){const z=o.lupeZentrum();if(z)return z;}return LX!=null&&LY!=null?{x:LX,y:LY}:null;}
+ function ausschnitt(){const z=zentrum();if(!z){lupeAus();return;}const w=W/o.lupeFaktor,h=H/o.lupeFaktor;
+  let vx=px(z.x)-w/2,vy=py(z.y)-h/2;vx=Math.max(X0-w*0.25,Math.min(X1-w*0.75,vx));vy=Math.max(Y0-h*0.25,Math.min(Y1-h*0.75,vy));
+  svg.setAttribute('viewBox',`${vx.toFixed(2)} ${vy.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)}`);fl.classList.add('kl-gross');}
+ function lupeAus(){lupe=false;svg.setAttribute('viewBox',`0 0 ${W} ${H}`);fl.classList.remove('kl-gross');}
+ function melde(ende){o.beiLinien&&o.beiLinien(zustand(),ende);}
+ const rx=v=>KL.rasten(v,ax.rasten||ax.raster,ax.min,ax.max),ry=v=>KL.rasten(v,ay.rasten||ay.raster,ay.min,ay.max);
+ function setze(y,x,ende){if(y!==undefined)LY=y==null?null:ry(y);if(x!==undefined)LX=x==null?null:rx(x);zeichne();melde(ende!==false);}
+ // Bildschirm → Bildkoordinaten (gilt auch in der Lupe)
+ function svgPunkt(ev){const r=svg.getBoundingClientRect(),vb=svg.viewBox.baseVal;return {x:vb.x+(ev.clientX-r.left)/r.width*vb.width,y:vb.y+(ev.clientY-r.top)/r.height*vb.height};}
+ wurzel.querySelectorAll('[data-griff]').forEach(st=>{let zug=null;const ach=st.dataset.griff;
+  const schieb=ev=>{const q=svgPunkt(ev);if(ach==='y')setze(yAus(Math.min(Y1,Math.max(Y0,q.y))),undefined,false);else setze(undefined,xAus(Math.min(X1,Math.max(X0,q.x))),false);};
+  st.addEventListener('pointerdown',ev=>{if(lupe||gesperrt[ach])return;ev.preventDefault();zug=ev.pointerId;try{st.setPointerCapture(ev.pointerId);}catch(_){}schieb(ev);});
+  st.addEventListener('pointermove',ev=>{if(zug!==ev.pointerId)return;ev.preventDefault();schieb(ev);});
+  const los=ev=>{if(zug!==ev.pointerId)return;zug=null;melde(true);};
+  st.addEventListener('pointerup',los);st.addEventListener('pointercancel',los);});
+ // Feinknöpfe: Tipp = ein Rasterschritt, gedrückt halten = weiterzählen
+ function schritt(ach,r){if(gesperrt[ach])return;const a=ach==='y'?ay:ax,alt=ach==='y'?LY:LX,st=a.rasten||a.raster;
+  const neu=alt==null?(a.start!=null?a.start:(a.min+a.max)/2):alt+r*st;if(ach==='y')setze(neu,undefined,false);else setze(undefined,neu,false);}
+ wurzel.querySelectorAll('.kl-k').forEach(b=>{let t1=null,t2=null,wdh=false;const ach=b.dataset.s,r=+b.dataset.d;
+  const halt=()=>{if(t1)clearTimeout(t1);if(t2)clearInterval(t2);const war=!!t2;t1=t2=null;if(war)melde(true);};
+  b.addEventListener('pointerdown',()=>{wdh=false;halt();t1=setTimeout(()=>{t2=setInterval(()=>{wdh=true;schritt(ach,r);},70);},450);});
+  ['pointerup','pointercancel','pointerleave'].forEach(n=>b.addEventListener(n,halt));
+  b.addEventListener('click',()=>{if(wdh){wdh=false;return;}schritt(ach,r);melde(true);});});
+ const lb=wurzel.querySelector('[data-r="lupe"]');if(lb)lb.onclick=()=>{if(lupe)lupeAus();else if(zentrum())lupe=true;zeichne();};
+ // Tippen ins Raster (nur wenn o.tippen gesetzt ist): liefert die Werte an der Stelle (noch ohne Rasten)
+ svg.addEventListener('click',ev=>{if(!o.tippen)return;const q=svgPunkt(ev);if(q.x<X0-6||q.x>X1+6||q.y<Y0-6||q.y>Y1+6)return;
+  o.tippen(Math.min(ax.max,Math.max(ax.min,xAus(q.x))),Math.min(ay.max,Math.max(ay.min,yAus(q.y))),ev,{px:q.x,py:q.y,massstab:svg.getBoundingClientRect().width/svg.viewBox.baseVal.width});});
+ function zustand(){return {X:LX,Y:LY,gesetzt:LX!=null&&LY!=null,lupe};}
+ zeichneFest();zeichne();
+ return {svg,px,py,xAus,yAus,ax,ay,setze,zustand,neu:zeichne,
+  kurven:l=>{if(l)kurven=l.slice();zeichne();return kurven;},punkte:l=>{if(l)punkte=l.slice();zeichne();return punkte;},
+  hilfen:l=>{if(l)hilfen=l.slice();zeichne();return hilfen;},texte:l=>{if(l)texte=l.slice();zeichne();return texte;},
+  alles:a=>{if(a.kurven)kurven=a.kurven.slice();if(a.punkte)punkte=a.punkte.slice();if(a.hilfen)hilfen=a.hilfen.slice();if(a.texte)texte=a.texte.slice();zeichne();},
+  stil:(ach,s)=>{if(ach==='y')stilY=Object.assign({},s||{});else stilX=Object.assign({},s||{});zeichne();},
+  linieY:f=>{yLinie=f||null;zeichne();},linieX:f=>{xLinie=f||null;zeichne();},
+  sperre:(ach,an)=>{gesperrt[ach]=!!an;zeichne();},
+  lupe:an=>{if(an!==undefined){if(an&&zentrum())lupe=true;else lupeAus();zeichne();}return lupe;},
+  abstandPx:(x1,y1,x2,y2)=>Math.hypot(px(x1)-px(x2),py(y1)-py(y2)),rx,ry};
+}
+
+// ---------------------------------------------------------------- 3.4.2 Dreier-Team „Reicht die alte Pumpe?“ mit Ringtausch (ohne DOM, braucht KL, ZAHL, Z34, VK)
+// Gleiche Bauweise wie die Dreier-Teams 3.1.2 bis 3.3.2: „Welches Tablet bist du? 1 · 2 · 3“, Ring 1 holt von 2, 2 von 3, 3 von 1.
+// Zahlen aus dem Rechenblatt der Vorschau (Z34) und aus Station 3.3 (VK: Anbau 83 / 52 / 78 / 122 l/h, HK 2.2 = 10,2 kPa):
+// Tablet 1 Volumenstrom: Altbau 8 140 W → 700 l/h, ganzes Haus 1 035 l/h = 1,035 m³/h · Tablet 2 Druck: Bad 30 m → 4 500 Pa, mit Ventil 9,0 kPa,
+// ganzes Haus 10,2 kPa = 102 mbar ≈ 1,02 m (es zählt der größte Strang) · Tablet 3 Pumpe: Stufe 1 bei 0 → 1,9 m, Stufe 1 bei 1,0 m³/h → 1,34 m, Stufe 3 → 3,33 m.
+// Alte Pumpe 25-40 (neu gezeichnet): Stufe 3 H = 4,0 − 0,35·V̇ − 0,32·V̇², Stufen 2 und 1 nach den Proportionalgesetzen (2 300 und 1 860 statt 2 700 1/min).
+// Punkte: Teil 1 drei eigene Werte (3 × 10) · Teil 2 geholter Wert (10) und seine Verwendung (10) · Teil 3 dritter Wert (10) + vier Fragen (je 10) = 100.
+// Teil 2 zählt erst, wenn Teil 1 stimmt; Teil 3 erst, wenn Teil 2 stimmt; die Fragen erst, wenn der dritte Wert stimmt.
+const RP=(()=>{
+ const T=ZAHL.text,B=Z34.bestand,ST=Z34.strang,AB=Z34.ablesen;
+ const tsd=x=>T(x).replace(/^(\d)(\d{3})(?=$|,)/,'$1 $2');
+ const DREHZAHL={1:1860,2:2300,3:2700};
+ const H=(s,V)=>{const q=DREHZAHL[s]/2700;return 4.0*q*q-0.35*q*V-0.32*V*V;};
+ const P=(s,V)=>({1:27+4*V,2:41+5*V,3:56+6*V})[s];
+ const vNull=s=>KL.nullstelle(V=>H(s,V),0,4);
+ const VA=B.Vges/1000,HA=ST.ganzesHausPa/10000,KA=HA/(VA*VA);
+ const anlage=V=>KA*V*V;
+ const bp=s=>{const r=KL.schnitt(V=>H(s,V),anlage,0,3.2);return {V:r.x,H:r.y,P:P(s,r.x)};};
+ const BP={1:bp(1),2:bp(2),3:bp(3)};
+ const ALT=B.liste,BAD=ALT.reduce((a,b)=>a.l>b.l?a:b),WOHN=ALT[0];
+ const VB_EXAKT=B.QB/(1.163*10),VH_LH=B.Vges,H15=KA*1.5*1.5;
+ // Musterwerte je Feld
+ const SOLL={t1q:B.QB,t1a:B.VBrund,t1h:B.Vges,t1m:VA,t1v:H15,
+  t2p:BAD.rohrPa,t2v:ST.mitVentilPa/1000,t2k:ST.ganzesHausPa/1000,t2b:ST.ganzesHausPa/100,t2m:HA,
+  t3a:AB.s1_0,t3b:H(1,1),t3c:H(3,1),f2:BP[3].V};
+ const RAEUME=[[BAD.raum.toLowerCase(),BAD.raum],['kinder2','Kinderzimmer 2'],['schlaf','Schlafzimmer']];
+ const STRAENGE=[['anbau','der Strang zu HK 2.2 im Anbau'],['altbau','der Strang zum Bad im Altbau'],['summe','beide zusammen']];
+ const TAB=[{name:'Volumenstrom',was:'rechnet, wie viel Wasser das Haus braucht',von:1},{name:'Druck',was:'rechnet, wie viel Druck die Pumpe schaffen muss',von:2},{name:'Pumpe',was:'liest im Diagramm der alten Pumpe ab',von:0}];
+ const T1={0:['t1q','t1a','t1h','t1m'],1:['t2r','t2p','t2v','t2s','t2k','t2b','t2m'],2:['t3a','t3b','t3c']};
+ // drei Bewertungsgruppen in Teil 1 (je 10 Punkte)
+ const GRUPPEN={0:[['t1q','t1a'],['t1h'],['t1m']],1:[['t2r','t2p'],['t2v'],['t2s','t2k','t2b','t2m']],2:[['t3a'],['t3b'],['t3c']]};
+ const RING={0:{text:'Förderhöhe für das ganze Haus (von Tablet 2)',einheit:'m',soll:HA},1:{text:'Stufe 1 bei 1,0 m³/h (von Tablet 3)',einheit:'m',soll:H(1,1)},2:{text:'Volumenstrom des ganzen Hauses (von Tablet 1)',einheit:'m³/h',soll:VA}};
+ const DRITT={0:{text:'Stufe 1 bei 1,0 m³/h (von Tablet 3)',einheit:'m',soll:H(1,1),von:2},1:{text:'Volumenstrom des ganzen Hauses (von Tablet 1)',einheit:'m³/h',soll:VA,von:0},2:{text:'Förderhöhe für das ganze Haus (von Tablet 2)',einheit:'m',soll:HA,von:1}};
+ const NUTZE={0:'t1v',1:'t2j',2:'lx'};
+ const FRAGEN=[
+  {k:'f1',frage:'Reicht die alte Pumpe für Altbau und Anbau?',soll:'ja',opt:[['ja','Ja – Punkt A liegt sogar unter der Kennlinie von Stufe 1.'],['nein','Nein – sie schafft nur 4 m, und das Haus ist fast 10 m hoch.'],['drei','Nur auf Stufe 3.']],
+   tipp:'Schaut, wo Punkt A liegt: unter oder über den Kennlinien? Die Höhe des Hauses muss die Pumpe im geschlossenen Kreis nicht schaffen (3.2).'},
+  {k:'f2',art:'zahl',frage:'Die Pumpe steht auf Stufe 3. Lies den Betriebspunkt ab: Wie groß ist der Volumenstrom?',einheit:'m³/h'},
+  {k:'f3',frage:'Welche Stufe stellst du ein?',soll:'eins',opt:[['eins','Stufe 1 – die kleinste, deren Kennlinie über A liegt: genug Wasser, weniger Strom, leiser.'],['drei','Stufe 3 – sicher ist sicher.'],['zwei','Stufe 2 – immer die mittlere.']],
+   tipp:'Fachbuch S. 234: Liegt der Auslegungspunkt zwischen zwei Kennlinien, nimmt man die kleinere. Welche Stufe ist die kleinste, die noch über A liegt?'},
+  {k:'f4',frage:'Nachts schließen viele Thermostatventile. Was macht die alte, ungeregelte Pumpe?',soll:'links',opt:[['links','Der Betriebspunkt wandert auf ihrer Kennlinie nach links oben: Der Druck steigt, Ventile können pfeifen; ihre Leistungsaufnahme sinkt nur wenig.'],
+   ['spart','Der Druck sinkt, sie spart viel Strom.'],['nichts','Nichts, das merkt die Pumpe nicht.']],tipp:'Denkt an die Animation 3.4.1: Ventile zu – die Anlagenkennlinie wird steiler. Wohin wandert der Betriebspunkt?'}];
+ const ALLE=['t1q','t1a','t1h','t1m','t2r','t2p','t2v','t2s','t2k','t2b','t2m','t3a','t3b','t3c','ring','t1v','t2j','lx','drei','ly','f1','f2','f3','f4'];
+ const leer=()=>Object.fromEntries(ALLE.map(k=>[k,'']));
+ const zahl=(s,soll)=>VK.zahl(String(s==null?'':s).replace(/^\s*(ca\.?|≈|etwa)\s*/i,'').replace(/\s*(mws|m)\s*$/i,''),soll);
+ const nah=(x,s,t)=>isFinite(x)&&Math.abs(x-s)<=t+1e-9;
+ const proz=(x,s,p)=>isFinite(x)&&Math.abs(x-s)<=Math.abs(s)*p+1e-9;
+ const ablesung=(x,s)=>nah(x,s,0.1);
+ // Prüfregeln: l/h und W ±0,5 % · Pa 0,5 % · kPa auf eine Stelle · m ±0,05 · m³/h ±0,01 · Ablesungen ±0,1 m
+ function feldOk(i,f,s){const x=zahl(s,SOLL[f]);
+  switch(f){
+   case 't1q':return proz(x,B.QB,0.005);case 't1a':return proz(x,VB_EXAKT,0.005)||proz(x,B.VBrund,0.005);case 't1h':return proz(x,VH_LH,0.005);case 't1m':return nah(x,VA,0.01);
+   case 't1v':return nah(x,H15,0.05);
+   case 't2r':return s===RAEUME[0][0];case 't2p':return proz(x,BAD.rohrPa,0.005);case 't2v':return nah(x,ST.mitVentilPa/1000,0.05);
+   case 't2s':return s==='anbau';case 't2k':return nah(x,ST.ganzesHausPa/1000,0.05);case 't2b':return nah(x,ST.ganzesHausPa/100,1);case 't2m':return nah(x,HA,0.05);
+   case 't2j':return s==='ja';
+   case 't3a':return ablesung(x,AB.s1_0);case 't3b':return ablesung(x,H(1,1));case 't3c':return ablesung(x,H(3,1));
+   case 'ring':return wertOk(RING[i],x);case 'drei':return wertOk(DRITT[i],x);
+   case 'lx':return nah(+s,VA,0.02);case 'ly':return nah(+s,HA,0.05);
+   case 'f2':return x>=1.55-1e-9&&x<=1.75+1e-9;}
+  const q=FRAGEN.find(z=>z.k===f);return !!q&&s===q.soll;}
+ // geholte Werte: Förderhöhe 1,0–1,04 m (±0,05) · Stufe 1 bei 1,0 m³/h 1,25–1,45 m (±0,1) · Volumenstrom ±0,01 m³/h
+ function wertOk(w,x){if(w.soll===VA)return nah(x,VA,0.01);if(w.soll===HA)return nah(x,HA,0.05)||(x>=1.0&&x<=1.04);return ablesung(x,w.soll)||(x>=1.25&&x<=1.45);}
+ function pruefe(i,z){const r={};[...T1[i],'ring',NUTZE[i],'drei'].concat(i===2?['ly']:[]).concat(['f1','f2','f3','f4']).forEach(f=>{r[f]=feldOk(i,f,z[f]);});return r;}
+ function stand(i,z){const r=pruefe(i,z),gr=GRUPPEN[i].map(g=>g.every(f=>r[f])),p1=gr.every(Boolean),ring=p1&&r.ring,nutz=ring&&r[NUTZE[i]],p2=nutz;
+  const dritt=p2&&r.drei&&(i!==2||r.ly),fr=['f1','f2','f3','f4'].filter(f=>dritt&&r[f]).length,p3=dritt&&fr===4;
+  const punkte=gr.filter(Boolean).length*10+(ring?10:0)+(nutz?10:0)+(dritt?10:0)+fr*10;
+  return Object.assign({p1,p2,p3,dritt,gruppen:gr,punkte},r);}
+ // Hinweise: das erste falsche Feld in der Reihenfolge der Teile
+ const FREMD={0:[[BAD.rohrPa,'Tablet 2'],[ST.mitVentilPa/1000,'Tablet 2'],[ST.ganzesHausPa/1000,'Tablet 2'],[AB.s1_0,'Tablet 3'],[H(3,1),'Tablet 3']],
+  1:[[B.QB,'Tablet 1'],[B.VBrund,'Tablet 1'],[B.Vges,'Tablet 1'],[AB.s1_0,'Tablet 3'],[H(3,1),'Tablet 3']],2:[[B.QB,'Tablet 1'],[B.Vges,'Tablet 1'],[BAD.rohrPa,'Tablet 2'],[ST.mitVentilPa/1000,'Tablet 2']]};
+ function fremd(i,x){const t=FREMD[i].find(([w])=>nah(x,w,Math.max(0.005,Math.abs(w)*0.003)));return t?`Das ist ein Wert von ${t[1]}. Hast du das richtige Tablet gewählt? Unten kannst du wechseln.`:'';}
+ function tippFeld(i,f,s){const x=zahl(s,SOLL[f]);
+  if(/^t[123]/.test(f)&&f!=='t2r'&&f!=='t2s'&&f!=='t2j'&&!isFinite(x))return 'Gib eine Zahl ein.';
+  if(/^t[123]/.test(f)&&f!=='t1v'){const fr=fremd(i,x);if(fr)return fr;}
+  switch(f){
+   case 't1q':if(proz(x,B.Qges,0.005))return 'Gefragt ist nur der Altbau: die acht Räume aus den Unterlagen von 1998.';if(proz(x,B.QA,0.005))return 'Das ist der Anbau. Gefragt ist der Altbau.';return 'Zähl die Heizlasten der acht Räume zusammen.';
+   case 't1a':if(proz(x,VB_EXAKT*10,0.01)||proz(x,B.QB/1.163,0.01))return 'Hast du durch die 10 K geteilt?';if(proz(x,VH_LH,0.005))return 'Erst nur der Altbau – den Anbau zählst du im nächsten Feld dazu.';
+    return `ṁ = Q̇ / (c · ΔT) = ${tsd(B.QB)} W / (1,163 Wh/(kg·K) · 10 K) – 1 kg Wasser ≙ 1 Liter.`;
+   case 't1h':if(proz(x,B.VBrund,0.005)||proz(x,VB_EXAKT,0.005))return `Der Anbau kommt dazu: ${B.VA} l/h aus 3.3.`;if(nah(x,VA,0.01))return 'Hier in l/h – in m³/h kommt im nächsten Feld.';if(proz(x,VB_EXAKT*10+B.VA,0.01))return 'Hast du durch die 10 K geteilt?';
+    return `Altbau + Anbau: ${B.VBrund} l/h + ${B.VA} l/h.`;
+   case 't1m':if(proz(x,VH_LH,0.005))return '1 m³ = 1 000 l';if(nah(x,B.VBrund/1000,0.01))return 'Das ganze Haus: Altbau und Anbau.';return 'l/h ÷ 1 000 = m³/h.';
+   case 't1v':if(nah(x,HA*1.5/VA,0.05))return `quadratisch: (1,5/1,035)² = ${T(KL.rund((1.5/VA)**2,2),2)}, nicht ${T(KL.rund(1.5/VA,2),2)}.`;return 'H₂ = H₁ · (V̇₂/V̇₁)² – mit der Förderhöhe von Tablet 2 und V̇₁ = 1,035 m³/h.';
+   case 't2r':return 'Nimm den Raum mit dem längsten Weg.';
+   case 't2p':if(proz(x,BAD.l*100,0.005))return 'Zuschlag für Formteile und Armaturen: · 1,5.';if(proz(x,BAD.rohrPa/2,0.005))return 'Der Weg zählt Vor- und Rücklauf zusammen – nimm die ganze Länge.';
+    if(ALT.some(h=>h!==BAD&&proz(x,h.rohrPa,0.005)))return 'Nimm den Raum mit dem längsten Weg.';if(nah(x,BAD.rohrPa/1000,0.05))return `In Pa, bitte: ${BAD.l} m · 100 Pa/m · 1,5.`;return 'Δp = l · R · 1,5 mit R = 100 Pa/m (aus 3.2).';
+   case 't2v':if(nah(x,BAD.rohrPa/1000,0.05))return 'Das Ventil gehört dazu.';if(proz(x,ST.mitVentilPa,0.005))return 'In kPa: 1 kPa = 1 000 Pa.';return 'Ventil wie Rohr (Ventilautorität 0,5): Rohr + Ventil, in kPa.';
+   case 't2s':return s==='summe'?'Die Stränge liegen nebeneinander – es zählt der größte, nicht die Summe.':'Schau in 3.3: Im Anbau gibt es einen Strang mit noch mehr Druckverlust.';
+   case 't2k':if(nah(x,ST.mitVentilPa/1000,0.05))return 'Schau in 3.3: Im Anbau gibt es einen Strang mit noch mehr Druckverlust.';if(nah(x,(ST.mitVentilPa+ST.anbauPa)/1000,0.05))return 'Die Stränge liegen nebeneinander – es zählt der größte, nicht die Summe.';
+    if(nah(x,BAD.rohrPa/1000,0.05)||nah(x,ST.anbauPa/2000,0.05))return 'Das Ventil gehört dazu.';return 'Es zählt der Strang mit dem größten Druckverlust – im ganzen Haus.';
+   case 't2b':if(nah(x,ST.ganzesHausPa/1000,0.05))return 'In mbar: 1 kPa = 10 mbar.';if(proz(x,ST.ganzesHausPa/10,0.01))return '1 kPa = 10 mbar.';return 'kPa · 10 = mbar.';
+   case 't2m':if(nah(x,ST.ganzesHausPa/100,1))return `${T(ST.ganzesHausPa/100)} mbar, und 1 m ≈ 100 mbar.`;if(nah(x,ST.ganzesHausPa/1000,0.05))return '1 m ≈ 10 kPa ≈ 100 mbar.';return 'mbar ÷ 100 ≈ m.';
+   case 't2j':return `${T(KL.rund(H(1,1),2),2)} m sind mehr als ${T(HA,2)} m – reicht das?`;
+   case 't3a':case 't3b':case 't3c':{const v=f==='t3a'?0:1,st=f==='t3c'?3:1,and=[1,2,3].filter(k=>k!==st).find(k=>ablesung(x,H(k,v)));
+    if(and)return `Das ist Stufe ${and}. Stufe ${st} ist die ${st===1?'unterste':'oberste'} Kurve.`;if(nah(x,H(st,v)*100,10))return 'In Metern, bitte – links an der Achse.';
+    return v===0?'Lies bei V̇ = 0 an der linken Achse ab.':`Zieh die senkrechte Linie auf 1,0 m³/h und die waagrechte auf den Schnittpunkt mit Stufe ${st}.`;}
+   case 'ring':case 'drei':return 'Frag noch einmal nach.';
+   case 'lx':return 'Zieh die senkrechte Linie genau auf den Volumenstrom von Tablet 1 – mit − / + geht es genau.';
+   case 'ly':return 'Zieh jetzt die waagrechte Linie auf die Förderhöhe von Tablet 2.';
+   case 'f2':if(nah(x,BP[1].V,0.05))return 'Das ist der Betriebspunkt auf Stufe 1. Gefragt ist Stufe 3 – die oberste Kurve.';if(nah(x,VA,0.03))return 'Das ist der Auslegungspunkt A. Der Betriebspunkt liegt dort, wo die blaue Anlagenkennlinie die Kennlinie von Stufe 3 schneidet.';
+    if(nah(x,BP[3].H,0.1))return 'Gefragt ist der Volumenstrom (waagrechte Achse).';return 'Zieh die senkrechte Linie unter den Schnittpunkt der blauen Linie mit Stufe 3 und lies unten ab.';}
+  const q=FRAGEN.find(z=>z.k===f);return q?q.tipp:'';}
+ function tipp(i,z){const r=pruefe(i,z),s=stand(i,z);
+  const reihe=!s.p1?T1[i]:!r.ring?['ring']:!r[NUTZE[i]]?[NUTZE[i]]:!s.dritt?(i===2?['drei','ly']:['drei']):['f1','f2','f3','f4'];
+  const f=reihe.find(x=>!r[x]);if(!f)return '';const leerF=String(z[f]==null?'':z[f]).trim()==='';
+  if(leerF)return ['t2r','t2s','t2j','f1','f3','f4'].includes(f)?'Wählt noch eine Antwort aus.':f==='lx'||f==='ly'?tippFeld(i,f,z[f]):'Füll noch alle Felder aus.';
+  return tippFeld(i,f,z[f]);}
+ // Musterlösung je Tablet (für Proben und die Lehrkraft)
+ function richtig(i){const z=leer(),t=(x,n)=>T(KL.rund(x,n),n);
+  if(i===0)Object.assign(z,{t1q:String(B.QB),t1a:String(B.VBrund),t1h:String(B.Vges),t1m:t(VA,3),ring:t(HA,2),t1v:t(H15,2),drei:t(H(1,1),2)});
+  if(i===1)Object.assign(z,{t2r:RAEUME[0][0],t2p:String(BAD.rohrPa),t2v:t(ST.mitVentilPa/1000,1),t2s:'anbau',t2k:t(ST.ganzesHausPa/1000,1),t2b:String(ST.ganzesHausPa/100),t2m:t(HA,2),ring:t(H(1,1),2),t2j:'ja',drei:t(VA,3)});
+  if(i===2)Object.assign(z,{t3a:t(AB.s1_0,1),t3b:t(H(1,1),2),t3c:t(H(3,1),2),ring:t(VA,3),lx:String(VA),drei:t(HA,2),ly:String(HA)});
+  Object.assign(z,{f1:'ja',f2:t(BP[3].V,2),f3:'eins',f4:'links'});return z;}
+ const text=s=>typeof s==='string'?s.slice(0,12):'';
+ function saeubere(z){const o=leer();if(!z||typeof z!=='object')return o;ALLE.forEach(f=>{o[f]=text(z[f]);});return o;}
+ const MELDUNG=`Altbau ${B.VBrund} l/h + Anbau ${B.VA} l/h = ${tsd(B.Vges)} l/h ≈ ${T(KL.rund(VA,2),2)} m³/h. Der ungünstigste Strang liegt jetzt im Anbau (HK ${VK.SCHLECHT}), ${T(ST.ganzesHausPa/1000,1)} kPa ≈ ${T(KL.rund(HA,1),1)} m. `+
+  `Die alte 25-40 reicht schon auf Stufe 1 – auf Stufe 3 drückt sie rund ${T(KL.rund(BP[3].V,1),1)} m³/h bei ${T(KL.rund(BP[3].H,1),1)} m durch, darum pfeift es nachts. `+
+  'Empfehlung: auf Stufe 1 stellen, die Ventile im Altbau nachstellen, beim nächsten Tausch eine geregelte Pumpe (Δp-v).';
+ return {H,P,vNull,VA,HA,KA,anlage,BP,ALT,BAD,WOHN,SOLL,RAEUME,STRAENGE,TAB,T1,GRUPPEN,RING,DRITT,NUTZE,FRAGEN,ALLE,leer,zahl,feldOk,pruefe,stand,tipp,tippFeld,richtig,saeubere,MELDUNG,tsd,DREHZAHL};
+})();
+
+// ---------------------------------------------------------------- 4.1 Dreier-Team „Übergabe an den Chef“ (ohne DOM, braucht ZAHL, VK, KL, Z34, RP)
+// Feinplan Abschnitt 4–6 (25.11.2026), „4.1 Dreier-Team …“: Es wird nichts neu gerechnet – die Ergebnisse der Stationen 3.1 bis 3.4 werden zum
+// Übergabeprotokoll zusammengetragen, und das Team entscheidet die Ventile. Zahlen NICHT abgetippt, sondern aus den Kernen der Stationen:
+// VK (3.3: Heizlast 965 / 605 / 907 / 1419 W, Wege 18 / 20 / 30 / 34 m → 83 / 52 / 78 / 122 l/h, Summe 335 l/h, Rohr 2,7 / 3,0 / 4,5 / 5,1 kPa,
+// 5,1 + 5,1 = 10,2 kPa, Ventil 7,5 / 7,2 / 5,7 / 5,1 kPa, Heimeier 4,6 / 3,5 / 5,0 / 6,6 · Danfoss 6 / 5 / 7 / N · Oventrop 5,7 / 3,9 / 6,1 / 7,8)
+// und Z34/RP (3.4: Altbau 700 l/h, alte Pumpe 25-40, bei 1,035 m³/h Stufe 1 / 2 / 3 = 1,31 / 2,25 / 3,30 m).
+// Gleiche Bauweise wie die Dreier-Teams 3.1.2 bis 3.4.2: „Welches Tablet bist du? 1 · 2 · 3“, Ringtausch 1 holt von 2, 2 von 3, 3 von 1.
+// Punkte: Teil 1 30 · Teil 2 20 · Teil 3 5 × 10 = 100. Teil 2 zählt erst, wenn Teil 1 ganz stimmt; Teil 3 erst, wenn Teil 2 stimmt.
+const UE4=(()=>{
+ const T=ZAHL.text,R=VK.REIHE,n=k=>k.replace('.',''),hk=f=>f[1]+'.'+f[2],NB=' ';
+ const tsd=x=>{const s=T(x);return /^\d{4}(,|$)/.test(s)?s.replace(/^(\d)(\d{3})/,'$1'+NB+'$2'):s;};   // 1 035 wie im Feinplan
+ // ---------------- Musterwerte
+ const ALTBAU=Z34.bestand.VBrund;                        // 700 l/h (Station 3.4)
+ const ANBAU=VK.SUMME;                                   // 335 l/h (Station 3.3)
+ const HAUS=ALTBAU+ANBAU,HAUS_M3=HAUS/1000;              // 1 035 l/h = 1,035 m³/h
+ const SCHLECHT=VK.SCHLECHT,ROHR=VK.rohrKpa(SCHLECHT),PUMPE=VK.GESAMT;   // HK 2.2 · 5,1 kPa · 10,2 kPa
+ const HM=KL.rund(PUMPE/10,2);                           // 1,02 m (1 m ≈ 10 kPa)
+ const STUFE_H=s=>KL.rund(RP.H(s,HAUS_M3),2),S1=STUFE_H(1);                 // 1,31 m
+ const HE=k=>VK.einstellwert('heimeier2',VK.kv(k)).wert,OV=k=>VK.einstellwert('oventrop',VK.kv(k)).wert;
+ const DA=k=>{const w=VK.einstellwert('danfoss',VK.kv(k)).wert;return w==='knapp'?'N':String(w);};
+ const DANFOSS_PUMPE=KL.rund(ROHR+VK.druckFuer('danfoss',VK.VENTIL.danfoss.kv.length-1,VK.lh(SCHLECHT)),1);   // 10,4 kPa
+ // ---------------- Spielraum (Feinplan)
+ const TOL={q:1,sum:2,rohr:0.05,pumpe:0.1,ventil:0.1,hm:0.03,s1:0.05,ring1:0.1,anbau:2,haus:5,hausM3:0.005,einstell:0.3};
+ // ---------------- Felder und Punkte
+ const ANDERE=R.filter(k=>k!==SCHLECHT);                 // HK 1.1, 1.2, 2.1 (Ventil-Δp)
+ const T1={0:['sys',...R.map(k=>'q'+n(k)),'sum'],1:['str','rohr','pumpe',...ANDERE.map(k=>'v'+n(k))],2:['hm','s1','st']};
+ const P1=Object.assign({sys:6,sum:4,str:6,rohr:6,pumpe:6,hm:10,s1:10,st:10},...R.map(k=>({['q'+n(k)]:5})),...ANDERE.map(k=>({['v'+n(k)]:4})));
+ const T2={0:['ring'],1:['ring'],2:['ring','hl','hm3']};
+ const EINS=[...R.map(k=>'h'+n(k)),...R.map(k=>'d'+n(k)),...R.map(k=>'o'+n(k))];
+ const T3=['eins','w','a','s','r'];
+ const ALLE=[...T1[0],...T1[1],...T1[2],'ring','hl','hm3',...EINS,'w','a','s','r'];
+ const TAB=[{name:'Rohrsystem und Wasser',aus:'aus 3.1 und 3.3',von:1},{name:'Druck',aus:'aus 3.2 und 3.3',von:2},{name:'Pumpe',aus:'aus 3.4',von:0}];
+ const SYS=[['zwei','Zweirohr'],['ein','Einrohr'],['tichel','Tichelmann']];
+ const STR=R.map(k=>[k,'HK '+k]);
+ const STUFEN=[['1','Stufe 1'],['2','Stufe 2'],['3','Stufe 3']];
+ const DANFOSS=[...VK.VENTIL.danfoss.stufen];             // 1 … 7, N
+ const RING={0:{text:'Druck, den die Pumpe schaffen muss',einheit:'kPa'},1:{text:'Stufe der alten Pumpe',einheit:''},2:{text:'Wasser des Anbaus',einheit:'l/h'}};
+ // ---------------- Teil 3: vier Auswahlfragen (Wortlaut Feinplan)
+ const FRAGEN=[
+  {k:'w',mehr:true,frage:'„Welche Ventile nehmen wir?“ – Welche Aussagen stimmen?',soll:'ab',opt:[
+   ['a','Heimeier und Oventrop sind stufenlos einstellbar – jeder Heizkörper bekommt genau seinen Wert.'],
+   ['b','Bei Danfoss reicht für HK 2.2 selbst „N“ (ganz offen) knapp nicht – die Pumpe müsste 10,4 statt 10,2 kPa schaffen.'],
+   ['c','Danfoss ist am besten, weil seine Einstellwerte ganze Zahlen sind.'],
+   ['d','Es ist egal, welchen Hersteller wir nehmen – die Einstellwerte sind bei allen gleich.']]},
+  {k:'a',frage:'Warum muss im Anbau abgeglichen werden?',soll:'weg',opt:[
+   ['weg','Im Zweirohrsystem ist der Weg des Wassers zu jedem Heizkörper verschieden lang. Ohne Abgleich bekommen die nahen Heizkörper zu viel Wasser und die fernen zu wenig.'],
+   ['kaelter','Weil das Wasser im Zweirohrsystem von Heizkörper zu Heizkörper kälter wird.'],
+   ['heben','Damit die Pumpe das Wasser bis ins Obergeschoss hochheben kann.'],
+   ['gross','Weil alle Heizkörper gleich groß sein müssen.']]},
+  {k:'s',mehr:true,frage:'Warum nicht Stufe 3?',soll:'abc',opt:[
+   ['a','Auf Stufe 3 fließt etwa 59 % mehr Wasser als nötig (1,64 statt 1,035 m³/h).'],
+   ['b','Die Thermostatventile müssen mehr drosseln – es kann rauschen und pfeifen.'],
+   ['c','Die Pumpe braucht mehr Strom (etwa 66 statt 32 W).'],
+   ['d','Auf Stufe 3 werden die Räume schneller und gleichmäßiger warm, das ist immer besser.']]},
+  {k:'r',frage:'Was raten wir Familie Röhringer für später?',soll:'dpv',opt:[
+   ['dpv','Wenn die alte Pumpe einmal ausfällt: eine geregelte Pumpe mit Proportionaldruck (Δp-v) – sie braucht im Teillastbetrieb viel weniger Strom (Tabellenbuch Tab. 431.1: 10 statt 60 W).'],
+   ['groesser','Sofort eine größere ungeregelte Pumpe.'],
+   ['stufe3','Die Pumpe auf Stufe 3 stellen, damit es nie kalt wird.'],
+   ['keine','Gar keine Pumpe – das warme Wasser steigt von selbst.']]}];
+ const frage=k=>FRAGEN.find(q=>q.k===k);
+ // ---------------- Lesen und Prüfen
+ const leer=()=>Object.fromEntries(ALLE.map(k=>[k,'']));
+ const zahl=(s,soll)=>VK.zahl(String(s==null?'':s).replace(/^\s*(stufe|ca\.?|≈|etwa)\s*/i,''),soll);
+ const nah=(x,s,t)=>isFinite(x)&&Math.abs(x-s)<=t+1e-9;
+ const mehrText=s=>[...new Set(String(s==null?'':s).replace(/[^a-d]/g,''))].sort().join('');
+ // Musterwert eines Zahlenfelds (für das Lesen doppeldeutiger Eingaben wie „1.035“)
+ function soll(i,f){let m;
+  if((m=/^q\d\d$/.exec(f)))return VK.lh(hk(f));if((m=/^v\d\d$/.exec(f)))return VK.ventilKpa(hk(f));
+  if(/^h\d\d$/.test(f))return HE(hk(f));if(/^o\d\d$/.test(f))return OV(hk(f));
+  return {sum:ANBAU,rohr:ROHR,pumpe:PUMPE,hm:HM,s1:S1,hl:HAUS,hm3:HAUS_M3,ring:i===0?PUMPE:i===1?1:ANBAU}[f];}
+ function pruefeFeld(i,f,s){const x=zahl(s,soll(i,f));
+  if(f==='sys')return s==='zwei';
+  if(/^q\d\d$/.test(f))return nah(x,VK.lh(hk(f)),TOL.q);
+  if(f==='sum')return nah(x,ANBAU,TOL.sum);
+  if(f==='str')return s===SCHLECHT;
+  if(f==='rohr')return nah(x,ROHR,TOL.rohr);
+  if(f==='pumpe')return nah(x,PUMPE,TOL.pumpe);
+  if(/^v\d\d$/.test(f))return nah(x,VK.ventilKpa(hk(f)),TOL.ventil);
+  if(f==='hm')return nah(x,HM,TOL.hm);
+  if(f==='s1')return nah(x,S1,TOL.s1);
+  if(f==='st')return s==='1';
+  if(f==='ring')return i===0?nah(x,PUMPE,TOL.ring1):i===1?x===1:nah(x,ANBAU,TOL.anbau);
+  if(f==='hl')return nah(x,HAUS,TOL.haus);
+  if(f==='hm3')return nah(x,HAUS_M3,TOL.hausM3);
+  if(/^h\d\d$/.test(f))return nah(x,HE(hk(f)),TOL.einstell);
+  if(/^o\d\d$/.test(f))return nah(x,OV(hk(f)),TOL.einstell);
+  if(/^d\d\d$/.test(f))return s===DA(hk(f));
+  if(f==='eins')return false;
+  const q=frage(f);return !!q&&(q.mehr?mehrText(s)===q.soll:s===q.soll);}
+ function pruefe(i,z){const r={};[...T1[i],...T2[i],...EINS,'w','a','s','r'].forEach(f=>{r[f]=pruefeFeld(i,f,z[f]);});r.eins=EINS.every(f=>r[f]);return r;}
+ function stand(i,z){const r=pruefe(i,z),p1=T1[i].every(f=>r[f]),p2=p1&&T2[i].every(f=>r[f]),t3=T3.filter(f=>r[f]).length,p3=p2&&t3===T3.length;
+  const punkte=T1[i].reduce((s,f)=>s+(r[f]?P1[f]:0),0)+(p2?20:0)+(p2?10*t3:0);
+  return Object.assign({p1,p2,p3,punkte,t3},r);}
+ // ---------------- Hinweise zum ersten falschen Feld
+ const leerF=s=>String(s==null?'':s).trim()==='';
+ const um=(a,b,p)=>isFinite(a)&&b!==0&&Math.abs(a/b-1)<=(p||0.02);
+ const WEGE=R.map(k=>VK.HK[k].l).join(', ').replace(/, (\d+)$/,' und $1');
+ function tippFeld(i,f,z){const s=z[f],x=zahl(s,soll(i,f));
+  if(f==='sys')return s==='ein'?'Im Einrohrsystem fließt das Wasser nacheinander durch die Heizkörper und wird von Heizkörper zu Heizkörper kälter (3.1). Im Anbau bekommt jeder Heizkörper sein Wasser direkt aus dem Vorlauf.'
+   :`Bei Tichelmann sind alle Wege gleich lang (3.1). Im Anbau sind die Wege verschieden lang: ${WEGE} m.`;
+  if(/^q\d\d$/.test(f)){const k=hk(f),Q=VK.HK[k].q;if(!isFinite(x))return 'Gib den Durchfluss in l/h als Zahl ein.';
+   if(um(x,Q/VK.C))return 'Die Spreizung fehlt: durch c · ΔT teilen, also durch 1,163 Wh/(kg·K) · 10 K.';
+   if(um(x,Q/VK.SPREIZUNG))return 'c fehlt: durch 1,163 Wh/(kg·K) · 10 K teilen.';
+   const and=R.find(j=>j!==k&&nah(x,VK.lh(j),TOL.q));if(and)return `Das ist der Durchfluss von HK ${and}. Nimm die Heizlast von HK ${k}.`;
+   return `ṁ = Q̇ / (c · ΔT) = ${Q} W / (1,163 Wh/(kg·K) · 10 K) – 1 kg Wasser ≙ 1 Liter.`;}
+  if(f==='sum'){if(!isFinite(x))return 'Gib die Summe in l/h ein.';if(nah(x,HAUS,TOL.haus))return 'Gefragt ist nur der Anbau – ohne den Altbau.';return 'Zähl die Durchflüsse der vier Heizkörper zusammen.';}
+  if(f==='str')return 'Ungünstig ist der Strang mit dem längsten Weg – dort ist der Druckverlust am größten (3.3).';
+  if(f==='rohr'){const l=VK.HK[SCHLECHT].l;if(!isFinite(x))return 'Gib den Druckverlust in kPa ein.';
+   if(nah(x,l*VK.R/1000,0.05))return 'Zuschlag für Formteile und Armaturen nicht vergessen: · 1,5.';
+   if(um(x,ROHR*1000,0.01))return 'In kPa, bitte: 1 kPa = 1 000 Pa.';
+   if(nah(x,ROHR/2,0.05))return 'Der Weg zählt Vor- und Rücklauf zusammen – nimm die ganze Länge.';
+   if(nah(x,PUMPE,0.1))return 'Gefragt ist nur das Rohr – das Ventil kommt im nächsten Feld dazu.';
+   const and=R.find(j=>j!==SCHLECHT&&nah(x,VK.rohrKpa(j),0.05));if(and)return `Das ist das Rohr von HK ${and}. Nimm den ungünstigsten Strang.`;
+   return 'Δp = l · R · 1,5 mit R = 100 Pa/m (aus 3.2), das Ergebnis in kPa.';}
+  if(f==='pumpe'){if(!isFinite(x))return 'Gib den Druck in kPa ein.';
+   if(nah(x,ROHR,0.1))return 'Das ist nur das Rohr. Am ungünstigsten Strang braucht das Ventil noch einmal so viel wie das Rohr (Ventilautorität 0,5): Rohr + Ventil.';
+   if(um(x,PUMPE*10,0.01))return 'Das sind mbar. Gefragt ist kPa: 1 kPa = 10 mbar.';
+   if(nah(x,HM,0.03))return 'Das sind Meter. Gefragt ist der Druck in kPa.';
+   if(nah(x,R.reduce((a,k)=>a+VK.rohrKpa(k),0),0.1))return 'Die Stränge liegen nebeneinander – es zählt der ungünstigste, nicht die Summe.';
+   return 'Die Pumpe muss den ungünstigsten Strang schaffen: sein Rohr und sein Ventil.';}
+  if(/^v\d\d$/.test(f)){const k=hk(f),r=VK.rohrKpa(k);if(!isFinite(x))return 'Gib den Druckverlust am Ventil in kPa ein.';
+   if(nah(x,r,0.1))return `HK ${k}: Das ist das Rohr. Das Ventil baut den Rest ab – Druck der Pumpe minus Rohr.`;
+   if(nah(x,PUMPE+r,0.1))return `HK ${k}: Minus, nicht plus – Druck der Pumpe minus Rohr.`;
+   if(nah(x,ROHR,0.1))return `HK ${k}: Nur am ungünstigsten Strang ist das Ventil so groß wie sein Rohr. Hier baut das Ventil den Rest ab – Druck der Pumpe minus Rohr.`;
+   if(nah(x,PUMPE,0.1))return `HK ${k}: Das ist der ganze Druck der Pumpe. Zieh das Rohr dieses Strangs ab.`;
+   return `HK ${k}: Ventil = Druck der Pumpe − Rohr dieses Strangs (aus 3.3).`;}
+  if(f==='hm'){if(!isFinite(x))return 'Gib die Förderhöhe in Metern ein.';if(nah(x,PUMPE,0.1))return 'In Metern, bitte: 1 m ≈ 10 kPa.';
+   if(um(x,HM*100,0.03)||um(x,HM/10,0.03))return '1 m ≈ 10 kPa – teile die kPa durch 10.';return '1 m ≈ 10 kPa (genau 9,81 kPa): Teile die kPa durch 10.';}
+  if(f==='s1'){if(!isFinite(x))return 'Gib die Förderhöhe in Metern ein.';const and=[2,3].find(k=>nah(x,STUFE_H(k),TOL.s1));
+   if(and)return `Das ist Stufe ${and}. Stufe 1 ist die unterste Kurve.`;
+   if(nah(x,KL.rund(RP.H(1,0),2),0.05))return 'Das ist Stufe 1 bei V̇ = 0. Zieh die senkrechte Linie auf 1,035 m³/h.';
+   if(um(x,S1*100,0.05))return 'In Metern, bitte – links an der Achse.';
+   return 'Zieh die senkrechte Linie auf 1,035 m³/h und die waagrechte auf den Schnittpunkt mit Stufe 1 – die Lupe hilft.';}
+  if(f==='st')return s==='3'?'Stufe 3 drückt viel mehr Wasser durch als nötig – es rauscht, und die Pumpe braucht mehr Strom. Nimm die kleinste Stufe, die reicht.'
+   :'Schon Stufe 1 schafft mehr, als die Pumpe schaffen muss. Nimm die kleinste Stufe, die reicht.';
+  if(f==='ring'){if(i===0){if(nah(x,ROHR,0.1))return 'Das ist nur das Rohr von HK 2.2. Frag nach dem Druck, den die Pumpe schaffen muss – Rohr und Ventil zusammen.';
+    if(nah(x,HM,0.03))return 'Das sind Meter. Frag nach dem Druck in kPa.';if(um(x,PUMPE*10,0.01))return 'Das sind mbar. Gefragt ist kPa: 1 kPa = 10 mbar.';}
+   if(i===1&&x===3)return 'Frag noch einmal nach: Tablet 3 hat die kleinste Stufe gesucht, die reicht.';
+   if(i===2&&nah(x,HAUS,TOL.haus))return 'Gefragt ist nur der Anbau – den Altbau zählst du im nächsten Feld dazu.';
+   return 'Frag noch einmal nach.';}
+  if(f==='hl'){if(!isFinite(x))return 'Gib das Wasser für das ganze Haus in l/h ein.';if(nah(x,ANBAU,TOL.anbau)||nah(x,ALTBAU,1))return `Altbau und Anbau zusammen: ${ALTBAU} l/h + ${ANBAU} l/h.`;
+   if(nah(x,HAUS_M3,TOL.hausM3))return 'Hier in l/h – in m³/h kommt im nächsten Feld.';return `Altbau + Anbau: ${ALTBAU} l/h + ${ANBAU} l/h.`;}
+  if(f==='hm3'){if(!isFinite(x))return 'Gib das Wasser für das ganze Haus in m³/h ein.';if(nah(x,HAUS,TOL.haus))return '1 m³ = 1 000 l: l/h ÷ 1 000 = m³/h.';
+   if(um(x,HAUS_M3*10,0.01)||um(x,HAUS_M3/10,0.01))return '1 m³ = 1 000 l – durch 1 000 teilen.';return 'l/h ÷ 1 000 = m³/h.';}
+  if(f==='eins')return tippEins(z);
+  if(f==='w'){const m=mehrText(s);if(!m)return 'Kreuzt die Aussagen an, die stimmen.';
+   if(m.includes('c'))return 'Ganze Zahlen sind kein Vorteil: Bei Danfoss reicht für HK 2.2 selbst N knapp nicht.';
+   if(m.includes('d'))return 'Die Einstellwerte sind bei jedem Hersteller anders – schaut in eure Tabelle.';
+   return 'Es stimmen mehrere Aussagen – kreuzt alle an, die stimmen.';}
+  if(f==='a'){if(leerF(s))return 'Wählt noch eine Antwort aus.';
+   if(s==='kaelter')return 'Von Heizkörper zu Heizkörper kälter – das ist das Einrohrsystem (3.1). Der Anbau hat ein Zweirohrsystem.';
+   if(s==='heben')return 'Im geschlossenen Kreis muss die Pumpe das Wasser nicht hochheben – sie überwindet nur die Reibung (3.2).';
+   return 'Die Heizkörper sind verschieden groß, weil die Räume verschieden viel Wärme brauchen. Was ist im Zweirohrsystem zu jedem Heizkörper verschieden lang?';}
+  if(f==='s'){const m=mehrText(s);if(!m)return 'Kreuzt die Aussagen an, die stimmen.';
+   if(m.includes('d'))return 'Die Thermostatventile regeln jeden Raum ohnehin auf seine Temperatur – zu viel Wasser bringt nichts, es rauscht und kostet Strom.';
+   return 'Es stimmen mehrere Aussagen – kreuzt alle an, die stimmen.';}
+  if(f==='r'){if(leerF(s))return 'Wählt noch eine Antwort aus.';
+   if(s==='groesser')return 'Eine größere ungeregelte Pumpe braucht noch mehr Strom – die alte reicht ja schon auf Stufe 1.';
+   if(s==='stufe3')return 'Auf Stufe 3 fließt viel zu viel Wasser – es rauscht, und die Pumpe braucht mehr Strom.';
+   return 'Ohne Pumpe fließt nicht genug Wasser – die Pumpe muss die Reibung im Rohrnetz überwinden (3.2).';}
+  return '';}
+ const HERST={h:['Heimeier','Tablet 1'],d:['Danfoss','Tablet 2'],o:['Oventrop','Tablet 3']};
+ function tippEins(z){const f=EINS.find(x=>!pruefeFeld(0,x,z[x]));if(!f)return '';
+  if(EINS.some(x=>leerF(z[x])))return 'Füllt noch alle zwölf Einstellwerte aus.';
+  const k=hk(f),[name,tab]=HERST[f[0]],x=zahl(z[f],soll(0,f));
+  if(f[0]==='d'){if(k===SCHLECHT)return `Danfoss HK ${k}: Für ${VK.lh(k)} l/h reicht selbst N (ganz offen) knapp nicht – mehr als ganz offen geht nicht.`;
+   if(z[f]==='N')return `Danfoss HK ${k}: N ist ganz offen. Für diesen Heizkörper reicht eine kleinere Stufe – nehmt die von Tablet 2 aus 3.3.2.`;
+   return `Danfoss HK ${k} stimmt noch nicht. Danfoss hat Linien nur für ganze Stufen – nehmt die Stufe von Tablet 2 aus 3.3.2.`;}
+  const anders=f[0]==='h'?OV(k):HE(k);
+  if(nah(x,anders,0.05))return `${name} HK ${k}: Das ist der ${f[0]==='h'?'Oventrop':'Heimeier'}-Wert. Jeder Hersteller nummeriert seine Stufen anders.`;
+  return `${name} HK ${k} stimmt noch nicht – nehmt den Wert von ${tab} aus 3.3.2, auf eine Stelle nach dem Komma.`;}
+ function tipp(i,z){const s=stand(i,z),reihe=!s.p1?T1[i]:!s.p2?T2[i]:T3,f=reihe.find(x=>!s[x]);if(!f)return '';
+  if(f!=='eins'&&leerF(z[f])){if(['sys','str','st'].includes(f))return 'Wähl noch eine Antwort aus.';if(['w','s'].includes(f))return 'Kreuzt die Aussagen an, die stimmen.';
+   if(['a','r'].includes(f))return 'Wählt noch eine Antwort aus.';return 'Füll noch alle Felder aus.';}
+  return tippFeld(i,f,z);}
+ // ---------------- Musterlösung je Tablet (für Proben und die Lehrkraft)
+ function richtig(i){const z=leer();
+  if(i===0){z.sys='zwei';R.forEach(k=>{z['q'+n(k)]=String(VK.lh(k));});z.sum=String(ANBAU);z.ring=T(PUMPE,1);}
+  if(i===1){z.str=SCHLECHT;z.rohr=T(ROHR,1);z.pumpe=T(PUMPE,1);ANDERE.forEach(k=>{z['v'+n(k)]=T(VK.ventilKpa(k),1);});z.ring='1';}
+  if(i===2){z.hm=T(HM,2);z.s1=T(S1,2);z.st='1';z.ring=String(ANBAU);z.hl=String(HAUS);z.hm3=T(HAUS_M3,3);}
+  R.forEach(k=>{z['h'+n(k)]=T(HE(k),1);z['d'+n(k)]=DA(k);z['o'+n(k)]=T(OV(k),1);});
+  FRAGEN.forEach(q=>{z[q.k]=q.soll;});return z;}
+ const text=s=>typeof s==='string'?s.slice(0,12):'';
+ function saeubere(z){const o=leer();if(!z||typeof z!=='object')return o;ALLE.forEach(f=>{o[f]=text(z[f]);});['w','s'].forEach(f=>{o[f]=mehrText(o[f]);});return o;}
+ // Spielstand für Moodle: nur belegte Felder, je höchstens 12 Zeichen. KUERZEN = Stufen für LP.verbinde, falls er doch über 4096 Zeichen käme:
+ // zuerst die Felder der anderen Tablets weg (das aktuelle Tablet und die Punkte bleiben).
+ const fuerMoodle=z=>{const o={};ALLE.forEach(k=>{const v=text(z&&z[k]);if(v!=='')o[k]=v;});return o;};
+ const KUERZEN=[d=>{const tm=d&&d.team;if(tm&&Array.isArray(tm.Z))tm.Z=tm.Z.map((z,i)=>i===tm.t?z:{});return d;}];
+ // ---------------- Übergabeprotokoll (Arbeitsblatt 4, Aufgabe 1 und 2)
+ const ZEILEN=R.map(k=>({k,raum:VK.HK[k].raum,q:VK.HK[k].q,l:VK.HK[k].l,lh:VK.lh(k),rohr:VK.rohrKpa(k),ventil:VK.ventilKpa(k),he:HE(k),da:DA(k),ov:OV(k)}));
+ const ANLAGE=[['Rohrsystem des Anbaus','Zweirohrsystem'],['Ungünstigster Strang','HK '+SCHLECHT],
+  ['Druck, den die Pumpe schaffen muss',`${T(PUMPE,1)} kPa ≈ ${T(HM,2)} m`],['Wasser für den Anbau',`${ANBAU} l/h`],
+  ['Wasser für das ganze Haus',`Altbau ${ALTBAU} l/h + Anbau ${ANBAU} l/h = ${tsd(HAUS)} l/h = ${T(HAUS_M3,3)} m³/h`],
+  ['Stufe der alten Pumpe 25-40',`Stufe 1 (schafft bei ${T(HAUS_M3,3)} m³/h etwa ${T(S1,2)} m)`],['Urteil','Die alte Pumpe bleibt.']];
+ const VENTILE=`Heimeier oder Oventrop – stufenlos, jeder Heizkörper bekommt genau seinen Wert. Bei Danfoss reicht für HK ${SCHLECHT} selbst „N“ (ganz offen) knapp nicht; die Pumpe müsste ${T(DANFOSS_PUMPE,1)} statt ${T(PUMPE,1)} kPa schaffen.`;
+ return {T,R,n,hk,tsd,ALTBAU,ANBAU,HAUS,HAUS_M3,SCHLECHT,ROHR,PUMPE,HM,STUFE_H,S1,HE,OV,DA,DANFOSS_PUMPE,TOL,ANDERE,T1,P1,T2,EINS,T3,ALLE,TAB,SYS,STR,STUFEN,DANFOSS,RING,
+  FRAGEN,frage,leer,zahl,mehrText,soll,pruefeFeld,pruefe,stand,tippFeld,tippEins,tipp,richtig,saeubere,fuerMoodle,KUERZEN,ZEILEN,ANLAGE,VENTILE};
+})();
+
+// ---------------------------------------------------------------- 4.1 Dreier-Team „Übergabe an den Chef“: Bild und Bedienung (braucht UE4, VK, RP, KL, ZAHL, svgEl, bauKennlinien)
+// bauUebergabe(wurzel,o) – Lernpaket: Start „Welches Tablet bist du? 1 · 2 · 3“ (wechselbar). Links das Werkzeug des Tablets (1: Heizlasten und Formel,
+// 2: Wege und Regeln, 3: Diagramm der alten Pumpe 25-40 wie im Dreier-Team 3.4.2), rechts Teil 1 bis 3, darunter (ganze Breite) das Übergabeprotokoll.
+// Ein Teil öffnet sich erst, wenn der vorige stimmt. Richtige Felder werden grün und gesperrt – so sinken auch die angezeigten Punkte nie.
+// bauUebergabeOeffentlich(wurzel) – öffentliche Seite roehringer/4.html: die drei Tablet-Teile und der gemeinsame Teil nacheinander, Prüfen-Knopf je Teil,
+// ohne Punkte; der Ringtausch entfällt (alles auf einer Seite), Tablet 3 rechnet das ganze Haus mit dem Anbau aus Teil 1.
+// o: {stand:{t,Z,gp}|null, beiAenderung(), beiPunkte(p)}
+const UE4UI=(()=>{
+ const S=UE4,T=ZAHL.text,n=S.n,esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+ const ROT='#c62828';
+ const mische=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+ // ---------------------------------------------------------------- Werkzeuge der drei Tablets
+ function werkzeug(i){
+  if(i===0)return `<div class="karte ht-werkzeug"><h3 style="margin-top:0">Dein Werkzeug: Heizlasten und Formel</h3>
+   <p class="klein" style="margin:0 0 6px">Der Anbau aus der Skizze vom Chef (3.3):</p>
+   <div class="rollen"><table class="strangliste ue4-tab"><tr><th>HK</th><th>Raum</th><th>Heizlast</th></tr>${S.ZEILEN.map(z=>`<tr><td><b>${z.k}</b></td><td>${z.raum}</td><td class="zahl">${z.q} W</td></tr>`).join('')}</table></div>
+   <p class="merkzeile" style="margin-top:10px"><b>ṁ = Q̇ / (c · ΔT)</b><br>c = 1,163 Wh/(kg·K), Spreizung ΔT = 10 K (60/50 °C), 1 kg Wasser ≙ 1 Liter</p>
+   <p class="klein" style="margin:0">Die drei Rohrsysteme kennst du aus 3.1: Zweirohr, Einrohr, Tichelmann.</p></div>`;
+  if(i===1)return `<div class="karte ht-werkzeug"><h3 style="margin-top:0">Dein Werkzeug: Wege und Regeln</h3>
+   <p class="klein" style="margin:0 0 6px">Weg des Wassers zu jedem Heizkörper und zurück (Vor- und Rücklauf zusammen):</p>
+   <div class="rollen"><table class="strangliste ue4-tab"><tr><th>HK</th><th>Raum</th><th>Weg</th></tr>${S.ZEILEN.map(z=>`<tr><td><b>${z.k}</b></td><td>${z.raum}</td><td class="zahl">${z.l} m</td></tr>`).join('')}</table></div>
+   <p class="merkzeile" style="margin-top:10px"><b>Rohr: Δp = l · R · 1,5</b> mit R = 100 Pa/m (aus 3.2)<br><b>Ventil am ungünstigsten Strang wie sein Rohr</b> (Ventilautorität 0,5, aus 3.3)<br><b>Jedes andere Ventil baut den Rest ab:</b> Druck der Pumpe − Rohr (aus 3.3)</p>
+   <p style="margin:0"><b>Umrechnen:</b> 1 kPa = 1 000 Pa</p></div>`;
+  return `<div class="karte ht-werkzeug"><h3 style="margin-top:0">Dein Werkzeug: das Diagramm der alten Pumpe</h3>
+   <p class="klein" style="margin:0 0 6px">Zieh die senkrechte Linie am Griff unten, die waagrechte am Griff links. Mit − / + stellst du genau ein.</p><div data-r="diagramm"></div>
+   <p class="merkzeile" style="margin:10px 0 0">Wasser des Altbaus: <b>${S.ALTBAU} l/h</b> (aus 3.4)<br>1 m ≈ 10 kPa ≈ 100 mbar (genau: 1 m = 9,81 kPa)</p></div>`;}
+ // Diagramm der alten Pumpe – Einstellungen wie im Dreier-Team 3.4.2 (rp-ui.js), Kurven aus RP.H
+ function pumpenDiagramm(c,kennung,beiLinien){const W=bauKennlinien(c,{kennung,w:640,h:470,rand:{l:60,r:66,o:40,u:54},schrift:14,titel:'Alte Pumpe 25-40 · ungeregelt, drei Stufen',untertitel:'neu gezeichnet, keine Herstellerkurve',
+   x:{min:0,max:3.2,raster:0.1,haupt:0.5,marken:0.5,stellen:1,rasten:0.005,wertStellen:3,text:'Volumenstrom V̇ in m³/h',name:'V̇',einheit:'m³/h',start:1.0},
+   y:{min:0,max:4.5,raster:0.1,haupt:0.5,marken:0.5,stellen:1,rasten:0.01,wertStellen:2,text:'Förderhöhe H in m',name:'H',einheit:'m',start:1.5},
+   y2:{f:100,stellen:0,text:'Δp in mbar (1 m ≈ 100 mbar)'},griffe:{x:true,y:true},knoepfe:true,lupe:true,lupeFaktor:4,
+   aria:'Kennlinien der alten Pumpe 25-40 mit drei Stufen',beiLinien,
+   quelle:'Neu gezeichnet, keine Herstellerkurve – angelehnt an die ungeregelte Pumpe im Tabellenbuch S. 431 und an Fachbuch S. 231 Bild 1. Stufen 2 und 1 nach den Proportionalgesetzen.'});
+  W.alles({kurven:[1,2,3].map(k=>({id:'stufe'+k,f:V=>RP.H(k,V),von:0,bis:RP.vNull(k),farbe:ROT,breite:2.6,name:'Stufe '+k,nameBei:[0.55,RP.H(k,0.55)+0.12],schrift:14}))});
+  return W;}
+ // ---------------------------------------------------------------- Felder einer Ansicht: z = Werte, g = schon geprüft, r = Prüfergebnis
+ function formular(z,g,r){
+  const kl=f=>g&&String(z[f]||'').trim()!==''?(r[f]?' ok':' nein'):'';
+  const zu=(f,sperre)=>sperre||(g&&r[f])?' disabled':'';
+  return {
+   ok:f=>!!g&&!!r[f],
+   inp:(f,einheit,lab,o2)=>{o2=o2||{};const e=`<input type="text" class="zahl${o2.breit?' breit':''}${kl(f)}" inputmode="${o2.modus||'decimal'}" autocomplete="off" data-k="${f}" value="${esc(z[f])}"${zu(f,o2.zu)} aria-label="${esc(lab)}">`;
+    return einheit?`<span class="ue4-feld">${e} ${einheit}</span>`:e;},
+   wahl:(f,opt,quer,sperre)=>`<div class="optionen${quer?' quer':''}">${opt.map(([w,x])=>`<button type="button" data-k="${f}" data-w="${w}" aria-pressed="${z[f]===w}" class="${g&&z[f]===w?(r[f]?'ok':'nein'):''}"${zu(f,sperre)}>${x}</button>`).join('')}</div>`,
+   mehr:(f,opt,soll,sperre)=>{const m=S.mehrText(z[f]);return `<div class="optionen mehr">${opt.map(([w,x])=>{const an=m.includes(w),kl2=g&&an?(r[f]?'ok':!soll.includes(w)?'nein':''):'';
+     return `<button type="button" data-k="${f}" data-m="${w}" aria-pressed="${an}" class="${kl2}"${zu(f,sperre)}>${x}</button>`;}).join('')}</div>`;},
+   sel:(f,lab,sperre)=>`<select class="ue4-sel${kl(f)}" data-k="${f}"${zu(f,sperre)} aria-label="${esc(lab)}"><option value=""${z[f]?'':' selected'}>–</option>${S.DANFOSS.map(v=>`<option value="${v}"${z[f]===v?' selected':''}>${v}</option>`).join('')}</select>`};}
+ const kasten=(F,felder,inhalt)=>{const fertig=felder.every(F.ok);return `<div class="ea-hk ue4-kasten${fertig?' fertig':''}">${inhalt}${fertig?' <span class="ok-text">✓</span>':''}</div>`;};
+ // ---------------------------------------------------------------- Teil 1 je Tablet (o2: punkte, kopf, sys = gemischte Reihenfolge Rohrsysteme)
+ function teil1Html(i,F,o2){const pk=t=>o2.punkte?` <span class="klein">(${t})</span>`:'';let h='';
+  if(i===0){if(o2.kopf)h+=`<b>1 · Rohrsystem und Wasser</b>${pk('30 Punkte')}`;
+   h+=`<p class="klein" style="margin:4px 0">Nimm deine Arbeitsblätter 3.1 und 3.3 – oder rechne nach.</p>`;
+   h+=kasten(F,['sys'],`<p style="margin:0 0 4px">Welches Rohrsystem hat der Anbau?${pk('6 Punkte')}</p>${F.wahl('sys',o2.sys||S.SYS,true)}`);
+   h+=kasten(F,S.R.map(k=>'q'+n(k)),`<p style="margin:0 0 2px">Durchfluss der vier Heizkörper${pk('je 5 Punkte')}</p>`+
+    S.ZEILEN.map(z=>`<label>HK ${z.k} ${z.raum} (${z.q} W): ${F.inp('q'+n(z.k),'l/h','Durchfluss HK '+z.k)}</label>`).join(''));
+   h+=kasten(F,['sum'],`<label>Summe Anbau: ${F.inp('sum','l/h','Summe Anbau')}${pk('4 Punkte')}</label>`);}
+  else if(i===1){if(o2.kopf)h+=`<b>1 · Druck</b>${pk('30 Punkte')}`;
+   h+=`<p class="klein" style="margin:4px 0">Nimm deine Arbeitsblätter 3.2 und 3.3 – oder rechne nach.</p>`;
+   h+=kasten(F,['str'],`<p style="margin:0 0 4px">Welcher Strang ist der ungünstigste?${pk('6 Punkte')}</p>${F.wahl('str',S.STR,true)}`);
+   h+=kasten(F,['rohr'],`<label>Rohr-Δp des ungünstigsten Strangs: ${F.inp('rohr','kPa','Rohr-Δp des ungünstigsten Strangs')}${pk('6 Punkte')}</label>`);
+   h+=kasten(F,['pumpe'],`<label>Druck, den die Pumpe schaffen muss: ${F.inp('pumpe','kPa','Druck, den die Pumpe schaffen muss')}${pk('6 Punkte')}</label>`);
+   h+=kasten(F,S.ANDERE.map(k=>'v'+n(k)),`<p style="margin:0 0 2px">Ventil-Δp der anderen Heizkörper${pk('je 4 Punkte')}</p>`+
+    S.ANDERE.map(k=>`<label>HK ${k}: ${F.inp('v'+n(k),'kPa','Ventil-Δp HK '+k)}</label>`).join(''));}
+  else {if(o2.kopf)h+=`<b>1 · Pumpe</b>${pk('30 Punkte')}`;
+   h+=`<p class="klein" style="margin:4px 0">Nimm dein Arbeitsblatt 3.4 – oder lies im Diagramm ab.</p>`;
+   h+=kasten(F,['hm'],`<label>Förderhöhe in m aus ${T(S.PUMPE,1)} kPa: ${F.inp('hm','m','Förderhöhe in m')}${pk('10 Punkte')}</label>`);
+   h+=kasten(F,['s1'],`<label>Was schafft Stufe 1 bei ${T(S.HAUS_M3,3)} m³/h? ${F.inp('s1','m','Stufe 1 bei '+T(S.HAUS_M3,3)+' m³/h')}${pk('10 Punkte')}</label>`);
+   h+=kasten(F,['st'],`<p style="margin:0 0 4px">Welche Stufe stellst du ein?${pk('10 Punkte')}</p>${F.wahl('st',S.STUFEN,true)}`);}
+  return h;}
+ // Ganzes Haus (Tablet 3, nach dem Wasser des Anbaus)
+ const hausHtml=(F,sperre)=>`<label>Altbau ${S.ALTBAU} l/h + Anbau = ${F.inp('hl','l/h','Wasser ganzes Haus in l/h',{zu:sperre})} = ${F.inp('hm3','m³/h','Wasser ganzes Haus in m³/h',{zu:sperre})}</label>`;
+ // ---------------------------------------------------------------- Teil 3 (gemeinsam)
+ function teil3Html(F,FR,sperre){let h=`<p style="margin:10px 0 4px"><b>Gemeinsam 1:</b> Einstellwerte aller drei Hersteller</p>
+   <p class="klein" style="margin:0 0 4px">Aus 3.3.2 Team: Tablet 1 Heimeier, Tablet 2 Danfoss, Tablet 3 Oventrop. Heimeier und Oventrop auf eine Stelle nach dem Komma, Danfoss als ganze Stufe oder N (ganz offen).</p>
+   <div class="ue4-ein-rahmen${S.EINS.every(F.ok)?' fertig':''}"><table class="strangliste ue4-ein"><tr><th>HK</th><th>Heimeier</th><th>Danfoss</th><th>Oventrop</th></tr>`+
+   S.R.map(k=>`<tr><td><b>${k}</b></td><td>${F.inp('h'+n(k),'','Heimeier HK '+k,{zu:sperre})}</td><td>${F.sel('d'+n(k),'Danfoss HK '+k,sperre)}</td><td>${F.inp('o'+n(k),'','Oventrop HK '+k,{zu:sperre})}</td></tr>`).join('')+'</table></div>';
+  FR.forEach((q,j)=>{h+=`<p style="margin:14px 0 4px"><b>Gemeinsam ${j+2}:</b> ${q.frage}${q.mehr?' <span class="klein">Kreuzt alle an, die stimmen.</span>':''}</p>`+(q.mehr?F.mehr(q.k,q.opt,q.soll,sperre):F.wahl(q.k,q.opt,false,sperre));});
+  return h;}
+ // ---------------------------------------------------------------- Übergabeprotokoll (Tabelle wie Arbeitsblatt 4, Aufgabe 1 und 2, Ventile)
+ function protokollHtml(satz){
+  return `<div class="karte ue4-protokoll"><h3 style="margin-top:0">Euer Übergabeprotokoll</h3><p style="margin:0 0 4px"><b>Heizkörper</b></p>
+   <div class="rollen"><table class="strangliste ue4-tab ue4-prot"><tr><th>HK</th><th>Raum</th><th class="zahl">Heizlast</th><th class="zahl">Weg (Vor- + Rücklauf)</th><th class="zahl">Durchfluss</th><th class="zahl">Rohr-Δp</th><th class="zahl">Ventil-Δp</th><th class="mitte">Heimeier</th><th class="mitte">Danfoss</th><th class="mitte">Oventrop</th></tr>`+
+   S.ZEILEN.map(z=>`<tr><td><b>${z.k}</b></td><td>${z.raum}</td><td class="zahl">${z.q} W</td><td class="zahl">${z.l} m</td><td class="zahl">${z.lh} l/h</td><td class="zahl">${T(z.rohr,1)} kPa</td><td class="zahl">${T(z.ventil,1)} kPa</td>`+
+    `<td class="mitte">${T(z.he,1)}</td><td class="mitte">${z.da==='N'?'N (reicht knapp nicht)':z.da}</td><td class="mitte">${T(z.ov,1)}</td></tr>`).join('')+`</table></div>
+   <p style="margin:12px 0 4px"><b>Anlage</b></p><table class="ue4-anlage">${S.ANLAGE.map(([a,b])=>`<tr><th>${a}</th><td>${b}</td></tr>`).join('')}</table>
+   <p style="margin:12px 0 0"><b>Ventile:</b> ${S.VENTILE}</p>
+   <p class="meldung">${satz}</p></div>`;}
+ // ---------------------------------------------------------------- Eingaben verdrahten (c = Container, Z = Werte, neu() = neu zeichnen, pruefen())
+ function verdrahte(c,Z,neu,pruefen,aenderung){
+  c.querySelectorAll('input[data-k]').forEach(e=>{e.addEventListener('input',()=>{Z[e.dataset.k]=e.value;e.classList.remove('nein');aenderung();});
+   e.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();pruefen();}});});
+  c.querySelectorAll('select[data-k]').forEach(e=>{e.addEventListener('change',()=>{Z[e.dataset.k]=e.value;e.classList.remove('nein');aenderung();});});
+  c.querySelectorAll('button[data-w]').forEach(b=>b.onclick=()=>{lies(c,Z);Z[b.dataset.k]=b.dataset.w;aenderung();neu();});
+  c.querySelectorAll('button[data-m]').forEach(b=>b.onclick=()=>{lies(c,Z);const f=b.dataset.k,m=S.mehrText(Z[f]),w=b.dataset.m;Z[f]=S.mehrText(m.includes(w)?m.replace(w,''):m+w);aenderung();neu();});}
+ function lies(c,Z){c.querySelectorAll('input[data-k],select[data-k]').forEach(e=>{if(!e.disabled)Z[e.dataset.k]=e.value;});}
+ return {werkzeug,pumpenDiagramm,formular,teil1Html,hausHtml,teil3Html,protokollHtml,verdrahte,lies,mische,esc};
+})();
+
+// ================================================================ Lernpaket 4.1 Dreier-Team
+function bauUebergabe(wurzel,o){
+ o=Object.assign({stand:null,beiAenderung:null,beiPunkte:null},o||{});
+ const S=UE4,U=UE4UI,esc=U.esc;
+ let t=-1,D=null;const Z=[S.leer(),S.leer(),S.leer()],gp=[0,0,0],RUECK=['','',''],LIN={X:null,Y:null};
+ const st=o.stand;
+ if(st&&typeof st==='object'){if([0,1,2].includes(st.t))t=st.t;if(Array.isArray(st.Z))st.Z.slice(0,3).forEach((z,i)=>{Z[i]=S.saeubere(z);});
+  if(Array.isArray(st.gp))st.gp.slice(0,3).forEach((x,i)=>{gp[i]=x?1:0;});}
+ const FERTIG=[0,1,2].map(i=>!!gp[i]&&S.stand(i,Z[i]).p3);
+ const SYS=U.mische(S.SYS),FR=S.FRAGEN.map(q=>Object.assign({},q,{opt:U.mische(q.opt)}));
+ const aenderung=()=>{o.beiAenderung&&o.beiAenderung();};
+ const besterStand=()=>Math.max(...[0,1,2].map(i=>S.stand(i,Z[i]).punkte));
+ function startbild(){D=null;
+  wurzel.innerHTML='<div class="karte"><h2>Welches Tablet bist du?</h2>'+
+   '<p>Setzt euch zu dritt zusammen. Jeder nimmt eine andere Nummer und bringt seinen Teil des Protokolls mit. Am Ende hat jeder von euch das ganze Protokoll.</p>'+
+   '<div class="grosswahl">'+[0,1,2].map(i=>`<button type="button" data-t="${i}"><b>${i+1}</b>${S.TAB[i].name}<small class="ht-klein">${S.TAB[i].aus}</small></button>`).join('')+'</div>'+
+   '<p class="klein">Ihr seid nur zu zweit? Dann übernimmt einer von euch das dritte Tablet mit: Er wählt später unten „anderes Tablet wählen“.</p></div>';
+  wurzel.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>waehleTablet(+b.dataset.t));}
+ function waehleTablet(i){t=i;RUECK[i]='';aenderung();tablet();try{wurzel.scrollIntoView({block:'start'});}catch(_){}}
+ function tablet(){wurzel.innerHTML=`<div class="tablet"><h3>Tablet ${t+1} – ${S.TAB[t].name}</h3>
+   <p class="klein" style="margin:0 0 8px">Dein Team: Tablet 1 Rohrsystem und Wasser · Tablet 2 Druck · Tablet 3 Pumpe. Jeder bringt seinen Teil des Protokolls mit.</p>
+   <div class="dr-zwei ue4-zwei${t===2?' ue4-pumpe':''}"><div class="ht-links" data-r="werkzeug">${U.werkzeug(t)}</div><div data-r="rechts"></div></div><div data-r="schluss"></div>
+   <p class="klein" style="margin-top:14px">Falsches Tablet gewählt oder nur zu zweit? <button type="button" class="knopf" data-r="wechsel">anderes Tablet wählen</button></p></div>`;
+  D=null;if(t===2){D=U.pumpenDiagramm(wurzel.querySelector('[data-r="diagramm"]'),'ue3',z=>{LIN.X=z.X;LIN.Y=z.Y;});if(LIN.X!=null||LIN.Y!=null)D.setze(LIN.Y,LIN.X,false);}
+  wurzel.querySelector('[data-r="wechsel"]').onclick=()=>{t=-1;aenderung();startbild();};
+  teile();}
+ function teile(){const c=wurzel.querySelector('[data-r="rechts"]'),sc=wurzel.querySelector('[data-r="schluss"]');if(!c)return;
+  const z=Z[t],s=S.stand(t,z),g=gp[t],fertig=!!g&&s.p3&&FERTIG[t],F=U.formular(z,g,s),von=S.TAB[t].von+1;
+  let h=`<div class="phase" style="border-top:0;margin-top:0;padding-top:0">${U.teil1Html(t,F,{punkte:true,kopf:true,sys:SYS})}</div>`;
+  // Teil 2 – Ringtausch
+  const R=S.RING[t];
+  h+=`<div class="phase ${s.p1?'':'zu'}"><b>2 · Frag Tablet ${von}</b> <span class="klein">(20 Punkte${s.p1?'':' · erst wenn Teil 1 stimmt'})</span>
+   <p style="margin:4px 0">Diesen Wert hat nur dein Mitspieler am Tablet ${von}. Geh hin und frag nach:</p>`;
+  if(t===1)h+=`<label>${R.text} (von Tablet ${von}): Stufe ${F.inp('ring','',R.text,{zu:!s.p1,modus:'numeric'})}</label>`;
+  else h+=`<label>${R.text} (von Tablet ${von}): ${F.inp('ring',R.einheit,R.text,{zu:!s.p1})}</label>`;
+  if(t===2)h+=`<p style="margin:8px 0 2px">Rechne das ganze Haus:</p>${U.hausHtml(F,!s.p1)}`;
+  h+='</div>';
+  // Teil 3 – gemeinsam
+  h+=`<div class="phase ${s.p2?'':'zu'}"><b>3 · Gemeinsam</b> <span class="klein">(fünfmal 10 Punkte${s.p2?'':' · erst wenn Teil 2 stimmt'})</span>
+   <p style="margin:4px 0">Setzt euch zusammen und füllt den Rest des Protokolls gemeinsam aus.</p>${U.teil3Html(F,FR,!s.p2)}</div>`;
+  h+=`<div class="phase"><span style="font-size:20px;font-weight:700">${s.punkte} von 100 Punkten</span> ${fertig?'<span class="hinweis-gruen">Protokoll vollständig</span>':'<span class="klein">Die volle Punktzahl gibt es erst, wenn alles stimmt.</span>'}
+   ${fertig?'':'<div class="wahl" style="margin:10px 0 0"><button type="button" class="knopf haupt" data-r="pruefen">Prüfen</button></div>'}
+   <p class="rueck ${fertig?'ok':RUECK[t]?'nein':''}" data-r="rueck">${fertig?'Alles richtig – 100 Punkte.':esc(RUECK[t])}</p></div>`;
+  c.innerHTML=h;
+  sc.innerHTML=fertig?U.protokollHtml('Mach ein Bildschirmfoto oder schreib die Werte ab – du brauchst sie für deine Meldung in 4.2.'):'';
+  U.verdrahte(c,Z[t],teileNeu,pruefen,aenderung);
+  const pb=c.querySelector('[data-r="pruefen"]');if(pb)pb.onclick=()=>pruefen();}
+ function teileNeu(){const a=document.activeElement,k=a&&a.dataset&&a.dataset.k&&a.tagName==='INPUT'?a.dataset.k:null;teile();
+  if(k){const e=wurzel.querySelector(`input[data-k="${k}"]`);if(e&&!e.disabled){try{e.focus();}catch(_){}}}}
+ function pruefen(){if(t<0)return null;const c=wurzel.querySelector('[data-r="rechts"]');if(c)U.lies(c,Z[t]);gp[t]=1;const s=S.stand(t,Z[t]);FERTIG[t]=s.p3;RUECK[t]=s.p3?'':S.tipp(t,Z[t]);
+  teile();aenderung();o.beiPunkte&&o.beiPunkte(besterStand());return s;}
+ if(t<0)startbild();else tablet();
+ return {waehleTablet,pruefen,tablet:()=>t,besterStand,D:()=>D,linien:()=>Object.assign({},LIN),
+  setze:(i,f)=>{f(Z[i]);if(i===t&&t>=0)teile();aenderung();},
+  fuellen:i=>{Z[i]=S.richtig(i);gp[i]=1;FERTIG[i]=S.stand(i,Z[i]).p3;if(i===t)teile();aenderung();},
+  stand:i=>S.stand(i,Z[i]),
+  exportiere:()=>({t,Z:Z.map(S.fuerMoodle),gp:gp.slice()}),
+  wechsel:()=>{t=-1;aenderung();startbild();}};
+}
+
+// ================================================================ öffentliche Seite roehringer/4.html (ohne Punkte, ohne Moodle)
+function bauUebergabeOeffentlich(wurzel){
+ const S=UE4,U=UE4UI,esc=U.esc;
+ const Z=S.leer(),gp=[0,0,0,0],RUECK=['','','',''],SYS=U.mische(S.SYS),FR=S.FRAGEN.map(q=>Object.assign({},q,{opt:U.mische(q.opt)}));let D=null;
+ const FELD=[S.T1[0],S.T1[1],[...S.T1[2],'hl','hm3'],S.T3];
+ const KOPF=[['teil1','1 · Rohrsystem und Wasser (Tablet 1)','aus 3.1 und 3.3'],['teil2','2 · Druck (Tablet 2)','aus 3.2 und 3.3'],['teil3','3 · Pumpe (Tablet 3)','aus 3.4'],['gemeinsam','4 · Gemeinsam: der Rest des Protokolls','Ventile, Abgleich und Pumpe']];
+ const ergebnis=k=>S.pruefe(k<3?k:0,Z);
+ const richtigTeil=k=>{const r=ergebnis(k);return FELD[k].every(f=>r[f]);};
+ const alleRichtig=()=>[0,1,2,3].every(k=>gp[k]&&richtigTeil(k));
+ wurzel.innerHTML=KOPF.map(([id,titel,aus],k)=>`<section class="abschnitt" id="${id}"><h2>${titel}</h2><p class="leise" style="margin:0 0 8px">${aus}</p>`+
+  (k<3?`<div class="dr-zwei ue4-zwei${k===2?' ue4-pumpe':''}"><div class="ht-links">${U.werkzeug(k)}</div><div class="karte" data-teil="${k}"></div></div>`:`<div class="karte ue4-gemeinsam" data-teil="${k}"></div>`)+'</section>').join('')+'<div data-r="schluss"></div>';
+ D=U.pumpenDiagramm(wurzel.querySelector('#teil3 [data-r="diagramm"]'),'ue3o',null);
+ function tippTeil(k){const r=ergebnis(k),f=FELD[k].find(x=>!r[x]);if(!f)return '';const leer=f!=='eins'&&String(Z[f]||'').trim()==='';
+  if(leer)return ['sys','str','st','a','r'].includes(f)?'Wähl noch eine Antwort aus.':['w','s'].includes(f)?'Kreuz die Aussagen an, die stimmen.':'Füll noch alle Felder aus.';
+  return S.tippFeld(k<3?k:0,f,Z);}
+ function teil(k){const c=wurzel.querySelector(`[data-teil="${k}"]`),g=gp[k],r=ergebnis(k),F=U.formular(Z,g,r),fertig=!!g&&richtigTeil(k);
+  let h=k<3?U.teil1Html(k,F,{punkte:false,kopf:false,sys:SYS}):`<p style="margin:0 0 4px">Füllt den Rest des Protokolls aus – zu zweit, zu dritt oder allein.</p>${U.teil3Html(F,FR,false)}`;
+  if(k===2)h+=`<div class="ea-hk ue4-kasten${F.ok('hl')&&F.ok('hm3')?' fertig':''}"><p style="margin:0 0 2px">Wasser für das ganze Haus (mit dem Anbau aus Teil 1):</p>${U.hausHtml(F,false)}${F.ok('hl')&&F.ok('hm3')?' <span class="ok-text">✓</span>':''}</div>`;
+  h+=`<div class="wahl" style="margin:12px 0 0">${fertig?'<span class="hinweis-gruen">Dieser Teil stimmt.</span>':'<button type="button" class="knopf haupt" data-r="pruefen">Prüfen</button>'}</div>
+   <p class="rueck ${fertig?'ok':RUECK[k]?'nein':''}" data-r="rueck">${fertig?'Richtig!':esc(RUECK[k])}</p>`;
+  c.innerHTML=h;
+  U.verdrahte(c,Z,()=>neuTeil(k),()=>pruefen(k),()=>{});
+  const pb=c.querySelector('[data-r="pruefen"]');if(pb)pb.onclick=()=>pruefen(k);}
+ function neuTeil(k){const a=document.activeElement,f=a&&a.dataset&&a.dataset.k&&a.tagName==='INPUT'?a.dataset.k:null;teil(k);
+  if(f){const e=wurzel.querySelector(`input[data-k="${f}"]`);if(e&&!e.disabled){try{e.focus();}catch(_){}}}}
+ function schluss(){wurzel.querySelector('[data-r="schluss"]').innerHTML=alleRichtig()?U.protokollHtml('Mach ein Bildschirmfoto oder schreib die Werte ab – du brauchst sie für deine Meldung an den Chef (4.2 oder Arbeitsblatt 4, Aufgabe 4).'):'';}
+ function pruefen(k){const c=wurzel.querySelector(`[data-teil="${k}"]`);U.lies(c,Z);gp[k]=1;const ok=richtigTeil(k);RUECK[k]=ok?'':tippTeil(k);teil(k);schluss();return ok;}
+ [0,1,2,3].forEach(teil);schluss();
+ return {pruefen,Z,D:()=>D,alleRichtig,fuellen:()=>{[0,1,2].forEach(i=>{const m=S.richtig(i);FELD[i].forEach(f=>{Z[f]=m[f];});});const m=S.richtig(0);S.EINS.concat(['w','a','s','r']).forEach(f=>{Z[f]=m[f];});
+  [0,1,2,3].forEach(k=>{gp[k]=1;teil(k);});schluss();}};
+}
+
+const PR=bauUebergabeOeffentlich(document.getElementById('protokoll'));
+window.__seite={PR};
+</script>
+</body>
+</html>
