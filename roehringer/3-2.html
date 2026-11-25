@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>3.2 Was muss die Pumpe leisten? Druck und Förderhöhe – Haus Röhringer</title>
+<style>
+:root{--papier:#f4f1ea;--tinte:#22303a;--leise:#5d6b75;--linie:#d5cfc2;--karte:#fff;--akzent:#0b6b7d;--akzent-hell:#e1f0f2;--gold:#d99a1b;
+  --vl:#d0342c;--rl:#2f6fb7;--ring:#b0408a;--gut:#2e7d4f;--gut-hell:#e4f3e3;--schlecht:#c8371f;--schlecht-hell:#fde3df;--merk:#fffbe9;--merk-rand:#ecd9a0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation}
+body{margin:0;background:var(--papier);color:var(--tinte);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+.kopf{position:sticky;top:0;z-index:5;background:var(--papier);border-bottom:1px solid var(--linie);padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.kopf .titel{flex:1 1 360px;min-width:0}
+.kopf .ober{margin:0;font-size:13px;color:var(--leise)}
+.kopf h1{margin:0;font-size:20px;line-height:1.25}
+.kopf .stand{font-size:16px;white-space:nowrap;text-align:right}
+.kopf .stand small{display:block;font-size:12px;color:var(--leise)}
+.kurs{min-height:44px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--akzent);background:#fff;color:var(--akzent);font-weight:600;cursor:pointer;touch-action:manipulation}
+main{max-width:1040px;margin:0 auto;padding:14px 16px 60px}
+.karte{background:var(--karte);border:1px solid var(--linie);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+h2{font-size:20px;margin:0 0 8px;line-height:1.25}
+h3{font-size:17px;margin:14px 0 6px}
+p{margin:0 0 10px}
+.klein{font-size:14px;color:var(--leise)}
+.sprech{border-left:5px solid var(--akzent);background:var(--akzent-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:0 0 12px}
+.sprech b.wer{display:block;font-size:13px;color:var(--akzent);letter-spacing:.3px;margin-bottom:2px}
+.merk{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 12px;margin:10px 0 0}
+.wahl{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.knopf,.wahl button{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);cursor:pointer;font-size:16px;touch-action:manipulation}
+.wahl button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.knopf.haupt{background:var(--akzent);border-color:var(--akzent);color:#fff}
+.knopf:disabled,.wahl button:disabled{opacity:.45;cursor:default}
+svg{display:block;width:100%;height:auto}
+.rollen{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--leise);font-weight:600}
+.balken{height:12px;border-radius:6px;background:var(--akzent)}
+.balkenreihe{display:flex;min-width:60px}
+.zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.zwei{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}}
+/* Animation */
+.wegbild{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.messung{min-height:48px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--akzent-hell);font-size:17px}
+.messung b{font-size:19px}
+.hk-knopf{cursor:pointer}
+.lupe-ruf{cursor:pointer}
+.lupe{border:2px solid var(--tinte);border-radius:14px;padding:12px 14px;margin-top:12px;background:#fff}
+.lupe h3{margin:0 0 6px}
+.lupe ol{margin:8px 0 0;padding-left:22px}
+.lupe li{margin:3px 0}
+/* Aufgaben */
+.aufgabe{border:1px solid var(--linie);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:#fff}
+.aufgabe h3{margin:0 0 6px}
+.aufgabe .pkt{float:right;margin-left:10px;font-size:14px;color:var(--leise);font-weight:600}
+.aufgabe.fertig{border-color:var(--gut);box-shadow:0 0 0 2px var(--gut-hell)}
+.feld{display:inline-flex;align-items:center;gap:6px;margin:4px 16px 4px 0;font-size:17px}
+input.zahl{font:inherit;width:5.2em;min-height:44px;padding:6px 8px;border:1px solid var(--linie);border-radius:8px;background:#fff;color:var(--tinte)}
+input.zahl.ok{border-color:var(--gut);background:var(--gut-hell)}
+input.zahl.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+input.zahl:disabled{opacity:1;color:var(--tinte)}
+.rueck{display:block;margin-top:8px;font-size:15px}
+.rueck.ok{color:var(--gut);font-weight:600}
+.rueck.nein{color:var(--schlecht)}
+.satz{border:1px solid var(--linie);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fcfbf8}
+.satz p{margin:0 0 6px;font-style:italic}
+.satz.ok{border-color:var(--gut);background:var(--gut-hell)}
+.satz.nein{border-color:var(--schlecht);background:var(--schlecht-hell)}
+.satz .wahl{margin:0}
+/* Zeichnen */
+svg.zeichnen{min-width:680px;touch-action:manipulation;background:#eef1ea;border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.gruppe{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 8px}
+.gruppe button[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.gruppe .gname{font-size:14px;color:var(--leise);font-weight:600;min-width:110px}
+.pruefliste{list-style:none;padding:0;margin:10px 0 0;font-size:15px}
+.pruefliste li{padding:3px 0 3px 26px;position:relative}
+.pruefliste li::before{position:absolute;left:0;top:4px;width:18px;height:18px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;text-align:center;line-height:18px}
+.pruefliste li.ok::before{content:"✓";background:var(--gut)}
+.pruefliste li.nein::before{content:"✗";background:var(--schlecht)}
+/* Team */
+.tablet{border:2px solid var(--tinte);border-radius:16px;padding:14px;background:#fff;margin-top:6px}
+.tablet h3{margin:0 0 6px}
+.phase{border-top:1px solid var(--linie);padding-top:10px;margin-top:12px}
+.phase.zu{opacity:.45}
+.phase label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.grosswahl{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}
+.grosswahl button{min-width:150px;min-height:96px;border-radius:16px;border:2px solid var(--tinte);background:#fff;cursor:pointer;font-size:18px;padding:10px 14px;touch-action:manipulation}
+.grosswahl button b{display:block;font-size:34px;line-height:1.1}
+.ok-text{color:var(--gut);font-weight:600}
+.hinweis-gruen{display:inline-block;background:var(--gut-hell);border:1px solid var(--gut);border-radius:8px;padding:2px 8px}
+.hinweis-orange{display:inline-block;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:2px 8px}
+@media (max-width:820px){body{font-size:16px}.kopf h1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Station 3.2 – Ergänzungen zu basis.css (Reiter, Animation, Auswahl, Rechentrainer, Strangliste) */
+.reiter{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.reiter button{min-height:48px;padding:6px 16px;border-radius:12px;border:1.5px solid var(--linie);background:#fff;color:var(--tinte);font-size:16px;font-weight:600;cursor:pointer;touch-action:manipulation;text-align:left}
+.reiter button[aria-selected="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.reiter button small{display:block;font-size:12px;font-weight:400;opacity:.85}
+.dr-zwei{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.dr-zwei{grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);align-items:start}}
+.dr-bild{margin:0}
+.dr-gruppe{align-items:center;margin:0 0 8px}
+.gname{font-size:14px;color:var(--leise);font-weight:600;margin-right:2px}
+.dr-svg{background:#fbfaf6;border:1px solid var(--linie);border-radius:10px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.dr-info{margin:8px 0 0}
+.dr-fuss{margin:8px 0 0}
+.dr-rechts .karte{margin:0}
+/* Sprechblase des Chefs: hochkant oben, quer in der rechten Spalte (damit Regler und Bild ganz auf den Schirm passen) */
+.chef-rechts{margin:0 0 12px}
+@media (min-width:900px){.chef-oben{display:none}}
+@media (max-width:899px){.chef-rechts{display:none}}
+/* Auswahlantworten */
+.optionen{display:flex;flex-direction:column;gap:8px;margin:6px 0 8px}
+.optionen button{min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-align:left;font-size:16px;cursor:pointer;touch-action:manipulation}
+.optionen.quer{flex-direction:row;flex-wrap:wrap}
+.optionen button[aria-pressed="true"]{border-color:var(--tinte);box-shadow:inset 0 0 0 2px var(--tinte)}
+.optionen button.ok{background:var(--gut-hell);border-color:var(--gut);box-shadow:inset 0 0 0 2px var(--gut)}
+.optionen button.nein{background:var(--schlecht-hell);border-color:var(--schlecht);box-shadow:inset 0 0 0 2px var(--schlecht)}
+.optionen button:disabled{cursor:default}
+.optionen button:disabled:not(.ok){opacity:.5}
+.aufgabe.gesperrt .optionen,.aufgabe.gesperrt .feld,.aufgabe.gesperrt .wahl{opacity:.45}
+.sperre{display:block;font-size:15px;color:#7a4d00;background:#fff0d9;border:1px solid #e9a23b;border-radius:8px;padding:6px 10px;margin:6px 0}
+.lsatz{font-style:italic;line-height:2;margin:4px 0 8px}
+.lluecke{display:inline-block;min-width:7em;padding:0 8px;border-bottom:2px solid var(--tinte);font-style:normal;font-weight:700;text-align:center}
+.lluecke.ok{color:var(--gut);border-color:var(--gut)}
+.lluecke.nein{color:var(--schlecht);border-color:var(--schlecht)}
+.weiter{margin:4px 0 0}
+/* Rechentrainer */
+.rt-leiste{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.rt-leiste .reiter{margin:0}
+.rt-karten{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.rt-karten .aufgabe{margin:0}
+.rt-karten .breit{grid-column:1/-1}
+.feldzeile{margin:6px 0}
+.feldzeile .optionen{margin:6px 0 0}
+.aufgabe .nr{display:inline-block;min-width:2.2em;font-weight:700;color:var(--akzent)}
+.aufgabe .gegeben{font-size:18px}
+.rt-skizze{max-width:640px;margin:6px 0 10px;border:1px solid var(--linie);border-radius:10px;overflow:hidden;background:#fffef9}
+.merkzeile{background:var(--merk);border:1px solid var(--merk-rand);border-radius:10px;padding:10px 14px;margin:0 0 12px;font-size:17px}
+.merkzeile p{margin:2px 0}
+.geuebt{font-size:13px;color:var(--gut);font-weight:600;margin-left:6px}
+/* Strangliste (Dreier-Team) */
+.strangliste td,.strangliste th{padding:6px 6px}
+.strangliste td.zahl{text-align:right;white-space:nowrap}
+.strangliste tr.eigen td{background:#fff8d6}
+.strangliste tr.chef td{color:var(--leise)}
+.skizze-chef svg{border:1px solid var(--linie);border-radius:10px}
+@media (min-width:900px){.tablet .dr-zwei>div:first-child{position:sticky;top:104px}}
+a.kurs{display:inline-flex;align-items:center;text-decoration:none}
+.merksatz{font-size:19px;line-height:1.45}
+.meldung{border-left:5px solid var(--gut);background:var(--gut-hell);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0 0}
+
+.leise{color:var(--leise);font-size:14px}
+.kennz{font-weight:700;color:var(--akzent);margin:0 0 2px}
+a.zurueck{color:var(--akzent)}
+h1{font-size:24px;margin:0 0 4px;line-height:1.2}
+.sprung{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}
+.sprung a{display:inline-block;padding:9px 14px;border-radius:999px;border:1px solid var(--linie);background:#fff;color:var(--tinte);text-decoration:none;font-size:15px}
+section.abschnitt{scroll-margin-top:10px;margin:0 0 22px}
+section.abschnitt>h2{margin:8px 0 6px}
+footer{margin-top:28px;font-size:13px;color:var(--leise);border-top:1px solid var(--linie);padding-top:10px}
+</style>
+</head>
+<body>
+<main>
+  <p class="leise"><a class="zurueck" href="index.html">← Haus Röhringer: alle Stationen</a></p>
+  <p class="kennz">3194 · 3.2</p>
+  <h1>3.2 Was muss die Pumpe leisten? Druck und Förderhöhe</h1>
+  <p class="leise">Haus Röhringer – Der Anbau kommt ans Netz. Animation und Rechentrainer zum Arbeitsblatt 3.2, ohne Anmeldung und ohne Punkte.</p>
+  <div class="sprung"><a href="#animation">3.2.1 Animation</a><a href="#rechentrainer">3.2.2 Rechentrainer</a></div>
+
+  <section class="abschnitt" id="animation">
+    <h2>3.2.1 Animation: Seilzug und Wassersäule – muss die Pumpe das Wasser hochheben?</h2>
+    <p>Drei Bilder: ein Seilzug, ein oben offenes Rohr und ein Haus mit Heizkreis. Stell selbst ein und schau genau hin. Damit löst du die Aufgaben 1 und 2 auf deinem Arbeitsblatt.</p>
+    <div id="druck"></div>
+  </section>
+
+  <section class="abschnitt" id="rechentrainer">
+    <h2>3.2.2 Übung: Rechentrainer – Druck umrechnen und Rohrreibung</h2>
+    <p>Teil A: Druckangaben umrechnen (Aufgabe 3 auf dem Arbeitsblatt). Teil B: Rohrreibung überschlägig rechnen (Aufgabe 4). Die Zahlen wechseln – mit „Neue Zahlen“ kannst du immer weiter üben.</p>
+    <div id="trainer"></div>
+  </section>
+
+  <footer>Diese Seite setzt keine Cookies, speichert nichts auf dem Gerät und lädt nichts von anderen Servern. Beim Aufruf verarbeitet der Anbieter GitHub technisch die IP-Adresse des Geräts.</footer>
+</main>
+<script>
+// ---------------------------------------------------------------- Zahlen lesen und schreiben (deutsch), für Station 3.2 (ohne DOM)
+// Eingaben dürfen Komma oder Punkt haben, mit oder ohne Einheit, mit Leerzeichen als Tausendertrenner („10 000“).
+// „2.700“ ist doppeldeutig (Tausenderpunkt oder Dezimalpunkt): Dann gilt die Lesart, die näher am erwarteten Wert liegt.
+const ZAHL=(()=>{
+ const EINHEIT=/\s*(mws|m\s*ws|meter|m|bar|mbar|hpa|kpa|pa\/m|pa|kg\/h|m\/s|°c|°|%)\.?$/i;
+ function lies(s,soll){
+  let t=String(s==null?'':s).trim().toLowerCase();
+  for(let i=0;i<2;i++)t=t.replace(EINHEIT,'');
+  t=t.replace(/[\s  ']/g,'');
+  if(!t)return NaN;
+  let m;
+  if((m=/^(-?)(\d{1,3}(?:\.\d{3})+),(\d+)$/.exec(t)))return parseFloat(m[1]+m[2].replace(/\./g,'')+'.'+m[3]);   // 2.700,5
+  if(/^-?\d{1,3}(\.\d{3})+$/.test(t)){const dez=parseFloat(t),tau=parseFloat(t.replace(/\./g,''));                // 2.700 → 2,7 oder 2700
+   if(soll===undefined||!isFinite(soll)||soll===0)return dez;
+   const ab=x=>Math.abs(Math.log(Math.abs(x)||1e-12)-Math.log(Math.abs(soll)));return ab(tau)<ab(dez)?tau:dez;}
+  t=t.replace(',','.');
+  if(!/^-?(\d+(\.\d+)?|\.\d+)$/.test(t))return NaN;
+  return parseFloat(t);}
+ // deutsch schreiben: n Nachkommastellen (ohne n: so wenige wie nötig, höchstens 3), ab 10 000 mit schmalem Leerzeichen
+ function text(x,n){if(!isFinite(x))return '';let s;
+  if(n===undefined){s=String(Math.round(x*1000)/1000);}else s=(+x).toFixed(n);
+  let [g,k]=s.split('.');const neg=g.startsWith('-');if(neg)g=g.slice(1);
+  if(g.length>4)g=g.replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+  return (neg?'-':'')+g+(k?','+k:'');}
+ const gleich=(a,b,rel)=>Math.abs(a-b)<=Math.max(1e-9,Math.abs(b)*(rel||1e-9));
+ return {lies,text,gleich};
+})();
+
+// ---------------------------------------------------------------- Seilzug und Wassersäule: Physik-Modell, Zeichnung des Kreises und Aufgaben der Animation 3.2.1 (ohne DOM, braucht ZAHL)
+// Station 3.2, Haus Röhringer. Neu gezeichnet am 25.11.2026 nach den Tafelbildern des Lehrers (17.10.2024 Seilzug, 12.11.2025 Haus 10 m und „25-40“,
+// 07.01.2026 Ventil zu, V̇ = 0). Physik (Vorschau, Abschnitt „Fachlich geprüft“):
+//  · Seilzug: Hängen links und rechts gleiche Gewichte, braucht das Drehen nur Kraft gegen die Reibung der Rollen – bei jeder Höhe gleich.
+//    Hängt nur ein Gewicht, hebt (oder hält) man es: m · g, ebenfalls unabhängig von der Höhe.
+//  · Offenes Rohr: Die Pumpe drückt das Wasser so hoch, wie ihre Förderhöhe reicht (zweite Zahl der Bezeichnung ÷ 10 in Metern). Ist das Rohr
+//    höher, bleibt die Säule stehen (Volumenstrom 0), das Manometer am Nullpunkt zeigt Förderhöhe ÷ 10 in bar. Ist das Rohr niedriger, läuft das
+//    Wasser oben über und fließt.
+//  · Geschlossener Kreis: Vorlauf- und Rücklaufsäule sind gleich hoch und gleich schwer, sie heben sich auf. Vor der Pumpe sitzt das Ausdehnungsgefäß
+//    (Nullpunkt), dort bleibt der Druck immer 1,5 bar. Ventil zu: Die Pumpe drückt mit ihrer ganzen Förderhöhe (4 m ≈ 0,4 bar), es fließt nichts.
+//    Ventil auf: Das Wasser fließt, die Pumpe braucht nur noch Druck für die Reibung (Unterschied kleiner, ohne Zahl).
+//  Modellgrenzen (nur für Lehrkräfte): gleiche Temperatur in Vor- und Rücklauf angenommen; „4 m“ nur ohne Durchfluss; Reibung im Seilzug ≠ Rohrreibung.
+const DRK=(()=>{
+ const G=9.81,RHO=1000;
+ // -------------------------------------------------------------- Bild 1 Seilzug
+ const SEIL={hoehen:[2,4,6,8,10],masse:2,reibung:0.8};          // Reibung der Rollen in N (klein, hängt nicht von der Höhe ab)
+ // Kraft zum Drehen in N: Unterschied der beiden Gewichte plus Reibung der Rollen. Das Seil selbst gilt als gewichtslos.
+ const seilKraft=(h,rechtsDran)=>Math.abs(SEIL.masse*G-(rechtsDran?SEIL.masse*G:0))+SEIL.reibung;
+ const KRAFT_MAX=SEIL.masse*G+SEIL.reibung;
+ // -------------------------------------------------------------- Bild 2 Offenes Rohr
+ const PUMPEN=['25-40','25-60'],ROHRE=[3,5,8,10];
+ const foerderhoehe=b=>{const m=/^(\d+)-(\d+)$/.exec(String(b));return m?+m[2]/10:NaN;};   // „25-40“ → 4 m
+ const anschluss=b=>{const m=/^(\d+)-(\d+)$/.exec(String(b));return m?+m[1]:NaN;};          // „25-40“ → DN 25
+ const RAND=0.02;                                                  // bar: etwas Reibung, wenn das Wasser oben überläuft und fließt
+ // Zustand im Gleichgewicht: Höhe der Säule über dem Nullpunkt (Wasserspiegel im Behälter), fließt?, Manometer am Nullpunkt in bar
+ function offenesRohr(rohr,bez,an){const H=foerderhoehe(bez);
+  if(!an)return {saeule:0,fliesst:false,bar:0,H};
+  if(rohr<H)return {saeule:rohr,fliesst:true,bar:rohr/10+RAND,H};
+  return {saeule:H,fliesst:false,bar:H/10,H};}
+ // -------------------------------------------------------------- Bild 3 Geschlossener Kreis: Zeichnung (Bildpunkte, viewBox 0 0 480 420)
+ // Keller unten, Heizkörper unterm Dach. Vorlauf rot: Wärmeerzeuger → Ausdehnungsgefäß-Abzweig → Pumpe → Steigleitung → Ventil → Heizkörper.
+ // Rücklauf blau: Heizkörper → Fallleitung → Wärmeerzeuger. Beide Steigleitungen reichen von derselben Höhe (y.vl/y.rl im Keller ≈ gleich) bis y.oben.
+ const KX={wandL:30,wandR:440,first:235,weL:52,weR:112,mag:128,vor:164,pumpe:196,nach:228,vlS:258,hkL:270,hkR:360,hkVL:284,hkRL:346,rlS:400,mass:458};
+ const KY={dachFirst:16,dach:138,og:216,eg:292,keller:414,weO:326,weU:400,vl:340,rl:386,hkO:96,hkU:118,oben:130,magO:296};
+ const FARBE_VL='#d0342c',FARBE_RL='#2f6fb7';
+ const KREIS={
+  vl:[[KX.weR,KY.vl],[KX.vlS,KY.vl],[KX.vlS,KY.oben],[KX.hkVL,KY.oben],[KX.hkVL,KY.hkU]],
+  rl:[[KX.hkRL,KY.hkU],[KX.hkRL,KY.oben],[KX.rlS,KY.oben],[KX.rlS,KY.rl],[KX.weR,KY.rl]],
+  mag:[[KX.mag,KY.vl],[KX.mag,KY.magO+30]]};
+ const HAUS_M=10,VOR=1.5,REIB_AUF=0.15;                           // Haus vom Keller bis unters Dach ≈ 10 m · Anlagendruck · Reibung bei offenem Ventil (bar, nur fürs Bild)
+ // Höhe der beiden Säulen im Haus (von der Kellerdecke bis zur Leitung unterm Dach), aus der Zeichnung gemessen.
+ // Steigleitung (Vorlauf) und Fallleitung (Rücklauf) müssen beide diese ganze Höhe überbrücken – sonst wären sie nicht gleich schwer.
+ const saeulenPx=()=>{const spanne=(p,i)=>{const a=p[i][1],b=p[i+1][1];return [Math.min(a,b),Math.max(a,b)];};
+  const v=spanne(KREIS.vl,1),r=spanne(KREIS.rl,2),imHaus=s=>s[0]<=KY.oben&&s[1]>=KY.eg?KY.eg-KY.oben:0;
+  return {vl:imHaus(v),rl:imHaus(r),vlX:KREIS.vl[1][0],rlX:KREIS.rl[2][0]};};
+ function kreis(an,zu){const H=foerderhoehe('25-40'),s=saeulenPx(),pa=px=>RHO*G*(px/(KY.keller-KY.hkO)*HAUS_M)/1e5;
+  const dp=!an?0:zu?H/10:REIB_AUF;
+  return {vor:VOR,nach:VOR+dp,dp,fliesst:an&&!zu,pfeilVL:pa(s.vl),pfeilRL:pa(s.rl),oben:VOR-HAUS_M/10,gefuellt:true};}
+ // -------------------------------------------------------------- Aufgaben a–j (10 × 10 Punkte; j = 2 × 5)
+ const A=[
+  {k:'a',reiter:0,art:'wahl',p:10,titel:'Seilzug: 2 m und 10 m',frage:'Stell den Seilzug auf <b>2 m</b> und dreh. Stell ihn dann auf <b>10 m</b> und dreh wieder. Was ändert sich an der Kraft zum Drehen?',
+   sperre:'Erst im Bild drehen: einmal bei 2 m und einmal bei 10 m.',
+   opt:[['gleich','Nichts – du überwindest nur die Reibung der Rollen.'],['fuenf','Bei 10 m brauchst du fünfmal so viel Kraft.'],['weniger','Bei 10 m brauchst du weniger Kraft.']],soll:'gleich',
+   tipp:'Dreh noch einmal bei 2 m und bei 10 m und vergleich die beiden Kraftbalken.'},
+  {k:'b',reiter:0,art:'wahl',p:10,titel:'Ein Gewicht fehlt',frage:'Nimm das rechte Gewicht ab und dreh. Was musst du jetzt tun?',
+   opt:[['heben','Die 2 kg hochheben.'],['reibung','Nur die Reibung überwinden.'],['nichts','Nichts.']],soll:'heben',
+   tipp:'Schau auf den Kraftbalken, wenn nur noch ein Gewicht am Seil hängt.'},
+  {k:'c',reiter:1,art:'zahl',p:10,titel:'Wie hoch steigt das Wasser?',frage:'Pumpe <b>25-40</b>, Rohr <b>10 m</b>, Pumpe an. Bis zu welcher Höhe steigt das Wasser?',einheit:'m',soll:4,
+   sperre:'Erst im Bild: Pumpe 25-40, Rohr 10 m, Pumpe an – warte, bis das Wasser steht.',
+   tipp:'Schau auf die Skala am Rohr: Wo bleibt die Wassersäule stehen?'},
+  {k:'d',reiter:1,art:'wahl',p:10,titel:'Fließt noch Wasser?',frage:'Fließt dann noch Wasser durch die Pumpe?',
+   opt:[['nein','Nein – die Säule steht, der Volumenstrom ist null.'],['langsam','Ja, langsam.'],['gleich','Ja, genauso viel wie beim 3-m-Rohr.']],soll:'nein',
+   tipp:'Schau auf die Anzeige unter dem Bild: Bewegt sich das Wasser noch?'},
+  {k:'e',reiter:1,art:'zahl',p:10,titel:'Die stärkere Pumpe',frage:'Schalte auf die Pumpe <b>25-60</b>. Wie hoch steigt das Wasser jetzt?',einheit:'m',soll:6,
+   sperre:'Erst im Bild: auf 25-60 umschalten, Rohr 8 m oder 10 m, Pumpe an – warte, bis das Wasser steht.',
+   tipp:'Schau auf die Skala am Rohr, nachdem du auf 25-60 umgeschaltet hast.'},
+  {k:'f',reiter:1,art:'wahl',p:10,titel:'Das Typenschild',frage:'Was bedeutet die <b>25</b> in „25-40“?',
+   opt:[['dn','Anschluss-Nennweite DN 25 (1 Zoll)'],['watt','25 Watt'],['grad','25 °C'],['cm','25 cm Baulänge']],soll:'dn',
+   tipp:'Tipp im Bild auf „Was heißt 25-40?“ neben dem Typenschild.'},
+  {k:'g',reiter:2,art:'wahl',p:10,titel:'Kommt das Wasser oben an?',frage:'Das Haus ist 10 m hoch, die Pumpe schafft im offenen Rohr nur 4 m. Kommt das Wasser oben im Heizkörper an?',
+   opt:[['ja','Ja'],['nein','Nein']],soll:'ja',
+   tipp:'Schalte im Bild die Pumpe an und schau, ob das Wasser oben durch den Heizkörper läuft.'},
+  {k:'h',reiter:2,art:'wahl',p:10,titel:'Warum?',frage:'Warum schafft es die Pumpe trotzdem?',
+   opt:[['gleich','Das Wasser im Vorlauf ist genauso schwer wie das Wasser im Rücklauf – wie beim Seilzug.'],['schneller','Im Haus läuft die Pumpe schneller.'],['duenner','Im Haus sind die Rohre dünner.']],soll:'gleich',
+   tipp:'Vergleich die beiden Pfeile neben den Steigleitungen.'},
+  {k:'i',reiter:2,art:'zahl',p:10,titel:'Ventil zu',frage:'Schließ das Ventil am Heizkörper. Wie groß ist jetzt der Druckunterschied an der Pumpe?',einheit:'bar',soll:0.4,
+   sperre:'Erst im Bild: Pumpe an und „Ventil am Heizkörper zu“.',
+   tipp:'Lies beide Manometer ab und zieh ab: nach der Pumpe minus vor der Pumpe.'},
+  {k:'j',reiter:2,art:'luecke',p:10,titel:'Der Satz deines Lehrers',
+   vor:'„Die Druckleistung der Pumpe wird nicht benötigt, um das Heizungswasser nach',mitte:'zu pumpen, sondern lediglich, um den',nach:'zu überwinden.“',
+   teile:[{k:'j1',p:5,opt:[['oben','oben'],['unten','unten'],['hinten','hinten']],soll:'oben'},
+          {k:'j2',p:5,opt:[['reib','Rohrreibungswiderstand'],['hoehe','Höhenunterschied'],['luft','Luftdruck']],soll:'reib'}],
+   tipp:'Denk an den Seilzug: Was musstest du dort überwinden, wenn beide Gewichte hängen?'}];
+ const SCHLUESSEL=['a','b','c','d','e','f','g','h','i','j1','j2'];
+ const PUNKTE={a:10,b:10,c:10,d:10,e:10,f:10,g:10,h:10,i:10,j1:5,j2:5};
+ const punkte=G=>SCHLUESSEL.reduce((s,k)=>s+(G[k]?PUNKTE[k]:0),0);
+ const auf=k=>A.find(x=>x.k===k||(x.teile&&x.teile.some(t=>t.k===k)));
+ // Prüfen: liefert {ok, tipp}. Zahlen: c 4 m, e 6 m, i 0,4 bar (0,39 mit 9,81 gilt auch).
+ function pruefe(k,w){
+  if(k==='j1'||k==='j2'){const t=auf('j').teile.find(x=>x.k===k);const ok=w===t.soll;return {ok,tipp:ok?'':auf('j').tipp};}
+  const a=auf(k);if(!a)return {ok:false,tipp:''};
+  if(a.art==='wahl'){const ok=w===a.soll;let tipp=a.tipp;
+   if(k==='a'&&w==='fuenf')tipp='Die Wege der Gewichte sind bei 10 m länger – aber vergleich die Kraftbalken bei 2 m und 10 m.';
+   return {ok,tipp:ok?'':tipp};}
+  const x=ZAHL.lies(w,a.soll);
+  if(!isFinite(x))return {ok:false,tipp:'Gib eine Zahl ein, zum Beispiel '+ZAHL.text(k==='i'?0.7:7)+'.'};
+  if(k==='c'||k==='e'){const H=a.soll,ok=Math.abs(x-H)<0.051;let tipp=a.tipp;
+   if(Math.abs(x-10)<0.01)tipp='Das Rohr ist 10 m hoch – aber kommt das Wasser oben an? Schau auf die Skala am Rohr.';
+   else if(Math.abs(x-H*10)<0.01)tipp=ZAHL.text(H*10)+' steht auf dem Typenschild. Wie viele Meter sind das? Schau auf die Skala am Rohr.';
+   else if(Math.abs(x-H/10)<0.001)tipp='Das wäre der Druck in bar. Gefragt ist die Höhe in Metern – schau auf die Skala am Rohr.';
+   return {ok,tipp:ok?'':tipp};}
+  if(k==='i'){const ok=x>=0.385&&x<=0.405;let tipp=a.tipp;
+   if(Math.abs(x-1.9)<0.001)tipp='1,9 bar zeigt das Manometer nach der Pumpe. Gefragt ist der Unterschied: nach der Pumpe minus vor der Pumpe.';
+   else if(Math.abs(x-1.5)<0.001)tipp='1,5 bar zeigt das Manometer vor der Pumpe. Gefragt ist der Unterschied: nach der Pumpe minus vor der Pumpe.';
+   else if(Math.abs(x-4)<0.01)tipp='4 m ist die Förderhöhe. Gefragt ist der Druckunterschied in bar.';
+   else if(Math.abs(x-40)<0.01||Math.abs(x-400)<0.01)tipp='Gefragt ist der Druckunterschied in bar.';
+   else if(Math.abs(x-3.4)<0.001)tipp='Zieh die beiden Werte voneinander ab: nach der Pumpe minus vor der Pumpe.';
+   return {ok,tipp:ok?'':tipp};}
+  return {ok:false,tipp:a.tipp};}
+ // Muster (für Proben und Beamer): richtige Antwort je Schlüssel
+ const MUSTER={a:'gleich',b:'heben',c:'4',d:'nein',e:'6',f:'dn',g:'ja',h:'gleich',i:'0,4',j1:'oben',j2:'reib'};
+ // Merksätze für die Beamer-Fassung: der Satz des Lehrers (17.10.2024, Rechtschreibung berichtigt) und die Förderhöhe
+ const MERK=['Die Druckleistung (z. B. 4 mWS oder 0,4 bar oder 400 mbar) der Pumpe wird nicht benötigt, um das Heizungswasser nach oben zu pumpen, sondern lediglich, um den Rohrreibungswiderstand zu überwinden. Denn das „Wassergewicht“ im Vorlauf ist genauso groß wie das „Wassergewicht“ im Rücklauf, so dass dieses für die Pumpe keine Rolle spielt. Ähnlich wie bei einem Seilzug, bei dem auf beiden Seiten das gleiche Gewicht hängt.',
+  'Die Förderhöhe ist der größte Druck der Pumpe, in Meter Wassersäule. 4 mWS ≈ 0,4 bar = 400 mbar.'];
+ return {G,RHO,SEIL,seilKraft,KRAFT_MAX,PUMPEN,ROHRE,foerderhoehe,anschluss,offenesRohr,KX,KY,KREIS,FARBE_VL,FARBE_RL,HAUS_M,VOR,saeulenPx,kreis,A,SCHLUESSEL,PUNKTE,punkte,auf,pruefe,MUSTER,MERK};
+})();
+
+// ---------------------------------------------------------------- SVG-Helfer (für Animation und Zeichenübungen)
+const SVGNS='http://www.w3.org/2000/svg';
+function svgEl(n,a,t){const e=document.createElementNS(SVGNS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!==undefined)e.textContent=t;return e;}
+const dstr=p=>p.map((q,i)=>(i?'L':'M')+q[0]+' '+q[1]).join(' ');
+
+// ---------------------------------------------------------------- Seilzug und Wassersäule: Bild und Bedienung (braucht DRK, ZAHL, svgEl, dstr)
+// Drei Reiter: 1 Seilzug · 2 Offenes Rohr · 3 Geschlossener Kreis. Links das Bild mit Reglern, rechts füllt die Seite (o.rechts) die Aufgaben,
+// die Merksätze (Beamer) oder die Hinweise (öffentliche Seite). Alle Bilder neu gezeichnet, viewBox 0 0 480 420.
+// Ereignisse (o.beiEreignis): dreh2 / dreh10 (Seilzug mit zwei Gewichten bei 2 m bzw. 10 m gedreht), ohne (mit einem Gewicht gedreht),
+// c (Pumpe 25-40, Rohr 10 m, Säule steht), e (Pumpe 25-60, Säule steht), i (Kreis: Pumpe an und Ventil zu), kreisAn (Kreis: Pumpe an).
+function bauDruck(wurzel,o){
+ o=Object.assign({modus:'schueler',reiter:0,beiEreignis:null,beiReiter:null,rechts:null,reiterZusatz:null,rechtsKopf:''},o||{});
+ const D=DRK,T=ZAHL.text;
+ const reduziert=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(_){return false;}})();
+ const Z={reiter:[0,1,2].includes(o.reiter)?o.reiter:0,
+  seil:{h:2,rechts:true,pos:0,weg:0,lauf:null,letzte:null},
+  rohr:{h:5,bez:'25-40',an:false,saeule:0,info:false,phase:0},
+  kreis:{an:false,zu:false,phase:0}};
+ const E={dreh2:0,dreh10:0,ohne:0,c:0,e:0,i:0,kreisAn:0};
+ const NAMEN=['1 Seilzug','2 Offenes Rohr','3 Geschlossener Kreis'];
+ wurzel.innerHTML='<div class="reiter" role="tablist" aria-label="Bilder" data-r="reiter"></div>'+
+  '<div class="dr-zwei"><div class="karte dr-bild"><div data-r="regler"></div>'+
+  '<div class="dr-svg"><svg data-r="svg" viewBox="0 0 480 420" role="img"></svg></div>'+
+  '<div class="messung" data-r="anzeige" aria-live="polite"></div><div data-r="info"></div></div>'+
+  '<div class="dr-rechts">'+(o.rechtsKopf||'')+'<div data-r="rechts"></div></div></div>';
+ const $=r=>wurzel.querySelector('[data-r="'+r+'"]'),svg=$('svg');
+ const melde=k=>{if(!E[k]){E[k]=1;o.beiEreignis&&o.beiEreignis(k);}};
+ // -------------------------------------------------------------- Reiter
+ function reiterLeiste(){const r=$('reiter');
+  r.innerHTML=NAMEN.map((n,i)=>`<button type="button" role="tab" data-reiter="${i}" aria-selected="${i===Z.reiter}">${n}${o.reiterZusatz?`<small>${o.reiterZusatz(i)}</small>`:''}</button>`).join('');
+  r.querySelectorAll('button').forEach(b=>b.onclick=()=>zeigeReiter(+b.dataset.reiter));}
+ function zeigeReiter(i){if(![0,1,2].includes(i))return;Z.reiter=i;if(Z.seil.lauf)seilFertig();reiterLeiste();regler();zeichne();rechts();o.beiReiter&&o.beiReiter(i);lauf();}
+ function rechts(){const c=$('rechts');if(o.rechts)o.rechts(Z.reiter,c);else c.innerHTML='';}
+ // -------------------------------------------------------------- Regler
+ const knopf=(attr,text,an,extra)=>`<button type="button" ${attr}${an!==undefined?` aria-pressed="${!!an}"`:''}${extra||''}>${text}</button>`;
+ function regler(){const c=$('regler');let h='';
+  if(Z.reiter===0){const s=Z.seil;
+   h=`<div class="wahl dr-gruppe" role="group" aria-label="Höhe"><span class="gname">Höhe:</span>${D.SEIL.hoehen.map(x=>knopf(`data-h="${x}"`,x+' m',x===s.h)).join('')}</div>
+    <div class="wahl dr-gruppe">${knopf('data-k="drehen" class="knopf haupt"',s.pos===0?'Drehen ↻':'Zurückdrehen ↺',undefined,s.lauf?' disabled':'')}${knopf('data-k="gewicht" class="knopf"',s.rechts?'rechtes Gewicht abnehmen':'rechtes Gewicht wieder anhängen',undefined,s.lauf?' disabled':'')}</div>`;}
+  else if(Z.reiter===1){const r=Z.rohr;
+   h=`<div class="wahl dr-gruppe" role="group" aria-label="Rohrhöhe"><span class="gname">Rohrhöhe:</span>${D.ROHRE.map(x=>knopf(`data-rh="${x}"`,x+' m',x===r.h)).join('')}</div>
+    <div class="wahl dr-gruppe" role="group" aria-label="Pumpe"><span class="gname">Pumpe:</span>${D.PUMPEN.map(b=>knopf(`data-bez="${b}"`,b,b===r.bez)).join('')}
+    ${knopf('data-k="rohrpumpe" class="knopf haupt"',r.an?'Pumpe aus':'Pumpe an')}${knopf('data-k="infoknopf" class="knopf"','Was heißt '+r.bez+'?',r.info)}</div>`;}
+  else{const k=Z.kreis;
+   h=`<div class="wahl dr-gruppe">${knopf('data-k="kreispumpe" class="knopf haupt"',k.an?'Pumpe aus':'Pumpe an')}${knopf('data-k="ventil" class="knopf"',k.zu?'Ventil am Heizkörper auf':'Ventil am Heizkörper zu',k.zu)}</div>`;}
+  c.innerHTML=h;
+  c.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>setzeHoehe(+b.dataset.h));
+  c.querySelectorAll('[data-rh]').forEach(b=>b.onclick=()=>setzeRohr(+b.dataset.rh));
+  c.querySelectorAll('[data-bez]').forEach(b=>b.onclick=()=>setzePumpe(b.dataset.bez));
+  const on=(k,f)=>{const b=c.querySelector('[data-k="'+k+'"]');if(b)b.onclick=f;};
+  on('drehen',()=>drehen());on('gewicht',()=>gewicht(!Z.seil.rechts));on('rohrpumpe',()=>rohrPumpe(!Z.rohr.an));
+  on('infoknopf',()=>{Z.rohr.info=!Z.rohr.info;regler();anzeige();});on('kreispumpe',()=>kreisPumpe(!Z.kreis.an));on('ventil',()=>ventil(!Z.kreis.zu));}
+ // -------------------------------------------------------------- Seilzug
+ function setzeHoehe(h){if(!D.SEIL.hoehen.includes(h))return;if(Z.seil.lauf)seilFertig();Z.seil.h=h;Z.seil.letzte=null;regler();zeichne();}
+ // Ohne Gegengewicht rutscht das linke Gewicht nach unten – „Drehen“ hebt es dann immer an.
+ function gewicht(an){const s=Z.seil;if(s.lauf)return;s.rechts=!!an;s.letzte=null;if(!an&&s.pos!==0){s.weg-=s.pos*seilHub(s.h);s.pos=0;}regler();zeichne();}
+ function drehen(){const s=Z.seil;if(s.lauf)return;
+  s.lauf={von:s.pos,nach:1-s.pos,t0:null,dauer:1500,kraft:D.seilKraft(s.h,s.rechts),rechts:s.rechts,hoch:s.pos===0};
+  if(reduziert){seilFertig();return;}regler();zeichne();lauf();}
+ function seilFertig(){const s=Z.seil,l=s.lauf;if(!l)return;s.weg+=(l.nach-l.von)*seilHub(s.h);s.pos=l.nach;s.lauf=null;
+  s.letzte={kraft:l.kraft,rechts:l.rechts,hoch:l.hoch,h:s.h};
+  if(l.rechts){if(s.h===2)melde('dreh2');if(s.h===10)melde('dreh10');}else melde('ohne');
+  if(Z.reiter===0){regler();zeichne();}}
+ const SK={k:36,boden:405,cx:250,r:10,yB:394,wB:16,wH:14};
+ const seilHub=h=>{const yT=SK.boden-h*SK.k,frei=(SK.yB-SK.r-3)-(yT+SK.r+3)-SK.wH;return Math.max(10,Math.min(150,frei));};
+ function kraftText(l){if(!l)return ['Tipp auf „Drehen“.','Dann zeigt der','Balken die Kraft.'];
+  if(l.rechts)return ['nur die Reibung','der Rollen',''];return l.hoch?['du hebst 2 kg','',''] :['du hältst 2 kg,','damit es nicht','herunterfällt'];}
+ // -------------------------------------------------------------- Offenes Rohr
+ function setzeRohr(h){if(!D.ROHRE.includes(h))return;Z.rohr.h=h;if(Z.rohr.saeule>h)Z.rohr.saeule=h;regler();zeichne();anzeige();lauf();}
+ function setzePumpe(b){if(!D.PUMPEN.includes(b))return;Z.rohr.bez=b;regler();zeichne();anzeige();lauf();}
+ function rohrPumpe(an){Z.rohr.an=!!an;regler();zeichne();anzeige();lauf();}
+ const rohrZiel=()=>D.offenesRohr(Z.rohr.h,Z.rohr.bez,Z.rohr.an);
+ const rohrSteht=()=>{const z=rohrZiel();return Z.rohr.an&&Math.abs(Z.rohr.saeule-z.saeule)<1e-6;};
+ function rohrPruefe(){if(!rohrSteht())return;const z=rohrZiel();if(z.fliesst)return;
+  if(Z.rohr.bez==='25-40'&&Z.rohr.h===10)melde('c');if(Z.rohr.bez==='25-60')melde('e');}
+ // -------------------------------------------------------------- Geschlossener Kreis
+ function kreisPumpe(an){Z.kreis.an=!!an;if(an)melde('kreisAn');if(an&&Z.kreis.zu)melde('i');regler();zeichne();anzeige();lauf();}
+ function ventil(zu){Z.kreis.zu=!!zu;if(zu&&Z.kreis.an)melde('i');regler();zeichne();anzeige();lauf();}
+ // -------------------------------------------------------------- Anzeige unter dem Bild
+ function anzeige(){const m=$('anzeige'),inf=$('info');let h='',i='';
+  if(Z.reiter===0){const s=Z.seil,l=s.lauf||s.letzte;
+   h=`Höhe <b>${s.h} m</b> · ${s.rechts?'zwei Gewichte (je 2 kg)':'nur noch das linke Gewicht (2 kg)'}`+
+    (l?` · Kraft zum Drehen: <b>${kraftText(l).join(' ').trim()}</b>`:' · Tipp auf „Drehen“.');
+   i=o.modus==='schueler'?`<p class="klein dr-fuss">Gedreht mit zwei Gewichten: bei 2 m ${E.dreh2?'✓':'–'} · bei 10 m ${E.dreh10?'✓':'–'}</p>`:'';}
+  else if(Z.reiter===1){const r=Z.rohr,z=rohrZiel();
+   if(!r.an)h=r.saeule>0.001?'Pumpe aus: Das Wasser sinkt zurück.':'Pumpe aus: Im Rohr steht das Wasser so hoch wie im Behälter.';
+   else if(!rohrSteht())h='Pumpe an: Das Wasser steigt …';
+   else if(z.fliesst)h=`<b>Wasser fließt:</b> Es läuft oben über und zurück in den Behälter. Manometer: <b>etwas über ${T(r.h/10,1)} bar</b>`;
+   else h=`<b>Volumenstrom 0 – das Wasser steht.</b> Manometer: <b>${T(z.bar,1)} bar</b>`;
+   if(r.info){const H=D.foerderhoehe(r.bez),N=r.bez.split('-')[1];
+    i=`<div class="merk dr-info"><b>Was heißt ${r.bez}?</b><br>${D.anschluss(r.bez)} = Anschluss DN ${D.anschluss(r.bez)} (1 Zoll) · ${N} = Förderhöhe ${T(H)} m – der größte Druck der Pumpe, wenn kein Wasser fließt.</div>`;}}
+  else{const k=Z.kreis,z=D.kreis(k.an,k.zu);
+   if(!k.an)h=`Pumpe aus: Das Wasser steht – und bleibt trotzdem oben im Heizkörper. Vor der Pumpe <b>${T(z.vor,1)} bar</b>, nach der Pumpe <b>${T(z.nach,1)} bar</b>.`;
+   else if(k.zu)h=`<b>Ventil zu: Das Wasser steht.</b> Vor der Pumpe <b>${T(z.vor,1)} bar</b>, nach der Pumpe <b>${T(z.nach,1)} bar</b>. Unterschied ${T(z.dp,1)} bar = ${T(z.dp*10)} m: die größte Förderhöhe – wie im offenen Rohr.`;
+   else h=`<b>Pumpe an: Das Wasser läuft im Kreis</b> – auch oben durch den Heizkörper. Vor der Pumpe <b>${T(z.vor,1)} bar</b>, nach der Pumpe etwas mehr. Jetzt braucht die Pumpe ihren Druck nur für die Reibung im fließenden Wasser.`;
+   i='<p class="klein dr-fuss">Dass das Wasser oben steht, auch wenn die Pumpe aus ist, macht der Anlagendruck vom Befüllen – mehr im Bonus 3.2.4. · WE Wärmeerzeuger · MAG Ausdehnungsgefäß</p>';}
+  // nur schreiben, wenn sich etwas ändert (die Zeile ist aria-live und soll während der Bewegung nicht ständig neu vorgelesen werden)
+  if(m.__h!==h){m.innerHTML=h;m.__h=h;}if(inf.__h!==i){inf.innerHTML=i;inf.__h=i;}}
+ // -------------------------------------------------------------- Zeichnen
+ let A=null;
+ const txt=(x,y,t,a)=>A('text',Object.assign({x,y,'font-size':13,fill:'#22303a'},a||{}),t);
+ const pfeilKopf=(x,y,rich,f,g)=>{g=g||7;const d=rich==='ab'?`M${x-g} ${y-g*1.4} L${x+g} ${y-g*1.4} L${x} ${y} Z`:rich==='auf'?`M${x-g} ${y+g*1.4} L${x+g} ${y+g*1.4} L${x} ${y} Z`:rich==='rechts'?`M${x-g*1.4} ${y-g} L${x-g*1.4} ${y+g} L${x} ${y} Z`:`M${x+g*1.4} ${y-g} L${x+g*1.4} ${y+g} L${x} ${y} Z`;A('path',{d,fill:f});};
+ function zeichne(nurBild){svg.innerHTML='';A=(n,a,t)=>svg.appendChild(svgEl(n,a,t));
+  svg.setAttribute('aria-label',['Seilzug mit zwei Rollen und zwei Gewichten','Behälter, Pumpe und oben offenes Rohr mit Meterskala','Haus im Schnitt mit Heizkreis vom Keller bis unters Dach'][Z.reiter]);
+  if(Z.reiter===0)bildSeil();else if(Z.reiter===1)bildRohr();else bildKreis();if(!nurBild)anzeige();}
+ function mensch(x,boden,hpx){const k=hpx/1.8,kopf=0.11*k;
+  A('circle',{cx:x,cy:boden-hpx+kopf,r:kopf,fill:'none',stroke:'#5d6b75','stroke-width':2});
+  A('path',{d:`M${x} ${boden-hpx+2*kopf} L${x} ${boden-0.9*k} M${x} ${boden-0.9*k} L${x-0.22*k} ${boden} M${x} ${boden-0.9*k} L${x+0.22*k} ${boden} M${x-0.3*k} ${boden-1.25*k} L${x} ${boden-1.45*k} L${x+0.3*k} ${boden-1.25*k}`,fill:'none',stroke:'#5d6b75','stroke-width':2,'stroke-linecap':'round','stroke-linejoin':'round'});}
+ function bildSeil(){const s=Z.seil,{k,boden,cx,r,yB,wB,wH}=SK,yT=boden-s.h*k,hub=seilHub(s.h);
+  let pos=s.pos,weg=s.weg;
+  if(s.lauf&&s.lauf.t0!==null){const f=Math.min(1,s.lauf.f||0),e=f<.5?2*f*f:1-2*(1-f)*(1-f);pos=s.lauf.von+(s.lauf.nach-s.lauf.von)*e;weg=s.weg+(s.lauf.nach-s.lauf.von)*hub*e;}
+  // Boden
+  A('line',{x1:16,y1:boden,x2:470,y2:boden,stroke:'#8d6e63','stroke-width':3});
+  for(let x=28;x<470;x+=22)A('line',{x1:x,y1:boden+3,x2:x-8,y2:boden+12,stroke:'#bcaaa4','stroke-width':1.5});
+  mensch(96,boden,1.8*k);txt(96,boden-1.8*k-8,'1,8 m',{'text-anchor':'middle','font-size':11,fill:'#5d6b75'});
+  // Gestell
+  A('path',{d:`M190 ${boden} L190 ${yT-24} L${cx} ${yT-24} L${cx} ${yT}`,fill:'none',stroke:'#6b7780','stroke-width':5,'stroke-linejoin':'round'});
+  A('line',{x1:174,y1:boden-2,x2:206,y2:boden-2,stroke:'#6b7780','stroke-width':5});
+  A('path',{d:`M${cx-10} ${boden-1} L${cx} ${yB} L${cx+10} ${boden-1}`,fill:'none',stroke:'#6b7780','stroke-width':3,'stroke-linejoin':'round'});
+  // Seil als geschlossene Schleife
+  const d=`M${cx-r} ${yT} A${r} ${r} 0 0 1 ${cx+r} ${yT} L${cx+r} ${yB} A${r} ${r} 0 0 1 ${cx-r} ${yB} Z`;
+  A('path',{d,fill:'none',stroke:'#7a5c3a','stroke-width':3.2});
+  A('path',{d,fill:'none',stroke:'#f1e2c6','stroke-width':1.4,'stroke-dasharray':'4 8','stroke-dashoffset':-weg});
+  // Rollen (drehen mit)
+  const winkel=weg/r;
+  [yT,yB].forEach(y=>{A('circle',{cx,cy:y,r:r-1,fill:'#fff',stroke:'#22303a','stroke-width':2});
+   A('line',{x1:cx-(r-4)*Math.cos(winkel),y1:y-(r-4)*Math.sin(winkel),x2:cx+(r-4)*Math.cos(winkel),y2:y+(r-4)*Math.sin(winkel),stroke:'#22303a','stroke-width':1.6});
+   A('circle',{cx,cy:y,r:2.4,fill:'#22303a'});});
+  // Kurbel an der unteren Rolle mit Hand
+  const kx=cx+(r-1)*Math.cos(winkel+Math.PI/2),ky=yB+(r-1)*Math.sin(winkel+Math.PI/2);
+  A('line',{x1:cx,y1:yB,x2:kx,y2:ky,stroke:'#22303a','stroke-width':3,'stroke-linecap':'round'});
+  A('ellipse',{cx:kx,cy:ky,rx:7,ry:5.5,fill:'#f2c9a0',stroke:'#8a5a3c','stroke-width':1.5});
+  txt(cx+26,yB+2,'Kurbel',{'font-size':11,fill:'#5d6b75'});
+  // Gewichte: links auf dem linken Seil, rechts auf dem rechten Seil
+  const oben=yT+r+3,unten=oben+hub;
+  const gew=(x,u,lbl)=>{const y=oben+(unten-oben)*u;A('rect',{x:x-wB/2,y,width:wB,height:wH,rx:2,fill:'#9aa7b1',stroke:'#22303a','stroke-width':1.5});
+   A('text',{x,y:y+wH-4.5,'text-anchor':'middle','font-size':8.5,'font-weight':700,fill:'#22303a'},lbl);};
+  gew(cx-r,1-pos,'2 kg');if(s.rechts)gew(cx+r,pos,'2 kg');
+  // Maßlinie Höhe
+  const mx=318;A('line',{x1:mx,y1:boden,x2:mx,y2:yT,stroke:'#5d6b75','stroke-width':1.4});pfeilKopf(mx,yT,'auf','#5d6b75',4.5);pfeilKopf(mx,boden,'ab','#5d6b75',4.5);
+  A('line',{x1:mx-6,y1:yT,x2:cx+r+4,y2:yT,stroke:'#5d6b75','stroke-width':1,'stroke-dasharray':'3 3'});
+  txt(mx+8,(boden+yT)/2+5,s.h+' m',{'font-size':16,'font-weight':700});
+  // Kraftbalken
+  const l=s.lauf||s.letzte,bx=340,by=14,bw=124;
+  A('rect',{x:bx-10,y:by,width:bw+20,height:122,rx:10,fill:'#fff',stroke:'#d5cfc2'});
+  txt(bx,by+22,'Kraft zum Drehen',{'font-weight':700});
+  A('rect',{x:bx,y:by+32,width:bw,height:16,rx:5,fill:'#eef1ea',stroke:'#d5cfc2'});
+  if(l){const w=Math.max(4,l.kraft/D.KRAFT_MAX*bw);A('rect',{x:bx,y:by+32,width:w,height:16,rx:5,fill:l.rechts?'#0b6b7d':'#d99a1b'});}
+  kraftText(l).forEach((t,j)=>{if(t)txt(bx,by+72+j*18,t,{'font-size':14,'font-weight':l?700:400});});}
+ function manometer(x,y,wert,max,r){r=r||11;A('circle',{cx:x,cy:y,r,fill:'#fff',stroke:'#22303a','stroke-width':1.8});
+  for(let j=0;j<=6;j++){const w=(-120+240*j/6)*Math.PI/180;A('line',{x1:x+Math.sin(w)*(r-1),y1:y-Math.cos(w)*(r-1),x2:x+Math.sin(w)*(r-3.5),y2:y-Math.cos(w)*(r-3.5),stroke:'#5d6b75','stroke-width':1});}
+  const w=(-120+240*Math.max(0,Math.min(1,wert/max)))*Math.PI/180;
+  A('line',{x1:x,y1:y,x2:x+Math.sin(w)*(r-3),y2:y-Math.cos(w)*(r-3),stroke:'#c8371f','stroke-width':2,'stroke-linecap':'round'});A('circle',{cx:x,cy:y,r:1.8,fill:'#22303a'});}
+ const RK={k:36,y0:382,boden:414,xL:254,xR:268,pumpe:[236,400]};
+ function bildRohr(){const r=Z.rohr,{k,y0,boden,xL,xR}=RK,[px,py]=RK.pumpe,yR=y0-r.h*k,z=rohrZiel(),steht=rohrSteht(),wasser='#64b5f6',leer='#f3f6f9';
+  A('line',{x1:16,y1:boden,x2:470,y2:boden,stroke:'#8d6e63','stroke-width':3});
+  // Messlatte 0–10 m
+  A('line',{x1:xR+4,y1:y0,x2:xR+4,y2:y0-10*k,stroke:'#5d6b75','stroke-width':1.2});
+  for(let m=0;m<=10;m++){const y=y0-m*k;A('line',{x1:xR+4,y1:y,x2:xR+(m%2?9:13),y2:y,stroke:'#5d6b75','stroke-width':1.2});if(m%2===0)txt(xR+17,y+4.5,m+' m',{'font-size':13,fill:'#22303a'});}
+  // Behälter
+  A('rect',{x:42,y:y0,width:156,height:boden-2-y0,fill:wasser,opacity:.75});
+  A('path',{d:`M40 ${y0-14} L40 ${boden-1} L200 ${boden-1} L200 ${y0-14}`,fill:'none',stroke:'#22303a','stroke-width':2.4,'stroke-linejoin':'round'});
+  txt(120,boden-10,'Behälter',{'text-anchor':'middle','font-size':12});
+  // Saugleitung, Pumpe, Verbindung zum Steigrohr
+  A('rect',{x:200,y:py-6,width:xR-200,height:12,fill:wasser});
+  A('line',{x1:200,y1:py-6,x2:xL,y2:py-6,stroke:'#22303a','stroke-width':2});A('line',{x1:200,y1:py+6,x2:xR,y2:py+6,stroke:'#22303a','stroke-width':2});
+  // Steigrohr, oben offen
+  const ySaeule=Math.max(yR,y0-r.saeule*k);
+  A('rect',{x:xL,y:yR,width:xR-xL,height:py-6-yR,fill:leer});
+  A('rect',{x:xL,y:ySaeule,width:xR-xL,height:py+6-ySaeule,fill:wasser});
+  if(r.an&&z.fliesst&&steht){A('line',{x1:(xL+xR)/2,y1:py,x2:(xL+xR)/2,y2:yR+2,stroke:'#fff','stroke-width':2,'stroke-dasharray':'4 10','stroke-dashoffset':-r.phase*30,opacity:.9});
+   const ueber=`M${xL+2} ${yR} C${xL-34} ${yR-44} ${112} ${yR-34} ${112} ${y0-8}`;
+   A('path',{d:`M${xL} ${yR+1} C${xL} ${yR-9} ${xR} ${yR-9} ${xR} ${yR+1}`,fill:wasser,stroke:'none'});
+   A('path',{d:ueber,fill:'none',stroke:wasser,'stroke-width':4,'stroke-linecap':'round'});
+   A('path',{d:ueber,fill:'none',stroke:'#fff','stroke-width':1.6,'stroke-dasharray':'3 9','stroke-dashoffset':-r.phase*30});
+   pfeilKopf(112,y0-4,'ab',wasser,5);}
+  A('line',{x1:xL,y1:py-6,x2:xL,y2:yR,stroke:'#22303a','stroke-width':2.2});A('line',{x1:xR,y1:py+6,x2:xR,y2:yR,stroke:'#22303a','stroke-width':2.2});
+  A('line',{x1:xL-4,y1:yR,x2:xL,y2:yR,stroke:'#22303a','stroke-width':2.2});A('line',{x1:xR,y1:yR,x2:xR+4,y2:yR,stroke:'#22303a','stroke-width':2.2});
+  if(!(r.an&&z.fliesst&&steht))txt((xL+xR)/2,yR-8,'offen',{'text-anchor':'middle','font-size':12,fill:'#5d6b75'});
+  // Pumpe
+  A('circle',{cx:px,cy:py,r:11,fill:'#fff',stroke:'#22303a','stroke-width':2});pfeilKopf(px+7,py,'rechts',r.an?'#0b6b7d':'#22303a',6);
+  // Manometer am Nullpunkt (Höhe des Wasserspiegels im Behälter)
+  A('path',{d:`M${xL} ${y0} L${px} ${y0} L${px} ${y0-6}`,fill:'none',stroke:'#22303a','stroke-width':1.6});
+  const bar=r.an&&steht?z.bar:r.saeule/10;manometer(px,y0-19,bar,1,11);
+  txt(px-16,y0-22,T(bar,1)+' bar',{'text-anchor':'end','font-size':12,'font-weight':700});
+  // Typenschild
+  A('rect',{x:xR+18,y:py-9,width:58,height:20,rx:3,fill:'#fff',stroke:'#22303a','stroke-width':1.4});
+  txt(xR+47,py+6,r.bez,{'text-anchor':'middle','font-size':14,'font-weight':700});
+  txt(xR+80,py+6,'Typenschild',{'font-size':11,fill:'#5d6b75'});
+  if(r.an&&steht&&!z.fliesst){A('line',{x1:xL-30,y1:ySaeule,x2:xL-3,y2:ySaeule,stroke:'#0b6b7d','stroke-width':1.6});
+   txt(xL-34,ySaeule-4,'Säule steht',{'text-anchor':'end','font-size':12,fill:'#0b6b7d','font-weight':700});txt(xL-34,ySaeule+12,'Volumenstrom 0',{'text-anchor':'end','font-size':12,fill:'#0b6b7d'});}}
+ const KR=D.KREIS,KX=D.KX,KY=D.KY;
+ const SCHLEIFE=[...KR.vl,[KX.hkVL,KY.hkO+12],[KX.hkRL,KY.hkO+12],...KR.rl,[KX.weL+30,KY.rl],[KX.weL+30,KY.vl],[KX.weR,KY.vl]];
+ const SCHL_L=SCHLEIFE.reduce((s,q,i)=>i?s+Math.hypot(q[0]-SCHLEIFE[i-1][0],q[1]-SCHLEIFE[i-1][1]):0,0);
+ const VL_L=KR.vl.reduce((s,q,i)=>i?s+Math.hypot(q[0]-KR.vl[i-1][0],q[1]-KR.vl[i-1][1]):0,0)+12+(KX.hkRL-KX.hkVL)/2;
+ function aufSchleife(u){u=((u%SCHL_L)+SCHL_L)%SCHL_L;for(let i=1;i<SCHLEIFE.length;i++){const a=SCHLEIFE[i-1],b=SCHLEIFE[i],d=Math.hypot(b[0]-a[0],b[1]-a[1]);if(u<=d){const f=d?u/d:0;return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f];}u-=d;}return SCHLEIFE[0];}
+ function bildKreis(){const k=Z.kreis,z=D.kreis(k.an,k.zu),rot=D.FARBE_VL,blau=D.FARBE_RL;
+  // Erdreich und Haus
+  const wl=KX.wandL,wr=KX.wandR;
+  A('line',{x1:0,y1:KY.eg,x2:wl,y2:KY.eg,stroke:'#8d6e63','stroke-width':3});A('line',{x1:wr,y1:KY.eg,x2:480,y2:KY.eg,stroke:'#8d6e63','stroke-width':3});
+  A('rect',{x:wl,y:KY.eg,width:wr-wl,height:KY.keller-KY.eg,fill:'#f1eee6'});
+  A('path',{d:`M${wl} ${KY.keller} L${wl} ${KY.dach} L${KX.first} ${KY.dachFirst} L${wr} ${KY.dach} L${wr} ${KY.keller} Z`,fill:'none',stroke:'#22303a','stroke-width':2.6,'stroke-linejoin':'round'});
+  [KY.dach,KY.og,KY.eg].forEach(y=>A('line',{x1:wl,y1:y,x2:wr,y2:y,stroke:'#9aa7b1','stroke-width':y===KY.eg?2.4:1.6,'stroke-dasharray':y===KY.eg?'':'7 5'}));
+  txt(wl+8,KY.eg+16,'Keller',{'font-size':11,fill:'#5d6b75'});txt(wl+8,KY.eg-8,'EG',{'font-size':11,fill:'#5d6b75'});txt(wl+8,KY.og-8,'OG',{'font-size':11,fill:'#5d6b75'});
+  // Maßlinie ≈ 10 m
+  const mx=KX.mass;A('line',{x1:mx,y1:KY.keller,x2:mx,y2:KY.hkO,stroke:'#5d6b75','stroke-width':1.3});pfeilKopf(mx,KY.hkO,'auf','#5d6b75',4.5);pfeilKopf(mx,KY.keller,'ab','#5d6b75',4.5);
+  A('line',{x1:mx-10,y1:KY.hkO,x2:mx+6,y2:KY.hkO,stroke:'#5d6b75','stroke-width':1});
+  A('text',{x:mx+16,y:(KY.keller+KY.hkO)/2,'font-size':14,'font-weight':700,fill:'#22303a','text-anchor':'middle',transform:`rotate(-90 ${mx+16} ${(KY.keller+KY.hkO)/2})`},'≈ 10 m');
+  // Leitungen: Vorlauf rot, Rücklauf blau, Abzweig zum Ausdehnungsgefäß rot
+  const rohr=(p,f)=>A('path',{d:dstr(p),fill:'none',stroke:f,'stroke-width':5,'stroke-linejoin':'miter','stroke-linecap':'butt'});
+  rohr(KR.vl,rot);rohr(KR.rl,blau);rohr(KR.mag,rot);
+  // Wasserteilchen (laufen nur, wenn die Pumpe läuft und das Ventil offen ist)
+  if(!reduziert||!z.fliesst){const n=34;for(let j=0;j<n;j++){const u=j*SCHL_L/n+(z.fliesst?k.phase*60:0),q=aufSchleife(u),uu=((u%SCHL_L)+SCHL_L)%SCHL_L;
+   A('circle',{cx:q[0],cy:q[1],r:2.3,fill:'#fff',opacity:.95,stroke:uu<VL_L?'#8e1f19':'#1d4a80','stroke-width':.8});}}
+  if(z.fliesst){pfeilKopf(KX.vlS,KY.og+30,'auf','#fff',4);pfeilKopf(KX.rlS,KY.og+30,'ab','#fff',4);}
+  // Heizkörper unterm Dach
+  A('rect',{x:KX.hkL,y:KY.hkO,width:KX.hkR-KX.hkL,height:KY.hkU-KY.hkO,rx:3,fill:z.fliesst?'#f6b9a8':'#fbe3c4',stroke:'#22303a','stroke-width':1.8});
+  for(let x=KX.hkL+10;x<KX.hkR;x+=10)A('line',{x1:x,y1:KY.hkO+4,x2:x,y2:KY.hkU-4,stroke:'#8a8478','stroke-width':.8,opacity:.7});
+  txt(KX.vlS-6,KY.hkO+14,'Heizkörper',{'text-anchor':'end','font-size':11,'font-weight':700});
+  // Ventil vor dem Heizkörper (im Vorlauf, waagerecht)
+  const vx=(KX.vlS+KX.hkVL)/2,vy=KY.oben;
+  A('path',{d:`M${vx-8} ${vy-7} L${vx-8} ${vy+7} L${vx} ${vy} Z M${vx+8} ${vy-7} L${vx+8} ${vy+7} L${vx} ${vy} Z`,fill:k.zu?'#22303a':'#fff',stroke:'#22303a','stroke-width':1.5,'stroke-linejoin':'round'});
+  if(k.zu)txt(KX.vlS-7,vy+5,'Ventil zu',{'text-anchor':'end','font-size':12,'font-weight':700,fill:'#c8371f'});
+  // Wärmeerzeuger, Ausdehnungsgefäß, Pumpe, Manometer
+  A('rect',{x:KX.weL,y:KY.weO,width:KX.weR-KX.weL,height:KY.weU-KY.weO,rx:5,fill:'#fff',stroke:'#22303a','stroke-width':2});
+  txt((KX.weL+KX.weR)/2,(KY.weO+KY.weU)/2+6,'WE',{'text-anchor':'middle','font-size':17,'font-weight':700});
+  A('rect',{x:KX.mag-12,y:KY.magO,width:24,height:30,rx:10,fill:'#e6e1d6',stroke:'#22303a','stroke-width':1.6});
+  txt(KX.mag,KY.magO+19,'MAG',{'text-anchor':'middle','font-size':8,'font-weight':700});
+  A('circle',{cx:KX.pumpe,cy:KY.vl,r:12,fill:'#fff',stroke:'#22303a','stroke-width':2});pfeilKopf(KX.pumpe+8,KY.vl,'rechts',k.an?'#0b6b7d':'#22303a',6.5);
+  [[KX.vor,z.vor],[KX.nach,z.nach]].forEach(([x,w])=>{A('line',{x1:x,y1:KY.vl-2,x2:x,y2:KY.vl-11,stroke:'#22303a','stroke-width':1.6});manometer(x,KY.vl-22,w,3,11);});
+  txt(KX.vor,KY.vl-38,T(z.vor,1),{'text-anchor':'middle','font-size':11,'font-weight':700});
+  if(!(k.an&&!k.zu))txt(KX.nach,KY.vl-38,T(z.nach,1),{'text-anchor':'middle','font-size':11,'font-weight':700});
+  txt(KX.vor,KY.vl+20,'vor',{'text-anchor':'middle','font-size':10,fill:'#5d6b75'});txt(KX.nach,KY.vl+20,'nach',{'text-anchor':'middle','font-size':10,fill:'#5d6b75'});
+  txt(KX.pumpe,KY.vl+28,'Pumpe',{'text-anchor':'middle','font-size':10,fill:'#5d6b75'});txt(KX.pumpe,KY.vl+40,'25-40',{'text-anchor':'middle','font-size':10,'font-weight':700});
+  // Pfeile „drückt“: Vorlauf- und Rücklaufsäule gleich hoch, gleich schwer
+  const PL=108,lv=PL*z.pfeilVL/Math.max(z.pfeilVL,z.pfeilRL),lr=PL*z.pfeilRL/Math.max(z.pfeilVL,z.pfeilRL),y1=KY.dach+24;
+  [[KX.vlS-26,lv,rot],[(KX.rlS+KX.wandR)/2,lr,blau]].forEach(([x,l,f])=>{A('line',{x1:x,y1,x2:x,y2:y1+l-8,stroke:f,'stroke-width':3});pfeilKopf(x,y1+l,'ab',f,6);
+   txt(x,y1-6,'drückt',{'text-anchor':'middle','font-size':10.5,'font-weight':700,fill:f});});
+  const mt=(KX.vlS+KX.rlS)/2;
+  ['gleich schwer –','heben sich auf,','wie beim Seilzug'].forEach((t,j)=>txt(mt,KY.dach+34+j*16,t,{'text-anchor':'middle','font-size':12.5,'font-weight':700,fill:'#0b6b7d'}));}
+ // -------------------------------------------------------------- Bewegung
+ let rafId=null,zuletzt=null;
+ function aktiv(){if(Z.reiter===0)return !!Z.seil.lauf;
+  if(Z.reiter===1){const z=rohrZiel();return Math.abs(Z.rohr.saeule-z.saeule)>1e-6||(!reduziert&&Z.rohr.an&&z.fliesst);}
+  return !reduziert&&Z.kreis.an&&!Z.kreis.zu;}
+ function lauf(){if(rafId===null&&aktiv()){zuletzt=null;rafId=requestAnimationFrame(takt);}else if(Z.reiter===1&&reduziert){rohrSofort();}}
+ function rohrSofort(){const z=rohrZiel();if(Math.abs(Z.rohr.saeule-z.saeule)>1e-6){Z.rohr.saeule=z.saeule;zeichne();}rohrPruefe();}
+ function takt(t){rafId=null;const dt=zuletzt===null?0:Math.min(.05,(t-zuletzt)/1000);zuletzt=t;
+  if(Z.reiter===0&&Z.seil.lauf){const l=Z.seil.lauf;if(l.t0===null)l.t0=t;l.f=(t-l.t0)/l.dauer;if(l.f>=1){seilFertig();return;}}
+  if(Z.reiter===1){const r=Z.rohr,z=rohrZiel();if(reduziert){rohrSofort();return;}
+   const d=z.saeule-r.saeule,v=2.6*dt;r.saeule=Math.abs(d)<=v?z.saeule:r.saeule+Math.sign(d)*v;r.phase+=dt;
+   if(Math.abs(d)<=v)rohrPruefe();}
+  if(Z.reiter===2)Z.kreis.phase+=dt;
+  zeichne(true);if(Z.reiter===1)anzeige();if(aktiv())rafId=requestAnimationFrame(takt);}
+ reiterLeiste();regler();zeichne();rechts();
+ return {zeigeReiter,reiter:()=>Z.reiter,setzeHoehe,drehen,gewicht,setzeRohr,setzePumpe,rohrPumpe,kreisPumpe,ventil,
+  ereignisse:()=>Object.assign({},E),zustand:()=>JSON.parse(JSON.stringify(Z)),laeuft:()=>rafId!==null||!!Z.seil.lauf,
+  rechtsNeu:()=>rechts(),reiterNeu:()=>reiterLeiste(),fertig:()=>{if(Z.seil.lauf)seilFertig();if(Z.reiter===1)rohrSofort();}};
+}
+
+// ---------------------------------------------------------------- Rechentrainer 3.2.2: Aufgaben mit wechselnden Zahlen, Prüfung, Hinweise bei typischen Fehlern (ohne DOM, braucht ZAHL)
+// Teil A Druck umrechnen (10 × 5 Punkte), Teil B Rohrreibung (B1 2 × 5, B2–B4 je 10, B5 2 × 5) = 100 Punkte.
+// Regeln (Vorschau 3.2, „Fachlich geprüft“ 2–4):
+//  · bar, mbar, kPa, Pa: nur der genaue Wert (Spanne 0,1 %). Aufgaben mit mWS (A7–A9): der Wert mit 10 kPa je Meter UND der Wert mit 9,81 gelten,
+//    auch gerundet (Spanne zwischen beiden plus 0,5 % bzw. die halbe letzte Stelle) – höchstens rund 2,5 % neben dem Wert mit 10.
+//  · Rohrreibung: Δp = l · R · 1,5 (R = 100 Pa/m, wenn nicht anders gesagt), Spanne 0,5 % (bei kPa und mbar auch auf eine Stelle nach dem Komma gerundet).
+//  · Der Druck einer Pumpe wird nie in kPa gefragt (A9 in mbar), sonst wäre „40“ vom Typenschild schon die Lösung.
+//  · Kein Ergebnis ist zugleich eine gegebene Zahl. Zahlen aus Kapiteltest und Probe-Test kommen nicht vor, die Wege 18 / 20 / 30 / 34 m (Team) auch nicht.
+const RK=(()=>{
+ const T=ZAHL.text;
+ function zufall(seed){let a=(seed>>>0)||1;return ()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return ((t^(t>>>14))>>>0)/4294967296;};}
+ const ganz=(z,a,b)=>a+Math.floor(z()*(b-a+1));
+ const stufe=(z,a,b,s)=>+(a+ganz(z,0,Math.round((b-a)/s))*s).toFixed(6);
+ const eins=(z,arr)=>arr[Math.floor(z()*arr.length)];
+ // Zahlen aus Kapiteltest 3.2.5 und Probe-Test (Vorschau): Wege A1–A4 und Probe-Test 24 m, B1 0,35 bar / 35 kPa, B2 68 mbar / 6800 Pa,
+ // B3 6 m / 600 mbar, B4 8,4 kPa / 0,84 m, Probe-Test 3,6 kPa; Ergebnisse 4650 / 4050 / 5700 / 6300 Pa
+ const TEST_WEGE=[14,15,19,21,22,24,25,26,27,29,31,38,42],TEAM_WEGE=[18,20,30,34];
+ const WEG_VERBOTEN=new Set([...TEST_WEGE,...TEAM_WEGE]);
+ const ZAHL_VERBOTEN=[0.35,35,68,6800,6,600,8.4,0.84,3.6,3600,4650,4050,5700,6300];
+ const verboten=x=>ZAHL_VERBOTEN.some(v=>Math.abs(x-v)<1e-9);
+ const WEGE=[];for(let l=10;l<=58;l++)if(!WEG_VERBOTEN.has(l)&&!verboten(150*l))WEGE.push(l);
+ const HALB=[];for(let a=5;a<=29;a++)if(!WEG_VERBOTEN.has(a)&&!TEAM_WEGE.includes(2*a)&&!verboten(a)&&!verboten(300*a))HALB.push(a);
+ const MERK={barmbar:'1 bar = 1000 mbar',mbarpa:'1 mbar = 100 Pa',kpapa:'1 kPa = 1000 Pa',barkpa:'1 bar = 100 kPa',mbarkpa:'1 kPa = 10 mbar',mws:'1 mWS ≈ 10 kPa = 100 mbar',reib:'1 kPa = 1000 Pa, 1 mbar = 100 Pa'};
+ const MERKZEILE=['1 mWS ≈ 0,1 bar = 100 mbar = 10 kPa = 10 000 Pa','1 bar = 1000 mbar = 100 kPa = 100 000 Pa','1 mbar = 100 Pa','1 kPa = 1000 Pa = 10 mbar'];
+ const FORMEL=['Δp = l · R · 1,5','Δp = Druckverlust (Rohrreibung) in Pa','l = Weg des Wassers in m – Vorlauf und Rücklauf zusammen','R = Druckgefälle je Meter Rohr, hier 100 Pa/m','1,5 = Faustregel des Chefs für Fittings und Formstücke (50 % Zuschlag)'];
+ const LISTE=[{id:'A1',teil:'A',p:5,titel:'bar und mbar'},{id:'A2',teil:'A',p:5,titel:'mbar und Pa'},{id:'A3',teil:'A',p:5,titel:'kPa und Pa'},
+  {id:'A4',teil:'A',p:5,titel:'bar und kPa'},{id:'A5',teil:'A',p:5,titel:'mbar in kPa'},{id:'A6',teil:'A',p:5,titel:'kPa in mbar'},
+  {id:'A7',teil:'A',p:5,titel:'Wassersäule in kPa'},{id:'A8',teil:'A',p:5,titel:'kPa in Meter Wassersäule'},{id:'A9',teil:'A',p:5,titel:'Typenschild der Pumpe'},
+  {id:'A10',teil:'A',p:5,titel:'Zwei Manometer'},
+  {id:'B1',teil:'B',p:10,titel:'Der Chef rechnet HK 1.1 vor',fest:true},{id:'B2',teil:'B',p:10,titel:'Weg in kPa'},{id:'B3',teil:'B',p:10,titel:'Vorlauf und Rücklauf'},
+  {id:'B4',teil:'B',p:10,titel:'Anderes Druckgefälle'},{id:'B5',teil:'B',p:10,titel:'Der ungünstigste Strang'}];
+ // Feld: {k, vor (Text vor dem Feld), einheit, soll, art: genau|mws|reib|wahl, alt (Wert mit 9,81), rund, p, merk}
+ const umrechnung=(id,z,paare)=>{const [a,b,f,merk,erzeuge]=eins(z,paare),g=erzeuge(z),s=+(g*f).toFixed(9);
+  return {html:`Rechne <b>${a}</b> in <b>${b}</b> um.`,gegeben:[g],von:a,nach:b,felder:[{k:id,vor:`<b>${T(g)} ${a}</b> =`,einheit:b,soll:s,art:'genau',p:5,merk}]};};
+ const bar=z=>stufe(z,0.05,2.5,0.05),mbar=z=>ganz(z,5,900),kpa=z=>stufe(z,0.5,60,0.5);
+ const ERZ={
+  A1:z=>umrechnung('A1',z,[['bar','mbar',1000,MERK.barmbar,bar],['mbar','bar',0.001,MERK.barmbar,mbar]]),
+  A2:z=>umrechnung('A2',z,[['mbar','Pa',100,MERK.mbarpa,mbar],['Pa','mbar',0.01,MERK.mbarpa,z=>mbar(z)*100]]),
+  A3:z=>umrechnung('A3',z,[['kPa','Pa',1000,MERK.kpapa,kpa],['Pa','kPa',0.001,MERK.kpapa,z=>Math.round(kpa(z)*1000)]]),
+  A4:z=>umrechnung('A4',z,[['bar','kPa',100,MERK.barkpa,bar],['kPa','bar',0.01,MERK.barkpa,kpa]]),
+  A5:z=>umrechnung('A5',z,[['mbar','kPa',0.1,MERK.mbarkpa,mbar]]),
+  A6:z=>umrechnung('A6',z,[['kPa','mbar',10,MERK.mbarkpa,kpa]]),
+  A7:z=>{const x=stufe(z,1.5,9.5,0.5);return {html:`Eine Wassersäule ist <b>${T(x)} m</b> hoch. Mit wie viel Druck drückt sie unten – in kPa?`,gegeben:[x],
+   felder:[{k:'A7',vor:'Druck:',einheit:'kPa',soll:10*x,alt:9.81*x,art:'mws',rund:0.05,p:5,merk:MERK.mws}]};},
+  A8:z=>{const y=stufe(z,2.1,9.9,0.3);return {html:`Ein Strang hat <b>${T(y)} kPa</b> Druckverlust. Wie viel Meter Wassersäule sind das?`,gegeben:[y],
+   felder:[{k:'A8',vor:'Das sind',einheit:'mWS',soll:y/10,alt:y/9.81,art:'mws',rund:0.005,p:5,merk:MERK.mws}]};},
+  A9:z=>{const xx=eins(z,[40,50,60,70,80]);return {html:`Auf dem Typenschild einer Pumpe steht <b>„25-${xx}“</b>. Welchen größten Druck schafft sie – in mbar?`,gegeben:[25,xx],typ:xx,
+   felder:[{k:'A9',vor:'Größter Druck:',einheit:'mbar',soll:xx*10,alt:xx/10*98.1,art:'mws',rund:0.5,p:5,merk:MERK.mws}]};},
+  A10:z=>{const p1=stufe(z,1.2,2.0,0.05),dp=stufe(z,0.10,0.45,0.05),p2=+(p1+dp).toFixed(2);
+   return {html:`Vor der Pumpe zeigt das Manometer <b>${T(p1)} bar</b>, nach der Pumpe <b>${T(p2)} bar</b>. Wie groß ist der Druckunterschied – in kPa?`,gegeben:[p1,p2],p1,p2,dp,
+   felder:[{k:'A10',vor:'Unterschied:',einheit:'kPa',soll:+(dp*100).toFixed(6),art:'genau',p:5,merk:MERK.barkpa}]};},
+  B1:()=>({html:'Der Chef rechnet dir HK 1.1 vor. In der Skizze steht der Weg des Wassers: <b>18 m</b>.<br><b>Δp = 18 m · 100 Pa/m · 1,5</b>',gegeben:[18,100,1.5],l:18,R:100,
+   felder:[{k:'B1a',vor:'Δp =',einheit:'Pa',soll:2700,art:'reib',rund:0,p:5,merk:MERK.reib},{k:'B1b',vor:'=',einheit:'kPa',soll:2.7,art:'reib',rund:0.05,p:5,merk:MERK.reib}]}),
+  B2:z=>{const l=eins(z,WEGE);return {html:`Der Weg des Wassers (Vor- und Rücklauf zusammen) ist <b>${l} m</b> lang. Rechne mit 100 Pa/m und 50 % Zuschlag. Wie groß ist Δp?`,gegeben:[l,100,50],l,R:100,
+   felder:[{k:'B2',vor:'Δp =',einheit:'kPa',soll:+(l*0.15).toFixed(6),art:'reib',rund:0.05,p:10,merk:MERK.reib}]};},
+  B3:z=>{const a=eins(z,HALB);return {html:`Zu einem Heizkörper ist der Vorlauf <b>${a} m</b> lang und der Rücklauf auch <b>${a} m</b>. Rechne mit 100 Pa/m und 50 % Zuschlag. Wie groß ist Δp?`,gegeben:[a,100,50],l:2*a,a,R:100,
+   felder:[{k:'B3',vor:'Δp =',einheit:'Pa',soll:300*a,art:'reib',rund:0,p:10,merk:MERK.reib}]};},
+  B4:z=>{const R=eins(z,[60,80,120]),l=eins(z,WEGE);return {html:`Für dieses Rohr rechnet der Planer mit <b>R = ${R} Pa/m</b>. Der Weg des Wassers ist <b>${l} m</b> lang, dazu 50 % Zuschlag. Wie groß ist Δp?`,gegeben:[R,l,50],l,R,
+   felder:[{k:'B4',vor:'Δp =',einheit:'mbar',soll:+(l*R*1.5/100).toFixed(6),art:'reib',rund:0.05,p:10,merk:MERK.reib}]};},
+  // drei Wege, je mindestens 3 m auseinander; kein kürzerer Weg mit 1,5 · l = längster Weg (sonst wäre „Zuschlag vergessen“ = „kürzerer Strang“)
+  B5:z=>{let w;do{w=[eins(z,WEGE),eins(z,WEGE),eins(z,WEGE)];}while(Math.min(Math.abs(w[0]-w[1]),Math.abs(w[0]-w[2]),Math.abs(w[1]-w[2]))<3||w.some(l=>3*l===2*Math.max(...w)));
+   const max=Math.max(...w),i=w.indexOf(max);
+   return {html:`Drei Heizkörper hängen an einem Zweirohrsystem. Die Wege des Wassers (Vor- und Rücklauf zusammen): <b>Strang 1: ${w[0]} m</b> · <b>Strang 2: ${w[1]} m</b> · <b>Strang 3: ${w[2]} m</b>. Rechne mit 100 Pa/m und 50 % Zuschlag.`,
+    gegeben:[...w,100,50],wege:w,R:100,
+    felder:[{k:'B5a',vor:'Welcher Strang ist der ungünstigste?',art:'wahl',optionen:[['0','Strang 1'],['1','Strang 2'],['2','Strang 3']],soll:String(i),p:5},
+            {k:'B5b',vor:'Sein Rohr-Druckverlust: Δp =',einheit:'Pa',soll:150*max,art:'reib',rund:0,p:5,merk:MERK.reib}]};}};
+ const ALLE_FELDER=['A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','B1a','B1b','B2','B3','B4','B5a','B5b'];
+ // Aufgabe erzeugen; zieht neu, bis kein Ergebnis eine gegebene Zahl ist und keine Zahl aus den Tests vorkommt
+ function erzeuge(id,seed){const z=zufall(seed===undefined?Math.floor(Math.random()*4294967295):seed);let a,n=0;
+  do{a=ERZ[id](z);a.id=id;a.teil=id[0];n++;}while(n<200&&!sauber(a));a.titel=LISTE.find(x=>x.id===id).titel;return a;}
+ function sauber(a){const zahlen=a.felder.filter(f=>f.art!=='wahl').map(f=>f.soll);
+  if(zahlen.some(s=>a.gegeben.some(g=>Math.abs(s-g)<1e-9)))return false;
+  if(a.id!=='B1'&&[...a.gegeben,...zahlen].some(verboten))return false;
+  if(a.id==='A10'&&zahlen.some(s=>[40,50,60,70,80].includes(Math.round(s*1e6)/1e6)))return false;   // „40 kPa“ wäre eine Zahl vom Typenschild
+  return true;}
+ // Fehlerbilder
+ const zehner=(x,s)=>{if(!(x>0)||!(s>0))return null;const k=Math.log10(x/s),r=Math.round(k);return Math.abs(k-r)<0.0005?r:null;};
+ const passtBis=(x,s,f)=>{const k=zehner(x,s*f);return k!==null;};      // x = s·f·10^k (k beliebig, auch 0)
+ function tipp(a,f,x){const s=f.soll;
+  if(a.id==='A9'){if(Math.abs(x-a.typ)<1e-9)return `${a.typ} steht auf dem Typenschild. Die zweite Zahl nennt die Förderhöhe: ${a.typ} heißt ${T(a.typ/10)} m. Rechne ${T(a.typ/10)} m in mbar um: ${MERK.mws}.`;
+   if(Math.abs(x-a.typ/10)<1e-9)return `${T(a.typ/10)} m ist die Förderhöhe. Gefragt ist der Druck in mbar: ${MERK.mws}.`;
+   if(Math.abs(x-a.typ/100)<1e-9)return 'Das wäre der Druck in bar. Gefragt ist mbar: 1 bar = 1000 mbar.';
+   if(Math.abs(x-25)<1e-9)return 'Die 25 nennt den Anschluss (DN 25). Der Druck steckt in der zweiten Zahl.';}
+  if(a.id==='A10'){if(Math.abs(x-a.dp)<1e-9)return 'Das ist der Unterschied in bar. Gefragt ist kPa: 1 bar = 100 kPa.';
+   if(Math.abs(x-a.p2*100)<1e-6||Math.abs(x-a.p2)<1e-9)return 'Das ist der Druck nach der Pumpe. Gefragt ist der Unterschied: nach der Pumpe minus vor der Pumpe.';
+   if(Math.abs(x-a.p1*100)<1e-6||Math.abs(x-a.p1)<1e-9)return 'Das ist der Druck vor der Pumpe. Gefragt ist der Unterschied: nach der Pumpe minus vor der Pumpe.';
+   if(Math.abs(x-(a.p1+a.p2)*100)<1e-6||Math.abs(x-(a.p1+a.p2))<1e-9)return 'Unterschied heißt abziehen: nach der Pumpe minus vor der Pumpe.';}
+  if(a.id==='A7'&&Math.abs(x-a.gegeben[0])<1e-9)return `Das ist die Höhe in Metern. Rechne sie in kPa um: ${MERK.mws}.`;
+  if(a.id==='A8'&&Math.abs(x-a.gegeben[0])<1e-9)return `Das sind noch kPa. Rechne in Meter Wassersäule um: ${MERK.mws}.`;
+  if(a.teil==='B'){
+   if(a.id==='B5'&&f.k==='B5b'){const w=a.wege.slice().sort((p,q)=>p-q);if(passtBis(x,150*w[0],1)||passtBis(x,150*w[1],1))return 'Ungünstig ist der Strang mit dem größten Druckverlust – rechne mit dem längsten Weg.';}
+   if(a.id==='B3'){if(passtBis(x,s,1/3))return 'Vor- und Rücklauf zusammenzählen – und den Zuschlag von 50 % nicht vergessen.';if(passtBis(x,s,0.5))return 'Vor- und Rücklauf zusammenzählen!';}
+   if(passtBis(x,s,1/1.5))return 'Zuschlag 50 % für Fittings und Formstücke vergessen? Δp = l · R · 1,5';
+   if(a.id==='B4'&&passtBis(x,s,100/a.R))return `Rechne hier mit dem Druckgefälle des Planers (R = ${a.R} Pa/m), nicht mit 100 Pa/m.`;
+   if(passtBis(x,s,1.5))return 'Den Zuschlag nur einmal nehmen: Δp = l · R · 1,5';}
+  const k=zehner(x,s),k2=f.alt?zehner(x,f.alt):null,kk=k!==null&&k!==0?k:k2!==null&&k2!==0?k2:null;
+  if(kk!==null)return `Das Komma sitzt an der falschen Stelle – dein Ergebnis ist ${kk>0?'zu groß':'zu klein'}. Schau in die Merkzeile: ${f.merk}.`;
+  return a.teil==='B'?'Noch nicht richtig. Rechne noch einmal nach: Δp = l · R · 1,5.':`Noch nicht richtig. Schau in die Merkzeile: ${f.merk}.`;}
+ // Prüfen eines Feldes: {ok, tipp, leer}
+ function pruefeFeld(a,f,eingabe){
+  if(f.art==='wahl'){if(eingabe===undefined||eingabe===null||eingabe==='')return {ok:false,leer:true,tipp:'Tipp zuerst auf einen Strang.'};
+   const ok=String(eingabe)===f.soll;return {ok,tipp:ok?'':'Ungünstig ist der Strang mit dem größten Druckverlust.'};}
+  if(String(eingabe==null?'':eingabe).trim()==='')return {ok:false,leer:true,tipp:'Gib zuerst eine Zahl ein.'};
+  const x=ZAHL.lies(eingabe,f.soll);if(!isFinite(x))return {ok:false,tipp:'Gib eine Zahl ein – mit Komma oder Punkt, ohne Rechenzeichen.'};
+  let ok;
+  if(f.art==='genau')ok=Math.abs(x-f.soll)<=Math.max(1e-9,Math.abs(f.soll)*0.001);
+  else if(f.art==='mws'){const lo=Math.min(f.soll,f.alt),hi=Math.max(f.soll,f.alt),d=Math.max(hi*0.005,f.rund||0)+1e-9;ok=x>=lo-d&&x<=hi+d;}
+  else ok=Math.abs(x-f.soll)<=Math.max(f.soll*0.005,f.rund||0)+1e-9;
+  return {ok,tipp:ok?'':tipp(a,f,x)};}
+ const feldPunkte=k=>({A1:5,A2:5,A3:5,A4:5,A5:5,A6:5,A7:5,A8:5,A9:5,A10:5,B1a:5,B1b:5,B2:10,B3:10,B4:10,B5a:5,B5b:5})[k]||0;
+ const punkte=G=>ALLE_FELDER.reduce((s,k)=>s+(G[k]?feldPunkte(k):0),0);
+ const anzeige=f=>f.art==='wahl'?f.soll:T(f.soll);
+ return {LISTE,ERZ,ALLE_FELDER,WEGE,HALB,WEG_VERBOTEN,ZAHL_VERBOTEN,MERKZEILE,FORMEL,MERK,zufall,erzeuge,sauber,pruefeFeld,tipp,feldPunkte,punkte,anzeige,zehner};
+})();
+
+// erzeugt von bauen-3-2.mjs aus material/skizze-chef/skizze-chef-anbau.svg – nicht von Hand ändern
+const SKIZZE_CHEF_SVG="\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1000 680\" font-family=\"Segoe Print, Chalkboard SE, Comic Sans MS, sans-serif\">\n  \u003crect x=\"0\" y=\"0\" width=\"1000\" height=\"680\" fill=\"#fffef9\"/>\n  \u003ctext x=\"30\" y=\"40\" font-size=\"24\" fill=\"#1d2a33\" font-weight=\"bold\">Skizze vom Chef · Anbau Familie Röhringer\u003c/text>\n  \u003ctext x=\"30\" y=\"66\" font-size=\"15\" fill=\"#4a555d\">Schnitt, nicht maßstäblich · Heizlast vom Büro gerechnet · 60/50 °C (Spreizung 10 K)\u003c/text>\n  \u003cline x1=\"20\" y1=\"500\" x2=\"980\" y2=\"500\" stroke=\"#8d6e63\" stroke-width=\"3\"/>\n  \u003cg stroke=\"#bcaaa4\" stroke-width=\"1.5\">\n    \u003cline x1=\"350\" y1=\"512\" x2=\"365\" y2=\"527\"/>\u003cline x1=\"420\" y1=\"512\" x2=\"435\" y2=\"527\"/>\u003cline x1=\"490\" y1=\"512\" x2=\"505\" y2=\"527\"/>\n    \u003cline x1=\"560\" y1=\"512\" x2=\"575\" y2=\"527\"/>\u003cline x1=\"700\" y1=\"512\" x2=\"715\" y2=\"527\"/>\u003cline x1=\"770\" y1=\"512\" x2=\"785\" y2=\"527\"/>\n    \u003cline x1=\"840\" y1=\"512\" x2=\"855\" y2=\"527\"/>\u003cline x1=\"910\" y1=\"512\" x2=\"925\" y2=\"527\"/>\n  \u003c/g>\n  \u003cg stroke=\"#8a959e\" stroke-width=\"2.5\" fill=\"none\">\n    \u003cpolyline points=\"60,500 60,220 340,220\"/>\n    \u003cpolyline points=\"60,220 200,130 340,220\"/>\n    \u003cline x1=\"60\" y1=\"360\" x2=\"340\" y2=\"360\" stroke-dasharray=\"8 6\"/>\n    \u003cpolyline points=\"60,500 60,600 340,600 340,500\"/>\n  \u003c/g>\n  \u003ctext x=\"200\" y=\"200\" font-size=\"18\" fill=\"#8a959e\" text-anchor=\"middle\">Bestand\u003c/text>\n  \u003ctext x=\"200\" y=\"300\" font-size=\"15\" fill=\"#8a959e\" text-anchor=\"middle\">Wohnhaus\u003c/text>\n  \u003ctext x=\"75\" y=\"592\" font-size=\"15\" fill=\"#4a555d\">Heizraum (Keller)\u003c/text>\n  \u003cg stroke=\"#1d2a33\" stroke-width=\"3\" fill=\"none\">\n    \u003cpolyline points=\"340,500 340,220 900,220 900,500\"/>\n    \u003cpolyline points=\"340,220 620,110 900,220\"/>\n    \u003cline x1=\"340\" y1=\"360\" x2=\"900\" y2=\"360\" stroke-dasharray=\"10 7\" stroke-width=\"2\"/>\n    \u003cline x1=\"340\" y1=\"500\" x2=\"900\" y2=\"500\" stroke-width=\"4\"/>\n  \u003c/g>\n  \u003cline x1=\"630\" y1=\"230\" x2=\"630\" y2=\"350\" stroke=\"#9aa7b1\" stroke-width=\"2\" stroke-dasharray=\"4 5\"/>\n  \u003cline x1=\"630\" y1=\"370\" x2=\"630\" y2=\"490\" stroke=\"#9aa7b1\" stroke-width=\"2\" stroke-dasharray=\"4 5\"/>\n  \u003ctext x=\"620\" y=\"190\" font-size=\"20\" fill=\"#1d2a33\" text-anchor=\"middle\" font-weight=\"bold\">Anbau\u003c/text>\n  \u003ctext x=\"920\" y=\"300\" font-size=\"15\" fill=\"#4a555d\">OG\u003c/text>\n  \u003ctext x=\"920\" y=\"440\" font-size=\"15\" fill=\"#4a555d\">EG\u003c/text>\n  \u003crect x=\"85\" y=\"515\" width=\"60\" height=\"62\" fill=\"#fff\" stroke=\"#1d2a33\" stroke-width=\"2.5\"/>\n  \u003ctext x=\"115\" y=\"553\" font-size=\"18\" text-anchor=\"middle\" fill=\"#1d2a33\" font-weight=\"bold\">WE\u003c/text>\n  \u003cg stroke=\"#d32f2f\" stroke-width=\"3.5\" fill=\"none\" stroke-linejoin=\"round\">\n    \u003cpolyline points=\"145,530 320,530 320,486 792,486 792,464\"/>\n    \u003cline x1=\"392\" y1=\"486\" x2=\"392\" y2=\"464\"/>\n    \u003cpolyline points=\"620,486 620,346\"/>\n    \u003cpolyline points=\"392,324 392,346 792,346 792,324\"/>\n  \u003c/g>\n  \u003cg fill=\"none\" stroke-linejoin=\"round\">\n    \u003cg stroke=\"#fffef9\" stroke-width=\"9\">\n      \u003cline x1=\"448\" y1=\"476\" x2=\"448\" y2=\"494\"/>\n      \u003cline x1=\"640\" y1=\"478\" x2=\"640\" y2=\"494\"/>\n      \u003cline x1=\"448\" y1=\"336\" x2=\"448\" y2=\"354\"/>\n      \u003cline x1=\"620\" y1=\"350\" x2=\"620\" y2=\"358\" stroke=\"#fffef9\"/>\n    \u003c/g>\n    \u003cg stroke=\"#1565c0\" stroke-width=\"3.5\">\n      \u003cpolyline points=\"145,565 335,565 335,494 848,494 848,464\"/>\n      \u003cline x1=\"448\" y1=\"464\" x2=\"448\" y2=\"494\"/>\n      \u003cpolyline points=\"640,494 640,354\"/>\n      \u003cpolyline points=\"448,324 448,354 848,354 848,324\"/>\n    \u003c/g>\n  \u003c/g>\n  \u003cline x1=\"620\" y1=\"346\" x2=\"620\" y2=\"366\" stroke=\"#d32f2f\" stroke-width=\"3.5\"/>\n  \u003ccircle cx=\"230\" cy=\"530\" r=\"13\" fill=\"#fff\" stroke=\"#1d2a33\" stroke-width=\"2.5\"/>\n  \u003cpolygon points=\"224,522 224,538 239,530\" fill=\"#1d2a33\"/>\n  \u003ctext x=\"230\" y=\"512\" font-size=\"14\" text-anchor=\"middle\" fill=\"#1d2a33\">Pumpe\u003c/text>\n  \u003cg fill=\"#fff\" stroke=\"#1d2a33\" stroke-width=\"2.5\">\n    \u003crect x=\"380\" y=\"428\" width=\"80\" height=\"36\"/>\n    \u003crect x=\"780\" y=\"428\" width=\"80\" height=\"36\"/>\n    \u003crect x=\"380\" y=\"288\" width=\"80\" height=\"36\"/>\n    \u003crect x=\"780\" y=\"288\" width=\"80\" height=\"36\"/>\n  \u003c/g>\n  \u003cg stroke=\"#1d2a33\" stroke-width=\"1.2\">\n    \u003cline x1=\"395\" y1=\"432\" x2=\"395\" y2=\"460\"/>\u003cline x1=\"410\" y1=\"432\" x2=\"410\" y2=\"460\"/>\u003cline x1=\"425\" y1=\"432\" x2=\"425\" y2=\"460\"/>\u003cline x1=\"440\" y1=\"432\" x2=\"440\" y2=\"460\"/>\n    \u003cline x1=\"795\" y1=\"432\" x2=\"795\" y2=\"460\"/>\u003cline x1=\"810\" y1=\"432\" x2=\"810\" y2=\"460\"/>\u003cline x1=\"825\" y1=\"432\" x2=\"825\" y2=\"460\"/>\u003cline x1=\"840\" y1=\"432\" x2=\"840\" y2=\"460\"/>\n    \u003cline x1=\"395\" y1=\"292\" x2=\"395\" y2=\"320\"/>\u003cline x1=\"410\" y1=\"292\" x2=\"410\" y2=\"320\"/>\u003cline x1=\"425\" y1=\"292\" x2=\"425\" y2=\"320\"/>\u003cline x1=\"440\" y1=\"292\" x2=\"440\" y2=\"320\"/>\n    \u003cline x1=\"795\" y1=\"292\" x2=\"795\" y2=\"320\"/>\u003cline x1=\"810\" y1=\"292\" x2=\"810\" y2=\"320\"/>\u003cline x1=\"825\" y1=\"292\" x2=\"825\" y2=\"320\"/>\u003cline x1=\"840\" y1=\"292\" x2=\"840\" y2=\"320\"/>\n  \u003c/g>\n  \u003cg fill=\"#fff\" stroke=\"#1d2a33\" stroke-width=\"2\">\n    \u003cpolygon points=\"384,468 400,468 392,476\"/>\u003cpolygon points=\"384,484 400,484 392,476\"/>\n    \u003cpolygon points=\"784,468 800,468 792,476\"/>\u003cpolygon points=\"784,484 800,484 792,476\"/>\n    \u003cpolygon points=\"384,328 400,328 392,336\"/>\u003cpolygon points=\"384,344 400,344 392,336\"/>\n    \u003cpolygon points=\"784,328 800,328 792,336\"/>\u003cpolygon points=\"784,344 800,344 792,336\"/>\n  \u003c/g>\n  \u003cg font-size=\"15\" fill=\"#1d2a33\">\n    \u003ctext x=\"355\" y=\"384\" font-weight=\"bold\">1.1 Arbeitszimmer\u003c/text>\n    \u003ctext x=\"355\" y=\"403\">Heizlast 965 W\u003c/text>\n    \u003ctext x=\"490\" y=\"440\">Rohr VL + RL:\u003c/text>\u003ctext x=\"490\" y=\"458\" font-weight=\"bold\">18 m\u003c/text>\n    \u003ctext x=\"655\" y=\"384\" font-weight=\"bold\">1.2 Gästezimmer\u003c/text>\n    \u003ctext x=\"655\" y=\"403\">Heizlast 605 W\u003c/text>\n    \u003ctext x=\"655\" y=\"440\">Rohr VL + RL:\u003c/text>\u003ctext x=\"655\" y=\"458\" font-weight=\"bold\">20 m\u003c/text>\n    \u003ctext x=\"355\" y=\"244\" font-weight=\"bold\">2.1 Zimmer 1\u003c/text>\n    \u003ctext x=\"355\" y=\"263\">Heizlast 907 W\u003c/text>\n    \u003ctext x=\"490\" y=\"300\">Rohr VL + RL:\u003c/text>\u003ctext x=\"490\" y=\"318\" font-weight=\"bold\">30 m\u003c/text>\n    \u003ctext x=\"655\" y=\"244\" font-weight=\"bold\">2.2 Zimmer 2\u003c/text>\n    \u003ctext x=\"655\" y=\"263\">Heizlast 1419 W\u003c/text>\n    \u003ctext x=\"655\" y=\"300\">Rohr VL + RL:\u003c/text>\u003ctext x=\"655\" y=\"318\" font-weight=\"bold\">34 m\u003c/text>\n  \u003c/g>\n  \u003cg font-size=\"15\" fill=\"#1d2a33\">\n    \u003cline x1=\"400\" y1=\"630\" x2=\"440\" y2=\"630\" stroke=\"#d32f2f\" stroke-width=\"3.5\"/>\u003ctext x=\"448\" y=\"635\">Vorlauf\u003c/text>\n    \u003cline x1=\"530\" y1=\"630\" x2=\"570\" y2=\"630\" stroke=\"#1565c0\" stroke-width=\"3.5\"/>\u003ctext x=\"578\" y=\"635\">Rücklauf\u003c/text>\n    \u003cg fill=\"#fff\" stroke=\"#1d2a33\" stroke-width=\"2\">\u003cpolygon points=\"684,622 684,638 692,630\"/>\u003cpolygon points=\"700,622 700,638 692,630\"/>\u003c/g>\n    \u003ctext x=\"708\" y=\"635\">Thermostatventil\u003c/text>\n    \u003ctext x=\"400\" y=\"662\" font-size=\"14\" fill=\"#4a555d\">„Rohr VL + RL“ = Weg des Wassers vom Heizraum zum Heizkörper und zurück\u003c/text>\n  \u003c/g>\n\u003c/svg>";
+
+// ---------------------------------------------------------------- Skizze vom Chef (Anbau Röhringer) mit markiertem Heizkörper (braucht SKIZZE_CHEF_SVG, svgEl, dstr)
+// Dieselbe Zeichnung wie in Abschnitt 1 des Kurses. Markieren: Heizkörper gelb umrandet, sein Weg (Vorlauf und Rücklauf) hellblau nachgezogen.
+// Koordinaten aus skizze-chef-anbau.svg (viewBox 0 0 1000 680). Die Wege stehen in der Skizze („Rohr VL + RL“): 18 / 20 / 30 / 34 m.
+const SKIZZE=(()=>{
+ const HK={'1.1':[380,428],'1.2':[780,428],'2.1':[380,288],'2.2':[780,288]};
+ const VL0=[[145,530],[320,530],[320,486]],RL0=[[335,494],[335,565],[145,565]];
+ const WEG={
+  '1.1':[...VL0,[392,486],[392,464],[448,464],[448,494],...RL0],
+  '1.2':[...VL0,[792,486],[792,464],[848,464],[848,494],...RL0],
+  '2.1':[...VL0,[620,486],[620,346],[392,346],[392,324],[448,324],[448,354],[640,354],[640,494],...RL0],
+  '2.2':[...VL0,[620,486],[620,346],[792,346],[792,324],[848,324],[848,354],[640,354],[640,494],...RL0]};
+ const NAME={'1.1':'HK 1.1 Arbeitszimmer','1.2':'HK 1.2 Gästezimmer','2.1':'HK 2.1 Zimmer 1','2.2':'HK 2.2 Zimmer 2'};
+ function zeige(el,o){o=o||{};el.innerHTML=SKIZZE_CHEF_SVG;const s=el.querySelector('svg');if(!s)return null;
+  s.setAttribute('role','img');s.setAttribute('aria-label','Skizze vom Chef: Anbau Familie Röhringer mit vier Heizkörpern'+(o.hk?', markiert '+NAME[o.hk]:''));
+  if(o.hk&&WEG[o.hk]){const g=svgEl('g',{'data-markierung':o.hk});
+   g.appendChild(svgEl('path',{d:dstr(WEG[o.hk]),fill:'none',stroke:'#4fc3f7','stroke-width':16,'stroke-linejoin':'round','stroke-linecap':'round',opacity:.55}));
+   s.insertBefore(g,s.children[1]||null);
+   const [x,y]=HK[o.hk];s.appendChild(svgEl('rect',{x:x-9,y:y-9,width:98,height:54,rx:7,fill:'none',stroke:'#f2b705','stroke-width':6,'data-markierung':o.hk}));}
+  return s;}
+ return {zeige,HK,WEG,NAME};
+})();
+
+// ---------------------------------------------------------------- Rechentrainer 3.2.2: Bedienung (braucht RK, ZAHL, SKIZZE)
+// Zwei Reiter (A Druck umrechnen, B Rohrreibung), Knopf „Merkzeile“ (in B auch „Formel“). Jede Aufgabe ist eine Karte mit fester Einheit hinter dem Feld.
+// Jede noch nicht gelöste Aufgabe bekommt bei jedem Öffnen neue Zahlen. Nach zwei Fehlversuchen erscheint „Neue Zahlen“. Gelöste Felder werden grün
+// und gesperrt; danach kann man mit neuen Zahlen weiterüben, die Punkte bleiben (sinken nie). Gespeichert werden nur die gelösten Felder.
+// o: {gespeichert:[Feldkennungen], mitPunkten, beiAenderung(), beiPunkte(p), reiter:'A'|'B', seed(id)}
+function bauRechen(wurzel,o){
+ o=Object.assign({gespeichert:[],mitPunkten:true,beiAenderung:null,beiPunkte:null,reiter:'A',seed:null},o||{});
+ const G={},OK={},FEHL={},RUECK={},EIN={},INST={};let reiter=o.reiter==='B'?'B':'A',merkAuf=false,formelAuf=false;
+ (o.gespeichert||[]).forEach(k=>{if(RK.ALLE_FELDER.includes(k))G[k]=1;});
+ const neueZahlen=id=>{INST[id]=RK.erzeuge(id);INST[id].felder.forEach(f=>{OK[f.k]=false;delete EIN[f.k];});FEHL[id]=0;delete RUECK[id];};
+ RK.LISTE.forEach(a=>{INST[a.id]=RK.erzeuge(a.id,o.seed?o.seed(a.id):undefined);INST[a.id].felder.forEach(f=>{OK[f.k]=!!G[f.k];});FEHL[a.id]=0;});
+ const punkte=()=>RK.punkte(G);
+ const teilPunkte=t=>RK.ALLE_FELDER.filter(k=>k[0]===t).reduce((s,k)=>s+(G[k]?RK.feldPunkte(k):0),0);
+ const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+ const allesOk=a=>a.felder.every(f=>OK[f.k]);
+ function feldHtml(a,f){const ok=OK[f.k],r=RUECK[a.id],rot=r&&r.falsch&&r.falsch.includes(f.k);
+  if(f.art==='wahl'){const w=ok?f.soll:EIN[f.k];
+   return `<div class="feldzeile"><span>${f.vor}</span><div class="optionen quer">`+f.optionen.map(([v,t])=>`<button type="button" data-f="${f.k}" data-w="${v}" aria-pressed="${w===v}" class="${ok&&v===f.soll?'ok':rot&&w===v?'nein':''}"${ok?' disabled':''}>${t}</button>`).join('')+'</div></div>';}
+  const v=ok?(EIN[f.k]!==undefined?EIN[f.k]:RK.anzeige(f)):(EIN[f.k]||'');
+  return `<label class="feld">${f.vor} <input type="text" class="zahl${ok?' ok':rot?' nein':''}" inputmode="decimal" autocomplete="off" data-f="${f.k}" value="${esc(v)}"${ok?' disabled':''} aria-label="${esc(a.id+': '+f.vor.replace(/<[^>]+>/g,'')+' … '+f.einheit)}"> ${f.einheit}</label>`;}
+ function karte(id){const a=INST[id],L=RK.LISTE.find(x=>x.id===id),fe=allesOk(a),r=RUECK[id],pk=a.felder.reduce((s,f)=>s+(G[f.k]?RK.feldPunkte(f.k):0),0);
+  let h=`<div class="aufgabe${fe?' fertig':''}${id==='B1'?' breit':''}" id="rk-${id}" data-aufgabe="${id}">`+(o.mitPunkten?`<span class="pkt">${pk} von ${L.p} Punkten</span>`:'')+
+   `<h3><span class="nr">${id}</span> ${a.titel}</h3><p class="gegeben">${a.html}</p>`;
+  if(id==='B1')h+='<div class="rt-skizze skizze-chef" data-r="skizze"></div>';
+  h+=a.felder.map(f=>feldHtml(a,f)).join('');
+  h+='<div class="wahl" style="margin:8px 0 0">';
+  if(!fe)h+=`<button type="button" class="knopf haupt" data-p="${id}">Prüfen</button>`;
+  if(!L.fest&&(fe||FEHL[id]>=2))h+=`<button type="button" class="knopf" data-neu="${id}">${fe?'Noch einmal mit neuen Zahlen':'Neue Zahlen'}</button>`;
+  h+='</div>';
+  if(r)h+=`<span class="rueck ${r.ok?'ok':'nein'}">${r.text}</span>`;
+  return h+'</div>';}
+ function zeige(){const auf=RK.LISTE.filter(x=>x.teil===reiter).map(x=>x.id);
+  let h=`<div class="rt-leiste"><div class="reiter" role="tablist" aria-label="Teile">`+['A','B'].map(t=>`<button type="button" role="tab" data-teil="${t}" aria-selected="${t===reiter}">${t==='A'?'A Druck umrechnen':'B Rohrreibung'}${o.mitPunkten?`<small>${teilPunkte(t)>=50?'✓ ':''}${teilPunkte(t)} von 50 Punkten</small>`:''}</button>`).join('')+'</div>'+
+   `<button type="button" class="knopf" data-r="merk" aria-pressed="${merkAuf}">Merkzeile</button>`+(reiter==='B'?`<button type="button" class="knopf" data-r="formel" aria-pressed="${formelAuf}">Formel</button>`:'')+'</div>';
+  if(merkAuf)h+='<div class="merkzeile" data-r="merkzeile"><b>Merkzeile</b>'+RK.MERKZEILE.map(t=>`<p>${t}</p>`).join('')+'</div>';
+  if(formelAuf&&reiter==='B')h+='<div class="merkzeile" data-r="formelbox"><b>Formel: '+RK.FORMEL[0]+'</b>'+RK.FORMEL.slice(1).map(t=>`<p>${t}</p>`).join('')+'</div>';
+  h+='<div class="rt-karten">'+auf.map(karte).join('')+'</div>';
+  if(o.mitPunkten&&punkte()>=100)h+='<div class="merk"><b>Alles geschafft: 100 von 100 Punkten.</b> Du kannst mit neuen Zahlen weiterüben.</div>';
+  wurzel.innerHTML=h;
+  const sk=wurzel.querySelector('[data-r="skizze"]');if(sk&&typeof SKIZZE!=='undefined')SKIZZE.zeige(sk,{hk:'1.1'});
+  wurzel.querySelectorAll('[data-teil]').forEach(b=>b.onclick=()=>{reiter=b.dataset.teil;zeige();});
+  const mk=wurzel.querySelector('[data-r="merk"]');if(mk)mk.onclick=()=>{merkAuf=!merkAuf;zeige();};
+  const fo=wurzel.querySelector('[data-r="formel"]');if(fo)fo.onclick=()=>{formelAuf=!formelAuf;zeige();};
+  wurzel.querySelectorAll('input[data-f]').forEach(e=>{e.addEventListener('input',()=>{EIN[e.dataset.f]=e.value;e.classList.remove('nein');});
+   e.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();const k=e.closest('[data-aufgabe]');if(k)pruefe(k.dataset.aufgabe);}});});
+  wurzel.querySelectorAll('button[data-w]').forEach(b=>b.onclick=()=>{EIN[b.dataset.f]=b.dataset.w;const k=b.closest('[data-aufgabe]').dataset.aufgabe;if(RUECK[k]&&!RUECK[k].ok)delete RUECK[k];neu(k);});
+  wurzel.querySelectorAll('button[data-p]').forEach(b=>b.onclick=()=>pruefe(b.dataset.p));
+  wurzel.querySelectorAll('button[data-neu]').forEach(b=>b.onclick=()=>{const id=b.dataset.neu;neueZahlen(id);INST[id].geuebt=true;neu(id);const e=wurzel.querySelector('#rk-'+id+' input:not([disabled])');if(e)try{e.focus();}catch(_){}});}
+ // nur eine Karte neu zeichnen (Fokus und Lage bleiben ruhig)
+ function neu(id){const alt=wurzel.querySelector('#rk-'+id);if(!alt){zeige();return;}const t=document.createElement('div');t.innerHTML=karte(id);const n=t.firstElementChild;alt.replaceWith(n);
+  if(id==='B1'){const sk=n.querySelector('[data-r="skizze"]');if(sk&&typeof SKIZZE!=='undefined')SKIZZE.zeige(sk,{hk:'1.1'});}
+  n.querySelectorAll('input[data-f]').forEach(e=>{e.addEventListener('input',()=>{EIN[e.dataset.f]=e.value;e.classList.remove('nein');});
+   e.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();pruefe(id);}});});
+  n.querySelectorAll('button[data-w]').forEach(b=>b.onclick=()=>{EIN[b.dataset.f]=b.dataset.w;if(RUECK[id]&&!RUECK[id].ok)delete RUECK[id];neu(id);});
+  n.querySelectorAll('button[data-p]').forEach(b=>b.onclick=()=>pruefe(id));
+  n.querySelectorAll('button[data-neu]').forEach(b=>b.onclick=()=>{neueZahlen(id);INST[id].geuebt=true;neu(id);const e=wurzel.querySelector('#rk-'+id+' input:not([disabled])');if(e)try{e.focus();}catch(_){}});
+  kopfNeu();}
+ function kopfNeu(){wurzel.querySelectorAll('[data-teil]').forEach(b=>{const t=b.dataset.teil,s=b.querySelector('small');if(s)s.textContent=(teilPunkte(t)>=50?'✓ ':'')+teilPunkte(t)+' von 50 Punkten';});
+  const m=wurzel.querySelector(':scope > .merk');if(o.mitPunkten&&punkte()>=100&&!m)wurzel.insertAdjacentHTML('beforeend','<div class="merk"><b>Alles geschafft: 100 von 100 Punkten.</b> Du kannst mit neuen Zahlen weiterüben.</div>');}
+ function pruefe(id){const a=INST[id];if(!a)return punkte();
+  wurzel.querySelectorAll('#rk-'+id+' input[data-f]').forEach(e=>{EIN[e.dataset.f]=e.value;});
+  const offen=a.felder.filter(f=>!OK[f.k]);if(!offen.length)return punkte();
+  const erg=offen.map(f=>[f,RK.pruefeFeld(a,f,EIN[f.k])]);
+  if(erg.every(([,r])=>r.leer)){RUECK[id]={ok:false,text:erg[0][1].tipp,falsch:[]};neu(id);return punkte();}
+  let neuPunkte=false;
+  erg.forEach(([f,r])=>{if(r.ok){OK[f.k]=true;if(!G[f.k]){G[f.k]=1;neuPunkte=true;}}});
+  const falsch=erg.filter(([,r])=>!r.ok);
+  if(falsch.length){FEHL[id]=(FEHL[id]||0)+1;RUECK[id]={ok:false,text:falsch[0][1].tipp,falsch:falsch.map(([f])=>f.k)};}
+  else RUECK[id]={ok:true,text:a.geuebt&&!neuPunkte&&o.mitPunkten?'Richtig! (Die Punkte dafür hattest du schon.)':'Richtig!'};
+  if(neuPunkte){o.beiPunkte&&o.beiPunkte(punkte());o.beiAenderung&&o.beiAenderung();}
+  neu(id);return punkte();}
+ zeige();
+ return {zeige,pruefe,punkte,reiter:t=>{if(t){reiter=t;zeige();}return reiter;},inst:id=>INST[id],neueZahlen:id=>{neueZahlen(id);INST[id].geuebt=true;neu(id);},
+  eingabe:(k,v)=>{EIN[k]=v;},geloest:()=>RK.ALLE_FELDER.filter(k=>G[k]),ok:()=>Object.assign({},OK),fehl:id=>FEHL[id],rueck:id=>RUECK[id]};
+}
+
+const PROBIER=[
+ ['Stell <b>2 m</b> ein und tippe auf „Drehen“. Schau auf den Kraftbalken.','Stell <b>10 m</b> ein und dreh wieder. Ändert sich die Kraft?','Nimm das rechte Gewicht ab und dreh. Was musst du jetzt tun?','Arbeitsblatt: Aufgabe 1 a'],
+ ['Pumpe <b>25-40</b>, Rohr <b>10 m</b>, Pumpe an: Wo bleibt das Wasser stehen? Fließt noch Wasser?','Stell das Rohr auf <b>3 m</b>. Was passiert jetzt?','Schalte auf die Pumpe <b>25-60</b>.','Tipp auf „Was heißt …?“ und lies das Typenschild.','Arbeitsblatt: Aufgabe 1 b und Aufgabe 2'],
+ ['Pumpe an: Kommt das Wasser oben im Heizkörper an – obwohl das Haus 10 m hoch ist?','Vergleich die beiden Pfeile neben den Steigleitungen.','Schließ das Ventil und lies beide Manometer ab.','Schalte die Pumpe aus: Bleibt das Wasser oben?','Arbeitsblatt: Aufgabe 1 c und 1 d']];
+const W=bauDruck(document.getElementById('druck'),{modus:'oeffentlich',rechts:(i,c)=>{const p=PROBIER[i];
+ c.innerHTML='<div class="karte"><h2>Probier es aus</h2><ol>'+p.slice(0,-1).map(t=>`<li>${t}</li>`).join('')+`</ol><p class="klein">${p[p.length-1]}</p></div>`;}});
+const RT=bauRechen(document.getElementById('trainer'),{mitPunkten:false});
+window.__seite={W,RT};
+</script>
+</body>
+</html>
