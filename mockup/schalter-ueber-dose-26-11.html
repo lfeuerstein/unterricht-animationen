@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mockup – zwei neue Übungen: Schalter über die Verteilerdose (Gästebad, Haus Neumann)</title>
+<meta name="robots" content="noindex,nofollow">
+<!-- Mockup (Entwurf) für den Unterricht – nicht im Spiel, nicht in Moodle. -->
+<style>
+  html,body{margin:0;min-height:100%;background:#0e1014;color:#fff;font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  #rahmen{max-width:1280px;margin:0 auto;min-height:100vh;background:rgba(18,21,27,.96);border-top:5px solid #e2854a;padding-bottom:26px}
+  #mock{margin:10px 16px 0;padding:8px 14px;border:2px dashed #e2854a;border-radius:8px;background:rgba(226,133,74,.16);font-size:15.5px;line-height:1.35;color:#ffe3d0}
+  #mock span{font-size:13.5px;opacity:.95}
+  .marke{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11.5px;font-weight:700;letter-spacing:.3px;white-space:nowrap;vertical-align:middle}
+  .marke.neu{background:#e2854a;color:#16110d}
+  .marke.da{background:rgba(255,255,255,.16);color:#d5d9e0}
+  #ablauf{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;padding:10px 16px 2px}
+  #ablauf button{font:600 12.5px "Segoe UI",system-ui,-apple-system,Arial,sans-serif;min-height:66px;padding:5px 7px;border-radius:8px;border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.05);color:#fff;cursor:pointer;-webkit-appearance:none;appearance:none;text-align:left;display:flex;flex-direction:column;gap:4px;justify-content:center;touch-action:manipulation}
+  #ablauf button.neu{border:2px dashed #e2854a}
+  #ablauf button.an{background:#e2854a;border:2px solid #e2854a;color:#16110d}
+  #ablauf button.an .marke{background:#16110d;color:#f3b086}
+  #ablauf button[disabled]{cursor:default;opacity:.62}
+  .kopf{padding:12px 16px 4px}
+  .kopf h2{margin:0;font-size:21px;font-weight:650}
+  .kopf p{margin:5px 0 0;font-size:15px;line-height:1.45;opacity:.93;max-width:1000px}
+  .teil{margin:10px 16px 0;padding:10px 12px 12px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
+  .teil h3{margin:0 0 6px;font-size:15px;text-transform:uppercase;letter-spacing:.6px;color:#f3b086}
+  .frage{font-size:16px;line-height:1.4;margin:4px 0 8px}
+  .knoepfe{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+  .vd button,.knoepfe button{font:600 15px "Segoe UI",system-ui,-apple-system,Arial,sans-serif;min-height:46px;padding:0 16px;border-radius:8px;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;-webkit-appearance:none;appearance:none;touch-action:manipulation}
+  .knoepfe button.an{background:#e2854a;border-color:#e2854a;color:#16110d}
+  .knoepfe button.richtig{background:#2e7d32;border-color:#66bb6a}
+  .knoepfe button.falsch{background:#8e2a2a;border-color:#e57373}
+  .knoepfe button.chip{min-height:42px;font-size:14px;font-weight:600}
+  .knoepfe button.chip.an{background:#e2854a;color:#16110d}
+  .rueck{min-height:24px;font-size:15px;line-height:1.45;padding:6px 10px;border-radius:6px}
+  .rueck.gut{background:rgba(46,125,50,.25);border-left:4px solid #66bb6a}
+  .rueck.halt{background:rgba(198,40,40,.22);border-left:4px solid #e57373}
+  .rueck.info{background:rgba(255,255,255,.06);border-left:4px solid #90a4ae}
+  .zwei{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  svg.plan{width:100%;height:auto;display:block;background:#fbfaf6;border-radius:6px;touch-action:manipulation}
+  svg text{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+  .station{cursor:pointer}
+  .station:hover rect.kasten{stroke:#e2854a}
+  .bildunter{font-size:13px;opacity:.85;margin-top:4px}
+  .regel{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+  .regel div{padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.06);font-size:14.5px;line-height:1.45}
+  .ader{display:inline-block;width:34px;height:10px;border-radius:5px;vertical-align:middle;margin-right:4px}
+  .karte-zaehler{font-size:14px;opacity:.85}
+  #entscheidungen{margin:14px 16px 0;padding:10px 14px;border:2px dashed #e2854a;border-radius:8px;background:rgba(226,133,74,.08)}
+  #entscheidungen h2{margin:0 0 6px;font-size:18px}
+  #entscheidungen ol{margin:4px 0 0 18px;padding:0;font-size:15px;line-height:1.5}
+  #entscheidungen li{margin-bottom:6px}
+  .alt{padding:16px;font-size:15.5px;line-height:1.5;opacity:.9}
+  @media (max-width:900px){.zwei,.regel{grid-template-columns:1fr}}
+  /* Handy (Android/iPhone hochkant): Übungsleiste zum Wischen, kleinere Ränder, große Tippflächen */
+  @media (max-width:700px){
+    #mock{margin:6px 8px 0;font-size:14px}
+    #ablauf{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;padding:8px 8px 4px;gap:6px}
+    #ablauf button{flex:0 0 132px;scroll-snap-align:start;min-height:62px}
+    .kopf{padding:10px 10px 2px}.kopf h2{font-size:19px}.kopf p{font-size:14.5px}
+    .teil{margin:8px 6px 0;padding:8px 8px 10px}
+    .frage{font-size:15.5px}
+    .knoepfe button{flex:1 1 auto;min-height:48px}
+    .knoepfe button.chip{flex:1 1 45%;min-height:48px;font-size:14px;line-height:1.2;padding:4px 8px}
+    .rueck{font-size:14.5px}
+    #entscheidungen{margin:12px 6px 0;padding:8px 10px}#entscheidungen ol{font-size:14px}
+  }
+</style>
+</head>
+<body>
+<div id="rahmen">
+  <div id="mock"><b>MOCKUP</b> – zwei neue Übungen im Gästebad, <b>vor</b> „Leuchte und Schalter über eine Verteilerdose“. Noch nicht im Spiel, nicht in Moodle.
+    <span>Alles hier ist anklickbar. Oben die Reihe der Übungen; orange gestrichelt = neu.</span></div>
+  <div id="ablauf"></div>
+  <div id="inhalt"></div>
+  <div id="entscheidungen">
+    <h2>Offene Entscheidungen für dich</h2>
+    <ol>
+      <li><b>Platz und Nummern:</b> Die zwei neuen Übungen kommen nach „Leuchte mit Schalter“ als Übung 4 und 5. Die bisherigen Übungen 4 bis 6 werden zu 6 bis 8. <i>Empfehlung: so.</i> (Anders: als „3a/3b“ ohne neue Nummern.)</li>
+      <li><b>Zählen sie mit?</b> Die neuen Übungen sind Denk-Übungen ohne „andere Anordnung“, also 12 + 2 = 14 Übungen auf dem Übungsweg im Gästebad. <i>Empfehlung: Sie zählen für „Übe zuerst das Verdrahten“ mit. Die Moodle-Punkte bleiben bei 100.</i></li>
+      <li><b>Regel für die Leiterzahl:</b> „Zähle die Außenleiter in der Leitung: ein Außenleiter → 3-adrig, zwei (hin und geschaltet zurück) → 4-adrig, weil Blau nur der Neutralleiter sein darf.“ <i>Empfehlung: so wörtlich im Spiel und im Regelkasten. Stimmt das mit deinem Unterricht überein?</i></li>
+      <li><b>Leitungen legen:</b> Danach wählen die Schüler in Übung 6 bis 8 wie bisher selbst 3- oder 4-adrig. Die Karten aus Übung 5 bereiten genau das vor. <i>Empfehlung: Bei einer falschen Wahl dort zeigt der Hinweis die Zählregel aus Übung 5.</i></li>
+      <li><b>Übungsblatt auf Papier:</b> Soll eine Aufgabe „3-adrig oder 4-adrig?“ auch auf das Übungsblatt Verdrahten? <i>Empfehlung: erst nach dem Einsatz im Spiel entscheiden.</i></li>
+    </ol>
+  </div>
+</div>
+<script>
+'use strict';
+const F={braun:'#8b4513',schwarz:'#222',grau:'#8a8f98',blau:'#1e88e5',gnge:'#2e9e2e',gelb:'#f2d200',orange:'#e2854a',kabel:'#b9bec7'};
+const REIHE=[
+  {n:1,t:'Steckdose anschließen',neu:false},{n:2,t:'Leuchte anschließen',neu:false},{n:3,t:'Leuchte mit Schalter',neu:false},
+  {n:4,t:'Der Umweg über den Schalter',neu:true},{n:5,t:'3-adrig oder 4-adrig?',neu:true},
+  {n:6,t:'Leuchte und Schalter über eine Verteilerdose',neu:false,alt:4},{n:7,t:'Steckdose dazu',neu:false,alt:5},{n:8,t:'Gästebad – alles an einer Verteilerdose',neu:false,alt:6}];
+let ansicht=4;
+const $=s=>document.querySelector(s);
+function ablauf(){
+  $('#ablauf').innerHTML=REIHE.map(r=>`<button data-n="${r.n}" class="${r.neu?'neu':''} ${r.n===ansicht?'an':''}" ${r.neu||r.n===3||r.n===6?'':'disabled'}>
+    <span>${r.n}. ${r.t}</span><span class="marke ${r.neu?'neu':'da'}">${r.neu?'NEU':(r.alt?'bisher '+r.alt:'wie bisher')}</span></button>`).join('');
+  $('#ablauf').querySelectorAll('button').forEach(b=>b.onclick=()=>{ansicht=+b.dataset.n;zeige();});
+  const an=$('#ablauf .an');if(an){const l=$('#ablauf');l.scrollLeft=an.offsetLeft-(l.clientWidth-an.offsetWidth)/2;}
+}
+function zeige(){ablauf();({3:alt3,4:uebung4,5:uebung5,6:alt6})[ansicht]();window.scrollTo({top:0});}
+
+// ---------------------------------------------------------------- SVG-Bausteine
+const NS='http://www.w3.org/2000/svg';
+function kasten(id,x,y,b,h,titel,sym,klasse,gr){
+  return `<g class="${klasse||''}" data-id="${id}"><rect class="kasten" x="${x}" y="${y}" width="${b}" height="${h}" rx="10" fill="#fff" stroke="#555" stroke-width="2.5"/>
+    <text x="${x+b/2}" y="${y-10}" text-anchor="middle" font-size="${gr||19}" font-weight="600" fill="#333">${titel}</text>${sym||''}</g>`;
+}
+const dose=(cx,cy)=>`<circle cx="${cx}" cy="${cy}" r="30" fill="none" stroke="#555" stroke-width="2.5"/><circle cx="${cx}" cy="${cy}" r="4" fill="#555"/>`;
+const lampe=(cx,cy,an)=>`<circle class="glimm" cx="${cx}" cy="${cy}" r="40" fill="${an?'rgba(242,210,0,.55)':'none'}"/><circle cx="${cx}" cy="${cy}" r="24" fill="${an?'#fff59d':'none'}" stroke="#555" stroke-width="2.5"/>
+  <line x1="${cx-17}" y1="${cy-17}" x2="${cx+17}" y2="${cy+17}" stroke="#555" stroke-width="2.5"/><line x1="${cx+17}" y1="${cy-17}" x2="${cx-17}" y2="${cy+17}" stroke="#555" stroke-width="2.5"/>`;
+const schalter=(cx,cy,an)=>`<circle cx="${cx-22}" cy="${cy+10}" r="5" fill="#555"/><circle cx="${cx+22}" cy="${cy+10}" r="5" fill="#555"/>
+  <line x1="${cx-22}" y1="${cy+10}" x2="${an?cx+22:cx+16}" y2="${an?cy+10:cy-20}" stroke="#555" stroke-width="3.5" stroke-linecap="round"/>`;
+const steckdose=(cx,cy)=>`<path d="M${cx-26} ${cy+12} A26 26 0 0 1 ${cx+26} ${cy+12}" fill="none" stroke="#555" stroke-width="2.5"/><line x1="${cx}" y1="${cy-14}" x2="${cx}" y2="${cy-30}" stroke="#555" stroke-width="2.5"/><line x1="${cx-30}" y1="${cy+12}" x2="${cx+30}" y2="${cy+12}" stroke="#555" stroke-width="2.5"/>`;
+const netz=(cx,cy)=>`<text x="${cx}" y="${cy+8}" text-anchor="middle" font-size="22" font-weight="700" fill="#555">230 V</text>`;
+const kabel=(x1,y1,x2,y2,w)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${F.kabel}" stroke-width="${w||16}" stroke-linecap="round"/>`;
+const ader=(pts,farbe,id,extra)=>`<polyline ${id?`id="${id}"`:''} points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="${farbe}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" ${extra||''}/>`;
+const pfeil=(x,y,richtung,farbe)=>{const d={r:[[0,0],[-14,-8],[-14,8]],l:[[0,0],[14,-8],[14,8]],u:[[0,0],[-8,-14],[8,-14]],o:[[0,0],[-8,14],[8,14]]}[richtung];
+  return `<polygon points="${d.map(([a,b])=>(x+a)+','+(y+b)).join(' ')}" fill="${farbe}"/>`;};
+const beschr=(x,y,t,farbe,anker,gr)=>`<text x="${x}" y="${y}" text-anchor="${anker||'middle'}" font-size="${gr||17}" font-weight="600" fill="${farbe||'#333'}">${t}</text>`;
+
+// ---------------------------------------------------------------- Übung 4 (neu): Der Umweg über den Schalter
+let u4={teilA:null,schritte:[],fehler:'',fertig:false,teilC:null};
+const WEG=['Z','VD','S','VD','E'];
+const STATION_TEXT={Z:'Zuleitung',VD:'Verteilerdose',S:'Schalter',E:'Leuchte'};
+function planA(links){
+  // links: Übung 3 – Schalter liegt auf dem Weg; rechts: neu – Schalter an einem Abzweig
+  if(links)return `<svg class="plan" viewBox="0 0 460 300">
+    ${kabel(95,130,195,130)}${kabel(265,130,365,130)}
+    ${kasten('z',20,90,75,80,'Netz',netz(57,130))}${kasten('s',195,90,70,80,'Schalter',schalter(230,130,true))}${kasten('e',365,90,75,80,'Leuchte',lampe(402,130,false))}
+    ${ader([[95,124],[195,124]],F.braun)}${ader([[265,124],[365,124]],F.braun)}
+    ${beschr(230,232,'Der Schalter liegt AUF dem Weg','#2e7d32','middle',21)}${beschr(230,260,'vom Netz zur Leuchte.','#2e7d32','middle',21)}</svg>`;
+  const ok=u4.teilA===true;
+  return `<svg class="plan" viewBox="0 0 460 300">
+    ${kabel(95,90,190,90)}${kabel(270,90,365,90)}${kabel(230,130,230,205)}
+    ${kasten('z',20,50,75,80,'Netz',netz(57,90))}${kasten('vd',190,50,80,80,'Dose',dose(230,90))}${kasten('e',365,50,75,80,'Leuchte',lampe(402,90,false))}
+    ${kasten('s',195,205,70,72,'',schalter(230,240,false))}${beschr(300,248,'Schalter','#333','start')}
+    ${ok?`<line x1="95" y1="90" x2="365" y2="90" stroke="${F.orange}" stroke-width="4" stroke-dasharray="10 7"/>${beschr(320,155,'direkter Weg','#c25a1c')}
+      <line x1="246" y1="135" x2="246" y2="200" stroke="${F.orange}" stroke-width="4"/>${pfeil(246,200,'u',F.orange)}
+      <line x1="214" y1="200" x2="214" y2="135" stroke="${F.orange}" stroke-width="4"/>${pfeil(214,135,'o',F.orange)}${beschr(120,185,'Abzweig: hin','#c25a1c')}${beschr(120,207,'und zurück','#c25a1c')}`:''}
+    ${beschr(230,296,ok?'Der Schalter liegt NEBEN dem Weg.':'Wo liegt der Schalter hier?',ok?'#c25a1c':'#333')}</svg>`;
+}
+function planB(){
+  // 600 breit, damit die Schrift auch am Handy hochkant lesbar bleibt (26.11.2026 ~17:00, Wunsch des Lehrers: „anklickbar für ein Android Handy“)
+  const s=u4.schritte,n=s.length,fertig=u4.fertig;
+  const segs=[];
+  if(n>=2)segs.push(ader([[115,106],[240,106]],F.braun,'w1'));
+  if(n>=3)segs.push(ader([[285,172],[285,400]],F.braun,'w2'),beschr(272,300,'hin: braun',F.braun,'end',20));
+  if(n>=4)segs.push(ader([[315,400],[315,172]],F.schwarz,'w3'),beschr(328,290,'zurück,',F.schwarz,'start',20),beschr(328,314,'geschaltet:',F.schwarz,'start',20),beschr(328,338,'schwarz',F.schwarz,'start',20));
+  if(n>=5)segs.push(ader([[360,106],[485,106]],F.braun,'w4'),beschr(422,92,'geschaltet',F.braun,'middle',18));
+  if(fertig)segs.push(ader([[485,136],[115,136]],F.blau,'','stroke-dasharray="14 9"'),beschr(12,215,'N (blau): direkt zurück',F.blau,'start',18),beschr(590,215,'nicht über den Schalter',F.blau,'end',18));
+  const st=(id,x,y,b,h,titel,sym)=>kasten(id,x,y,b,h,titel,sym,'station',22);
+  const marke=(p,i)=>`<g><circle cx="${p[0]}" cy="${p[1]}" r="17" fill="${F.orange}"/>${beschr(p[0],p[1]+7,i+1,'#16110d','middle',19)}</g>`;
+  return `<svg class="plan" id="planB" viewBox="0 0 600 510">
+    ${kabel(115,120,240,120,40)}${kabel(360,120,485,120,40)}${kabel(300,172,300,400,52)}
+    ${st('Z',15,70,100,100,'Zuleitung',netz(65,120))}
+    ${st('VD',240,70,120,102,'Verteilerdose',dose(300,121))}
+    ${st('E',485,70,100,100,'Leuchte',lampe(535,120,fertig))}
+    ${st('S',245,400,110,90,'',schalter(300,435,fertig))}${beschr(368,452,'Schalter','#333','start',22)}
+    ${segs.join('')}
+    ${s.map((id,i)=>marke({Z:[115,170],VD:[i===1?240:360,172],S:[355,400],E:[585,170]}[id],i)).join('')}
+    <circle id="punkt" r="10" fill="${F.gelb}" stroke="#c25a1c" stroke-width="3" ${fertig?'':'visibility="hidden"'}/>
+  </svg>`;
+}
+function uebung4(){
+  const a=u4.teilA,c=u4.teilC;
+  $('#inhalt').innerHTML=`<div class="vd">
+   <div class="kopf"><h2>Übung 4: Der Umweg über den Schalter <span class="marke neu">NEU</span></h2>
+    <p>Bisher lag der Schalter auf dem Weg vom Netz zur Leuchte (Übung 3). Jetzt hängen Schalter und Leuchte an einer <b>Verteilerdose</b>. Finde heraus, welchen Weg der Strom nimmt.</p></div>
+   <div class="teil"><h3>Teil A – Wo liegt der Schalter?</h3>
+    <div class="zwei"><div>${planA(true)}<div class="bildunter">So war es in Übung 3: Die Leitung läuft durch die Schalterdose.</div></div><div>${planA(false)}<div class="bildunter">Jetzt: Leuchte und Schalter hängen an der Verteilerdose.</div></div></div>
+    <p class="frage">Liegt der Schalter rechts noch auf dem direkten Weg vom Netz zur Leuchte?</p>
+    <div class="knoepfe" id="a4"><button data-w="ja" class="${a===false?'falsch':''}">Ja, auf dem Weg</button><button data-w="nein" class="${a===true?'richtig':''}">Nein, er liegt daneben</button></div>
+    <div class="rueck ${a===true?'gut':a===false?'halt':''}">${a===true?'Richtig! Vom Netz geht der Weg über die Verteilerdose direkt zur Leuchte. Der Schalter hängt an einem <b>Abzweig</b>. Damit er die Leuchte schalten kann, muss der Strom von der Dose <b>hinunter zum Schalter und wieder herauf</b>.':a===false?'Schau noch einmal: Zwischen Netz und Leuchte liegt nur die Verteilerdose. Der Schalter sitzt darunter, an einer eigenen Leitung.':''}</div></div>
+   <div class="teil" ${a===true?'':'hidden'}><h3>Teil B – Tippe den Weg des Stroms</h3>
+    <p class="frage">Tippe der Reihe nach alles an, wodurch der Strom (Außenleiter L) fließt, bis die Leuchte brennt. Du darfst eine Station auch zweimal antippen.</p>
+    ${planB()}
+    <div class="knoepfe"><button id="b4neu">Noch einmal</button><button id="b4hilfe" class="${u4.fertig?'':''}">Tipp</button></div>
+    <div class="rueck ${u4.fehler?'halt':u4.fertig?'gut':'info'}" id="r4">${u4.fehler||(u4.fertig?'Genau! Zuleitung → Verteilerdose → <b>hinunter zum Schalter</b> → <b>wieder herauf zur Verteilerdose</b> → Leuchte. In der Leitung zum Schalter läuft der Außenleiter also <b>zweimal</b>: hin (braun) und geschaltet zurück (schwarz).':'Weg bis jetzt: '+(u4.schritte.map(x=>STATION_TEXT[x]).join(' → ')||'–'))}</div></div>
+   <div class="teil" ${u4.fertig?'':'hidden'}><h3>Teil C – Kontrollfrage</h3>
+    <p class="frage">Wie viele Außenleiter (L) laufen in der Leitung zwischen Verteilerdose und Schalter?</p>
+    <div class="knoepfe" id="c4">${[1,2,3].map(z=>`<button data-z="${z}" class="${c===z?(z===2?'richtig':'falsch'):''}">${z}</button>`).join('')}</div>
+    <div class="rueck ${c===2?'gut':c?'halt':''}">${c===2?'Richtig: zwei – einer hin, einer geschaltet zurück. Die 3-adrige Leitung hat aber nur EINE Ader für einen Außenleiter (braun), Blau ist der Neutralleiter. Darum braucht man zum Schalter eine <b>4-adrige Leitung</b> (braun, schwarz, grau, grün-gelb). Weiter mit Übung 5.':c?'Zähle die farbigen Wege in der Leitung zum Schalter in Teil B.':''}</div>
+    ${c===2?'<div class="knoepfe"><button class="an" id="weiter5">Weiter: Übung 5</button></div>':''}</div>
+  </div>`;
+  $('#a4').querySelectorAll('button').forEach(b=>b.onclick=()=>{u4.teilA=b.dataset.w==='nein';uebung4();});
+  document.querySelectorAll('#planB .station').forEach(g=>g.onclick=()=>tippe4(g.dataset.id));
+  const n=$('#b4neu');if(n)n.onclick=()=>{u4.schritte=[];u4.fehler='';u4.fertig=false;u4.teilC=null;uebung4();};
+  const h=$('#b4hilfe');if(h)h.onclick=()=>{u4.fehler='';$('#r4').className='rueck info';$('#r4').innerHTML='Tipp: Der Strom kommt aus der Zuleitung. Bevor er zur Leuchte darf, muss er durch den Schalter – und der hängt unter der Verteilerdose.';};
+  $('#c4')&&$('#c4').querySelectorAll('button').forEach(b=>b.onclick=()=>{u4.teilC=+b.dataset.z;uebung4();});
+  const w=$('#weiter5');if(w)w.onclick=()=>{ansicht=5;zeige();};
+  if(u4.fertig)laufpunkt();
+}
+function tippe4(id){
+  if(u4.fertig)return;
+  const soll=WEG[u4.schritte.length];
+  if(id===soll){u4.schritte.push(id);u4.fehler='';if(u4.schritte.length===WEG.length)u4.fertig=true;uebung4();return;}
+  const bisher=u4.schritte.join(',');
+  u4.fehler=id==='E'&&bisher==='Z,VD'?'Halt! Geht der Strom jetzt direkt zur Leuchte, brennt sie <b>immer</b> – der Schalter wäre umgangen. Erst muss er durch den Schalter.'
+    :id==='S'&&bisher==='Z'?'Der Schalter ist nicht direkt mit der Zuleitung verbunden. Was liegt dazwischen?'
+    :id==='E'&&bisher==='Z,VD,S'?'Fast! Vom Schalter führt keine Leitung direkt zur Leuchte. Der Strom muss erst <b>zurück zur Verteilerdose</b>.'
+    :soll==='Z'?'Fang dort an, wo der Strom herkommt: bei der Zuleitung.':'Das ist noch nicht die nächste Station. Folge den Leitungen.';
+  uebung4();
+}
+function laufpunkt(){
+  const pts=[[65,106],[240,106],[285,172],[285,400],[315,400],[315,172],[360,106],[485,106]];
+  const p=$('#punkt');if(!p)return;let t=0;
+  const len=[];let ges=0;for(let i=1;i<pts.length;i++){const d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);len.push(d);ges+=d;}
+  function schritt(){if(!document.body.contains(p))return;t=(t+4)%ges;let r=t,i=0;while(r>len[i]){r-=len[i];i++;}
+    const a=pts[i],b=pts[i+1],f=r/len[i];p.setAttribute('cx',a[0]+(b[0]-a[0])*f);p.setAttribute('cy',a[1]+(b[1]-a[1])*f);requestAnimationFrame(schritt);}
+  requestAnimationFrame(schritt);
+}
+
+// ---------------------------------------------------------------- Übung 5 (neu): 3-adrig oder 4-adrig?
+const LEITER={L:'Außenleiter L (vom Netz)',LS:'geschalteter Außenleiter (vom Schalter)',N:'Neutralleiter N',PE:'Schutzleiter PE'};
+const KARTEN=[
+  {plan:'gross',hl:'SD',titel:'Leitung von Verteilerdose 1 zur Steckdose',soll:['L','N','PE'],adern:3,
+   erkl:'Die Steckdose hat immer Spannung: L, N und PE. Ein Außenleiter → <b>3-adrig</b>: braun = L, blau = N, grün-gelb = PE.'},
+  {plan:'gross',hl:'S',titel:'Leitung von Verteilerdose 2 zum Schalter',soll:['L','LS','PE'],adern:4,
+   erkl:'Zum Schalter hin L, geschaltet zurück, dazu PE. Zwei Außenleiter → <b>4-adrig</b>: braun = L hin, schwarz = geschaltet zurück, grün-gelb = PE, grau bleibt frei. Blau darf nicht als Außenleiter dienen.'},
+  {plan:'gross',hl:'E',titel:'Leitung von Verteilerdose 2 zur Leuchte',soll:['LS','N','PE'],adern:3,
+   erkl:'Zur Leuchte geht nur der geschaltete Außenleiter, dazu N und PE. Ein Außenleiter → <b>3-adrig</b>: braun = geschaltet, blau = N, grün-gelb = PE.'},
+  {plan:'gross',hl:'VD',titel:'Leitung von Verteilerdose 1 zu Verteilerdose 2',soll:['L','N','PE'],adern:3,
+   erkl:'Hier wird das Netz nur weitergereicht: L, N, PE. Der Schalter kommt erst danach. → <b>3-adrig</b>.'},
+  {plan:'klein',hl:'SE',titel:'Wie in Übung 3: Leitung von der Schalterdose zur Leuchte',soll:['LS','N','PE'],adern:3,
+   erkl:'Hier liegt der Schalter AUF dem Weg: Der Strom läuft weiter zur Leuchte und muss nicht zurück. N und PE werden in der Schalterdose nur durchverbunden. Ein Außenleiter → <b>3-adrig</b>.'}];
+let u5={k:0,wahl:[],adern:null,geprueft:false,richtig:0,fertig:false};
+function planKarte(K){
+  // 600 breit (Handy hochkant); die Markierung liegt ÜBER dem Kabel
+  const hl=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${F.orange}" stroke-width="24" stroke-linecap="round" opacity=".9"/>`;
+  if(K.plan==='klein')return `<svg class="plan" viewBox="0 0 600 250">
+    ${kabel(120,120,230,120)}${kabel(370,120,480,120)}${hl(370,120,480,120)}
+    ${kasten('z',10,70,110,100,'Zuleitung',netz(65,120),'',21)}${kasten('s',230,70,140,100,'Schalterdose',schalter(300,120,true),'',21)}${kasten('e',480,70,110,100,'Leuchte',lampe(535,120,false),'',21)}
+    ${beschr(425,205,'diese Leitung?','#c25a1c','middle',21)}</svg>`;
+  const z={SD:hl(210,160,210,320),S:hl(380,160,380,320),E:hl(430,110,495,110),VD:hl(260,110,330,110)}[K.hl];
+  return `<svg class="plan" viewBox="0 0 600 465">
+    ${kabel(100,110,160,110)}${kabel(260,110,330,110)}${kabel(430,110,495,110)}${kabel(210,160,210,320)}${kabel(380,160,380,320)}${z}
+    ${kasten('z',8,70,92,80,'Zuleitung',netz(54,110),'',19)}${kasten('v1',160,60,100,100,'Verteilerdose 1',dose(210,110),'',18)}${kasten('v2',330,60,100,100,'Verteilerdose 2',dose(380,110),'',18)}
+    ${kasten('e',495,60,97,100,'Leuchte',lampe(543,110,false),'',19)}${kasten('sd',160,320,100,100,'',steckdose(210,375))}${beschr(210,452,'Steckdose','#333','middle',19)}
+    ${kasten('s',330,320,100,100,'',schalter(380,365,false))}${beschr(380,452,'Schalter','#333','middle',19)}</svg>`;
+}
+function uebung5(){
+  if(u5.fertig){$('#inhalt').innerHTML=`<div class="vd"><div class="kopf"><h2>Übung 5: 3-adrig oder 4-adrig? <span class="marke neu">NEU</span></h2></div>
+    <div class="teil"><div class="rueck gut">Geschafft: ${u5.richtig} von ${KARTEN.length} beim ersten Versuch richtig. Merke: <b>Zähle die Außenleiter.</b> Einer → 3-adrig, zwei (hin und geschaltet zurück) → 4-adrig. In der nächsten Übung legst du die Leitungen selbst.</div>
+    <div class="knoepfe"><button id="nochmal5">Noch einmal</button><button class="an" id="weiter6">Weiter: Übung 6 (bisher 4)</button></div></div></div>`;
+    $('#nochmal5').onclick=()=>{u5={k:0,wahl:[],adern:null,geprueft:false,richtig:0,fertig:false};uebung5();};$('#weiter6').onclick=()=>{ansicht=6;zeige();};return;}
+  const K=KARTEN[u5.k],gleich=(a,b)=>a.length===b.length&&a.every(x=>b.includes(x));
+  const leiterOk=gleich(u5.wahl,K.soll),adernOk=u5.adern===K.adern;
+  $('#inhalt').innerHTML=`<div class="vd">
+   <div class="kopf"><h2>Übung 5: 3-adrig oder 4-adrig? <span class="marke neu">NEU</span></h2>
+    <p>Für jede Leitung zwei Fragen: Was muss hindurch? Und reicht dann eine 3-adrige Leitung, oder braucht es eine 4-adrige? <span class="karte-zaehler">– Karte ${u5.k+1} von ${KARTEN.length}</span></p></div>
+   <div class="teil"><h3>${K.titel}</h3>${planKarte(K)}
+    <p class="frage"><b>1.</b> Welche Leiter müssen durch die orange markierte Leitung? (mehrere antippen)</p>
+    <div class="knoepfe" id="leiter">${Object.entries(LEITER).map(([k,t])=>`<button class="chip ${u5.wahl.includes(k)?'an':''} ${u5.geprueft&&K.soll.includes(k)!==u5.wahl.includes(k)?'falsch':''}" data-k="${k}">${t}</button>`).join('')}</div>
+    <p class="frage"><b>2.</b> Welche Leitung nimmst du?</p>
+    <div class="knoepfe" id="adern">${[3,4].map(a=>`<button data-a="${a}" class="${u5.adern===a?(u5.geprueft?(adernOk?'richtig':'falsch'):'an'):''}">${a}-adrig</button>`).join('')}
+      <button id="pruefen5" class="an" ${u5.adern&&u5.wahl.length?'':'disabled'}>Prüfen</button></div>
+    <div class="rueck ${u5.geprueft?(leiterOk&&adernOk?'gut':'halt'):'info'}">${u5.geprueft?(leiterOk&&adernOk?'Richtig! '+K.erkl:(!leiterOk?'Bei den Leitern stimmt etwas nicht (rot markiert). ':'')+(!adernOk?'Zähle die Außenleiter in deiner Auswahl: Wie viele Adern für Außenleiter hat die Leitung?':'')):'Tipp: Ein Schalter braucht den Strom hin <i>und</i> zurück.'}</div>
+    ${u5.geprueft&&leiterOk&&adernOk?'<div class="knoepfe"><button class="an" id="naechste5">'+(u5.k+1<KARTEN.length?'Nächste Karte':'Fertig')+'</button></div>':''}
+    <div class="regel"><div><span class="ader" style="background:${F.gnge}"></span><span class="ader" style="background:${F.blau}"></span><span class="ader" style="background:${F.braun}"></span><br><b>3-adrig:</b> grün-gelb, blau, braun → Platz für <b>einen</b> Außenleiter (braun). Blau ist nur der Neutralleiter.</div>
+      <div><span class="ader" style="background:${F.gnge}"></span><span class="ader" style="background:${F.braun}"></span><span class="ader" style="background:${F.schwarz}"></span><span class="ader" style="background:${F.grau}"></span><br><b>4-adrig:</b> grün-gelb, braun, schwarz, grau → Platz für <b>zwei</b> Außenleiter (braun hin, schwarz geschaltet zurück).</div></div>
+   </div></div>`;
+  $('#leiter').querySelectorAll('button').forEach(b=>b.onclick=()=>{const k=b.dataset.k;u5.wahl=u5.wahl.includes(k)?u5.wahl.filter(x=>x!==k):[...u5.wahl,k];u5.geprueft=false;uebung5();});
+  $('#adern').querySelectorAll('button[data-a]').forEach(b=>b.onclick=()=>{u5.adern=+b.dataset.a;u5.geprueft=false;uebung5();});
+  $('#pruefen5').onclick=()=>{if(!u5.versucht){u5.versucht=true;if(leiterOk&&adernOk)u5.richtig++;}u5.geprueft=true;uebung5();};
+  const n=$('#naechste5');if(n)n.onclick=()=>{if(u5.k+1<KARTEN.length){u5.k++;u5.wahl=[];u5.adern=null;u5.geprueft=false;u5.versucht=false;}else u5.fertig=true;uebung5();};
+}
+
+// ---------------------------------------------------------------- bisherige Übungen (nur Hinweis)
+function alt3(){$('#inhalt').innerHTML=`<div class="alt"><b>Übung 3: Leuchte mit Schalter</b> – bleibt wie bisher: Die Leitung läuft von der Verteilerdose <b>durch die Schalterdose</b> zur Leuchte, beide Leitungen 3-adrig. Danach kommen die zwei neuen Übungen.</div>`;}
+function alt6(){$('#inhalt').innerHTML=`<div class="alt"><b>Übung 6 (bisher 4): Leuchte und Schalter über eine Verteilerdose</b> – bleibt wie bisher, mit „Leitungen legen“ vorab (3- oder 4-adrig wählen). Neu wäre nur: Bei einer falschen Wahl erinnert der Hinweis an die Zählregel aus Übung 5 („Zum Schalter laufen zwei Außenleiter – hin und geschaltet zurück.“).</div>`;}
+zeige();
+</script>
+</body>
+</html>
