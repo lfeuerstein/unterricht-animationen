@@ -2038,9 +2038,12 @@ function zeichneTeil(g,t,an,z,S){
       el('line',{x1:q,y1:y+28,x2:zu?q:q+(rechts?16:-16),y2:zu?y+60:y+56,stroke:'#2b2b2b','stroke-width':3,'stroke-linecap':'round'},g);}
     if(!z||!z.ohneStellung)tx(g,t.x+t.b/2,t.y+t.h-10,zu?'EIN':'AUS',{'text-anchor':'middle','font-size':12,'font-weight':700,fill:zu?'#1a7f37':'#777'});}}   // ohneStellung: beim Leitungen-Legen
 
+// Plan-Reparatur (iPad-Foto des Lehrers 26.11.2026 10:08, Moodle ohne Vollbild): „… komme da nicht mehr weiter. Ich kann jetzt weder die Ansicht scrollen,
+// dass ich den Vertratungsplan sehe …“ – der Plan (svg im Flex-Kasten) wurde von Kopf, Leitungsleiste und Statuszeile auf einen Strich gequetscht, und weil
+// nichts überlief, ließ sich nichts scrollen. Seitdem schrumpft der Plan nie (flex:none), das Fenster wächst mit dem Inhalt (min-height statt height) und scrollt.
 let cssDa=false;
 function css(){if(cssDa||typeof document==='undefined'||!document.head)return;cssDa=true;const s=document.createElement('style');s.textContent=`
-.vd{display:flex;flex-direction:column;height:100%;min-height:0;color:#fff;font:15px "Segoe UI",system-ui,-apple-system,Arial,sans-serif;box-sizing:border-box;user-select:none;-webkit-user-select:none}
+.vd{display:flex;flex-direction:column;min-height:100%;color:#fff;font:15px "Segoe UI",system-ui,-apple-system,Arial,sans-serif;box-sizing:border-box;user-select:none;-webkit-user-select:none}
 .vd *{box-sizing:border-box}
 .vd-kopf{padding:12px 16px 4px;display:flex;gap:12px;align-items:flex-start}
 .vd-kopf>div{flex:1;min-width:0}
@@ -2055,9 +2058,9 @@ function css(){if(cssDa||typeof document==='undefined'||!document.head)return;cs
 .vd button .ok{color:#5fd38a;margin-left:6px}
 .vd-farben button.gesperrt{opacity:.38;border-style:dashed}
 .vd button.an .ok{color:#14532d}
-.vd-haupt{flex:1;min-height:0;display:flex;gap:14px;padding:6px 16px 14px}
+.vd-haupt{flex:1 0 auto;display:flex;gap:14px;padding:6px 16px 14px}
 .vd-bild{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
-.vd-bild svg{width:100%;height:auto;display:block;background:#fbfaf6;border-radius:6px;touch-action:manipulation}
+.vd-bild svg{flex:none;width:100%;height:auto;display:block;background:#fbfaf6;border-radius:6px;touch-action:manipulation}
 .vd-seite{width:250px;flex:none;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:10px}
 .vd-seite h3{margin:2px 0 0;font-size:14px;text-transform:uppercase;letter-spacing:1px;opacity:.75;font-weight:600}
 .vd-farben{display:grid;grid-template-columns:1fr 1fr;gap:6px}
