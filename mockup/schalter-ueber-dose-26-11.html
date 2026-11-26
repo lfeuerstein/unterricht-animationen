@@ -83,6 +83,7 @@
       <li><b>Zählen sie mit?</b> Die neuen Übungen sind Denk-Übungen ohne „andere Anordnung“, also 12 + 2 = 14 Übungen auf dem Übungsweg im Gästebad. <i>Empfehlung: Sie zählen für „Übe zuerst das Verdrahten“ mit. Die Moodle-Punkte bleiben bei 100.</i></li>
       <li><b>Regel für die Leiterzahl:</b> „Zähle die Außenleiter in der Leitung: ein Außenleiter → 3-adrig, zwei (hin und geschaltet zurück) → 4-adrig, weil Blau nur der Neutralleiter sein darf.“ <i>Empfehlung: so wörtlich im Spiel und im Regelkasten. Stimmt das mit deinem Unterricht überein?</i></li>
       <li><b>Leitungen legen:</b> Danach wählen die Schüler in Übung 6 bis 8 wie bisher selbst 3- oder 4-adrig. Die Karten aus Übung 5 bereiten genau das vor. <i>Empfehlung: Bei einer falschen Wahl dort zeigt der Hinweis die Zählregel aus Übung 5.</i></li>
+      <li><b>Rückweg mit antippen?</b> Soll der Schüler in Teil B auch den Rückweg antippen (… → Leuchte → Verteilerdose → Zuleitung), bis der Stromkreis geschlossen ist? Jetzt zeigt ihn nur der laufende Punkt. <i>Empfehlung: ja – dann erlebt er selbst, dass N nicht über den Schalter geht.</i></li>
       <li><b>Übungsblatt auf Papier:</b> Soll eine Aufgabe „3-adrig oder 4-adrig?“ auch auf das Übungsblatt Verdrahten? <i>Empfehlung: erst nach dem Einsatz im Spiel entscheiden.</i></li>
     </ol>
   </div>
@@ -145,14 +146,13 @@ function planA(links){
     ${beschr(230,296,ok?'Der Schalter liegt NEBEN dem Weg.':'Wo liegt der Schalter hier?',ok?'#c25a1c':'#333')}</svg>`;
 }
 function planB(){
-  // 600 breit, damit die Schrift auch am Handy hochkant lesbar bleibt (26.11.2026 ~17:00, Wunsch des Lehrers: „anklickbar für ein Android Handy“)
   const s=u4.schritte,n=s.length,fertig=u4.fertig;
   const segs=[];
   if(n>=2)segs.push(ader([[115,106],[240,106]],F.braun,'w1'));
   if(n>=3)segs.push(ader([[285,172],[285,400]],F.braun,'w2'),beschr(272,300,'hin: braun',F.braun,'end',20));
   if(n>=4)segs.push(ader([[315,400],[315,172]],F.schwarz,'w3'),beschr(328,290,'zurück,',F.schwarz,'start',20),beschr(328,314,'geschaltet:',F.schwarz,'start',20),beschr(328,338,'schwarz',F.schwarz,'start',20));
   if(n>=5)segs.push(ader([[360,106],[485,106]],F.braun,'w4'),beschr(422,92,'geschaltet',F.braun,'middle',18));
-  if(fertig)segs.push(ader([[485,136],[115,136]],F.blau,'','stroke-dasharray="14 9"'),beschr(12,215,'N (blau): direkt zurück',F.blau,'start',18),beschr(590,215,'nicht über den Schalter',F.blau,'end',18));
+  if(fertig)segs.push(ader([[485,136],[360,136]],F.blau),ader([[240,136],[115,136]],F.blau),beschr(12,215,'N (blau): direkt zurück',F.blau,'start',18),beschr(590,215,'nicht über den Schalter',F.blau,'end',18));
   const st=(id,x,y,b,h,titel,sym)=>kasten(id,x,y,b,h,titel,sym,'station',22);
   const marke=(p,i)=>`<g><circle cx="${p[0]}" cy="${p[1]}" r="17" fill="${F.orange}"/>${beschr(p[0],p[1]+7,i+1,'#16110d','middle',19)}</g>`;
   return `<svg class="plan" id="planB" viewBox="0 0 600 510">
@@ -180,7 +180,7 @@ function uebung4(){
     <p class="frage">Tippe der Reihe nach alles an, wodurch der Strom (Außenleiter L) fließt, bis die Leuchte brennt. Du darfst eine Station auch zweimal antippen.</p>
     ${planB()}
     <div class="knoepfe"><button id="b4neu">Noch einmal</button><button id="b4hilfe" class="${u4.fertig?'':''}">Tipp</button></div>
-    <div class="rueck ${u4.fehler?'halt':u4.fertig?'gut':'info'}" id="r4">${u4.fehler||(u4.fertig?'Genau! Zuleitung → Verteilerdose → <b>hinunter zum Schalter</b> → <b>wieder herauf zur Verteilerdose</b> → Leuchte. In der Leitung zum Schalter läuft der Außenleiter also <b>zweimal</b>: hin (braun) und geschaltet zurück (schwarz).':'Weg bis jetzt: '+(u4.schritte.map(x=>STATION_TEXT[x]).join(' → ')||'–'))}</div></div>
+    <div class="rueck ${u4.fehler?'halt':u4.fertig?'gut':'info'}" id="r4">${u4.fehler||(u4.fertig?'Genau! Zuleitung → Verteilerdose → <b>hinunter zum Schalter</b> → <b>wieder herauf zur Verteilerdose</b> → Leuchte. In der Leitung zum Schalter läuft der Außenleiter also <b>zweimal</b>: hin (braun) und geschaltet zurück (schwarz). Von der Leuchte fließt der Strom über den <b>blauen Neutralleiter</b> zur Verteilerdose und zurück zum Netz – nicht über den Schalter.':'Weg bis jetzt: '+(u4.schritte.map(x=>STATION_TEXT[x]).join(' → ')||'–'))}</div></div>
    <div class="teil" ${u4.fertig?'':'hidden'}><h3>Teil C – Kontrollfrage</h3>
     <p class="frage">Wie viele Außenleiter (L) laufen in der Leitung zwischen Verteilerdose und Schalter?</p>
     <div class="knoepfe" id="c4">${[1,2,3].map(z=>`<button data-z="${z}" class="${c===z?(z===2?'richtig':'falsch'):''}">${z}</button>`).join('')}</div>
@@ -207,11 +207,12 @@ function tippe4(id){
   uebung4();
 }
 function laufpunkt(){
-  const pts=[[65,106],[240,106],[285,172],[285,400],[315,400],[315,172],[360,106],[485,106]];
+  const pts=[[65,106],[240,106],[285,172],[285,400],[315,400],[315,172],[360,106],[485,106],[485,136],[360,136],[240,136],[115,136],[65,136]];
   const p=$('#punkt');if(!p)return;let t=0;
   const len=[];let ges=0;for(let i=1;i<pts.length;i++){const d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);len.push(d);ges+=d;}
   function schritt(){if(!document.body.contains(p))return;t=(t+4)%ges;let r=t,i=0;while(r>len[i]){r-=len[i];i++;}
-    const a=pts[i],b=pts[i+1],f=r/len[i];p.setAttribute('cx',a[0]+(b[0]-a[0])*f);p.setAttribute('cy',a[1]+(b[1]-a[1])*f);requestAnimationFrame(schritt);}
+    const a=pts[i],b=pts[i+1],f=r/len[i];p.setAttribute('cx',a[0]+(b[0]-a[0])*f);p.setAttribute('cy',a[1]+(b[1]-a[1])*f);
+    p.setAttribute('fill',i>=8?F.blau:F.gelb);requestAnimationFrame(schritt);}
   requestAnimationFrame(schritt);
 }
 
