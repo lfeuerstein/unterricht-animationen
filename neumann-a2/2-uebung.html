@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Haus Neumann A2 · 2 – Übung: Hausanschlussraum – antippen, ordnen, prüfen</title>
+<style>
+/* Haus Neumann A2 – gemeinsames Aussehen der Animationen, Fragen, Übungen und Bonusseiten. Läuft am PC, iPad und Handy hochkant.
+   Regeln: Tippflächen mindestens 44 px, kein seitliches Rollen der Seite, keine Schrift von fremden Servern, keine Bilder von außen. */
+:root{ --bg:#f3f5fa; --karte:#ffffff; --linie:#d6dce8; --text:#1d2840; --leise:#5d6884; --akzent:#9a4a1c; --akzentHell:#fbe9dd;
+  --ok:#1b7f3b; --okHell:#e3f4e8; --nein:#b3261e; --neinHell:#fde7e5; --blau:#1565c0; --gelb:#fff3cd; }
+*{ box-sizing:border-box }
+html{ -webkit-text-size-adjust:100%; touch-action:manipulation }
+body{ margin:0; background:var(--bg); color:var(--text); font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; overflow-x:hidden }
+main{ max-width:1000px; margin:0 auto; padding:12px 14px 40px }
+h1{ font-size:21px; line-height:1.25; margin:6px 0 4px }
+h2{ font-size:18px; margin:18px 0 8px }
+h3{ font-size:16.5px; margin:14px 0 6px }
+p{ margin:0 0 10px }
+sup{ font-size:.68em; line-height:0 }
+.leise{ color:var(--leise); font-size:15px }
+.kennz{ font-weight:700; color:var(--akzent); margin:0 }
+/* Kopfzeile */
+.kopf{ position:sticky; top:0; z-index:5; background:#fff; border-bottom:1px solid var(--linie); }
+.kopf-innen{ max-width:1000px; margin:0 auto; padding:6px 14px; display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; min-height:56px }
+.kopf-titel{ flex:1 1 220px; min-width:0; font-weight:700; font-size:15.5px; line-height:1.25 }
+.kopf-titel small{ display:block; font-weight:400; color:var(--leise); font-size:13.5px }
+#punkte{ font-size:15px; text-align:right }
+#punkte small{ display:block; color:var(--leise); font-size:12.5px }
+/* Knöpfe */
+button, .knopf{ font:inherit; font-size:16px; min-height:44px; min-width:44px; padding:8px 14px; border-radius:10px; border:1px solid #b9c2d6; background:#fff; color:var(--text);
+  cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+button:hover{ border-color:var(--akzent) }
+button:focus-visible, input:focus-visible{ outline:3px solid #ffb74d; outline-offset:2px }
+button.haupt{ background:var(--akzent); border-color:var(--akzent); color:#fff; font-weight:700 }
+button.gewaehlt{ background:var(--akzentHell); border-color:var(--akzent); font-weight:700 }
+button:disabled{ opacity:.55; cursor:default }
+#zumKurs{ background:#fff; border-color:var(--akzent); color:var(--akzent); font-weight:700 }
+.reihe{ display:flex; flex-wrap:wrap; gap:8px; align-items:center }
+/* Karten */
+.karte{ background:var(--karte); border:1px solid var(--linie); border-radius:14px; padding:12px 14px; margin:12px 0 }
+.hinweis{ background:var(--karte); border-left:5px solid var(--akzent); padding:10px 12px; border-radius:8px; margin:10px 0 }
+.chef{ background:#fff8e1; border-left:5px solid #f9a825; padding:10px 12px; border-radius:8px; margin:10px 0 }
+.chef b:first-child{ color:#8a5300 }
+.merke{ background:#eef4ff; border-left:5px solid var(--blau); padding:10px 12px; border-radius:8px; margin:10px 0 }
+/* Zeichnungen */
+.bild{ background:#fff; border:1px solid var(--linie); border-radius:12px; padding:6px; position:relative; overflow:hidden }
+.bild svg{ display:block; width:100%; height:auto; max-height:72vh }
+.bild .knopf-lage{ position:absolute; transform:translate(-50%,-50%); width:44px; height:44px; min-width:44px; padding:0; border-radius:50%; font-weight:700; font-size:15px;
+  background:#fff; border:2px solid #1d2840; box-shadow:0 1px 3px rgba(0,0,0,.25) }
+.bild .knopf-lage.gewaehlt{ background:#ffe082; border-color:#8a5300 }
+.bild .knopf-lage.ok{ background:var(--okHell); border-color:var(--ok); color:var(--ok) }
+.bild .knopf-lage.nein{ background:var(--neinHell); border-color:var(--nein); color:var(--nein) }
+/* Schritte der Animation */
+.schritte{ display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 }
+.schritte button{ min-width:44px; padding:6px 10px }
+.schritte button.aktiv{ background:var(--akzent); border-color:var(--akzent); color:#fff; font-weight:700 }
+.steuerung{ display:flex; gap:8px; justify-content:space-between; margin:10px 0 }
+.steuerung button{ flex:1 1 0 }
+.text-schritt{ min-height:3em }
+.zahlband{ font-size:19px; font-weight:700; background:#fff; border:1px solid var(--linie); border-radius:10px; padding:8px 12px; margin:8px 0; overflow-wrap:anywhere }
+.zahlband .ok{ color:var(--ok) }
+table.tafel{ border-collapse:collapse; width:100%; font-size:15.5px; background:#fff }
+table.tafel th, table.tafel td{ border:1px solid var(--linie); padding:6px 8px; text-align:left; vertical-align:top }
+table.tafel th{ background:#eef1f7 }
+/* Fragen und Aufgaben */
+.frage{ background:#fff; border:1px solid var(--linie); border-radius:14px; padding:12px 14px; margin:12px 0 }
+.frage .nr{ color:var(--akzent); font-weight:700 }
+.antworten{ display:flex; flex-direction:column; gap:8px; margin:10px 0 }
+.antworten button{ text-align:left; width:100%; line-height:1.3 }
+.antworten button.ok{ background:var(--okHell); border-color:var(--ok) }
+.antworten button.nein{ background:var(--neinHell); border-color:var(--nein) }
+.rueck{ border-radius:10px; padding:8px 12px; margin:8px 0 0 }
+.rueck.ok{ background:var(--okHell); color:#0f4d24 }
+.rueck.nein{ background:var(--neinHell); color:#7a1711 }
+.eingabe{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:8px 0 }
+.eingabe label{ font-weight:700 }
+input.zahl{ font:inherit; font-size:18px; width:8.5em; max-width:100%; min-height:44px; padding:6px 10px; border:2px solid #b9c2d6; border-radius:10px; text-align:right; background:#fff }
+input.zahl.ok{ border-color:var(--ok); background:var(--okHell) }
+input.zahl.nein{ border-color:var(--nein); background:var(--neinHell) }
+.einheit{ font-weight:700; color:var(--leise) }
+.geloest{ color:var(--ok); font-weight:700 }
+/* Ordnen (ziehen oder tippen) */
+.ablage, .stapel{ display:flex; flex-wrap:wrap; gap:8px; align-items:stretch }
+.stapel{ min-height:56px; padding:4px; border-radius:12px }
+.platz{ flex:1 1 140px; min-height:56px; min-width:120px; border:2px dashed #9aa6bf; border-radius:12px; padding:6px; display:flex; flex-direction:column; gap:4px; background:#fafbfe }
+.platz .platznr{ font-size:13px; color:var(--leise); font-weight:700 }
+.platz.ziel{ border-color:var(--akzent); background:var(--akzentHell) }
+.platz.ok{ border-style:solid; border-color:var(--ok); background:var(--okHell) }
+.platz.nein{ border-style:solid; border-color:var(--nein); background:var(--neinHell) }
+.karteZ{ min-height:44px; padding:8px 12px; border-radius:10px; border:2px solid #1d2840; background:#fff; font-weight:600; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; text-align:center }
+.karteZ.gewaehlt{ background:#ffe082; border-color:#8a5300 }
+.karteZ.schwebt{ position:fixed; z-index:50; pointer-events:none; opacity:.9; box-shadow:0 6px 18px rgba(0,0,0,.25) }
+.pfeil{ font-weight:700; color:var(--blau); align-self:center }
+.fertig{ background:var(--okHell); border:2px solid var(--ok); border-radius:12px; padding:10px 14px; font-weight:700; margin:12px 0 }
+main > p.leise a, footer a{ display:inline-flex; align-items:center; min-height:44px; padding:0 4px }
+footer{ margin-top:26px; font-size:13px; color:var(--leise); border-top:1px solid var(--linie); padding-top:10px }
+.verborgen{ display:none !important }
+@media (max-width:520px){ body{ font-size:16px } h1{ font-size:19px } .zahlband{ font-size:17px } .bild{ padding:3px } }
+@media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important } }
+
+.fliesst{stroke-dasharray:90 60;animation:fl 1.1s linear infinite}@keyframes fl{to{stroke-dashoffset:-150}}
+</style>
+</head>
+<body>
+<header class="kopf"><div class="kopf-innen">
+  <div class="kopf-titel">Haus Neumann A2 · 2<small>Übung: Hausanschlussraum – antippen, ordnen, prüfen</small></div>
+  <div id="punkte" aria-live="polite"></div>
+  <button type="button" id="zumKurs" hidden>← Zurück zum Moodle-Kurs</button>
+</div></header>
+<main>
+  <p class="leise"><a href="2.html">← zur Station 2</a></p>
+  <p class="kennz">Haus Neumann A2 · 2</p>
+  <h1>Übung: Hausanschlussraum – antippen, ordnen, prüfen</h1>
+  <div id="app"></div>
+  <footer>Diese Seite setzt keine Cookies, speichert nichts und lädt nichts von anderen Servern. Beim Aufruf verarbeitet der Anbieter GitHub technisch die IP-Adresse des Geräts.</footer>
+</main>
+<script>window.MODUS="oeffentlich";window.MIT_FRAGEN=false;window.DATEN={"teile":["T1","T2","T3","T4","T5","T6","T8","T11","T12","T14"],"label":{"T1":[-240,230],"T2":[150,110],"T3":[470,110],"T4":[780,110],"T9":[1030,300],"T8":[430,615],"T5":[960,1120],"T6":[660,1230],"T7":[-240,1350],"T10":[220,1880],"T11":[-210,1170],"T15":[-210,640],"T12":[1120,2000],"T14":[2240,1180],"T13":[2190,360],"T16":[2600,2200]},"namen":{"T1":"Absperrventil (Hauseinführung)","T2":"Wasserzähler","T3":"Rückflussverhinderer","T4":"Rückspülfilter","T5":"Druckminderer","T6":"Verteilleitung mit Freistromventilen","T8":"Ausgussbecken","T11":"Gaszähler","T12":"Kessel","T14":"Umwälzpumpe"},"ablenker":["Heizungsverteiler","Entleerungshahn"],"folge":["Absperrventil an der Hauseinführung","Wasserzähler","Rückflussverhinderer","Filter (Rückspülfilter)","Druckminderer","Verteilleitung"]};</script>
+<script>
+// Haus Neumann A2 – Zeichnungen aus EINER Quelle (Keller-Grundriss, Ausschnitt Hausanschlussraum/Gäste-WC, Ansicht D der Installationswand).
+// Alle Maße in mm und genau nach GRUNDRISS-Vorschlag-Gaeste-WC-26-11 (svg/png im Ordner darüber), dort nachgemessen am 26.11.2026.
+// Einheit der Zeichnung = 1 mm (viewBox in mm). x nach Osten ab Außenkante Westwand, y nach Süden ab Außenkante Nordwand.
+// Läuft im Browser (window.GRUNDRISS) und in Node (require) – für Animationen, Übungen und die Bilder der Arbeitsblätter.
+// Neu gezeichnet, keine Originalskizze (Regel K17).
+(function (wurzel) {
+  'use strict';
+
+  // ------------------------------------------------------------------ Maße
+  const M = {
+    B: 10000, T: 8000, D: 365,                 // Keller außen, Außenwand
+    iw: [2600, 2850],                          // neue Installationswand (25 cm)
+    flurWand: [4225, 4400],                    // Wand Hausanschlussraum (alt) / Kellerflur
+    xFlurEnde: 6745, mitte: [6745, 6920], xInnen: 9635,
+    yNordRaum: 3400, suedWand: [3400, 3575], treppeWand: [2465, 2640], yInnen: 7635,
+    fensterHar: [1200, 2200], fensterWc: [3100, 3900], fensterSued: [4700, 5700], fensterWest: [5000, 6000], fensterOst: [4500, 5500],
+    tuerWc: [1200, 2210],                      // alte Tür Hausanschlussraum → Kellerflur (in der Flurwand, y), wird WC-Tür
+    tuerFlurK1: [5000, 6010],                  // Kellerflur → Keller 1 (Südwand, x)
+    tuerK1K2: [4500, 5510],                    // Keller 1 → Keller 2 (Mittelwand, y)
+    tuerHarNeu: [1000, 2010],                  // neue Tür Keller 1 → Hausanschlussraum (Südwand, x)
+    treppe: { x: [6745, 8635], y: [365, 2465] },
+  };
+
+  // Räume (Rohbaumaße) – Fläche = Länge · Breite, auf 2 Stellen gerundet (so steht es im Grundriss)
+  const RAEUME = {
+    harAlt:   { name: 'Hausanschlussraum', kurz: 'HAR', x: [365, 4225], y: [365, 3400] },
+    harNeu:   { name: 'Hausanschlussraum', kurz: 'HAR', x: [365, 2600], y: [365, 3400] },
+    wc:       { name: 'Gäste-WC', kurz: 'WC', x: [2850, 4225], y: [365, 3400] },
+    flur:     { name: 'Kellerflur', kurz: 'Flur', x: [4400, 6745], y: [365, 3400] },
+    keller1:  { name: 'Keller 1', kurz: 'Keller 1', x: [365, 6745], y: [3575, 7635] },
+    keller2:  { name: 'Keller 2', kurz: 'Keller 2', x: [6920, 9635], y: [2640, 7635] },
+    wand:     { name: 'Installationswand', kurz: 'Wand', x: [2600, 2850], y: [365, 3400] },
+  };
+  const flaecheMm2 = r => (r.x[1] - r.x[0]) * (r.y[1] - r.y[0]);
+  const flaecheM2 = r => flaecheMm2(r) / 1e6;
+  const m2Text = v => (Math.round(v * 100) / 100).toFixed(2).replace('.', ',');
+
+  // Maßketten (Lagen der Maßhilfslinien in mm). unter = Maß unter der Maßlinie (Höhe von Fenster/Tür)
+  const KETTEN = {
+    A_oben:   { achse: 'x', pos: [0, 365, 4225, 4400, 6745, 9635, 10000] },
+    B_oben:   { achse: 'x', pos: [0, 365, 2600, 2850, 4225, 4400, 6745, 9635, 10000] },
+    unten:    { achse: 'x', pos: [0, 365, 6745, 6920, 9635, 10000] },
+    links:    { achse: 'y', pos: [0, 365, 3400, 3575, 7635, 8000] },
+    rechts:   { achse: 'y', pos: [0, 365, 2465, 2640, 7635, 8000] },
+    C_oben1:  { achse: 'x', pos: [0, 365, 2600, 2850, 4225, 4400] },
+    C_oben2:  { achse: 'x', pos: [0, 365, 1200, 2200, 2600, 2850, 3100, 3900, 4225, 4400], unter: { 2: 600, 6: 600 } },
+    C_achsen: { achse: 'x', pos: [0, 365, 620, 960, 2050, 2350, 2600] },
+    C_links:  { achse: 'y', pos: [0, 365, 3400, 3575] },
+    C_unten:  { achse: 'x', pos: [365, 1000, 2010, 2600], unter: { 1: 2135 } },
+    C_rechts: { achse: 'y', pos: [365, 1200, 2210, 3400], unter: { 1: 2135 } },
+    D_lagen:  { achse: 'x', pos: [0, 146, 671, 1215, 1604, 1940, 2100, 3035] },
+    D_hoehen: { achse: 'y', pos: [0, 417, 845, 1498, 2600] },
+  };
+  const teile = k => KETTEN[k].pos.slice(1).map((v, i) => v - KETTEN[k].pos[i]);
+
+  // ------------------------------------------------------------------ DIN 1356-1: unter 1 m in cm, ab 1 m in m, mm hochgestellt
+  function din(mm) {
+    mm = Math.round(mm);
+    const r = mm % 10;
+    const haupt = mm < 1000 ? String(Math.floor(mm / 10)) : (Math.floor(mm / 10) / 100).toFixed(2).replace('.', ',');
+    return { haupt, hoch: r ? String(r) : '' };
+  }
+  const dinHtml = mm => { const d = din(mm); return d.haupt + (d.hoch ? '<sup>' + d.hoch + '</sup>' : ''); };
+  const dinText = mm => { const d = din(mm); return d.haupt + (d.hoch ? '⁽' + d.hoch + '⁾' : ''); };   // nur für Protokolle
+  const HOCH = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+  const dinUnicode = mm => { const d = din(mm); return d.haupt + (d.hoch ? HOCH[d.hoch] : ''); };
+  const cmText = mm => String(mm / 10).replace('.', ',');
+
+  // ------------------------------------------------------------------ Farben
+  const FARBEN = {
+    bild:  { wand: '#4b4b4b', linie: '#1b1b1b', mass: '#1b1b1b', text: '#1b1b1b', leise: '#6b6b6b', neu: '#d35400', neuHell: '#fbe3d0', fenster: '#ffffff',
+             luecke: '#fff3cd', lueckeRand: '#b26a00', wasser: '#1565c0', gas: '#b8860b', heizung: '#b71c1c', strom: '#455a64', erde: '#2e7d32', boden: '#ececec',
+             hervor: '#ffe082', flaeche: 'rgba(21,101,192,0.16)', flaecheRand: '#1565c0', papier: '#ffffff', abwasser: '#6d4c41' },
+    druck: { wand: '#5a5a5a', linie: '#000000', mass: '#000000', text: '#000000', leise: '#444444', neu: '#000000', neuHell: '#ffffff', fenster: '#ffffff',
+             luecke: '#ffffff', lueckeRand: '#000000', wasser: '#000000', gas: '#000000', heizung: '#000000', strom: '#000000', erde: '#000000', boden: '#eeeeee',
+             hervor: '#dddddd', flaeche: 'rgba(0,0,0,0.10)', flaecheRand: '#000000', papier: '#ffffff', abwasser: '#000000' },
+  };
+
+  // ------------------------------------------------------------------ kleine SVG-Helfer
+  const f = v => { const s = String(Math.round(v * 100) / 100); return s === '-0' ? '0' : s; };
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const attrs = o => Object.entries(o).filter(([, v]) => v !== undefined && v !== null && v !== false).map(([k, v]) => ` ${k}="${typeof v === 'number' ? f(v) : esc(v)}"`).join('');
+  const rect = (x0, y0, x1, y1, o = {}) => `<rect${attrs({ x: Math.min(x0, x1), y: Math.min(y0, y1), width: Math.abs(x1 - x0), height: Math.abs(y1 - y0), ...o })}/>`;
+  const line = (x1, y1, x2, y2, o = {}) => `<line${attrs({ x1, y1, x2, y2, ...o })}/>`;
+  const poly = (pts, o = {}) => `<polyline${attrs({ points: pts.map(p => f(p[0]) + ',' + f(p[1])).join(' '), fill: 'none', ...o })}/>`;
+  const circ = (cx, cy, r, o = {}) => `<circle${attrs({ cx, cy, r, ...o })}/>`;
+  // Text; inhalt darf <tspan> enthalten (schon escaped)
+  const text = (x, y, inhalt, o = {}) => `<text${attrs({ x, y, ...o })}>${inhalt}</text>`;
+  let MM_TEXT = false;                       // für Ansicht D: Maße in mm wie im Grundriss 26-11 („Höhen in mm“)
+  const dinTspan = (mm, fs) => { if (MM_TEXT) return String(Math.round(mm)); const d = din(mm); return esc(d.haupt) + (d.hoch ? `<tspan dy="${f(-fs * 0.42)}" font-size="${f(fs * 0.68)}">${d.hoch}</tspan>` : ''); };
+  const breiteText = (zeichen, fs) => zeichen * fs * 0.56;
+
+  // ------------------------------------------------------------------ Maßkette
+  // k: Kettenname oder {achse,pos}; lage: y (waagerecht) bzw. x (senkrecht) der Maßlinie; von: Lage, an der die Maßhilfslinien beginnen
+  // (Abstand zum Bauwerk); o.luecke: Index des Teilmaßes, das als Lücke (Kasten) erscheint; o.lueckeText: Text in der Lücke ('?' oder '');
+  // o.fs Schriftgröße; o.id Präfix für data-Attribute; o.zeigeGesamt: zusätzliche Gesamtmaßlinie (Abstand o.gesamtAbstand)
+  function kette(k, lage, von, P, o = {}) {
+    const K = typeof k === 'string' ? KETTEN[k] : k;
+    const pos = K.pos, waag = K.achse === 'x', fs = o.fs || 150, sw = o.sw || 12, tick = fs * 0.55;
+    const teileMm = pos.slice(1).map((v, i) => v - pos[i]);
+    let s = `<g class="kette"${o.kid ? ` data-kette="${o.kid}"` : ''}>`;
+    // Maßlinie (über die Maßhilfslinien hinaus)
+    const ueber = fs * 0.6;
+    if (waag) s += line(pos[0] - ueber, lage, pos[pos.length - 1] + ueber, lage, { stroke: P.mass, 'stroke-width': sw });
+    else s += line(lage, pos[0] - ueber, lage, pos[pos.length - 1] + ueber, { stroke: P.mass, 'stroke-width': sw });
+    // Maßhilfslinien und Schrägstriche
+    for (const p of pos) {
+      if (waag) { s += line(p, von, p, lage + (lage < von ? -fs * 0.35 : fs * 0.35), { stroke: P.mass, 'stroke-width': sw * 0.55 }); s += line(p - tick / 2, lage + tick / 2, p + tick / 2, lage - tick / 2, { stroke: P.mass, 'stroke-width': sw * 1.6 }); }
+      else { s += line(von, p, lage + (lage < von ? -fs * 0.35 : fs * 0.35), p, { stroke: P.mass, 'stroke-width': sw * 0.55 }); s += line(lage - tick / 2, p + tick / 2, lage + tick / 2, p - tick / 2, { stroke: P.mass, 'stroke-width': sw * 1.6 }); }
+    }
+    // Maßzahlen (über der Maßlinie; schmale Teile versetzt, damit nichts übereinander liegt)
+    let versatz = 0;
+    teileMm.forEach((mm, i) => {
+      const mitte = (pos[i] + pos[i + 1]) / 2, d = din(mm), zeichen = d.haupt.length + (d.hoch ? 0.7 : 0);
+      const w = breiteText(zeichen, fs);
+      const schmal = mm < w * 1.15;
+      const nachbarSchmal = i > 0 && teileMm[i - 1] < breiteText(din(teileMm[i - 1]).haupt.length + 0.7, fs) * 1.15;
+      versatz = schmal && nachbarSchmal && versatz === 0 ? 1 : 0;
+      const ab = fs * 0.3 + versatz * fs * 1.05;
+      const istLuecke = o.luecke === i;
+      const hervor = o.hervor && o.hervor.includes(i);
+      const datum = ` data-teil="${i}" data-mm="${mm}"`;
+      if (istLuecke) {
+        const bw = Math.max(w, fs * 2.6), bh = fs * 1.25;
+        if (waag) s += `<g class="luecke"${datum}>` + rect(mitte - bw / 2, lage - ab - bh + fs * 0.12, mitte + bw / 2, lage - ab + fs * 0.12, { fill: P.luecke, stroke: P.lueckeRand, 'stroke-width': sw * 1.2, rx: fs * 0.15 }) +
+          text(mitte, lage - ab - fs * 0.12, esc(o.lueckeText === undefined ? '?' : o.lueckeText), { 'font-size': fs, 'text-anchor': 'middle', fill: P.lueckeRand, 'font-weight': 700 }) + '</g>';
+        else s += `<g class="luecke"${datum}>` + rect(lage - ab - bh + fs * 0.12, mitte - bw / 2, lage - ab + fs * 0.12, mitte + bw / 2, { fill: P.luecke, stroke: P.lueckeRand, 'stroke-width': sw * 1.2, rx: fs * 0.15 }) +
+          text(lage - ab - fs * 0.12, mitte, esc(o.lueckeText === undefined ? '?' : o.lueckeText), { 'font-size': fs, 'text-anchor': 'middle', fill: P.lueckeRand, 'font-weight': 700, transform: `rotate(-90 ${f(lage - ab - fs * 0.12)} ${f(mitte)})` }) + '</g>';
+      } else {
+        const fett = hervor ? { 'font-weight': 700 } : {};
+        if (hervor) {
+          if (waag) s += rect(pos[i], lage - fs * 0.25, pos[i + 1], lage + fs * 0.25, { fill: P.hervor, opacity: 0.9 });
+          else s += rect(lage - fs * 0.25, pos[i], lage + fs * 0.25, pos[i + 1], { fill: P.hervor, opacity: 0.9 });
+        }
+        if (waag) s += text(mitte, lage - ab, dinTspan(mm, fs), { 'font-size': fs, 'text-anchor': 'middle', fill: P.mass, class: 'masszahl', ...fett }) .replace('<text', `<text${datum}`);
+        else s += text(lage - ab, mitte, dinTspan(mm, fs), { 'font-size': fs, 'text-anchor': 'middle', fill: P.mass, class: 'masszahl', transform: `rotate(-90 ${f(lage - ab)} ${f(mitte)})`, ...fett }).replace('<text', `<text${datum}`);
+      }
+      // Höhe von Fenster/Tür unter der Maßlinie
+      if (K.unter && K.unter[i] && !o.ohneUnter) {
+        const hu = K.unter[i];
+        if (waag) s += text(mitte, lage + fs * 1.05, dinTspan(hu, fs * 0.9), { 'font-size': fs * 0.9, 'text-anchor': 'middle', fill: P.mass, class: 'unter' });
+        else s += text(lage + fs * 1.0, mitte, dinTspan(hu, fs * 0.9), { 'font-size': fs * 0.9, 'text-anchor': 'middle', fill: P.mass, class: 'unter', transform: `rotate(-90 ${f(lage + fs * 1.0)} ${f(mitte)})` });
+      }
+    });
+    if (o.gesamt) {
+      const g = lage + (lage < von ? -1 : 1) * (o.gesamtAbstand || fs * 2.2);
+      const a = pos[0], b = pos[pos.length - 1];
+      if (waag) { s += line(a - ueber, g, b + ueber, g, { stroke: P.mass, 'stroke-width': sw }); for (const p of [a, b]) s += line(p - tick / 2, g + tick / 2, p + tick / 2, g - tick / 2, { stroke: P.mass, 'stroke-width': sw * 1.6 }) + line(p, g, p, lage, { stroke: P.mass, 'stroke-width': sw * 0.55 });
+        s += text((a + b) / 2, g - fs * 0.3, o.gesamtLuecke ? '?' : dinTspan(b - a, fs), { 'font-size': fs, 'text-anchor': 'middle', fill: P.mass, class: 'gesamt' }); }
+      else { s += line(g, a - ueber, g, b + ueber, { stroke: P.mass, 'stroke-width': sw }); for (const p of [a, b]) s += line(g - tick / 2, p + tick / 2, g + tick / 2, p - tick / 2, { stroke: P.mass, 'stroke-width': sw * 1.6 }) + line(g, p, lage, p, { stroke: P.mass, 'stroke-width': sw * 0.55 });
+        s += text(g - fs * 0.3, (a + b) / 2, dinTspan(b - a, fs), { 'font-size': fs, 'text-anchor': 'middle', fill: P.mass, class: 'gesamt', transform: `rotate(-90 ${f(g - fs * 0.3)} ${f((a + b) / 2)})` }); }
+    }
+    return s + '</g>';
+  }
+
+  // ------------------------------------------------------------------ Bauteile im Grundriss
+  function defs(P, pre) {
+    return `<defs><pattern id="${pre}schraff" width="70" height="70" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">` +
+      `<rect width="70" height="70" fill="${P.neuHell}"/><line x1="0" y1="0" x2="0" y2="70" stroke="${P.neu}" stroke-width="16"/></pattern></defs>`;
+  }
+  function fensterWaag(x0, x1, y0, y1, P, o = {}) {           // Fenster in einer waagerechten Wand (Nord/Süd)
+    const sw = 10, d = y1 - y0;
+    return `<g${o.cls ? ` class="${o.cls}"` : ''}>` + rect(x0, y0, x1, y1, { fill: P.fenster, stroke: 'none' }) + line(x0, y0, x1, y0, { stroke: o.farbe || P.linie, 'stroke-width': sw }) + line(x0, y1, x1, y1, { stroke: o.farbe || P.linie, 'stroke-width': sw }) +
+      line(x0, y0 + d * 0.42, x1, y0 + d * 0.42, { stroke: o.farbe || P.linie, 'stroke-width': sw * 1.1 }) + line(x0, y0 + d * 0.58, x1, y0 + d * 0.58, { stroke: o.farbe || P.linie, 'stroke-width': sw * 1.1 }) +
+      line(x0, y0, x0, y1, { stroke: o.farbe || P.linie, 'stroke-width': sw }) + line(x1, y0, x1, y1, { stroke: o.farbe || P.linie, 'stroke-width': sw }) + '</g>';
+  }
+  function fensterSenk(y0, y1, x0, x1, P) {
+    const sw = 10, d = x1 - x0;
+    return rect(x0, y0, x1, y1, { fill: P.fenster, stroke: 'none' }) + line(x0, y0, x0, y1, { stroke: P.linie, 'stroke-width': sw }) + line(x1, y0, x1, y1, { stroke: P.linie, 'stroke-width': sw }) +
+      line(x0 + d * 0.42, y0, x0 + d * 0.42, y1, { stroke: P.linie, 'stroke-width': sw * 1.1 }) + line(x0 + d * 0.58, y0, x0 + d * 0.58, y1, { stroke: P.linie, 'stroke-width': sw * 1.1 }) +
+      line(x0, y0, x1, y0, { stroke: P.linie, 'stroke-width': sw }) + line(x0, y1, x1, y1, { stroke: P.linie, 'stroke-width': sw });
+  }
+  // Türöffnung (weiß) mit Türblatt und Bogen. scharnier/blatt: Punkte; bogenEnde: Punkt; sweep 0/1
+  function tuer(oeffnung, scharnier, blattEnde, bogenStart, sweep, P, o = {}) {
+    const r = Math.hypot(blattEnde[0] - scharnier[0], blattEnde[1] - scharnier[1]), farbe = o.farbe || P.linie;
+    return `<g${o.cls ? ` class="${o.cls}"` : ''}${o.id ? ` id="${o.id}"` : ''}>` + rect(...oeffnung, { fill: P.papier, stroke: 'none' }) +
+      line(scharnier[0], scharnier[1], blattEnde[0], blattEnde[1], { stroke: farbe, 'stroke-width': 22 }) +
+      `<path d="M${f(bogenStart[0])},${f(bogenStart[1])} A${f(r)},${f(r)} 0 0 ${sweep} ${f(blattEnde[0])},${f(blattEnde[1])}" fill="none" stroke="${farbe}" stroke-width="10" stroke-dasharray="${o.druck ? 'none' : '50 35'}"/></g>`;
+  }
+  function raumText(r, P, fs, o = {}) {
+    const cx = (r.x[0] + r.x[1]) / 2, cy = (r.y[0] + r.y[1]) / 2 + (o.dy || 0);
+    const name = o.name || (o.kurz ? r.kurz : r.name);
+    const zeilen = Array.isArray(name) ? name : [name];
+    let s = `<g class="raumtext"${o.rid ? ` data-raum="${o.rid}"` : ''}>`;
+    zeilen.forEach((z, i) => { s += text(cx, cy - (zeilen.length - i - 1) * fs * 1.15 - (o.ohneFlaeche ? 0 : fs * 0.35), esc(z), { 'font-size': fs, 'text-anchor': 'middle', fill: o.farbe || P.text, 'font-weight': 700 }); });
+    if (!o.ohneFlaeche) s += text(cx, cy + fs * 0.95, esc(m2Text(flaecheM2(r))) + ` m<tspan dy="${f(-fs * 0.4)}" font-size="${f(fs * 0.65)}">2</tspan>`, { 'font-size': fs * 0.9, 'text-anchor': 'middle', fill: o.farbe || P.text, class: 'flaeche' });
+    return s + '</g>';
+  }
+
+  // ------------------------------------------------------------------ 1) Keller-Grundriss (Bestand A und Umbau B in einer Zeichnung)
+  // o.stand: 'A' | 'B' | 'AB' (beide; Elemente nur in A haben class="nurA", nur in B class="nurB")
+  // o.ketten: Liste aus 'oben','unten','links','rechts'; o.luecken: {oben: i, links: i, …}; o.farbe; o.fs (Schrift Räume); o.pre (Präfix für IDs)
+  function plan(o = {}) {
+    const P = FARBEN[o.farbe || 'bild'], pre = o.pre || 'pl', st = o.stand || 'B', fsR = o.fs || 300;
+    const A = st === 'A' || st === 'AB', Bz = st === 'B' || st === 'AB';
+    const kA = st === 'AB' ? ' class="nurA"' : '', kB = st === 'AB' ? ' class="nurB"' : '';
+    const ketten = o.ketten || [], rand = { oben: ketten.includes('oben') ? 1500 : 500, unten: ketten.includes('unten') ? 1200 : 400, links: ketten.includes('links') ? 1600 : 400, rechts: ketten.includes('rechts') ? 1300 : 900 };
+    const vb = [-rand.links, -rand.oben - (o.strasse ? 450 : 0), M.B + rand.links + rand.rechts, M.T + rand.oben + rand.unten + (o.strasse ? 450 : 0)];
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.map(f).join(' ')}" class="plan" role="img" aria-label="${esc(o.titel || 'Grundriss Kellergeschoss Haus Neumann')}" font-family="Arial, Helvetica, sans-serif">` + defs(P, pre);
+    s += rect(vb[0], vb[1], vb[0] + vb[2], vb[1] + vb[3], { fill: P.papier });
+    if (o.strasse) s += text(M.B / 2, -rand.oben - 120, 'Straße (Norden) – die Hausanschlüsse kommen von hier', { 'font-size': 230, 'text-anchor': 'middle', fill: P.leise, 'font-style': 'italic' });
+    // Flächenhervorhebung (vor den Wänden)
+    if (o.flaeche) for (const rid of [].concat(o.flaeche)) { const r = RAEUME[rid]; s += rect(r.x[0], r.y[0], r.x[1], r.y[1], { fill: P.flaeche, stroke: P.flaecheRand, 'stroke-width': 30, class: 'flaechenfeld', 'data-raum': rid }); }
+    // Wände
+    const W = (x0, y0, x1, y1) => rect(x0, y0, x1, y1, { fill: P.wand });
+    s += '<g class="waende">' + W(0, 0, M.B, M.D) + W(0, M.T - M.D, M.B, M.T) + W(0, M.D, M.D, M.T - M.D) + W(M.B - M.D, M.D, M.B, M.T - M.D) +
+      W(M.flurWand[0], M.D, M.flurWand[1], M.yNordRaum) + W(M.D, M.suedWand[0], M.mitte[0], M.suedWand[1]) + W(M.mitte[0], M.treppeWand[0], M.mitte[1], M.yInnen) +
+      W(M.mitte[1], M.treppeWand[0], M.xInnen, M.treppeWand[1]) + '</g>';
+    // Fenster (Bestand)
+    s += fensterWaag(...M.fensterHar, 0, M.D, P) + fensterWaag(...M.fensterSued, M.T - M.D, M.T, P) + fensterSenk(...M.fensterWest, 0, M.D, P) + fensterSenk(...M.fensterOst, M.B - M.D, M.B, P);
+    // Türen Bestand
+    s += tuer([M.tuerFlurK1[0], M.suedWand[0] - 5, M.tuerFlurK1[1], M.suedWand[1] + 5], [M.tuerFlurK1[0], M.suedWand[1]], [M.tuerFlurK1[0], M.suedWand[1] + 1010], [M.tuerFlurK1[1], M.suedWand[1]], 1, P, { druck: o.farbe === 'druck' });
+    s += tuer([M.mitte[0] - 5, M.tuerK1K2[0], M.mitte[1] + 5, M.tuerK1K2[1]], [M.mitte[1], M.tuerK1K2[0]], [M.mitte[1] + 1010, M.tuerK1K2[0]], [M.mitte[1], M.tuerK1K2[1]], 0, P, { druck: o.farbe === 'druck' });
+    // Tür Hausanschlussraum → Kellerflur (in B: WC-Tür, schlägt nach außen in den Flur auf)
+    s += tuer([M.flurWand[0] - 5, M.tuerWc[0], M.flurWand[1] + 5, M.tuerWc[1]], [M.flurWand[1], M.tuerWc[1]], [M.flurWand[1] + 1010, M.tuerWc[1]], [M.flurWand[1], M.tuerWc[0]], 1, P, { druck: o.farbe === 'druck' });
+    // Treppe
+    const tr = M.treppe;
+    let tp = '<g class="treppe">';
+    for (let x = tr.x[0]; x <= tr.x[1] + 1; x += 270) tp += line(x, tr.y[0], x, 1300, { stroke: P.leise, 'stroke-width': 10 }) + line(x, 1400, x, tr.y[1], { stroke: P.leise, 'stroke-width': 10 });
+    tp += rect(tr.x[0], 1300, tr.x[1], 1400, { fill: '#d9d9d9', stroke: P.leise, 'stroke-width': 10 }) + line(tr.x[1], tr.y[0], tr.x[1], tr.y[1], { stroke: P.leise, 'stroke-width': 10 });
+    tp += text((tr.x[0] + tr.x[1]) / 2, 2150, 'Treppe ins EG', { 'font-size': fsR * 0.7, 'text-anchor': 'middle', fill: P.leise }) + '</g>';
+    s += tp;
+    // Neu in B: Installationswand, neue Tür, neues Fenster
+    if (Bz) {
+      s += `<g${kB}${o.ids ? ' id="' + pre + '-neu"' : ''}>`;
+      s += rect(M.iw[0], M.D, M.iw[1], M.yNordRaum, { fill: `url(#${pre}schraff)`, stroke: P.neu, 'stroke-width': 18, class: 'neuwand neu-1' });
+      s += fensterWaag(...M.fensterWc, 0, M.D, P, { farbe: P.neu, cls: 'neu-2' });
+      s += tuer([M.tuerHarNeu[0], M.suedWand[0] - 5, M.tuerHarNeu[1], M.suedWand[1] + 5], [M.tuerHarNeu[0], M.suedWand[1]], [M.tuerHarNeu[0], M.suedWand[1] + 1010], [M.tuerHarNeu[1], M.suedWand[1]], 1, P, { farbe: P.neu, druck: o.farbe === 'druck', cls: 'neu-3' });
+      s += '</g>';
+    }
+    // Raumtexte
+    if (o.raumtext !== 'keine') {
+      const kurz = o.raumtext === 'kurz';
+      if (A) s += `<g${kA}>` + raumText(RAEUME.harAlt, P, fsR, { kurz, rid: 'harAlt', name: kurz ? undefined : ['Hausanschluss-', 'raum'] }) + '</g>';
+      if (Bz) s += `<g${st === 'AB' ? ' class="nurB neu-4"' : ''}>` + raumText(RAEUME.harNeu, P, fsR, { kurz, rid: 'harNeu', name: kurz ? undefined : ['Hausanschluss-', 'raum'] }) + raumText(RAEUME.wc, P, fsR, { kurz, rid: 'wc', name: kurz ? 'WC' : ['Gäste-', 'WC'], farbe: o.farbe === 'druck' ? P.text : P.neu }) + '</g>';
+      s += raumText(RAEUME.flur, P, fsR, { kurz, rid: 'flur', dy: 1050 }) + raumText(RAEUME.keller1, P, fsR, { kurz, rid: 'keller1' }) + raumText(RAEUME.keller2, P, fsR, { kurz, rid: 'keller2' });
+    }
+    // Nordpfeil
+    const nx = M.B + rand.rechts - 380, ny = -rand.oben + 120;
+    s += `<g class="nord">` + line(nx, ny + 700, nx, ny + 150, { stroke: P.linie, 'stroke-width': 30 }) +
+      `<polygon points="${f(nx)},${f(ny)} ${f(nx - 110)},${f(ny + 250)} ${f(nx + 110)},${f(ny + 250)}" fill="${P.linie}"/>` +
+      text(nx, ny + 1000, 'N', { 'font-size': 280, 'text-anchor': 'middle', 'font-weight': 700, fill: P.linie }) + '</g>';
+    // Maßketten
+    const fsK = o.fsKette || 220, L = o.luecken || {};
+    if (ketten.includes('oben')) {
+      if (A) s += `<g${kA}>` + kette('A_oben', -700, -150, P, { fs: fsK, luecke: st === 'A' ? L.oben : undefined, kid: 'A_oben' }) + '</g>';
+      if (Bz) s += `<g${kB}>` + kette('B_oben', -700, -150, P, { fs: fsK, luecke: L.oben, lueckeText: L.text, kid: 'B_oben', hervor: o.hervorOben }) + '</g>';
+      s += kette({ achse: 'x', pos: [0, M.B] }, -1250, -760, P, { fs: fsK, kid: 'gesamt_oben' });
+    }
+    if (ketten.includes('unten')) s += kette('unten', M.T + 650, M.T + 150, P, { fs: fsK, luecke: L.unten, kid: 'unten' });
+    if (ketten.includes('links')) { s += kette('links', -650, -150, P, { fs: fsK, luecke: L.links, lueckeText: L.text, kid: 'links' }) + kette({ achse: 'y', pos: [0, M.T] }, -1150, -710, P, { fs: fsK, kid: 'gesamt_links' }); }
+    if (ketten.includes('rechts')) s += kette('rechts', M.B + 650, M.B + 150, P, { fs: fsK, luecke: L.rechts, kid: 'rechts' });
+    return s + '</svg>';
+  }
+
+  // ------------------------------------------------------------------ 2) Ausschnitt Hausanschlussraum + Gäste-WC (wie Teil C)
+  // o.ketten: Liste aus 'oben1','oben2','achsen','links','unten','rechts'; o.luecken: {oben2: i, unten: i, …}; o.flaeche: 'wc'|'harNeu'|['wc','harNeu']
+  // o.anschluesse: Hausanschlüsse von der Straße (S, TK, HES, G, W); o.objekte: WC und Waschtisch zeigen; o.anforderungen: Haken für Station 2
+  function ausschnitt(o = {}) {
+    const P = FARBEN[o.farbe || 'bild'], pre = o.pre || 'au', fs = o.fs || 150, k = o.ketten || [];
+    const oben = 300 + (k.includes('achsen') ? 420 : 0) + (k.includes('oben2') ? 520 : 0) + (k.includes('oben1') ? 420 : 0) + (o.anschluesse ? 950 : 0) + ((o.gesamt || []).some(x => x.startsWith('oben')) ? 380 : 0);
+    const links = 300 + (k.includes('links') ? 520 : 0) + (k.includes('zs') ? 420 : 0), rechts = 1300 + (k.includes('rechts') ? 800 : 0) + ((o.gesamt || []).includes('rechts') ? 420 : 0), unten = (k.includes('unten') ? 1450 : 1150) + ((o.gesamt || []).includes('unten') ? 450 : 0);
+    const vb = o.viewBox || [-links, -oben, 4400 + links + rechts, 3575 + oben + unten];
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.map(f).join(' ')}" class="ausschnitt" role="img" aria-label="${esc(o.titel || 'Ausschnitt Hausanschlussraum und Gäste-WC')}" font-family="Arial, Helvetica, sans-serif">` + defs(P, pre);
+    s += rect(vb[0], vb[1], vb[0] + vb[2], vb[1] + vb[3], { fill: P.papier });
+    if (o.flaeche) for (const rid of [].concat(o.flaeche)) { const r = RAEUME[rid]; s += rect(r.x[0], r.y[0], r.x[1], r.y[1], { fill: P.flaeche, stroke: P.flaecheRand, 'stroke-width': 25, class: 'flaechenfeld', 'data-raum': rid }); }
+    const W = (x0, y0, x1, y1) => rect(x0, y0, x1, y1, { fill: P.wand });
+    const xr = 4400 + 900;                       // rechts endet der Ausschnitt im Kellerflur
+    s += '<g class="waende">' + W(0, 0, xr, M.D) + W(0, M.D, M.D, 3575 + 700) + W(M.flurWand[0], M.D, M.flurWand[1], M.yNordRaum) + W(M.D, M.suedWand[0], xr, M.suedWand[1]) + '</g>';
+    s += fensterWaag(...M.fensterHar, 0, M.D, P);
+    s += `<g class="neu">` + rect(M.iw[0], M.D, M.iw[1], M.yNordRaum, { fill: `url(#${pre}schraff)`, stroke: P.neu, 'stroke-width': 15 }) + fensterWaag(...M.fensterWc, 0, M.D, P, { farbe: P.neu }) +
+      tuer([M.tuerHarNeu[0], M.suedWand[0] - 5, M.tuerHarNeu[1], M.suedWand[1] + 5], [M.tuerHarNeu[0], M.suedWand[1]], [M.tuerHarNeu[0], M.suedWand[1] + 1010], [M.tuerHarNeu[1], M.suedWand[1]], 1, P, { farbe: P.neu, druck: o.farbe === 'druck', id: o.ids ? pre + '-tuerneu' : null }) + '</g>';
+    s += tuer([M.flurWand[0] - 5, M.tuerWc[0], M.flurWand[1] + 5, M.tuerWc[1]], [M.flurWand[1], M.tuerWc[1]], [M.flurWand[1] + 1010, M.tuerWc[1]], [M.flurWand[1], M.tuerWc[0]], 1, P, { druck: o.farbe === 'druck', id: o.ids ? pre + '-tuerwc' : null });
+    if (o.objekte !== false) {
+      const wcY = M.D + 632, wtY = M.D + 1298;
+      s += `<g class="objekte">` + rect(M.iw[1], wcY - 190, M.iw[1] + 600, wcY + 190, { fill: P.papier, stroke: P.linie, 'stroke-width': 12, rx: 160 }) + text(M.iw[1] + 300, wcY + 55, 'WC', { 'font-size': fs * 0.85, 'text-anchor': 'middle', fill: P.leise }) +
+        rect(M.iw[1], wtY - 250, M.iw[1] + 400, wtY + 250, { fill: P.papier, stroke: P.linie, 'stroke-width': 12, rx: 60 }) + text(M.iw[1] + 200, wtY + 55, 'WT', { 'font-size': fs * 0.85, 'text-anchor': 'middle', fill: P.leise }) + '</g>';
+    }
+    // Raumtexte
+    if (o.raumtext !== false) {
+      s += raumText(RAEUME.harNeu, P, fs * 1.25, { name: ['Hausanschluss-', 'raum'], rid: 'harNeu', dy: 900 }) + raumText(RAEUME.wc, P, fs * 1.25, { name: 'Gäste-WC', rid: 'wc', dy: 900, farbe: o.farbe === 'druck' ? P.text : P.neu });
+      s += text(4400 + 450, 2900, 'Kellerflur', { 'font-size': fs, 'text-anchor': 'middle', fill: P.leise, transform: `rotate(-90 ${f(4400 + 450)} 2900)` });
+      s += text(3300, 3575 + 750, 'Keller 1', { 'font-size': fs, 'text-anchor': 'middle', fill: P.leise });
+    }
+    // Hausanschlüsse von der Straße
+    if (o.anschluesse) {
+      const yS = -oben + 260;
+      s += text(1300, yS, 'von der Straße', { 'font-size': fs * 0.95, 'text-anchor': 'middle', fill: P.leise, 'font-style': 'italic' });
+      const A = ANSCHLUESSE;
+      for (const a of A) {
+        const farbe = P[a.farbe];
+        s += `<g class="anschluss" data-anschluss="${a.id}">`;
+        if (a.id === 'hes') {
+          // Erdung kommt vom Fundamenterder (im Fundament), nicht von der Straße
+          s += poly([[a.x, M.D + 90], [a.x, M.D + 30]], { stroke: farbe, 'stroke-width': 30 });
+          s += rect(a.x - 170, M.D + 20, a.x + 170, M.D + 110, { fill: o.farbe === 'druck' ? '#ffffff' : '#c8e6c9', stroke: farbe, 'stroke-width': 18 });
+          s += text(a.x, M.D + 330, esc(a.kurz), { 'font-size': fs * 0.85, 'text-anchor': 'middle', 'font-weight': 700, fill: farbe });
+        } else {
+          s += `<path class="fluss" d="M${f(a.x)},${f(yS + 140)} L${f(a.x)},${f(M.D + 60)}${a.weiter ? ' ' + a.weiter.map(p => 'L' + f(p[0]) + ',' + f(p[1])).join(' ') : ''}" fill="none" stroke="${farbe}" stroke-width="${a.id === 'w' || a.id === 'g' ? 45 : 32}"${a.id === 'tk' || a.id === 's' ? ' stroke-dasharray="none"' : ''}/>`;
+          s += rect(a.x - 150, M.D + 30, a.x + 150, M.D + 150, { fill: P.papier, stroke: farbe, 'stroke-width': 18 });
+          s += text(a.x, M.D + 360, esc(a.kurz), { 'font-size': fs * 0.85, 'text-anchor': 'middle', 'font-weight': 700, fill: farbe });
+        }
+        s += '</g>';
+      }
+      // Zählerschrank an der Westwand
+      s += rect(M.D, 800, M.D + 280, 1350, { fill: o.farbe === 'druck' ? '#ffffff' : '#cfd8dc', stroke: P.strom, 'stroke-width': 15 }) + text(M.D + 420, 1120, 'ZS', { 'font-size': fs * 0.85, 'text-anchor': 'start', 'font-weight': 700, fill: P.strom });
+      s += line(620, M.D + 150, 620, 650, { stroke: P.strom, 'stroke-width': 18 }) + line(620, 650, M.D + 140, 650, { stroke: P.strom, 'stroke-width': 18 }) + line(M.D + 140, 650, M.D + 140, 800, { stroke: P.strom, 'stroke-width': 18 });
+      // Bodenablauf
+      s += rect(2180, 1880, 2380, 2080, { fill: P.papier, stroke: P.linie, 'stroke-width': 12 }) + line(2180, 1880, 2380, 2080, { stroke: P.linie, 'stroke-width': 10 }) + line(2380, 1880, 2180, 2080, { stroke: P.linie, 'stroke-width': 10 });
+    }
+    // Maßketten (von außen nach innen gestapelt)
+    const L = o.luecken || {};
+    let y = -300;
+    if (k.includes('achsen')) { s += kette('C_achsen', y, o.anschluesse ? -60 : -120, P, { fs, kid: 'C_achsen', luecke: L.achsen }); y -= 420; }
+    const GS = o.gesamt || [];
+    if (k.includes('oben2')) { s += kette('C_oben2', y, -120, P, { fs, kid: 'C_oben2', luecke: L.oben2, lueckeText: L.text, gesamt: GS.includes('oben2') && !k.includes('oben1'), gesamtAbstand: 330 }); y -= 520; }
+    if (k.includes('oben1')) { s += kette('C_oben1', y, -120, P, { fs, kid: 'C_oben1', luecke: L.oben1, lueckeText: L.text, gesamt: GS.includes('oben1') || GS.includes('oben2'), gesamtAbstand: 330 }); y -= 420; }
+    if (k.includes('links')) s += kette('C_links', -480, -120, P, { fs, kid: 'C_links', luecke: L.links });
+    if (k.includes('unten')) s += kette('C_unten', 3575 + 1000, 3575 + 120, P, { fs, kid: 'C_unten', luecke: L.unten, lueckeText: L.text, gesamt: GS.includes('unten'), gesamtAbstand: 420 });
+    if (k.includes('rechts')) s += kette('C_rechts', 4400 + 1500, 4400 + 1150, P, { fs, kid: 'C_rechts', luecke: L.rechts, lueckeText: L.text, gesamt: GS.includes('rechts'), gesamtAbstand: 400 });
+    // Flächenmaße l und b
+    if (o.lb) {
+      const r = RAEUME[o.lb];
+      s += `<g class="lb">` + text((r.x[0] + r.x[1]) / 2, r.y[0] + fs * 1.3, 'l = ' + esc(dinUnicodeM(r.x[1] - r.x[0])), { 'font-size': fs * 1.05, 'text-anchor': 'middle', 'font-weight': 700, fill: P.flaecheRand }) +
+        text(r.x[1] - fs * 0.6, (r.y[0] + r.y[1]) / 2, 'b = ' + esc(dinUnicodeM(r.y[1] - r.y[0])), { 'font-size': fs * 1.05, 'text-anchor': 'middle', 'font-weight': 700, fill: P.flaecheRand, transform: `rotate(-90 ${f(r.x[1] - fs * 0.6)} ${f((r.y[0] + r.y[1]) / 2)})` }) + '</g>';
+    }
+    if (o.anforderungen) {
+      for (const h of ANFORDERUNGEN_ORTE) s += `<g class="haken" data-haken="${h.id}">` + circ(h.x, h.y, 150, { fill: o.farbe === 'druck' ? '#ffffff' : '#2e7d32', stroke: '#1b5e20', 'stroke-width': 15 }) +
+        text(h.x, h.y + 55, h.nr, { 'font-size': 160, 'text-anchor': 'middle', fill: o.farbe === 'druck' ? '#000' : '#fff', 'font-weight': 700 }) + '</g>';
+    }
+    return s + '</svg>';
+  }
+  const dinUnicodeM = mm => dinUnicode(mm) + (mm >= 1000 ? ' m' : ' cm');
+
+  // Hausanschlüsse an der Nordwand (x = Achse ab Außenkante Westwand, wie Teil C Zeile „Achsen der Hauseinführungen“)
+  const ANSCHLUESSE = [
+    { id: 's', kurz: 'S', name: 'Strom', farbe: 'strom', x: 620, ziel: 'Hausanschlusskasten, von dort zum Zählerschrank' },
+    { id: 'tk', kurz: 'TK', name: 'Telekommunikation', farbe: 'strom', x: 960, ziel: 'Anschluss für Telefon und Internet' },
+    { id: 'hes', kurz: 'HES', name: 'Erdung', farbe: 'erde', x: 1650, ziel: 'Haupterdungsschiene (vom Fundamenterder)' },
+    { id: 'w', kurz: 'W', name: 'Trinkwasser', farbe: 'wasser', x: 2050, ziel: 'Hauseinführung, Absperrventil, dann zur Wasserzähleranlage an der Installationswand', weiter: [[2050, 560], [2600, 560]] },
+    { id: 'g', kurz: 'G', name: 'Gas', farbe: 'gas', x: 2350, ziel: 'Hauseinführung, Hauptabsperreinrichtung (HAE), Gasdruckregler, dann zum Gaszähler an der Installationswand', weiter: [[2350, 460], [2600, 460]] },
+  ];
+  // Orte der Haken „Anforderungen erfüllt“ (Station 2, Animation Schritt 6)
+  const ANFORDERUNGEN_ORTE = [
+    { id: 'aussenwand', nr: '1', x: 1300, y: 750 },
+    { id: 'tuer', nr: '2', x: 1505, y: 3150 },
+    { id: 'zugang', nr: '3', x: 1505, y: 4050 },
+    { id: 'licht', nr: '4', x: 2350, y: 3100 },
+  ];
+
+  // ------------------------------------------------------------------ 3) Ansicht D – Installationswand von der Technikseite (Blick nach Osten)
+  // X = Lage ab Innenkante Nordwand (mm), h = Höhe über Fußboden (mm). Zeichnung: x = X, y = 2600 − h.
+  // Bauteile T1 … T16 wie im Grundriss 26-11 (Lagen aus Bauteile-Rueckseite.md / anbauten.py, Wagen Fassung 2).
+  const TEILE = {
+    T1:  { name: 'Absperrventil an der Hauseinführung', kurz: 'Absperrventil', gruppe: 'wasser', mitte: [30, 417] },
+    T2:  { name: 'Wasserzähler', kurz: 'Wasserzähler', gruppe: 'wasser', mitte: [228, 417] },
+    T3:  { name: 'Rückflussverhinderer (mit Absperrventil)', kurz: 'Rückflussverhinderer', gruppe: 'wasser', mitte: [460, 432] },
+    T4:  { name: 'Rückspülfilter', kurz: 'Rückspülfilter', gruppe: 'wasser', mitte: [588, 240] },
+    T5:  { name: 'Druckminderer', kurz: 'Druckminderer', gruppe: 'wasser', mitte: [747, 884] },
+    T6:  { name: 'Verteilleitung mit drei Freistromventilen', kurz: 'Verteilleitung', gruppe: 'wasser', mitte: [312, 1049] },
+    T7:  { name: 'Gartenwasser zum Außenventil', kurz: 'Gartenwasser', gruppe: 'wasser', mitte: [100, 1186] },
+    T8:  { name: 'Ausgussbecken', kurz: 'Ausgussbecken', gruppe: 'abwasser', mitte: [408, 820] },
+    T9:  { name: 'Entleerungshahn', kurz: 'Entleerungshahn', gruppe: 'wasser', mitte: [869, 133] },
+    T10: { name: 'Gasleitung mit Zähleranschlussplatte', kurz: 'Gasleitung', gruppe: 'gas', mitte: [250, 1505] },
+    T11: { name: 'Gaszähler', kurz: 'Gaszähler', gruppe: 'gas', mitte: [292, 1252] },
+    T12: { name: 'Kessel (Gas-Brennwertgerät, wandhängend)', kurz: 'Kessel', gruppe: 'heizung', mitte: [1410, 1469] },
+    T13: { name: 'Heizungsverteiler', kurz: 'Heizungsverteiler', gruppe: 'heizung', mitte: [1775, 383] },
+    T14: { name: 'Umwälzpumpe', kurz: 'Umwälzpumpe', gruppe: 'heizung', mitte: [1940, 997] },
+    T15: { name: 'Fallleitung (in der Wand)', kurz: 'Fallleitung', gruppe: 'abwasser', mitte: [107, 700] },
+    T16: { name: 'Reserve, z. B. Speicher', kurz: 'Reserve', gruppe: 'sonst', mitte: [2580, 1150] },
+  };
+  // Weg des Wassers in Fließrichtung (für Animation): Punkte (X, h)
+  const WASSERWEG = [[-420, 417], [869, 417], [869, 845], [68, 845]];
+  const WASSER_FOLGE = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'];      // F1 S. 73, F2 S. 378 (Strangschema)
+
+  function ansichtD(o = {}) {
+    const P = FARBEN[o.farbe || 'bild'], fs = o.fs || 80, Y = h => 2600 - h;
+    const vb = o.viewBox || (o.ketten ? [-700, -260, 4750, 3800] : [-700, -260, 4250, 3260]);          // [X, Y(oben), Breite, Höhe] in Zeichnungskoordinaten
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.map(f).join(' ')}" class="ansicht-d" role="img" aria-label="${esc(o.titel || 'Ansicht D: Installationswand von der Technikseite')}" font-family="Arial, Helvetica, sans-serif">`;
+    s += rect(vb[0], vb[1], vb[0] + vb[2], vb[1] + vb[3], { fill: P.papier });
+    // Decke, Boden, Nordwand (links), Wand zu Keller 1 (rechts)
+    s += rect(-365, -200, 3035 + 175, 0, { fill: P.boden, stroke: P.leise, 'stroke-width': 8 }) + rect(-365, 2600, 3035 + 175, 2800, { fill: P.boden, stroke: P.leise, 'stroke-width': 8 });
+    s += rect(-365, 0, 0, 2600, { fill: P.wand }) + rect(3035, 0, 3035 + 175, 2600, { fill: P.wand });
+    s += text(-182, 520, 'Nordwand', { 'font-size': fs * 1.05, fill: '#ffffff', 'text-anchor': 'middle', transform: 'rotate(-90 -182 520)' });
+    s += text(3122, 1300, 'Wand zu Keller 1', { 'font-size': fs * 0.95, fill: '#ffffff', 'text-anchor': 'middle', transform: 'rotate(-90 3122 1300)' });
+    s += line(0, 2600, 3035, 2600, { stroke: P.linie, 'stroke-width': 10 }) + line(0, 0, 3035, 0, { stroke: P.linie, 'stroke-width': 10 });
+    const namen = id => !(o.ohneNamen || (o.nummern && o.nummern[id]));   // Bauteil mit Nummer (Übung, Papier) oder ohneNamen: Namen nicht verraten
+    const g = (id, inhalt) => `<g class="teil" data-t="${id}" data-gruppe="${TEILE[id].gruppe}">${inhalt}</g>`;
+    const wa = P.wasser, ga = P.gas, he = P.heizung, ab = P.abwasser;
+    // T15 Fallleitung (verdeckt in der Wand, gestrichelt)
+    s += g('T15', rect(52, Y(1468), 162, Y(0), { fill: 'none', stroke: ab, 'stroke-width': 9, 'stroke-dasharray': '40 25' }));
+    // T16 Reserve
+    s += g('T16', rect(2225, Y(2000), 2935, Y(300), { fill: 'none', stroke: P.leise, 'stroke-width': 9, 'stroke-dasharray': '45 30' }) + text(2580, Y(1150) + 30, 'Reserve', { 'font-size': fs * 0.9, 'text-anchor': 'middle', fill: P.leise }));
+    // Abgas angedeutet
+    s += line(1410, Y(1809), 1410, 0, { stroke: P.leise, 'stroke-width': 14, 'stroke-dasharray': '30 22' }) + text(1460, Y(2350), 'Abgas (nur angedeutet)', { 'font-size': fs * 0.85, fill: P.leise });
+    // Wasser: Zuleitung, Steigleitung, Verteilleitung, Gartenwasser
+    const wasserLeitung = `<g class="wasserleitung">` + poly([[-420, Y(417)], [869, Y(417)], [869, Y(845)], [68, Y(845)]], { stroke: wa, 'stroke-width': 24, 'stroke-linejoin': 'round' }) +
+      poly([[869, Y(417)], [869, Y(133)]], { stroke: wa, 'stroke-width': 18 }) + '</g>';
+    s += wasserLeitung;
+    s += g('T7', poly([[190, Y(1049)], [190, Y(1186)], [-420, Y(1186)]], { stroke: wa, 'stroke-width': 16, 'stroke-dasharray': '45 25' }) + `<polygon points="${f(-420)},${f(Y(1186))} ${f(-360)},${f(Y(1186) - 30)} ${f(-360)},${f(Y(1186) + 30)}" fill="${wa}"/>`);
+    // T8 Ausgussbecken (vor der Leitung, wird überdeckt gezeichnet)
+    s += g('T8', rect(146, Y(917), 671, Y(723), { fill: o.farbe === 'druck' ? '#ffffff' : '#eeeeee', stroke: P.linie, 'stroke-width': 12 }) + (namen('T8') ? text(408, Y(820) + 30, 'Ausguss', { 'font-size': fs * 0.8, 'text-anchor': 'middle', fill: P.leise }) : ''));
+    s += g('T1', rect(5, Y(417) - 24, 44, Y(417) + 24, { fill: o.farbe === 'druck' ? '#ffffff' : '#d6e6fb', stroke: wa, 'stroke-width': 9 }) + `<polygon points="${f(5)},${f(Y(417) - 30)} ${f(44)},${f(Y(417) + 30)} ${f(44)},${f(Y(417) - 30)} ${f(5)},${f(Y(417) + 30)}" fill="none" stroke="${wa}" stroke-width="8"/>`);
+    s += g('T2', circ(228, Y(417), 52, { fill: o.farbe === 'druck' ? '#ffffff' : '#90caf9', stroke: wa, 'stroke-width': 12 }) + text(228, Y(417) + 18, 'm³', { 'font-size': 48, 'text-anchor': 'middle', fill: P.linie }));
+    s += g('T3', rect(389, Y(473), 530, Y(392), { fill: o.farbe === 'druck' ? '#ffffff' : '#d6e6fb', stroke: wa, 'stroke-width': 9 }) + `<polygon points="${f(430)},${f(Y(450))} ${f(430)},${f(Y(414))} ${f(480)},${f(Y(432))}" fill="${wa}"/>` + line(484, Y(452), 484, Y(412), { stroke: wa, 'stroke-width': 9 }));
+    s += g('T4', rect(559, Y(360), 617, Y(117), { fill: o.farbe === 'druck' ? '#ffffff' : '#e3f2fd', stroke: wa, 'stroke-width': 9 }) + line(588, Y(417), 588, Y(360), { stroke: wa, 'stroke-width': 12 }) +
+      line(568, Y(330), 608, Y(300), { stroke: wa, 'stroke-width': 5 }) + line(568, Y(280), 608, Y(250), { stroke: wa, 'stroke-width': 5 }) + line(568, Y(230), 608, Y(200), { stroke: wa, 'stroke-width': 5 }));
+    s += g('T9', circ(869, Y(133), 26, { fill: o.farbe === 'druck' ? '#000000' : '#e53935', stroke: 'none' }));
+    s += g('T5', rect(705, Y(950), 788, Y(818), { fill: o.farbe === 'druck' ? '#ffffff' : '#d6e6fb', stroke: wa, 'stroke-width': 9 }) + line(746, Y(950), 746, Y(1010), { stroke: wa, 'stroke-width': 9 }) + line(716, Y(1010), 776, Y(1010), { stroke: wa, 'stroke-width': 12 }));
+    s += g('T6', [190, 310, 434].map(x => poly([[x, Y(845)], [x, Y(1007)]], { stroke: wa, 'stroke-width': 15 }) + circ(x, Y(1049), 42, { fill: o.farbe === 'druck' ? '#ffffff' : '#a5d6a7', stroke: o.farbe === 'druck' ? '#000' : '#2e7d32', 'stroke-width': 9 })).join(''));
+    // Gas
+    s += g('T10', rect(20, Y(1572), 479, Y(1437), { fill: o.farbe === 'druck' ? '#ffffff' : '#f5f5f5', stroke: P.leise, 'stroke-width': 8 }) + poly([[-420, Y(1498)], [471, Y(1498)]], { stroke: ga, 'stroke-width': 24 }) +
+      poly([[434, Y(1498)], [434, Y(1375)]], { stroke: ga, 'stroke-width': 20 }) + rect(110, Y(1498) - 14, 152, Y(1498) + 14, { fill: '#ffe082', stroke: ga, 'stroke-width': 9 }) + rect(413, Y(1440) - 14, 455, Y(1440) + 14, { fill: '#ffe082', stroke: ga, 'stroke-width': 9 }));
+    s += g('T11', rect(146, Y(1394), 437, Y(1110), { fill: o.farbe === 'druck' ? '#ffffff' : '#fff8e1', stroke: ga, 'stroke-width': 12, 'stroke-dasharray': o.farbe === 'druck' ? 'none' : '45 22' }) + (namen('T11') ? text(292, Y(1252) + 28, 'Gaszähler', { 'font-size': fs * 0.72, 'text-anchor': 'middle', fill: P.linie }) : ''));
+    // Heizung
+    s += g('T12', rect(1215, Y(1809), 1604, Y(1129), { fill: o.farbe === 'druck' ? '#ffffff' : 'rgba(255,235,238,0.85)', stroke: he, 'stroke-width': 12, 'stroke-dasharray': o.farbe === 'druck' ? 'none' : '55 25' }) + (namen('T12') ? text(1410, Y(1469) + 30, 'Kessel', { 'font-size': fs, 'text-anchor': 'middle', fill: P.linie }) : ''));
+    s += `<g class="heizleitung">` + poly([[1604, Y(1453)], [1931, Y(1453)], [1931, Y(577)]], { stroke: he, 'stroke-width': 22 }) + poly([[1604, Y(1387)], [2033, Y(1387)], [2033, Y(621)], [2006, Y(565)], [2006, Y(267)]], { stroke: he, 'stroke-width': 22 }) + '</g>';
+    s += g('T13', rect(1721, Y(553), 1828, Y(213), { fill: o.farbe === 'druck' ? '#888888' : '#424242', stroke: '#212121', 'stroke-width': 8 }));
+    s += g('T14', rect(1886, Y(1058), 1993, Y(936), { fill: o.farbe === 'druck' ? '#ffffff' : '#e53935', stroke: he, 'stroke-width': 10 }) + circ(1940, Y(997), 32, { fill: 'none', stroke: o.farbe === 'druck' ? '#000' : '#fff', 'stroke-width': 8 }));
+    // Kugelhähne Heizung
+    s += circ(1983, Y(1270), 42, { fill: P.papier, stroke: P.linie, 'stroke-width': 8 }) + circ(2081, Y(1270), 42, { fill: P.papier, stroke: P.linie, 'stroke-width': 8 });
+    // Höhenkette rechts und Lagen unten
+    if (o.ketten) {
+      MM_TEXT = true;
+      try {
+        s += kette({ achse: 'y', pos: [0, 417, 845, 1498, 2600].map(h => Y(h)).reverse() }, 3035 + 520, 3035 + 220, P, { fs: fs * 1.05, kid: 'D_hoehen' });
+        s += kette({ achse: 'x', pos: KETTEN.D_lagen.pos }, 2600 + 480, 2800, P, { fs: fs * 1.05, kid: 'D_lagen' });
+      } finally { MM_TEXT = false; }
+      s += text(1500, 2600 + 760, 'Maße in mm · X ab Innenkante Nordwand, Höhen über Fußboden', { 'font-size': fs * 0.85, 'text-anchor': 'middle', fill: P.leise });
+    }
+    // Nummern (Kennzeichen an den Bauteilen) – nur für Papier und Lösungen; in der Übung setzt die Seite eigene Knöpfe darüber
+    if (o.nummern) {
+      for (const [id, t] of Object.entries(o.nummern)) {
+        const [lx, lh] = t.label, [mx, mh] = TEILE[id].mitte;
+        s += `<g class="nummer" data-nr="${id}">` + line(mx, Y(mh), lx, Y(lh), { stroke: P.linie, 'stroke-width': 7 }) + circ(lx, Y(lh), fs * 0.95, { fill: P.papier, stroke: P.linie, 'stroke-width': 10 }) +
+          text(lx, Y(lh) + fs * 0.36, esc(t.text), { 'font-size': fs * (String(t.text).length > 2 ? 0.75 : 1), 'text-anchor': 'middle', 'font-weight': 700, fill: P.linie }) + '</g>';
+      }
+    }
+    if (o.fluss) s += `<path class="fluss" d="M${WASSERWEG.map(p => f(p[0]) + ',' + f(Y(p[1]))).join(' L')}" fill="none" stroke="${o.farbe === 'druck' ? '#000' : '#4fc3f7'}" stroke-width="14" stroke-dasharray="30 70"/>`;
+    return s + '</svg>';
+  }
+  // Lagen der Kennzeichen für Übung und Papier (X, h) – so verteilt, dass am Handy (Ausschnitt) mindestens 44 px Abstand bleiben
+  const LABEL_WASSER = { T1: [-240, 230], T2: [150, 110], T3: [470, 110], T4: [780, 110], T9: [1030, 300], T8: [430, 615], T5: [960, 1120], T6: [660, 1230], T7: [-240, 1350] };
+  const LABEL_GAS = { T10: [220, 1880], T11: [-210, 1170], T15: [-210, 640], T12: [1120, 2000], T14: [2240, 1180], T13: [2190, 360], T16: [2600, 2200] };
+  const VIEW_WASSER = [-480, 2600 - 1420, 1640, 1560];        // X −480 … 1160, h −140 … 1420
+  const VIEW_GAS = [-480, 2600 - 2200, 3100, 2400];           // X −480 … 2620, h −200 … 2200
+
+  // ------------------------------------------------------------------ Schnitt: Wo liegt die Schnittebene eines Grundrisses? (Animation Station 1, Schritt 1)
+  function schnittSkizze(o = {}) {
+    const P = FARBEN[o.farbe || 'bild'], fs = o.fs || 150;
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-900 -500 6400 3700" class="schnitt" role="img" aria-label="Schnitt durch den Keller mit der Schnittebene in 1,25 m Höhe" font-family="Arial, Helvetica, sans-serif">`;
+    s += rect(-900, -500, 5500, 3200, { fill: P.papier });
+    s += rect(-365, 2600, 4800, 2900, { fill: P.boden, stroke: P.leise, 'stroke-width': 10 }) + rect(-365, -250, 4800, 0, { fill: P.boden, stroke: P.leise, 'stroke-width': 10 });
+    s += rect(-365, 0, 0, 2600, { fill: P.wand }) + rect(4625, 0, 4800, 2600, { fill: P.wand });
+    s += rect(1650, 300, 2650, 900, { fill: P.fenster, stroke: P.linie, 'stroke-width': 10 }) + text(2150, 250, 'Kellerfenster', { 'font-size': fs * 0.8, 'text-anchor': 'middle', fill: P.leise });
+    // Schnittebene 1,25 m über dem Fußboden
+    const yS = 2600 - 1250;
+    s += `<g class="ebene">` + `<polygon points="-650,${yS - 120} 5100,${yS - 120} 5300,${yS + 120} -450,${yS + 120}" fill="${o.farbe === 'druck' ? 'rgba(0,0,0,0.08)' : 'rgba(255,193,7,0.35)'}" stroke="${o.farbe === 'druck' ? '#000' : '#b26a00'}" stroke-width="14"/>` +
+      text(2400, yS - 200, 'Schnittebene', { 'font-size': fs, 'text-anchor': 'middle', 'font-weight': 700, fill: o.farbe === 'druck' ? '#000' : '#8a5300' }) + '</g>';
+    s += kette({ achse: 'y', pos: [yS, 2600] }, 5250, 4850, P, { fs, kid: 'schnitthoehe' });
+    s += text(5250 + 60, (yS + 2600) / 2 + fs * 2.1, '', { 'font-size': fs });
+    // Blick von oben
+    s += `<g class="blick">` + line(1000, -480, 1000, yS - 260, { stroke: P.linie, 'stroke-width': 28 }) + `<polygon points="1000,${yS - 160} 920,${yS - 330} 1080,${yS - 330}" fill="${P.linie}"/>` +
+      line(3300, -480, 3300, yS - 260, { stroke: P.linie, 'stroke-width': 28 }) + `<polygon points="3300,${yS - 160} 3220,${yS - 330} 3380,${yS - 330}" fill="${P.linie}"/>` +
+      text(2150, -330, 'Blick von oben', { 'font-size': fs, 'text-anchor': 'middle', 'font-weight': 700, fill: P.linie }) + '</g>';
+    s += text(2150, 3100, 'Fußboden', { 'font-size': fs * 0.85, 'text-anchor': 'middle', fill: P.leise });
+    return s + '</svg>';
+  }
+
+  const API = { M, RAEUME, KETTEN, TEILE, WASSERWEG, WASSER_FOLGE, ANSCHLUESSE, ANFORDERUNGEN_ORTE, LABEL_WASSER, LABEL_GAS, VIEW_WASSER, VIEW_GAS,
+    teile, din, dinHtml, dinUnicode, dinText, cmText, flaecheM2, flaecheMm2, m2Text, plan, ausschnitt, ansichtD, schnittSkizze, kette, FARBEN };
+  if (typeof module !== 'undefined' && module.exports) module.exports = API; else wurzel.GRUNDRISS = API;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+// Haus Neumann A2 – gemeinsamer Kern aller interaktiven Seiten (Animationen, Fragen, Übungen, Bonus).
+// MODUS wird beim Bauen gesetzt: 'material' (Datei in Moodle, ohne Punkte) · 'lernpaket' (SCORM 1.2, Punkte in Moodle) · 'oeffentlich' (Stationsseite, ohne Punkte).
+// Keine Browser-Speicher (geteilte iPads): Im Lernpaket gilt nur der Stand aus Moodle (cmi.suspend_data), sonst nichts.
+
+// ---------------------------------------------------------------- Moodle-Lernpaket (SCORM 1.2) – Muster: Lernpaket 109656 (Haus Neumann) / Haus Röhringer lp.js
+// Punkte 0–100, gemeldet wird nur eine Verbesserung (cmi.core.score.raw); sie sinken nie. Bei 100: lesson_status „completed“, sonst „incomplete“.
+// 🔴 Kein masteryscore im Manifest. Verlassen über pagehide/beforeunload (Moodle verbietet „unload“).
+const LP = (() => {
+  const finde = w => { for (let i = 0; w && i < 12; i++) { try { if (w.API && typeof w.API.LMSInitialize === 'function') return w.API; } catch (_) { return null; }
+    let p = null; try { p = w.parent; } catch (_) {} if (!p || p === w) break; w = p; } return null; };
+  let api = null;
+  if (window.MODUS === 'lernpaket') { try { api = finde(window) || (window.opener ? finde(window.opener) : null); } catch (_) {} }
+  const imLMS = !!api;
+  if (api) { try { if (String(api.LMSInitialize('')) !== 'true') api = null; } catch (_) { api = null; } }
+  const start = Date.now(), grenze = v => Math.max(0, Math.min(100, Math.round(+v || 0)));
+  let daten = null, best = 0, zeitAus = null, beendet = false, review = false, holeStand = () => ({}), stufen = [];
+  const lese = k => { try { return String(api.LMSGetValue(k) || ''); } catch (_) { return ''; } };
+  const schreibe = (k, v) => { try { return String(api.LMSSetValue(k, String(v))) === 'true'; } catch (_) { return false; } };
+  if (api) {
+    try { const s = JSON.parse(lese('cmi.suspend_data') || '{}'); if (s && typeof s === 'object') { if (s.d && typeof s.d === 'object') daten = s.d; best = grenze(s.p); } } catch (_) {}
+    best = Math.max(best, grenze(lese('cmi.core.score.raw'))); review = lese('cmi.core.lesson_mode') === 'review';
+    const st = lese('cmi.core.lesson_status');
+    if (!review) { schreibe('cmi.core.score.min', 0); schreibe('cmi.core.score.max', 100); if (st !== 'completed' && st !== 'passed') schreibe('cmi.core.lesson_status', 'incomplete'); }
+  }
+  function packe() { const roh = d => JSON.stringify({ v: 1, p: best, d }); let d; try { d = JSON.parse(JSON.stringify(holeStand() || {})); } catch (_) { d = {}; }
+    let s = roh(d); for (const fn of stufen) { if (s.length <= 4096) break; try { d = fn(d) || d; } catch (_) {} s = roh(d); } return s.length <= 4096 ? s : roh({}); }
+  function sende() { if (!api || beendet || review) return; if (zeitAus) { clearTimeout(zeitAus); zeitAus = null; } schreibe('cmi.suspend_data', packe()); try { api.LMSCommit(''); } catch (_) {} }
+  const merke = () => { if (!api || beendet || review) return; if (!zeitAus) zeitAus = setTimeout(() => { zeitAus = null; sende(); }, 500); };
+  function punkte(p) { p = grenze(p); if (review || p <= best) return false; best = p;
+    if (api && !beendet) { schreibe('cmi.core.score.raw', best); if (best >= 100) schreibe('cmi.core.lesson_status', 'completed'); sende(); } return true; }
+  function dauer() { const s = (Date.now() - start) / 1000, h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60); return String(h).padStart(4, '0') + ':' + String(m).padStart(2, '0') + ':' + (s % 60).toFixed(2).padStart(5, '0'); }
+  function ende() { if (!api || beendet) return; if (!review) { sende(); schreibe('cmi.core.exit', 'suspend'); schreibe('cmi.core.session_time', dauer()); try { api.LMSCommit(''); } catch (_) {} }
+    try { api.LMSFinish(''); } catch (_) {} beendet = true; }
+  if (api) { window.addEventListener('pagehide', ende); window.addEventListener('beforeunload', ende);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') sende(); }); }
+  return { an: !!api, imLMS, stand: () => daten, verbinde: (fn, st) => { holeStand = fn; stufen = st || []; }, merke, sende, punkte, ende, packe, best: () => best, review: () => review };
+})();
+
+// ---------------------------------------------------------------- Kopfzeile, Rücksprung, Punkte
+const SEITE = (() => {
+  const moodleCfg = () => { try { return window.top && window.top.M && window.top.M.cfg ? window.top.M.cfg : null; } catch (_) { return null; } };
+  const imMoodle = () => window.MODUS !== 'oeffentlich' && (LP.imLMS || !!moodleCfg());
+  function kursAdresse() { const c = moodleCfg(), n = c && +c.courseId; return n > 1 ? '/course/view.php?id=' + n : null; }
+  function zumKurs() { const z = kursAdresse(); try { LP.ende(); } catch (_) {} if (z) { try { (window.top || window).location.href = z; } catch (_) { location.href = z; } } else history.back(); }
+  function start() { const b = document.getElementById('zumKurs'); if (b) { b.hidden = !imMoodle() || !kursAdresse(); b.onclick = zumKurs; }
+    const p = document.getElementById('punkte'); if (p && window.MODUS !== 'lernpaket') p.hidden = true; }
+  function zeigePunkte(p, max) { const e = document.getElementById('punkte'); if (!e || window.MODUS !== 'lernpaket') return;
+    const wo = LP.an ? (LP.review() ? 'Ansicht – es wird nichts geändert' : 'wird in Moodle gespeichert') : 'nicht in Moodle – es wird nichts gespeichert';
+    e.innerHTML = 'Punkte: <b>' + p + '</b> von ' + (max || 100) + '<small>' + wo + '</small>'; }
+  return { start, zeigePunkte, kursAdresse, imMoodle };
+})();
+
+// ---------------------------------------------------------------- Helfer
+const $ = (s, w) => (w || document).querySelector(s);
+const $$ = (s, w) => [...(w || document).querySelectorAll(s)];
+const h = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+function el(tag, at, html) { const e = document.createElement(tag); if (at) for (const [k, v] of Object.entries(at)) { if (v === null || v === undefined || v === false) continue; if (k === 'class') e.className = v; else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v === true ? '' : v); } if (html !== undefined) e.innerHTML = html; return e; }
+// Zahl aus einer Eingabe: Komma oder Punkt, Einheit und Leerzeichen erlaubt („137,5 cm“, „4.17 m²“). Tausenderpunkte nicht erlaubt.
+function zahlLesen(t) { const s = String(t || '').replace(/m²|m2|cm|mm|m\b/gi, '').replace(/\s+/g, '').replace(',', '.'); if (!/^-?\d+(\.\d+)?$/.test(s)) return NaN; return parseFloat(s); }
+const komma = (v, st) => (st === undefined ? String(v) : v.toFixed(st)).replace('.', ',');
+// feste Mischung (gleiche Saat → gleiche Reihenfolge)
+function mische(liste, saat) { let x = 2166136261; for (const c of String(saat)) { x ^= c.codePointAt(0); x = Math.imul(x, 16777619) >>> 0; }
+  const a = liste.slice(); for (let i = a.length - 1; i > 0; i--) { x = Math.imul(x ^ (x >>> 15), 2246822507) >>> 0; x = Math.imul(x ^ (x >>> 13), 3266489909) >>> 0; const j = x % (i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const bewegungAus = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (_) { return false; } };
+const schmal = () => (document.documentElement.clientWidth || innerWidth) < 600;
+
+// ---------------------------------------------------------------- Punkte der Seite (Summe der Teile; sinken nie)
+const PUNKTE = (() => {
+  const teile = {}; let stand = LP.stand() || {}; if (!stand.g || typeof stand.g !== 'object') stand.g = {};
+  const hoerer = [];
+  function registriere(id, max) { teile[id] = max; }
+  const summe = () => Math.round(Object.keys(teile).reduce((a, id) => a + Math.min(stand.g[id] || 0, teile[id]), 0));
+  function zeige() { SEITE.zeigePunkte(Math.max(summe(), LP.best())); }
+  function setze(id, p) { if (!(id in teile)) throw new Error('Teil unbekannt: ' + id); p = Math.min(Math.round(p * 100) / 100, teile[id]);
+    if ((stand.g[id] || 0) >= p) return false; stand.g[id] = p; LP.punkte(summe()); LP.merke(); zeige(); hoerer.forEach(f => f()); return true; }
+  LP.verbinde(() => stand, [d => { delete d.x; return d; }]);
+  return { registriere, setze, wert: id => stand.g[id] || 0, summe, zeige, stand: () => stand, nachAenderung: f => hoerer.push(f), max: () => Object.values(teile).reduce((a, b) => a + b, 0) };
+})();
+
+// ---------------------------------------------------------------- Fragen (wie ein Fragebogen: jede Frage einmal je Runde, dann Ergebnis; beste Runde zählt)
+// fragen: [{ id, text (HTML), typ: 'einfach'|'mehrfach', antworten: [{ t (HTML), r: true|false }], erklaerung (HTML) }]
+const QUIZ = (() => {
+  function baue(wurzel, { id, fragen, punkte = 100, titel }) {
+    PUNKTE.registriere(id, punkte);
+    const jeFrage = punkte / fragen.length;
+    let runde = 1, ergebnis = {};
+    wurzel.innerHTML = '';
+    const kopf = el('div', { class: 'reihe' });
+    if (titel) wurzel.appendChild(el('h2', null, titel));
+    const liste = el('div', { class: 'quiz-liste' }); wurzel.appendChild(liste);
+    const ende = el('div', { class: 'quiz-ende' }); wurzel.appendChild(ende);
+    function zeichne() {
+      liste.innerHTML = ''; ende.innerHTML = ''; ergebnis = {};
+      fragen.forEach((fr, i) => {
+        const box = el('div', { class: 'frage', 'data-frage': fr.id });
+        box.appendChild(el('p', null, `<span class="nr">Frage ${i + 1} von ${fragen.length}</span> · ${fr.typ === 'mehrfach' ? 'Mehrere Antworten sind richtig.' : 'Eine Antwort ist richtig.'}`));
+        box.appendChild(el('p', null, '<b>' + fr.text + '</b>'));
+        if (fr.bild) box.appendChild(el('div', { class: 'bild' }, fr.bild));
+        const ant = el('div', { class: 'antworten' });
+        const reihe = mische(fr.antworten.map((a, k) => ({ ...a, k })), fr.id + '/' + runde);
+        const gewaehlt = new Set();
+        reihe.forEach(a => {
+          const b = el('button', { type: 'button', 'data-k': a.k }, a.t);
+          b.addEventListener('click', () => { if (box.dataset.fertig) return;
+            if (fr.typ === 'mehrfach') { gewaehlt.has(a.k) ? gewaehlt.delete(a.k) : gewaehlt.add(a.k); b.classList.toggle('gewaehlt'); }
+            else { gewaehlt.clear(); gewaehlt.add(a.k); $$('button', ant).forEach(x => x.classList.toggle('gewaehlt', x === b)); } });
+          ant.appendChild(b);
+        });
+        box.appendChild(ant);
+        const pr = el('button', { type: 'button', class: 'haupt', 'data-pruefe': fr.id }, 'Prüfen');
+        const rueck = el('div', { class: 'rueck verborgen' });
+        pr.addEventListener('click', () => {
+          if (box.dataset.fertig) return;
+          if (!gewaehlt.size) { rueck.className = 'rueck nein'; rueck.innerHTML = 'Wähle zuerst eine Antwort.'; return; }
+          const richtige = fr.antworten.map((a, k) => a.r ? k : -1).filter(k => k >= 0);
+          let anteil;
+          if (fr.typ === 'mehrfach') { const r = [...gewaehlt].filter(k => fr.antworten[k].r).length, f = gewaehlt.size - r; anteil = Math.max(0, (r - f) / richtige.length); }
+          else anteil = fr.antworten[[...gewaehlt][0]].r ? 1 : 0;
+          ergebnis[fr.id] = anteil; box.dataset.fertig = '1'; pr.disabled = true;
+          $$('button[data-k]', ant).forEach(x => { const k = +x.dataset.k; x.disabled = true;
+            if (fr.antworten[k].r) x.classList.add('ok'); else if (gewaehlt.has(k)) x.classList.add('nein'); });
+          rueck.className = 'rueck ' + (anteil === 1 ? 'ok' : 'nein');
+          rueck.innerHTML = (anteil === 1 ? '<b>Richtig.</b> ' : anteil > 0 ? '<b>Teilweise richtig.</b> ' : '<b>Leider falsch.</b> ') + (fr.erklaerung || '');
+          if (Object.keys(ergebnis).length === fragen.length) fertig();
+        });
+        box.appendChild(pr); box.appendChild(rueck);
+        liste.appendChild(box);
+      });
+    }
+    function fertig() {
+      const p = Math.round(Object.values(ergebnis).reduce((a, b) => a + b, 0) * jeFrage);
+      PUNKTE.setze(id, p);
+      const best = Math.round(PUNKTE.wert(id));
+      ende.innerHTML = '';
+      ende.appendChild(el('div', { class: 'fertig', 'data-ergebnis': p }, `Diese Runde: ${p} von ${punkte} Punkten.` + (window.MODUS === 'lernpaket' ? ` Dein bestes Ergebnis: ${best} von ${punkte}.` : '')));
+      const nochmal = el('button', { type: 'button', 'data-nochmal': '1' }, 'Noch einmal versuchen');
+      nochmal.addEventListener('click', () => { runde++; zeichne(); wurzel.scrollIntoView({ block: 'start' }); });
+      ende.appendChild(nochmal);
+    }
+    zeichne();
+    return { runde: () => runde };
+  }
+  return { baue };
+})();
+
+// ---------------------------------------------------------------- Zahl-Aufgaben (ein oder mehrere Felder; richtige Felder werden grün und bleiben stehen)
+// a: { id, punkte, titel, text (HTML), bild (HTML/SVG), felder: [{ id, vor (HTML), einheit, soll, tol }], hilfe (HTML), loesung (HTML) }
+const AUFGABE = (() => {
+  function baue(wurzel, a) {
+    PUNKTE.registriere(a.id, a.punkte);
+    const box = el('div', { class: 'frage', 'data-aufgabe': a.id });
+    box.appendChild(el('h3', null, h(a.titel) + ` <span class="leise">(${a.punkte} Punkte)</span>`));
+    if (a.text) box.appendChild(el('div', null, a.text));
+    if (a.bild) box.appendChild(el('div', { class: 'bild' }, a.bild));
+    if (a.zusatz) box.appendChild(el('div', null, a.zusatz));
+    const jeFeld = a.punkte / a.felder.length;
+    const stand = PUNKTE.stand(); stand.f = stand.f || {};
+    const inputs = a.felder.map(fd => {
+      const zeile = el('div', { class: 'eingabe' });
+      const inId = 'in-' + a.id + '-' + fd.id;
+      zeile.appendChild(el('label', { for: inId }, fd.vor));
+      const inp = el('input', { id: inId, class: 'zahl', type: 'text', inputmode: 'decimal', autocomplete: 'off', 'data-feld': a.id + '/' + fd.id, 'aria-label': fd.aria || fd.einheit });
+      zeile.appendChild(inp);
+      zeile.appendChild(el('span', { class: 'einheit' }, fd.einheit || ''));
+      box.appendChild(zeile);
+      return { fd, inp };
+    });
+    const knopf = el('button', { type: 'button', class: 'haupt', 'data-pruefe': a.id }, 'Prüfen');
+    const rueck = el('div', { class: 'rueck verborgen' });
+    box.appendChild(knopf); box.appendChild(rueck);
+    wurzel.appendChild(box);
+    const key = fd => a.id + '/' + fd.id;
+    function sperre(x) { x.inp.value = x.fd.anzeige || komma(x.fd.soll); x.inp.classList.remove('nein'); x.inp.classList.add('ok'); x.inp.disabled = true; }
+    // Stand aus Moodle wiederherstellen
+    inputs.forEach(x => { if (stand.f[key(x.fd)]) sperre(x); });
+    const alleRichtig = () => inputs.every(x => stand.f[key(x.fd)]);
+    if (alleRichtig()) { knopf.disabled = true; rueck.className = 'rueck ok'; rueck.innerHTML = '<b>Gelöst.</b> ' + (a.loesung || ''); }
+    knopf.addEventListener('click', () => {
+      let leer = 0, falsch = 0;
+      inputs.forEach(x => { if (stand.f[key(x.fd)]) return; const v = zahlLesen(x.inp.value);
+        if (x.inp.value.trim() === '') { leer++; return; }
+        if (!isNaN(v) && Math.abs(v - x.fd.soll) <= (x.fd.tol || 1e-9) + 1e-9) { stand.f[key(x.fd)] = 1; sperre(x); }
+        else { falsch++; x.inp.classList.add('nein'); } });
+      const n = inputs.filter(x => stand.f[key(x.fd)]).length;
+      PUNKTE.setze(a.id, n * jeFeld);
+      if (alleRichtig()) { knopf.disabled = true; rueck.className = 'rueck ok'; rueck.innerHTML = '<b>Richtig.</b> ' + (a.loesung || ''); }
+      else { rueck.className = 'rueck nein'; rueck.innerHTML = (falsch ? '<b>Noch nicht richtig.</b> ' : '<b>Trage einen Wert ein.</b> ') + (a.hilfe || ''); }
+      LP.merke();
+    });
+    return box;
+  }
+  return { baue };
+})();
+
+// ---------------------------------------------------------------- Ordnen: Karten in die richtige Reihenfolge ziehen – oder antippen und Platz antippen
+// o: { id, punkte, titel, text, karten: [{ id, t }], richtig: [id, …], platzname: i => 'Platz 1', start: 'Straße', ziel: 'Haus' }
+const ORDNEN = (() => {
+  function baue(wurzel, o) {
+    PUNKTE.registriere(o.id, o.punkte);
+    const n = o.richtig.length, je = o.punkte / n;
+    const stand = PUNKTE.stand(); stand.o = stand.o || {}; const fest = stand.o[o.id] = stand.o[o.id] || {};   // Platz → Karte (nur richtig gelegte)
+    const box = el('div', { class: 'frage', 'data-ordnen': o.id });
+    box.appendChild(el('h3', null, h(o.titel) + ` <span class="leise">(${o.punkte} Punkte)</span>`));
+    if (o.text) box.appendChild(el('div', null, o.text));
+    box.appendChild(el('p', { class: 'leise' }, 'Ziehe jede Karte auf ihren Platz. Oder: Karte antippen, dann den Platz antippen.'));
+    const ablage = el('div', { class: 'ablage', 'aria-label': 'Plätze' });
+    const plaetze = [];
+    if (o.start) ablage.appendChild(el('div', { class: 'pfeil' }, h(o.start) + ' →'));
+    for (let i = 0; i < n; i++) { const p = el('div', { class: 'platz', 'data-platz': i, role: 'button', tabindex: '0', 'aria-label': (o.platzname ? o.platzname(i) : 'Platz ' + (i + 1)) });
+      p.appendChild(el('span', { class: 'platznr' }, o.platzname ? o.platzname(i) : (i + 1) + '.')); ablage.appendChild(p); plaetze.push(p); }
+    if (o.ziel) ablage.appendChild(el('div', { class: 'pfeil' }, '→ ' + h(o.ziel)));
+    box.appendChild(ablage);
+    box.appendChild(el('p', { class: 'leise', style: 'margin-top:10px' }, 'Karten:'));
+    const stapel = el('div', { class: 'stapel', 'data-stapel': o.id, role: 'button', tabindex: '0', 'aria-label': 'Kartenstapel' }); box.appendChild(stapel);
+    const karten = {};
+    mische(o.karten, o.id).forEach(k => { const c = el('div', { class: 'karteZ', 'data-karte': k.id, role: 'button', tabindex: '0' }, k.t); karten[k.id] = c; stapel.appendChild(c); });
+    const knopf = el('button', { type: 'button', class: 'haupt', 'data-pruefe': o.id, style: 'margin-top:10px' }, 'Prüfen');
+    const rueck = el('div', { class: 'rueck verborgen' });
+    box.appendChild(knopf); box.appendChild(rueck); wurzel.appendChild(box);
+    let gewaehlt = null;
+    const inPlatz = i => plaetze[i].querySelector('.karteZ');
+    function lege(karte, ziel) {                 // ziel: Platzindex oder 'stapel'
+      if (karte.dataset.fest) return;
+      if (ziel === 'stapel') { stapel.appendChild(karte); }
+      else { const p = plaetze[ziel]; if (p.classList.contains('ok')) return; const alt = inPlatz(ziel); if (alt && alt !== karte) stapel.appendChild(alt); p.appendChild(karte); p.classList.remove('nein'); }
+      waehle(null);
+    }
+    function waehle(k) { if (gewaehlt) gewaehlt.classList.remove('gewaehlt'); gewaehlt = k; if (k) k.classList.add('gewaehlt'); }
+    // Stand wiederherstellen
+    for (const [i, kid] of Object.entries(fest)) { const c = karten[kid]; if (c) { plaetze[i].appendChild(c); plaetze[i].classList.add('ok'); c.dataset.fest = '1'; } }
+    // Tippen
+    box.addEventListener('click', e => {
+      const k = e.target.closest('.karteZ');
+      if (k && box.contains(k)) { if (ziehen.bewegt) return;
+        // Karte gewählt und auf einen belegten Platz getippt → dorthin legen (die andere Karte geht zurück zu den Karten)
+        const p0 = k.closest('.platz'); if (gewaehlt && gewaehlt !== k && p0) { lege(gewaehlt, +p0.dataset.platz); e.stopPropagation(); return; }
+        if (k.dataset.fest) return; waehle(gewaehlt === k ? null : k); e.stopPropagation(); return; }
+      const p = e.target.closest('.platz'); if (p && gewaehlt) { lege(gewaehlt, +p.dataset.platz); return; }
+      if (e.target.closest('.stapel') && gewaehlt) lege(gewaehlt, 'stapel');
+    });
+    // Ziehen (Maus, Finger, Stift)
+    const ziehen = { k: null, x0: 0, y0: 0, bewegt: false, schatten: null };
+    box.addEventListener('pointerdown', e => { const k = e.target.closest('.karteZ'); if (!k || k.dataset.fest) return; ziehen.k = k; ziehen.x0 = e.clientX; ziehen.y0 = e.clientY; ziehen.bewegt = false; try { k.setPointerCapture(e.pointerId); } catch (_) {} });
+    box.addEventListener('pointermove', e => { if (!ziehen.k) return; const dx = e.clientX - ziehen.x0, dy = e.clientY - ziehen.y0;
+      if (!ziehen.bewegt && Math.hypot(dx, dy) > 8) { ziehen.bewegt = true; const r = ziehen.k.getBoundingClientRect(); const s = ziehen.k.cloneNode(true); s.classList.add('schwebt'); s.style.width = r.width + 'px'; s.style.left = r.left + 'px'; s.style.top = r.top + 'px'; document.body.appendChild(s); ziehen.schatten = s; ziehen.dx = e.clientX - r.left; ziehen.dy = e.clientY - r.top; }
+      if (ziehen.bewegt) { ziehen.schatten.style.left = (e.clientX - ziehen.dx) + 'px'; ziehen.schatten.style.top = (e.clientY - ziehen.dy) + 'px';
+        plaetze.forEach(p => p.classList.remove('ziel')); const unter = document.elementFromPoint(e.clientX, e.clientY); const p = unter && unter.closest('.platz'); if (p && box.contains(p)) p.classList.add('ziel'); } });
+    const loslassen = e => { if (!ziehen.k) return; const k = ziehen.k; plaetze.forEach(p => p.classList.remove('ziel'));
+      if (ziehen.bewegt) { if (ziehen.schatten) ziehen.schatten.remove(); const unter = document.elementFromPoint(e.clientX, e.clientY);
+        const p = unter && unter.closest('.platz'); if (p && box.contains(p)) lege(k, +p.dataset.platz); else if (unter && unter.closest('.stapel') && box.contains(unter)) lege(k, 'stapel');
+        setTimeout(() => { ziehen.bewegt = false; }, 0); }
+      ziehen.k = null; ziehen.schatten = null; };
+    box.addEventListener('pointerup', loslassen); box.addEventListener('pointercancel', e => { if (ziehen.schatten) ziehen.schatten.remove(); ziehen.k = null; ziehen.schatten = null; ziehen.bewegt = false; });
+    knopf.addEventListener('click', () => {
+      let leer = 0;
+      plaetze.forEach((p, i) => { if (p.classList.contains('ok')) return; const k = inPlatz(i); if (!k) { leer++; return; }
+        if (k.dataset.karte === o.richtig[i]) { p.classList.add('ok'); p.classList.remove('nein'); k.dataset.fest = '1'; fest[i] = k.dataset.karte; } else p.classList.add('nein'); });
+      const r = Object.keys(fest).length;
+      PUNKTE.setze(o.id, r * je);
+      if (r === n) { knopf.disabled = true; rueck.className = 'rueck ok'; rueck.innerHTML = '<b>Alles richtig.</b> ' + (o.loesung || ''); }
+      else { rueck.className = 'rueck nein'; rueck.innerHTML = `<b>${r} von ${n} Plätzen richtig.</b> ` + (leer ? 'Es sind noch Plätze frei. ' : 'Rot markierte Karten liegen falsch – lege sie um. ') + (o.hilfe || ''); }
+      LP.merke();
+    });
+    if (Object.keys(fest).length === n) { knopf.disabled = true; rueck.className = 'rueck ok'; rueck.innerHTML = '<b>Gelöst.</b> ' + (o.loesung || ''); }
+    return box;
+  }
+  return { baue };
+})();
+
+// ---------------------------------------------------------------- Benennen: Bauteile in einer Zeichnung antippen und den Namen wählen
+// o: { id, punkte, titel, text, ansichten: [{ id, titel, svg: () => String, teile: { Tn: [labelX, labelH] } }], namen: { Tn: 'Name' }, ablenker: ['…'] }
+const BENENNEN = (() => {
+  function baue(wurzel, o) {
+    PUNKTE.registriere(o.id, o.punkte);
+    const alle = o.ansichten.flatMap(a => Object.keys(a.teile)), je = o.punkte / alle.length;
+    const stand = PUNKTE.stand(); stand.b = stand.b || {}; const fest = stand.b[o.id] = stand.b[o.id] || {};
+    const wahl = {};                              // Tn → gewählter Name (noch nicht geprüft)
+    const nummer = {}; alle.forEach((t, i) => { nummer[t] = i + 1; });
+    const box = el('div', { class: 'frage', 'data-benennen': o.id });
+    box.appendChild(el('h3', null, h(o.titel) + ` <span class="leise">(${o.punkte} Punkte)</span>`));
+    if (o.text) box.appendChild(el('div', null, o.text));
+    const reiter = el('div', { class: 'reihe', role: 'tablist' });
+    const flaechen = {};
+    o.ansichten.forEach((a, i) => { const b = el('button', { type: 'button', 'data-ansicht': a.id, class: i === 0 ? 'gewaehlt' : '' }, a.titel); reiter.appendChild(b);
+      b.addEventListener('click', () => zeigeAnsicht(a.id)); });
+    box.appendChild(reiter);
+    o.ansichten.forEach((a, i) => { const f = el('div', { class: 'bild' + (i ? ' verborgen' : ''), 'data-flaeche': a.id }, a.svg()); flaechen[a.id] = f; box.appendChild(f);
+      for (const t of Object.keys(a.teile)) { const b = el('button', { type: 'button', class: 'knopf-lage', 'data-teil': t, 'aria-label': 'Bauteil ' + nummer[t] }, String(nummer[t])); f.appendChild(b);
+        b.addEventListener('click', () => waehleTeil(t)); } });
+    const auswahl = el('div', { class: 'karte verborgen', 'data-auswahl': o.id });
+    box.appendChild(auswahl);
+    const liste = el('div', { class: 'leise', 'data-liste': o.id, style: 'margin-top:8px' }); box.appendChild(liste);
+    const knopf = el('button', { type: 'button', class: 'haupt', 'data-pruefe': o.id, style: 'margin-top:10px' }, 'Prüfen');
+    const rueck = el('div', { class: 'rueck verborgen' });
+    box.appendChild(knopf); box.appendChild(rueck); wurzel.appendChild(box);
+    const namenListe = mische([...new Set([...Object.values(o.namen), ...(o.ablenker || [])])], o.id + '/namen');
+    let aktiv = null;
+    function zeigeAnsicht(id) { $$('[data-ansicht]', reiter).forEach(b => b.classList.toggle('gewaehlt', b.dataset.ansicht === id));
+      for (const [k, f] of Object.entries(flaechen)) f.classList.toggle('verborgen', k !== id); auswahl.classList.add('verborgen'); lege(); }
+    function waehleTeil(t) { if (fest[t]) { auswahl.className = 'karte'; auswahl.innerHTML = `<b>Nr. ${nummer[t]}:</b> ${h(o.namen[t])} <span class="geloest">✓</span>`; return; }
+      aktiv = t; $$('.knopf-lage', box).forEach(b => b.classList.toggle('gewaehlt', b.dataset.teil === t));
+      auswahl.className = 'karte'; auswahl.innerHTML = `<p><b>Welches Bauteil ist Nr. ${nummer[t]}?</b></p>`;
+      const r = el('div', { class: 'antworten' });
+      namenListe.forEach(n => { const b = el('button', { type: 'button', 'data-name': n, class: wahl[t] === n ? 'gewaehlt' : '' }, h(n)); r.appendChild(b);
+        b.addEventListener('click', () => { wahl[t] = n; auswahl.classList.add('verborgen'); $$('.knopf-lage', box).forEach(x => x.classList.remove('gewaehlt')); schreibeListe(); }); });
+      auswahl.appendChild(r); auswahl.scrollIntoView({ block: 'nearest' }); }
+    function schreibeListe() { liste.innerHTML = alle.map(t => `Nr. ${nummer[t]}: ` + (fest[t] ? `<span class="geloest">${h(o.namen[t])} ✓</span>` : wahl[t] ? h(wahl[t]) : '…')).join(' · '); }
+    function lege() {                              // Knöpfe auf die Lage der Kennzeichen setzen (SVG-Koordinaten → Bildschirm)
+      for (const a of o.ansichten) { const f = flaechen[a.id]; if (f.classList.contains('verborgen')) continue; const svg = $('svg', f); if (!svg) continue;
+        const m = svg.getScreenCTM(), fr = f.getBoundingClientRect(), pt = svg.createSVGPoint();
+        for (const [t, [x, hh]] of Object.entries(a.teile)) { pt.x = x; pt.y = 2600 - hh; const p = pt.matrixTransform(m); const b = $(`.knopf-lage[data-teil="${t}"]`, f);
+          b.style.left = (p.x - fr.left) + 'px'; b.style.top = (p.y - fr.top) + 'px'; b.classList.toggle('ok', !!fest[t]); } } }
+    knopf.addEventListener('click', () => {
+      let offen = 0;
+      for (const t of alle) { if (fest[t]) continue; if (!wahl[t]) { offen++; continue; } const b = $(`.knopf-lage[data-teil="${t}"]`, box);
+        if (wahl[t] === o.namen[t]) { fest[t] = 1; b.classList.add('ok'); b.classList.remove('nein'); } else { b.classList.add('nein'); delete wahl[t]; } }
+      const r = Object.keys(fest).length;
+      PUNKTE.setze(o.id, r * je); schreibeListe();
+      if (r === alle.length) { knopf.disabled = true; rueck.className = 'rueck ok'; rueck.innerHTML = '<b>Alle Bauteile richtig benannt.</b> ' + (o.loesung || ''); }
+      else { rueck.className = 'rueck nein'; rueck.innerHTML = `<b>${r} von ${alle.length} richtig.</b> ` + (offen ? 'Einige Bauteile hast du noch nicht benannt. ' : '') + 'Rot = falsch, tippe sie noch einmal an. ' + (o.hilfe || ''); }
+      LP.merke();
+    });
+    addEventListener('resize', lege); new ResizeObserver(lege).observe(box);
+    requestAnimationFrame(lege); setTimeout(lege, 200);
+    schreibeListe();
+    for (const t of alle) if (fest[t]) $(`.knopf-lage[data-teil="${t}"]`, box).classList.add('ok');   // Wiederaufnahme: gelöste Bauteile auch in der gerade verborgenen Ansicht grün
+    if (Object.keys(fest).length === alle.length) { knopf.disabled = true; rueck.className = 'rueck ok'; rueck.innerHTML = '<b>Gelöst.</b> ' + (o.loesung || ''); }
+    return { lege, nummer };
+  }
+  return { baue };
+})();
+
+// ---------------------------------------------------------------- Zuordnen (Auswahlfeld je Zeile, z. B. Leitung → Tiefe)
+// o: { id, punkte, titel, text, zeilen: [{ id, t, richtig }], wahl: ['…'] }
+const ZUORDNEN = (() => {
+  function baue(wurzel, o) {
+    PUNKTE.registriere(o.id, o.punkte);
+    const je = o.punkte / o.zeilen.length, stand = PUNKTE.stand(); stand.z = stand.z || {}; const fest = stand.z[o.id] = stand.z[o.id] || {};
+    const box = el('div', { class: 'frage', 'data-zuordnen': o.id });
+    box.appendChild(el('h3', null, h(o.titel) + ` <span class="leise">(${o.punkte} Punkte)</span>`));
+    if (o.text) box.appendChild(el('div', null, o.text));
+    const wahl = {};
+    o.zeilen.forEach(z => {
+      const zeile = el('div', { class: 'karte', 'data-zeile': z.id }); zeile.appendChild(el('p', null, '<b>' + z.t + '</b>'));
+      const r = el('div', { class: 'reihe' });
+      mische(o.wahl, o.id + '/' + z.id).forEach(w => { const b = el('button', { type: 'button', 'data-wert': w }, h(w)); r.appendChild(b);
+        b.addEventListener('click', () => { if (fest[z.id]) return; wahl[z.id] = w; $$('button', r).forEach(x => x.classList.toggle('gewaehlt', x === b)); zeile.classList.remove('nein'); }); });
+      zeile.appendChild(r); box.appendChild(zeile);
+      if (fest[z.id]) { $$('button', r).forEach(x => { x.disabled = true; if (x.dataset.wert === z.richtig) x.classList.add('ok'); }); }
+    });
+    const knopf = el('button', { type: 'button', class: 'haupt', 'data-pruefe': o.id }, 'Prüfen');
+    const rueck = el('div', { class: 'rueck verborgen' }); box.appendChild(knopf); box.appendChild(rueck); wurzel.appendChild(box);
+    knopf.addEventListener('click', () => {
+      o.zeilen.forEach(z => { if (fest[z.id] || !wahl[z.id]) return; const zeile = $(`[data-zeile="${z.id}"]`, box);
+        if (wahl[z.id] === z.richtig) { fest[z.id] = 1; $$('button', zeile).forEach(x => { x.disabled = true; x.classList.toggle('ok', x.dataset.wert === z.richtig); }); }
+        else { $$('button.gewaehlt', zeile).forEach(x => x.classList.add('nein')); setTimeout(() => $$('button.nein', zeile).forEach(x => x.classList.remove('nein', 'gewaehlt')), 900); delete wahl[z.id]; } });
+      const r = Object.keys(fest).length; PUNKTE.setze(o.id, r * je);
+      if (r === o.zeilen.length) { knopf.disabled = true; rueck.className = 'rueck ok'; rueck.innerHTML = '<b>Alles richtig.</b> ' + (o.loesung || ''); }
+      else { rueck.className = 'rueck nein'; rueck.innerHTML = `<b>${r} von ${o.zeilen.length} richtig.</b> ` + (o.hilfe || ''); }
+      LP.merke();
+    });
+    if (Object.keys(fest).length === o.zeilen.length) { knopf.disabled = true; rueck.className = 'rueck ok'; rueck.innerHTML = '<b>Gelöst.</b> ' + (o.loesung || ''); }
+    return box;
+  }
+  return { baue };
+})();
+
+// ---------------------------------------------------------------- Schritte einer Animation
+// o: { wurzel, schritte: [{ titel, zeige(ziel, schritt) }] } – Knöpfe „Zurück“, „Weiter“, Nummern; Pfeiltasten
+const SCHRITTE = (() => {
+  function baue(o) {
+    const w = o.wurzel; let i = 0;
+    const leiste = el('div', { class: 'schritte', role: 'tablist', 'aria-label': 'Schritte' });
+    o.schritte.forEach((s, k) => { const b = el('button', { type: 'button', 'data-schritt': k, 'aria-label': 'Schritt ' + (k + 1) + ': ' + s.titel }, String(k + 1)); b.addEventListener('click', () => geh(k)); leiste.appendChild(b); });
+    const titel = el('h2', { 'data-titel': '1' });
+    const inhalt = el('div', { class: 'schritt-inhalt' });
+    const steuer = el('div', { class: 'steuerung' });
+    const zur = el('button', { type: 'button', 'data-zurueck': '1' }, '← Zurück'), wei = el('button', { type: 'button', class: 'haupt', 'data-weiter': '1' }, 'Weiter →');
+    steuer.appendChild(zur); steuer.appendChild(wei);
+    w.appendChild(leiste); w.appendChild(titel); w.appendChild(inhalt); w.appendChild(steuer);
+    zur.addEventListener('click', () => geh(i - 1)); wei.addEventListener('click', () => geh(i + 1));
+    document.addEventListener('keydown', e => { if (e.target.closest('input')) return; if (e.key === 'ArrowRight') geh(i + 1); if (e.key === 'ArrowLeft') geh(i - 1); });
+    let laufend = null;
+    function geh(k) { if (k < 0 || k >= o.schritte.length) return; i = k; if (laufend && laufend.stopp) laufend.stopp();
+      $$('button', leiste).forEach((b, n) => { b.classList.toggle('aktiv', n === i); b.setAttribute('aria-selected', n === i ? 'true' : 'false'); });
+      titel.textContent = 'Schritt ' + (i + 1) + ' von ' + o.schritte.length + ': ' + o.schritte[i].titel;
+      inhalt.innerHTML = ''; laufend = o.schritte[i].zeige(inhalt, i) || null;
+      zur.disabled = i === 0; wei.disabled = i === o.schritte.length - 1;
+      wei.textContent = i === o.schritte.length - 1 ? 'Ende' : 'Weiter →';
+      if (o.nachSchritt) o.nachSchritt(i); }
+    geh(0);
+    return { geh, aktuell: () => i };
+  }
+  return { baue };
+})();
+
+// Lernpaket: Stand regelmäßig sichern, Punkte anzeigen
+document.addEventListener('DOMContentLoaded', () => { SEITE.start(); PUNKTE.zeige(); });
+
+</script>
+<script>
+// Haus Neumann A2 · 2.2 Übung „Hausanschlussraum: antippen, ordnen, prüfen“ (Pflicht, 100 Punkte):
+//   A Bauteile in Ansicht D antippen und benennen (zehn Bauteile, je 5 Punkte; Nummern wie auf Arbeitsblatt 2, Aufgabe 2)
+//   B Wasser-Bauteile in Fließrichtung ziehen (sechs Plätze, je 5 Punkte)
+//   C Anforderungen an den Hausanschlussraum: stimmt oder stimmt nicht (vier Sätze, je 5 Punkte; T-neu S. 119)
+(function () {
+  'use strict';
+  const G = window.GRUNDRISS, app = $('#app'), D = window.DATEN;
+  const fsD = () => schmal() ? 110 : 85;
+  app.appendChild(el('div', { class: 'chef' }, '<b>Chef:</b> „Bevor ihr bei Familie Neumann die Installationswand für das Gäste-WC baut: Zeigt mir, dass ihr jedes Teil im Hausanschlussraum kennt – und wisst, in welcher Reihenfolge das Wasser fließt.“'));
+  app.appendChild(el('h2', null, 'A · Bauteile antippen und benennen'));
+  const wA = el('div'); app.appendChild(wA);
+  const wasser = {}, gas = {};
+  D.teile.forEach(t => { (G.LABEL_WASSER[t] ? wasser : gas)[t] = D.label[t]; });
+  const leer = Object.fromEntries(D.teile.map(t => [t, { label: D.label[t], text: '' }]));
+  const svgMit = (vb, teile) => G.ansichtD({ viewBox: vb, fs: fsD(), ohneNamen: true, nummern: Object.fromEntries(Object.keys(teile).map(t => [t, leer[t]])) });
+  const ben = BENENNEN.baue(wA, { id: 'a', punkte: 50, titel: 'A · Ansicht D: Wie heißen die Bauteile?',
+    text: '<p>Tippe auf eine Nummer und wähle den Namen. Wechsle mit den Knöpfen zwischen „Wasser“ und „Gas und Heizung“. Dann „Prüfen“.</p>',
+    ansichten: [{ id: 'wasser', titel: 'Wasser', svg: () => svgMit(G.VIEW_WASSER, wasser), teile: wasser }, { id: 'gas', titel: 'Gas und Heizung', svg: () => svgMit(G.VIEW_GAS, gas), teile: gas }],
+    namen: D.namen, ablenker: D.ablenker, hilfe: 'Tipp: Der Wasserzähler ist rund und zeigt m³. Der Filter hängt unter der Leitung.', loesung: 'Du kennst jetzt alle Bauteile der Ansicht D.' });
+
+  app.appendChild(el('h2', null, 'B · In Fließrichtung ordnen'));
+  const wB = el('div'); app.appendChild(wB);
+  ORDNEN.baue(wB, { id: 'b', punkte: 30, titel: 'B · Wasserzähleranlage: Was kommt nach was?',
+    text: '<p>Lege die Bauteile in der Reihenfolge, in der das Wasser hindurchfließt – von der Straße bis zur Verteilleitung.</p>',
+    karten: D.folge.map((t, i) => ({ id: 'k' + i, t })), richtig: D.folge.map((_, i) => 'k' + i), start: 'Straße', ziel: 'Verbraucher', platzname: i => (i + 1) + '.',
+    hilfe: 'Tipp: Erst absperren, dann zählen, dann sichern (Rückfluss), dann sauber machen (Filter), dann den Druck senken.', loesung: D.folge.join(' → ') + '.' });
+
+  app.appendChild(el('h2', null, 'C · Stimmt das?'));
+  const wC = el('div'); app.appendChild(wC);
+  ZUORDNEN.baue(wC, { id: 'c', punkte: 20, titel: 'C · Anforderungen an den Hausanschlussraum (Tabellenbuch S. 119)',
+    text: '<p>Entscheide bei jedem Satz: stimmt oder stimmt nicht.</p>', wahl: ['stimmt', 'stimmt nicht'],
+    zeilen: [{ id: 'c1', t: 'Der Hausanschlussraum muss an der Außenwand liegen, durch die die Leitungen ins Haus kommen.', richtig: 'stimmt' },
+      { id: 'c2', t: 'Die Tür muss mindestens 0,875 m breit und 2 m hoch sein.', richtig: 'stimmt' },
+      { id: 'c3', t: 'Unter den Leitungen genügt eine Durchgangshöhe von 1,80 m.', richtig: 'stimmt nicht' },
+      { id: 'c4', t: 'Im Hausanschlussraum braucht man kein Licht – eine Taschenlampe genügt.', richtig: 'stimmt nicht' }],
+    hilfe: 'Lies im Arbeitsblatt (Infotext 5) oder im Tabellenbuch S. 119 nach.', loesung: 'Durchgangshöhe mindestens 2 m; fest installierte Beleuchtung mit Schalter an der Tür.' });
+
+  const fertig = el('div', { class: 'fertig verborgen', 'data-fertig': '1' }, 'Alle Aufgaben gelöst – 100 von 100 Punkten. Gut gemacht!'); app.appendChild(fertig);
+  const pf = () => fertig.classList.toggle('verborgen', PUNKTE.summe() < 100); PUNKTE.nachAenderung(pf); pf();
+  window.__seite = { D, nummer: ben.nummer };
+})();
+
+</script>
+</body>
+</html>
