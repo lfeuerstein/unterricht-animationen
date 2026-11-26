@@ -116,6 +116,20 @@
   /* Leitungen legen (NE8, 25.11.2026): Knöpfe 3-adrig/4-adrig mit Querschnitt (sonst gilt #info .vd button) und Anlass-Zeile über der Übung */
   #info .vd .ltg-wahl button{padding:8px 4px 7px;min-height:96px}
   #info .vd p.vd-anlass{margin:0 0 8px;font-size:14px}
+  /* 26.11.2026 (Lehrer: Plan „sehr dominant“, zoomen, Vollbild im Fenster): #info-Regeln für die neuen Teile; eng = wenig Höhe (iPad ohne Vollbild, Handy) */
+  #info .vd.eng h2{font-size:17px}
+  #info .vd.eng p.vd-anlass{font-size:12.5px;margin:0 0 4px}
+  #info .vd.eng p.vd-auftext{font-size:13.5px;margin-top:2px}
+  #info .vd.eng .vd-mehr{min-height:28px;padding:0 6px;font-size:13px;border:none;background:none;color:#f3b086}
+  #info .vd.eng .vd-uebungen button{min-height:36px;padding:0 9px;font-size:13.5px}
+  #info .vd.eng .vd-kopf-knoepfe button{min-height:38px;padding:0 10px;font-size:14px}
+  #info .vd .vd-zoom button{min-height:34px;min-width:34px;padding:0 9px;font-size:15px}
+  #info .vd .vd-klappe p{margin:0}
+  /* Text-Zoom (bausteine/zoom.js) im Verdrahten-Fenster: nicht das ganze Fenster – der Plan hat seinen eigenen Zoom und bleibt ungezoomt (Koordinaten) */
+  #info .box.zoom-text>.vd-wurzel{zoom:1}
+  #info .vd-wurzel .vd-kopf,#info .vd-wurzel .vd-uebungen,#info .vd-wurzel .vd-seite,#info .vd-wurzel .vd-ltg,#info .vd-wurzel .vd-status{zoom:var(--zoom-text,1)}
+  /* Wischen in den Fenstern: auch seitwärts (Reiter in einer Zeile, vergrößerter Text), nie bis zur Seite durchreichen (Safari-Geste „Vollbild beenden“) */
+  #info .box,#start .box,#dlg .box,#info .vd-wurzel{touch-action:pan-x pan-y;overscroll-behavior:contain}
   /* Übungsblatt vor dem Anklemmen (Entscheidung c, 25.11.2026) */
   #info p.leise{font-size:14px;opacity:.72}
   /* Auftrag: nächster Schritt oben in der Mitte; Auswahl im Startfenster */
@@ -251,7 +265,20 @@ let renderer;
 try{ renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'}); }
 catch(e){ $('start').innerHTML='<div class="box"><h1>3D-Darstellung nicht verfügbar</h1><p>Dieser Browser kann WebGL nicht starten. Bitte einen aktuellen Browser (Chrome, Edge, Firefox) mit eingeschalteter Hardwarebeschleunigung verwenden.</p></div>'; return; }
 renderer.setPixelRatio(PR_MAX);
-canvas.addEventListener('webglcontextrestored',()=>location.reload()); // iPad verwirft die 3D-Grafik manchmal beim App-Wechsel
+// 3D-Grafik verloren (Foto des Lehrers 26.11.2026 ~10:55: schwarzer Bildschirm, Knöpfe und Karte da – „… hängt an einem schwarzen Bildschirm fest“): Safari
+// gibt die Grafik bei Speichermangel oft NIE zurück. Dann nach 1,5 s eine Meldung mit Knopf „3D-Ansicht neu laden“. Neu geladen wird die Seite darüber
+// (Moodle-Spielerseite): Nur dort startet die Moodle-Schnittstelle neu – ein Neuladen nur des Spiels fände sie beendet (LMSFinish) und speicherte nichts mehr.
+// Vorher den Spielstand senden. Kommt die Grafik von selbst zurück: ebenso neu laden (vorher: location.reload() nur des Spiels).
+function dreiDNeu(){try{LP.sende();LP.ende();}catch(_){}let w=window;try{if(window.top&&window.top.location.href)w=window.top;}catch(_){}try{w.location.reload();}catch(_){location.reload();}}
+function zeigeDreiDWeg(){if(document.getElementById('dreiDWeg'))return;const d=document.createElement('div');d.id='dreiDWeg';
+  d.style.cssText='position:fixed;inset:0;z-index:2147483600;display:flex;align-items:center;justify-content:center;background:rgba(10,12,16,.9);padding:16px';
+  d.innerHTML='<div style="max-width:520px;background:#12151b;border:1px solid rgba(255,255,255,.18);border-top:5px solid #e2854a;border-radius:6px;padding:22px 24px;color:#fff;font:15.5px/1.5 \'Segoe UI\',system-ui,-apple-system,sans-serif">'+
+    '<h2 style="margin:0 0 8px;font-size:22px">Die 3D-Ansicht ist stehen geblieben</h2><p style="margin:0 0 14px;opacity:.92">Das Gerät hat die 3D-Grafik angehalten – meist, weil gerade zu wenig Speicher frei ist. Dein Spielstand ist gespeichert.</p>'+
+    '<button type="button" style="font:600 16px \'Segoe UI\',system-ui,-apple-system,sans-serif;min-height:48px;padding:0 20px;border-radius:8px;border:0;background:#e2854a;color:#16110d;cursor:pointer">3D-Ansicht neu laden</button>'+
+    '<p style="margin:14px 0 0;font-size:13.5px;opacity:.72">Hilft das nicht: andere Tabs im Browser schließen und die Begehung neu öffnen.</p></div>';
+  d.querySelector('button').addEventListener('click',e=>{e.stopPropagation();dreiDNeu();});document.body.appendChild(d);}
+canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();setTimeout(()=>{try{if(!renderer.getContext().isContextLost())return;}catch(_){}zeigeDreiDWeg();},1500);});
+canvas.addEventListener('webglcontextrestored',()=>dreiDNeu()); // iPad verwirft die 3D-Grafik manchmal beim App-Wechsel
 renderer.outputEncoding=T.sRGBEncoding;
 renderer.toneMapping=T.ACESFilmicToneMapping;
 renderer.toneMappingExposure=1;
@@ -279,6 +306,10 @@ const lin=h=>new T.Color(h).convertSRGBToLinear();
 // Büro-Tafel „Aufträge heute“ je Projekt (TAFEL). Sonst unverändert. VARIANTE OHNE KANTENTEILUNG: KNOTEN und KANTEN bleiben wie in Version 2; den Knoten RO
 // (41|−11, teilt EB–J6) setzt das Röhringer-Spiel weiter nur in sein eigenes Netz. Grund: Mit der Teilung im Dorf kippt der Gleichstand Lindenweg / Birkenweg
 // (je 167 m zu Familie Neumann) – die Rohbau-Begehung nimmt dann den Birkenweg und ihr Autopilot bleibt beim Linksabbiegen an J6 hängen (Messung 25.11.2026).
+// Version 4, IN KRAFT seit 26.11.2026 10:37 (Entwurf: Hilfsagent des Hauptchats „Übersicht SHK City (10)“; Werte aus dem Haus-Spiel Kessler, Bauplan Kessler §17 H1;
+// Sicherung beim In-Kraft-Setzen: dorf-v3-vor-v4-26-11.js): Haus Kessler steht auf Bauplatz 3 – Ziel `kessler`, Statisten-Hülle für alle anderen Spiele,
+// Bauplatz-Markierung 3 entfällt (wie bei Haus 6), TAFEL.kessler. Den Knoten KE (92|−11, teilt NM–W1) setzt das Kessler-Spiel weiter nur in sein eigenes Netz (wie RO).
+// Sonst unverändert.
 // Wunsch des Lehrers (23.11.2026): „… dass das Dorf immer gleich aussieht und der Schüler immer im selben Dorf herumfährt.“ Beschreibung: LIES-MICH.md.
 // 🔴 Nur HIER ändern. Jedes Spiel bettet diese Datei beim Bauen ein (Platzhalter /*__DORF__*/ in src.html, build.mjs) und lädt sie in probe.mjs vor dem Spiel.
 // Dorf-Koordinaten in Metern: x nach Osten, z nach SÜDEN (Norden = −z), Gelände y = GY. Ursprung = Nordwest-Ecke von Haus 2 (Familie Eberle).
@@ -306,18 +337,23 @@ const KNOTEN={H:{x:-133.5,z:2,sack:true},B:{x:-133.5,z:-11},G0:{x:-165,z:-11,sac
   W1:{x:110,z:-11,sack:true}};
 // 🔴 Version 3 (Variante): ZIELE.roehringer.knoten = 'RO' steht NICHT in KNOTEN – das Röhringer-Spiel teilt EB–J6 in seinem eigenen Netz (EB–RO, RO–J6), wie bis Version 2.
 // Die Teilung hier einzutragen ändert die Navi-Wege der anderen Spiele (Gleichstand zu Familie Neumann, siehe Kopf) – erst zusammen mit einer festen Vorrangregel dort.
+// 🔴 Version 4: ebenso ZIELE.kessler.knoten = 'KE' – NICHT in KNOTEN; das Kessler-Spiel teilt NM–W1 in seinem eigenen Netz (NM–KE 23 m, KE–W1 18 m), bis Heizler
+// und Neumann ihre Navi-Proben mit KE gefahren haben (Bauplan Kessler §17 H1).
 const KANTEN=[['H','B'],['G0','B'],['B','J1'],['J1','Q1S'],['J1','J2'],['N0','J2'],['J2','J3'],['J3','J4'],['J3','J5'],['J4','J6'],['W0','J5'],['J5','EB'],['EB','J6'],['J6','NM'],['NM','W1']];
 // Ziele je Projekt: Knoten im Straßennetz, Parkplatz (rechte Fahrbahnseite, Front nach Osten) und Haus
 // Haus 1 (Neumann) liegt 8 m weiter südlich als Haus 2: die Rohbau-Begehung hat 19 m Vorplatz bis zur Straßenmitte (Baustelle x −9 … 19, z −13 … 17
 // um das Haus; Entscheidung des Lehrers 23.11.2026 ~17:10, eingetragen von Chat „Lernbaustelle“). Versatz der Begehung: x −64, z −8.
 // Version 3: Haus 6 (Röhringer) – Parkplatz x 41 vor dem Hausweg, Haus = Bestand x 34 … 42,5 | z 1 … 10,5 plus Anbau x 42,5 … 48 | z 2 … 10,5
+// Version 4: Haus 3 (Kessler) – Parkplatz x 92 vor dem Hausweg, Haus x 87 … 97,5 | z 1,5 … 11,5; name im Wemfall wie im Spiel (Navi „Die Route zu Herrn Kessler …“)
 const ZIELE={eberle:{knoten:'EB',x:2.9,z:-9.425,th:0,name:'Familie Heizler',haus:[0,0,11.99,10.173]},neumann:{knoten:'NM',x:69,z:-9.425,th:0,name:'Familie Neumann',haus:[64,8,74,16]},
-  roehringer:{knoten:'RO',x:41,z:-9.425,th:0,name:'Familie Röhringer',haus:[34,1,48,10.5]}};
+  roehringer:{knoten:'RO',x:41,z:-9.425,th:0,name:'Familie Röhringer',haus:[34,1,48,10.5]},kessler:{knoten:'KE',x:92,z:-9.425,th:0,name:'Herrn Kessler',haus:[87,1.5,97.5,11.5]}};
 // Version 3: Büro-Tafel „Aufträge heute“ im Betrieb – der Auftrag des Projekts (sonst wie bis Version 2: Familie Heizler); Neumann setzte den Text bisher selbst
-const TAFEL={eberle:'Familie Heizler: neue Heizung',neumann:'Familie Neumann: Elektrik Gästebad',roehringer:'Familie Röhringer: Anbau ans Netz'};
+// Version 4: TAFEL.kessler = der Text, den bis Version 3 die Anpassungsschicht des Kessler-Spiels einsetzte
+const TAFEL={eberle:'Familie Heizler: neue Heizung',neumann:'Familie Neumann: Elektrik Gästebad',roehringer:'Familie Röhringer: Anbau ans Netz',kessler:'Herr Kessler: neues Gasgerät'};
 // Bauplätze (Zuordnung im Stadtplan, _Dorf\stadt.json): Haus 3 = Kessler, Haus 4 = Bader, Haus 5 = Luft, Haus 6 = Röhringer (Version 2, 24.11.2026)
 // Version 3: Haus 6 ist bebaut (bebaut = Schlüssel in ZIELE) – Erde, Pfosten und Schild entfallen; der Eintrag bleibt (Stadtplan, Sperrflächen der Spiele)
-const BAUPLAETZE=[{n:'Haus 3',x0:84,z0:-6.5,x1:100,z1:18,schild:[92,-5.8]},{n:'Haus 4',x0:-40,z0:-45,x1:-24,z1:-31,schild:[-32,-45.6]},{n:'Haus 5',x0:-92,z0:14,x1:-78,z1:28,schild:[-91.4,21]},
+// Version 4: ebenso Haus 3 (bebaut:'kessler')
+const BAUPLAETZE=[{n:'Haus 3',x0:84,z0:-6.5,x1:100,z1:18,schild:[92,-5.8],bebaut:'kessler'},{n:'Haus 4',x0:-40,z0:-45,x1:-24,z1:-31,schild:[-32,-45.6]},{n:'Haus 5',x0:-92,z0:14,x1:-78,z1:28,schild:[-91.4,21]},
   {n:'Haus 6',x0:33,z0:-6.5,x1:49,z1:18,schild:[41,-5.8],bebaut:'roehringer'}];
 const imRechteck=(r,x,z,m)=>x>r.x0+m&&x<r.x1-m&&z>r.z0+m&&z<r.z1-m;
 // befahrbar: Punkt liegt auf Fahrbahn, Kreuzung, Platz oder im Wendehammer (m = Abstand zum Rand)
@@ -369,7 +405,7 @@ function bauen(a,projekt){
   for(const q of[[-121,-4.8,.9],[-105.5,-4.6,1],[-72,-4.9,1.1],[-50,-4.7,.9],[-108,-16.6,1],[-68,-16.5,1.1],[-104,-40,1.1],[-90,-38,.9],[-70,-42,1],[-48,-40,1.2],
     [-10,-40,1],[20,-42,1.1],[40,-38,.9],[-130,-56,1],[-20,-56.5,.9],[44,-56,1.1],[60,-30,1],[50.5,-4.8,.9],[80,-17,1],[105,-18,1.1],[-104,20,1],[-88,35,1.1]])baum(q[0],q[1],q[2]);
   // ---------------------------------------------------------------- Bauplätze für spätere Häuser (Erde, rot-weiße Pfosten, Schild)
-  for(const b of BAUPLAETZE){if(b.bebaut)continue;   // Version 3: bebauter Bauplatz (Haus 6 Röhringer) – dort steht das Haus
+  for(const b of BAUPLAETZE){if(b.bebaut)continue;   // Version 3/4: bebauter Bauplatz (Haus 6 Röhringer, Haus 3 Kessler) – dort steht das Haus
     flaeche(b.x0+.5,b.z0+.5,b.x1-.5,b.z1-.5,GY+.012,0x9c8a6a);
     for(const x of[b.x0+.5,b.x1-.6])for(const z of[b.z0+.5,b.z1-.6])box(x,GY,z,x+.1,GY+1.0,z+.1,{c:0xd0281e,cTop:0xf4f4f0,th:'umg2',ao:1});
     stelle(['Bauplatz',b.n+' – kommt später'],b.schild[0],GY+1.6,b.schild[1],.1,{weit:30,fg2:'#f3b086'});}
@@ -408,6 +444,29 @@ function bauen(a,projekt){
     solid(33,GY,-6.5,36.5,GY+.6,-6.25,M);solid(38,GY,-6.5,49,GY+.6,-6.25,M);flaeche(36.6,-6.5,37.9,-.2,GY+.04,F.pflaster);
     solid(33,GY,-6.25,33.4,GY+1.2,17.6,HE);solid(48.8,GY,-6.25,49,GY+1.2,17.6,HE);solid(33,GY,17.6,49,GY+1.2,18,HE);
     stelle(['Haus 6','Familie Röhringer'],38.3,GY+1.75,-5.95,.09,{weit:25});}
+  if(projekt!=='kessler'){   // Version 4 – Haus 3: Herr Kessler (Zweifamilienhaus von 1978, verputzt) – Hülle mit den Maßen des Kessler-Spiels (_Entwuerfe\Haus-Kessler\spiel\src.html)
+    // Haus x 87 … 97,5 | z 1,5 … 11,5; Erdgeschoss-Fußboden GY + 0,2, Traufe 5,9 (Kniestock 0,4) und First 8,6 darüber (Unterseite der Dachfläche; First Ost-West, Traufe zur
+    // Straße), Dachüberstand 0,4 an der Traufe und 0,3 am Ortgang. Fenster und Haustür der Nord-, Ost- und Westseite an ihren Stellen im Spiel; die Loggia vor dem Bad
+    // (Obergeschoss, Nordostecke, offen über der Brüstung) als schattige Nische mit dem Badfenster; Schornstein mit Abdeckplatte über dem Nordhang.
+    // Nur im Spiel: Dachausstieg, Laufsteg, Terrasse, Mülltonnen, Baum im Garten.
+    const B=GY+.2,T=B+5.9,ZR=6.5,DN=2.7/5,PUTZ=0xe8dfcf,ZIEGEL=0x8a3a2a,LOGGIA=0xbcb2a0,xa=86.7,xb=97.8,yU=z=>T+DN*(z<=ZR?z-1.5:11.5-z);
+    solid(87,GY,1.5,97.5,T,11.5,{c:PUTZ,th:'nachbar',ao:1});
+    for(const s of[-1,1]){const ze=s<0?1.1:11.9;   // Dachflächen (oben Ziegel, unten Holz) und Traufkante
+      face([[xa,yU(ze)+.22,ze],[xb,yU(ze)+.22,ze],[xb,yU(ZR)+.22,ZR],[xa,yU(ZR)+.22,ZR]],[0,1,s*.7],ZIEGEL,'umg2',1);
+      face([[xa,yU(ze),ze],[xb,yU(ze),ze],[xb,yU(ZR),ZR],[xa,yU(ZR),ZR]],[0,-1,-s*.7],F.dachholz,'umg2',1);face([[xa,yU(ze),ze],[xb,yU(ze),ze],[xb,yU(ze)+.22,ze],[xa,yU(ze)+.22,ze]],[0,0,s],F.dachholz,'umg2',1);}
+    for(const q of[[87,-1],[97.5,1]])face([[q[0],T,1.5],[q[0],T,11.5],[q[0],yU(ZR),ZR]],[q[1],0,0],PUTZ,'nachbar',1);                       // Giebel West und Ost
+    for(const w of[[87.9,89.3,1.0,1.2],[92.6,93.5,1.4,.8],[94.6,96.2,1.0,1.2],[89.5,91.1,3.65,1.3],[92.6,93.5,3.75,1.0]])fensterreihe('x',1.47,w[0],w[1],1,B+w[2],w[1]-w[0],w[3],-1);   // Nord
+    fensterreihe('x',1.46,90.9,91.9,1,B,1.0,2.2,-1,F.tuer);fensterreihe('x',1.47,93.935,97.5,1,B+3.75,3.565,1.5,-1,LOGGIA);                // Haustür, Loggia (Nordseite)
+    fensterreihe('x',1.45,95.05,95.95,1,B+3.75,.9,1.2,-1);                                                                                   // Badfenster hinten in der Loggia
+    for(const w of[[5.6,6.8,1.0,1.2],[8.6,9.9,1.0,1.2],[7.6,9.0,3.65,1.3]])fensterreihe('z',97.53,w[0],w[1],1,B+w[2],w[1]-w[0],w[3],1);   // Ost
+    fensterreihe('z',97.53,1.5,2.625,1,B+3.75,1.125,1.5,1,LOGGIA);                                                                         // Loggia (Ostseite)
+    for(const w of[[3.0,4.3,1.0,1.2],[7.4,8.7,1.0,1.2],[8.0,9.3,3.65,1.3]])fensterreihe('z',86.97,w[0],w[1],1,B+w[2],w[1]-w[0],w[3],-1);  // West
+    box(96.335,B+7.0,3.4,97.135,B+9.52,4.2,{c:0x9a5a44,th:'nachbar',ao:1});box(96.285,B+9.52,3.35,97.185,B+9.6,4.25,{c:0x6a6a66,th:'umg2',ao:1});   // Schornstein
+    // Grundstück: Vorgartenmauer mit Lücke am Hausweg (x 90,65 … 92,15), Hausweg, Podest vor der Haustür, Hecken West, Ost und Süd; Hausschild am Hausweg
+    const M={c:0xb5ad9c,th:'umg2',ao:1},HE={c:F.hecke,th:'umg2',ao:1};
+    solid(84,GY,-6.5,90.65,GY+.6,-6.25,M);solid(92.15,GY,-6.5,100,GY+.6,-6.25,M);flaeche(90.75,-6.5,92.05,.7,GY+.04,F.pflaster);box(90.55,GY,.7,92.25,B-.02,1.5,{c:0x9a9a94,th:'umg',ao:1});
+    solid(84,GY,-6.25,84.4,GY+1.2,17.6,HE);solid(99.6,GY,-6.25,100,GY+1.2,17.6,HE);solid(84,GY,17.6,100,GY+1.2,18,HE);
+    stelle(['Haus 3','Herr Kessler'],92.6,GY+1.75,-5.95,.09,{weit:25});}
   // ---------------------------------------------------------------- Betrieb: Halle (Lager | Werkstatt | Büro), Hof, Zaun, Einfahrt, Schilder
   {const IN={c:0xf3f1ea,th:'innen'},AUS={c:0xf3f1ea,cAus:0xc9ced3,thIn:'innen',thAus:'nachbar'},y0=GY,y1=GY+BT.hh,A=(o,aus)=>Object.assign({aus},o);
     // Außenwände mit Türen und Fenstern (Höhen ab Hallenboden), Innenwände mit Durchgängen
@@ -466,7 +525,7 @@ function bauen(a,projekt){
   stelle(['Telefon'],-129.2,GY+1.08,12.58,.05,{weit:4});stelle(['Aufträge heute',TAFEL[projekt]||TAFEL.eberle],-126.7,GY+2.45,14.9,.07,{weit:8,fg2:'#f3b086'});   // Version 3: je Projekt
 }
 
-window.DORF={version:3,BT,STRASSEN,KREUZUNGEN,PLAETZE,UEBERGAENGE,KREISE,KNOTEN,KANTEN,ZIELE,TAFEL,BAUPLAETZE,befahrbar,strasseAn,bauen};
+window.DORF={version:4,BT,STRASSEN,KREUZUNGEN,PLAETZE,UEBERGAENGE,KREISE,KNOTEN,KANTEN,ZIELE,TAFEL,BAUPLAETZE,befahrbar,strasseAn,bauen};
 })();
 
 // ---------------------------------------------------------------- Die gemeinsame Firma (E:\#1_Schule\Claude Unterricht\_Dorf\firma.js, Version 2, eingesetzt von quelle.mjs → window.FIRMA)
@@ -1537,6 +1596,152 @@ function strahler(x,z,yf,dx,dz){const l=Math.hypot(dx,dz);dx/=l;dz/=l;
 const STRAHLER=[strahler(2.3,2.75,Y_KG,-.2,-1),strahler(5.75,2.95,Y_KG,-.25,-1),strahler(3.4,6.6,Y_KG,-.4,-1)],STRAHLER_HELL=1.5;
 
 // ---------------------------------------------------------------- Verdrahten (verdrahten.js, eingesetzt von build.mjs / quelle.mjs)
+// ---------------------------------------------------------------- Baustein „Zoomen mit zwei Fingern“ für die Haus-Spiele von SHK City
+// Datei: bausteine/zoom.js · Version 1 · gebaut 26.11.2026 im Klassenchat „SHK City 1BFSHK“ (Haus Neumann, Punkte NE15/NE16).
+// Wunsch des Lehrers (26.11.2026 ~10:15, am iPad): „… dass man in den Verdrahtungsplan rein zoomen kann, durch Wischen, falls es zu klein ist, dass man es
+// einfach mit zwei Fingern größer ziehen kann.“ – „Und das Reinzoomen sollte generell über das komplette SAK City eigentlich möglich sein, dass wenn Aufgaben
+// zu klein sind, dass die Schüler dann reinzoomen können am Handy oder am iPad und es dann besser sehen.“
+// 🔴 Warum nicht einfach das Zoomen von Safari freigeben: Die Haus-Spiele sperren es (viewport user-scalable=no, gesturestart/gesturechange mit
+// preventDefault, touch-action an den Fenstern). Gibt man es frei, zoomt Safari die GANZE Seite; schließt der Schüler das Fenster, bleibt die 3D-Ansicht
+// vergrößert, und dort sperrt die Spielsteuerung das Zurückzoomen – er sitzt fest. Dieser Baustein zoomt nur INNERHALB eines Fensters.
+//
+// Reines Skript (kein HTML, keine Skript-Marke; die wenigen CSS-Regeln legt es selbst an). Stellt window.Zoom bereit:
+//  Zoom.plan(svg, { breite, hoehe, knoepfe, max })  – Zeichnung mit viewBox „0 0 breite hoehe“ (preserveAspectRatio meet):
+//     zwei Finger = größer/kleiner um die Fingermitte · ein Finger = verschieben (nur vergrößert; sonst scrollt das Fenster wie gewohnt) ·
+//     am PC Strg + Mausrad (auch die Zwei-Finger-Geste am Touchpad) und Ziehen mit der Maus (nur vergrößert).
+//     knoepfe (optional) = Element, in das die Knöpfe „＋“, „−“ und „Ganzer Plan“ kommen (Aussehen macht das Spiel, z. B. .vd-zoom button).
+//     Nach einer Geste löst das Loslassen KEINEN Klick aus (sonst würde nach dem Verschieben z. B. eine Ader gezogen).
+//     Koordinaten im Spiel: getScreenCTM() rechnet den Ausschnitt mit ein – Klicks auf Anschlüsse treffen auch vergrößert.
+//     Steuerung: .stufe() · .setze(stufe, x, y) · .zuruecksetzen() · .umPunkt(stufe, clientX, clientY)
+//  Zoom.text(kasten, { schluessel, max })  – Textfenster: zwei Finger = Schrift und Bilder größer (CSS zoom an den Kindern des Kastens: der Text bricht
+//     neu um, kein Seitwärts-Scrollen), am PC Strg + Mausrad. Die Stufe gilt für ALLE so angemeldeten Kästen und bleibt gemerkt (localStorage schluessel).
+//     Gesten, die auf einem Zoom.plan-Plan beginnen, gehören dem Plan. Ist vergrößert, zeigt eine kleine Pille „Schrift 140 % ✕“ den Weg zurück.
+//     Steuerung: .stufe() · .setze(stufe)
+//
+// Einbau (Muster Rohbau-Begehung: quelle.mjs setzt die Datei vor verdrahten.js ein; src.html meldet #info .box, #dlg .box, #start .box an):
+//   const Z = Zoom.plan(svg, { breite: 960, hoehe: 540, knoepfe: document.querySelector('.vd-zoom') });   // beim Wechsel der Übung: Z.zuruecksetzen()
+//   Zoom.text(document.querySelector('#info .box'), { schluessel: 'meinSpiel.textzoom' });
+// Probe: Rohbau-Begehung probe-zoom.mjs (echte Zwei-Finger-Gesten im unsichtbaren Chrome).
+window.Zoom = (function () {
+  'use strict';
+  const abst = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) || 1;
+  const mitte = (a, b) => ({ x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 });
+  let cssDa = false;
+  function css() {
+    if (cssDa || !document.head) return; cssDa = true;
+    const s = document.createElement('style');
+    s.textContent = '.zoom-text>*:not(.zoom-pille){zoom:var(--zoom-text,1)}' +
+      '.zoom-pille{position:fixed;right:12px;bottom:12px;z-index:2147483000;font:600 14px "Segoe UI",system-ui,-apple-system,Arial,sans-serif;min-height:40px;padding:0 14px;' +
+      'border-radius:20px;border:1.5px solid rgba(255,255,255,.6);background:rgba(20,24,30,.88);color:#fff;cursor:pointer;-webkit-appearance:none;appearance:none}' +
+      '.zoom-pille[hidden]{display:none!important}';
+    document.head.appendChild(s);
+  }
+
+  // ---------------------------------------------------------------- Plan (SVG)
+  function plan(svg, o) {
+    o = o || {};
+    const W = o.breite, H = o.hoehe, MAX = o.max || 4;
+    let s = 1, x = 0, y = 0, sperreBis = 0, geste = null, maus = null;
+    svg.setAttribute('data-zoom-plan', '');
+    // Bildschirm ↔ Zeichnung bei Stufe st (meet: ganzer Ausschnitt sichtbar, mittig)
+    const mass = st => { const r = svg.getBoundingClientRect(), vw = W / st, vh = H / st, k = Math.min(r.width / vw, r.height / vh) || 1;
+      return { r, k, ox: (r.width - vw * k) / 2, oy: (r.height - vh * k) / 2 }; };
+    const zuPlan = (cx, cy) => { const m = mass(s); return { x: x + (cx - m.r.left - m.ox) / m.k, y: y + (cy - m.r.top - m.oy) / m.k }; };
+    let kn = null;
+    function setze(ns, nx, ny) {
+      ns = Math.max(1, Math.min(MAX, ns || 1));
+      if (ns < 1.02) { ns = 1; nx = 0; ny = 0; }
+      const vw = W / ns, vh = H / ns;
+      s = ns; x = Math.max(0, Math.min(W - vw, nx || 0)); y = Math.max(0, Math.min(H - vh, ny || 0));
+      svg.setAttribute('viewBox', s === 1 ? `0 0 ${W} ${H}` : `${x} ${y} ${vw} ${vh}`);
+      if (kn) { kn.ganz.hidden = s === 1; kn.raus.disabled = s === 1; kn.rein.disabled = s >= MAX; }
+    }
+    // um einen Bildschirmpunkt: der Zeichnungspunkt darunter bleibt unter dem Punkt
+    function umPunkt(ns, cx, cy) { const p = zuPlan(cx, cy); ns = Math.max(1, Math.min(MAX, ns)); const m = mass(ns); setze(ns, p.x - (cx - m.r.left - m.ox) / m.k, p.y - (cy - m.r.top - m.oy) / m.k); }
+    const umMitte = ns => { const r = svg.getBoundingClientRect(); umPunkt(ns, r.left + r.width / 2, r.top + r.height / 2); };
+    // Touch: zwei Finger zoomen, ein Finger verschiebt (nur vergrößert)
+    svg.addEventListener('touchstart', e => {
+      const t = e.touches;
+      if (t.length >= 2) { e.preventDefault(); const m = mitte(t[0], t[1]); geste = { art: 'zwei', d0: abst(t[0], t[1]), s0: s, p: zuPlan(m.x, m.y), bewegt: true }; }
+      else if (t.length === 1 && s > 1) geste = { art: 'eins', x0: t[0].clientX, y0: t[0].clientY, px: x, py: y, bewegt: false };
+      else geste = null;
+    }, { passive: false });
+    svg.addEventListener('touchmove', e => {
+      if (!geste) return; const t = e.touches;
+      if (geste.art === 'zwei' && t.length >= 2) {
+        e.preventDefault(); const m = mitte(t[0], t[1]), ns = Math.max(1, Math.min(MAX, geste.s0 * abst(t[0], t[1]) / geste.d0)), q = mass(ns);
+        setze(ns, geste.p.x - (m.x - q.r.left - q.ox) / q.k, geste.p.y - (m.y - q.r.top - q.oy) / q.k);
+      } else if (geste.art === 'eins' && t.length === 1) {
+        e.preventDefault();   // vergrößert: das Fenster scrollt nicht, der Ausschnitt wandert
+        const dx = t[0].clientX - geste.x0, dy = t[0].clientY - geste.y0;
+        if (!geste.bewegt && Math.hypot(dx, dy) < 8) return;
+        geste.bewegt = true; const q = mass(s); setze(s, geste.px - dx / q.k, geste.py - dy / q.k);
+      }
+    }, { passive: false });
+    const ende = e => { if (geste && geste.bewegt) sperreBis = Date.now() + 300;
+      if (!e.touches || !e.touches.length) geste = null; else if (geste && geste.art === 'zwei') geste = { art: 'nach', bewegt: true }; };
+    svg.addEventListener('touchend', ende); svg.addEventListener('touchcancel', ende);
+    // kein Klick nach einer Geste (Capture: vor den Klicks der Anschlüsse und der Fläche)
+    svg.addEventListener('click', e => { if (Date.now() < sperreBis) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+    // PC: Strg + Mausrad (Touchpad-Geste), Ziehen mit der Maus
+    svg.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); umPunkt(s * Math.exp(-e.deltaY * 0.01), e.clientX, e.clientY); }, { passive: false });
+    svg.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' || e.button !== 0 || s <= 1) return; maus = { id: e.pointerId, x0: e.clientX, y0: e.clientY, px: x, py: y, bewegt: false }; });
+    svg.addEventListener('pointermove', e => { if (!maus || e.pointerId !== maus.id) return; const dx = e.clientX - maus.x0, dy = e.clientY - maus.y0;
+      if (!maus.bewegt) { if (Math.hypot(dx, dy) < 6) return; maus.bewegt = true; try { svg.setPointerCapture(e.pointerId); } catch (_) {} }
+      const q = mass(s); setze(s, maus.px - dx / q.k, maus.py - dy / q.k); });
+    const mausEnde = () => { if (maus && maus.bewegt) sperreBis = Date.now() + 300; maus = null; };
+    svg.addEventListener('pointerup', mausEnde); svg.addEventListener('pointercancel', mausEnde);
+    // Knöpfe
+    if (o.knoepfe) {
+      const k = (txt, titel, fn) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = txt; b.title = titel;
+        b.addEventListener('click', e => { e.stopPropagation(); fn(); }); o.knoepfe.appendChild(b); return b; };
+      kn = { rein: k('＋', 'Plan vergrößern (oder mit zwei Fingern größer ziehen)', () => umMitte(s * 1.5)), raus: k('−', 'Plan verkleinern', () => umMitte(s / 1.5)),
+        ganz: k('Ganzer Plan', 'Ganzen Plan zeigen', () => setze(1)) };
+      kn.rein.dataset.zoom = 'rein'; kn.raus.dataset.zoom = 'raus'; kn.ganz.dataset.zoom = 'ganz';
+    }
+    setze(1);
+    return { stufe: () => s, setze, umPunkt, zuruecksetzen: () => setze(1), ausschnitt: () => ({ x, y, b: W / s, h: H / s }) };
+  }
+
+  // ---------------------------------------------------------------- Textfenster
+  const kaesten = []; let stufe = 1, schluessel = '', MAXT = 2.2, pille = null;
+  const stil = (k, w) => { try { k.style.setProperty('--zoom-text', String(w)); } catch (_) {} };
+  function textSetze(n, merken) {
+    stufe = Math.max(1, Math.min(MAXT, +n || 1)); if (stufe < 1.04) stufe = 1;
+    for (const k of kaesten) stil(k, Math.round(stufe * 100) / 100);
+    pilleAn();
+    if (merken && schluessel) try { localStorage.setItem(schluessel, String(stufe)); } catch (_) {}
+  }
+  function pilleAn() {
+    if (!pille) { pille = document.createElement('button'); pille.type = 'button'; pille.className = 'zoom-pille'; pille.title = 'Schrift wieder normal groß';
+      pille.addEventListener('click', e => { e.stopPropagation(); textSetze(1, true); }); }
+    // die Pille gehört in einen sichtbaren angemeldeten Kasten (die Spiele ersetzen den Inhalt per innerHTML – dann neu anhängen)
+    const ziel = kaesten.find(k => k.offsetParent !== null) || kaesten[0];
+    if (ziel && pille.parentNode !== ziel) ziel.appendChild(pille);
+    pille.hidden = stufe === 1; pille.textContent = 'Schrift ' + Math.round(stufe * 100) + ' % ✕';
+  }
+  function text(kasten, o) {
+    o = o || {}; css();
+    if (!kasten || kaesten.includes(kasten)) return { stufe: () => stufe, setze: textSetze };
+    if (o.max) MAXT = o.max;
+    if (o.schluessel && !schluessel) { schluessel = o.schluessel; try { const v = +localStorage.getItem(schluessel); if (v >= 1) stufe = Math.min(MAXT, v); } catch (_) {} }
+    kaesten.push(kasten); try { kasten.classList.add('zoom-text'); } catch (_) {} stil(kasten, stufe);
+    let g = null;
+    const imPlan = e => e.target && e.target.closest && e.target.closest('[data-zoom-plan]');
+    kasten.addEventListener('touchstart', e => { if (e.touches.length < 2 || imPlan(e)) { if (e.touches.length < 2) g = null; return; }
+      e.preventDefault(); g = { d0: abst(e.touches[0], e.touches[1]), s0: stufe }; }, { passive: false });
+    kasten.addEventListener('touchmove', e => { if (!g || e.touches.length < 2) return; e.preventDefault(); textSetze(g.s0 * abst(e.touches[0], e.touches[1]) / g.d0); }, { passive: false });
+    const ende = e => { if (g && (!e.touches || e.touches.length < 2)) { textSetze(stufe, true); g = null; } };
+    kasten.addEventListener('touchend', ende); kasten.addEventListener('touchcancel', ende);
+    kasten.addEventListener('wheel', e => { if (!e.ctrlKey || imPlan(e)) return; e.preventDefault(); textSetze(stufe * Math.exp(-e.deltaY * 0.01), true); }, { passive: false });
+    // Inhalt neu gesetzt (innerHTML) → Pille wieder anhängen, wenn vergrößert
+    try { new MutationObserver(() => { if (stufe > 1 && pille && pille.parentNode !== kasten && kasten.offsetParent !== null) pilleAn(); }).observe(kasten, { childList: true }); } catch (_) {}
+    pilleAn();
+    return { stufe: () => stufe, setze: textSetze };
+  }
+  return { plan, text, version: 1 };
+})();
+
 // verdrahten.js – Verdrahten im Gästebad (Haus 1, Familie Neumann; Wunsch des Lehrers 23.11.2026)
 // Übungsreihe nach den Skizzen des Lehrers: links die Verteilerdose mit der Zuleitung, rechts das Gerät; Adern nur waagerecht und senkrecht.
 //   Übung 1 Steckdose · Übung 2 Leuchte (brennt immer) · Übung 3 Leuchte über Schalter (Leitung durch die Schalterdose)
@@ -2047,6 +2252,10 @@ function css(){if(cssDa||typeof document==='undefined'||!document.head)return;cs
 .vd *{box-sizing:border-box}
 .vd-kopf{padding:12px 16px 4px;display:flex;gap:12px;align-items:flex-start}
 .vd-kopf>div{flex:1;min-width:0}
+.vd-kopf>.vd-kopf-knoepfe{flex:none;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;max-width:45%}
+.vd-titelzeile{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px}
+.vd-titelzeile .vd-schritte{margin-top:0}
+.vd .vd-mehr{display:none}
 .vd-kopf h2{margin:0;font-size:21px;font-weight:650}
 .vd-kopf p{margin:4px 0 0;font-size:14.5px;line-height:1.45;opacity:.92}
 .vd-leiste{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -2059,7 +2268,34 @@ function css(){if(cssDa||typeof document==='undefined'||!document.head)return;cs
 .vd-farben button.gesperrt{opacity:.38;border-style:dashed}
 .vd button.an .ok{color:#14532d}
 .vd-haupt{flex:1 0 auto;display:flex;gap:14px;padding:6px 16px 14px}
-.vd-bild{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.vd-bild{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;position:relative}
+.vd-zoom{position:absolute;top:6px;right:6px;display:flex;gap:4px;z-index:2}
+.vd .vd-zoom button{min-height:34px;min-width:34px;padding:0 9px;font-size:15px;line-height:1;background:rgba(22,26,32,.72);border-color:rgba(255,255,255,.6)}
+.vd .vd-zoom button:disabled{opacity:.35}
+.vd-klappe summary{cursor:pointer;font-size:14px;font-weight:600;opacity:.85;min-height:40px;display:flex;align-items:center;gap:6px;list-style:none}
+.vd-klappe summary::-webkit-details-marker{display:none}
+.vd-klappe summary::before{content:"▸";font-size:13px}
+.vd-klappe[open] summary::before{content:"▾"}
+.vd-klappe-inhalt{display:flex;flex-direction:column;gap:10px;padding-bottom:4px}
+/* eng = wenig Höhe (iPad ohne Vollbild, Handy): alles außer dem Plan rückt zusammen (26.11.2026) */
+.vd.eng .vd-kopf{padding:6px 12px 2px;gap:8px}
+.vd.eng .vd-kopf h2{font-size:17px}
+.vd.eng .vd-anlass{font-size:12.5px;padding:3px 8px;margin:0 0 4px}
+.vd.eng .vd-schritte span{font-size:12px;padding:2px 8px}
+.vd.eng .vd-auftext{font-size:13.5px;line-height:1.35}
+.vd.eng .vd-auftext:not(.auf){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vd.eng .vd-mehr{display:inline-block;min-height:28px;padding:0 6px;margin:0;font-size:13px;font-weight:600;border:none;background:none;color:#f3b086;text-decoration:underline}
+.vd.eng .vd-uebungen{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:3px 12px;gap:5px}
+.vd.eng .vd-uebungen button{flex:none;min-height:36px;padding:0 9px;font-size:13.5px}
+.vd.eng .vd-uw{display:none}
+.vd.eng .vd-haupt{padding:4px 12px 10px;gap:10px}
+.vd.eng .vd-kopf-knoepfe button{min-height:38px;padding:0 10px;font-size:14px}
+.vd.eng .vd-status{padding:6px 10px;font-size:14px}
+.vd.eng .vd-ltg{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;row-gap:4px;padding-bottom:2px}
+.vd.eng .vd-ltg-titel{display:none}
+.vd.eng .ltg-k{flex:0 0 auto;width:178px;padding:4px 7px 5px;gap:2px}
+.vd.eng .ltg-name{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vd.eng .ltg-meld{font-size:11.5px}
 .vd-bild svg{flex:none;width:100%;height:auto;display:block;background:#fbfaf6;border-radius:6px;touch-action:manipulation}
 .vd-seite{width:250px;flex:none;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:10px}
 .vd-seite h3{margin:2px 0 0;font-size:14px;text-transform:uppercase;letter-spacing:1px;opacity:.75;font-weight:600}
@@ -2110,7 +2346,8 @@ function css(){if(cssDa||typeof document==='undefined'||!document.head)return;cs
 .ltg-a.falsch{background:#a3261f;color:#fff;border-color:#ff8a80}
 .ltg-meld{font-size:12px;line-height:1.3;opacity:.9}
 .ltg-k.fehler .ltg-meld{opacity:1;color:#ffd2cc}
-@media (max-width:860px){.vd-haupt{flex-direction:column}.vd-seite,.vd.legen .vd-seite{width:auto}}`;document.head.appendChild(s);}
+@media (max-width:600px),(max-width:860px) and (orientation:portrait){.vd-haupt{flex-direction:column}.vd-seite,.vd.legen .vd-seite{width:auto}}
+@media (max-width:960px) and (orientation:landscape){.vd-seite{width:210px}.vd.legen .vd-seite{width:236px}.vd .ltg-wahl button{min-height:84px}}`;document.head.appendChild(s);}
 
 const KENNFARBEN=`<table class="vd-tab"><tr><td>3-adrig</td><td><span style="background:linear-gradient(135deg,#2e9e2e 50%,#f2d200 50%)">GNGE</span><span style="background:#1e88e5">BL</span><span style="background:#8b4513;color:#fff">BR</span></td></tr>
 <tr><td>4-adrig</td><td><span style="background:linear-gradient(135deg,#2e9e2e 50%,#f2d200 50%)">GNGE</span><span style="background:#8b4513;color:#fff">BR</span><span style="background:#222;color:#fff">SW</span><span style="background:#8a8f98">GR</span></td></tr></table>`;
@@ -2137,19 +2374,59 @@ function leitungsHtml(liste,fertig,titel){
       `<div class="ltg-zeile"><span class="ltg-typ${l.keine?' keine':''}">${l.keine?'keine Leitung':l.n+'-adrig'}</span>${l.keine?'':`<span class="ltg-zahl">${l.belegt} von ${l.n} belegt</span>`}</div>`+
       `<div class="ltg-adern">${chips}</div>${meld?`<div class="ltg-meld">${meld}</div>`:''}</div>`;}).join('');}
 
-// Übungsfenster. opt: {start, geloest:[Nummern], gelegt:[Nummern], lehrer, onGeloest(n, alle), onGelegt(n, alle), zurueck:{text, tu()}, hinweis}
+// ================================================================ Plan dominant, Zoom, Vollbild-Knopf (26.11.2026, Klassenchat „SHK City 1BFSHK“)
+// Wunsch des Lehrers (iPad ohne Vollbild, ~10:10): „Und es sollte auf jeden Fall so sein, dass der Vertratungsplan, dass man den sehr dominant sieht, dass
+// eben dann alles, was nicht gebraucht wird, etwas in den Hintergrund geht, dass man es eben auch auf dem Handy zur Not spielen kann, das Ganze.“ – dazu
+// „… dass man in den Verdrahtungsplan rein zoomen kann … mit zwei Fingern größer ziehen“ und „… weder die Ansicht scrollen … noch kann ich auf Vollansicht klicken“.
+// planRahmen(wurzel, svg, zoomKasten, opt) für Übungs- und Dosenfenster:
+//  (1) Plangröße: Plan + Leitungsleiste + Statuszeile passen zusammen in den sichtbaren Teil des Fensters (Rest scrollt) – svg.style.maxHeight;
+//  (2) Klasse eng am .vd bei wenig Höhe (< 900 px): schlanker Kopf (Aufgabentext auf zwei Zeilen, Reiter in einer Zeile);
+//  (3) Zoom im Plan (bausteine/zoom.js, wenn vorhanden; sonst Knöpfe ausgeblendet); (4) Knopf „Vollbild“ (opt.vollbild = {geht, istAn(), umschalten()});
+//  (5) inSicht(): Tipp in den Plan bei eng → Plan ganz ins Bild rollen.
+const WIN=typeof window!=='undefined'?window:null;
+function scrollKasten(el){for(let e=el;e&&e.nodeType===1;e=e.parentElement){const o=WIN.getComputedStyle(e).overflowY;if((o==='auto'||o==='scroll')&&e.clientHeight>0)return e;}return null;}
+function planRahmen(wurzel,svg,zoomKasten,opt){
+  opt=opt||{};
+  const ZM=WIN&&WIN.Zoom&&WIN.Zoom.plan?WIN.Zoom.plan(svg,{breite:W,hoehe:H,knoepfe:zoomKasten}):null;
+  if(!ZM&&zoomKasten)zoomKasten.hidden=true;
+  const voll=wurzel.querySelector('[data-v="voll"]');
+  function vollAuffrischen(){if(!voll||!opt.vollbild)return;voll.hidden=opt.vollbild.geht===false;let an=false;try{an=!!opt.vollbild.istAn();}catch(_){}
+    voll.textContent=an?'Vollbild aus':'Vollbild';voll.classList.toggle('an',an);}
+  if(voll&&opt.vollbild)voll.addEventListener('click',e=>{e.stopPropagation();try{opt.vollbild.umschalten();}catch(_){}WIN.setTimeout(vollAuffrischen,80);});
+  vollAuffrischen();
+  let geplant=false;
+  function platz(){geplant=false;if(!WIN||!svg.isConnected)return;const sc=scrollKasten(wurzel),sicht=sc?sc.clientHeight:(WIN.innerHeight||0);if(sicht<150)return;
+    const vd=wurzel.querySelector('.vd');if(vd)vd.classList.toggle('eng',sicht<900);
+    let rest=0;for(const e of svg.parentElement.children){if(e===svg||e.hidden)continue;const cs=WIN.getComputedStyle(e);if(cs.position==='absolute'||cs.display==='none')continue;rest+=e.offsetHeight+8;}
+    svg.style.maxHeight=Math.max(160,Math.floor(sicht-rest-24))+'px';}
+  // Zeitgeber statt requestAnimationFrame: die Spielschleife soll ihren Bildwechsel für sich haben (die Proben ohne Browser merken sich nur einen)
+  const bald=()=>{if(geplant||!WIN||!WIN.setTimeout)return;geplant=true;WIN.setTimeout(platz,0);};
+  const beiGroesse=()=>{if(!svg.isConnected){WIN.removeEventListener('resize',beiGroesse);return;}bald();};
+  if(WIN&&WIN.addEventListener)WIN.addEventListener('resize',beiGroesse);
+  try{const ro=new WIN.ResizeObserver(()=>{if(!svg.isConnected){ro.disconnect();return;}bald();});ro.observe(wurzel);}catch(_){}
+  // erst nach dem Neuzeichnen messen (die Statuszeile wird nach dem Tipp oft zweizeilig); Plangröße vorher frisch rechnen
+  function inSicht(){if(!WIN||!WIN.setTimeout)return;WIN.setTimeout(()=>{const vd=wurzel.querySelector('.vd');if(!svg.isConnected||!vd||!vd.classList.contains('eng'))return;
+    platz();const sc=scrollKasten(wurzel);if(!sc)return;
+    const r=svg.getBoundingClientRect(),k=sc.getBoundingClientRect(),bild=svg.parentElement.getBoundingClientRect();   // bis zur Statuszeile (unten in .vd-bild)
+    if(r.top<k.top-2||bild.bottom>k.bottom+2)sc.scrollTop+=r.top-k.top-6;},0);}
+  return {platz:bald,jetzt:platz,inSicht,zoom:ZM,zuruecksetzen:()=>{if(ZM)ZM.zuruecksetzen();},vollAuffrischen};}
+
+// Übungsfenster. opt: {start, geloest:[Nummern], gelegt:[Nummern], lehrer, onGeloest(n, alle), onGelegt(n, alle), zurueck:{text, tu()}, hinweis,
+//   vollbild:{geht, istAn(), umschalten()}}
 // Leitungen legen (NE8, 25.11.2026): Übungen mit UEBUNGEN[n].legen beginnen mit „Leitung wählen und legen“ (z.phase 'legen'), außer sie sind schon gelöst
 // (ältere Spielstände: gelöst bleibt gelöst, kein erneutes Legen) oder ihre Leitungen liegen schon (gelegt = „Prüfen“ bestanden, im Spielstand).
 // hinweis (Zusatzauftrag des Lehrers 25.11.2026 22:58): Satz über dem Fenster, z. B. warum es sich geöffnet hat.
 function uebungen(wurzel,opt){
   opt=opt||{};css();
   const z={n:opt.start||0,v:0,S:null,dr:[],farbe:'braun',wahl:null,ecken:[],st:{},beschr:true,tipp:true,geloest:new Set(opt.geloest||[]),lehrer:!!opt.lehrer,pruef:false,hinweis:'',zug:0,
-    gelegt:new Set(opt.gelegt||[]),phase:'verdrahten',lg:null,lgStand:{},anlass:opt.hinweis||''};
+    gelegt:new Set(opt.gelegt||[]),phase:'verdrahten',lg:null,lgStand:{},drStand:{},anlass:opt.hinweis||''};
+  // Kopf (26.11.2026, „Plan dominant“): Titel und Schritte in einer Zeile; bei wenig Höhe (Klasse eng) Aufgabentext auf zwei Zeilen mit „ganze Aufgabe ▾“;
+  // rechts Vollbild (opt.vollbild) und Zurück. Unter dem Plan: Leitungsleiste, Statuszeile; Zoom-Knöpfe oben rechts über dem Plan (bausteine/zoom.js).
   wurzel.innerHTML=`<div class="vd">
-  <div class="vd-kopf"><div>${opt.hinweis?'<p class="vd-anlass" data-v="anlass"></p>':''}<h2 data-v="titel"></h2><div class="vd-schritte" data-v="schritte" hidden></div><p data-v="text"></p></div>${opt.zurueck?'<button type="button" class="haupt" data-v="zurueck"></button>':''}</div>
+  <div class="vd-kopf"><div class="vd-kopf-text">${opt.hinweis?'<p class="vd-anlass" data-v="anlass"></p>':''}<div class="vd-titelzeile"><h2 data-v="titel"></h2><div class="vd-schritte" data-v="schritte" hidden></div></div><p class="vd-auftext" data-v="text"></p><button type="button" class="vd-mehr" data-v="mehr">ganze Aufgabe ▾</button></div><div class="vd-kopf-knoepfe">${opt.vollbild?'<button type="button" data-v="voll">Vollbild</button>':''}${opt.zurueck?'<button type="button" class="haupt" data-v="zurueck"></button>':''}</div></div>
   <div class="vd-leiste vd-uebungen" data-v="reiter"></div>
   <div class="vd-haupt">
-    <div class="vd-bild"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-label="Verdrahtung"></svg><div class="vd-ltg" data-v="ltg" hidden></div><div class="vd-status" data-v="status"></div></div>
+    <div class="vd-bild"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-label="Verdrahtung"></svg><div class="vd-ltg" data-v="ltg" hidden></div><div class="vd-status" data-v="status"></div><div class="vd-zoom" data-v="zoom"></div></div>
     <div class="vd-seite">
      <div class="vd-teil" data-v="seiteLegen" hidden>
       <h3>1. Leitung wählen</h3>
@@ -2165,14 +2442,17 @@ function uebungen(wurzel,opt){
       <div class="vd-leiste"><button type="button" data-v="schalter">Schalter betätigen</button><button type="button" data-v="zurueckNehmen">Rückgängig</button><button type="button" data-v="leeren">Alle Adern löschen</button></div>
       <div class="vd-leiste"><button type="button" class="haupt" data-v="pruefen">Prüfen</button>${z.lehrer?'<button type="button" data-v="loesung">Musterlösung</button>':''}</div>
       <ul class="vd-pruef" data-v="liste"></ul>
-      <label><input type="checkbox" data-v="beschr" checked> Anschlüsse beschriften</label>
+      <details class="vd-klappe"><summary>Hilfe und Kennfarben</summary><div class="vd-klappe-inhalt">
+      <p class="vd-hilfe">So ziehst du eine Ader: Farbe wählen, einen Anschluss antippen, für Ecken auf die freie Fläche tippen, am Ziel-Anschluss beenden. Ohne Ecken wird die Ader von selbst gelegt – nur waagerecht und senkrecht. Eine fertige Ader antippen löscht sie. Zu klein? Mit zwei Fingern im Plan größer ziehen.</p>
       <h3>Kennfarben der Adern</h3>${KENNFARBEN}
-      <p class="vd-hilfe">So ziehst du eine Ader: Farbe wählen, einen Anschluss antippen, für Ecken auf die freie Fläche tippen, am Ziel-Anschluss beenden. Ohne Ecken wird die Ader von selbst gelegt – nur waagerecht und senkrecht. Eine fertige Ader antippen löscht sie.</p>
+      <label><input type="checkbox" data-v="beschr" checked> Anschlüsse beschriften</label></div></details>
      </div>
     </div></div></div>`;
   const q=s=>wurzel.querySelector('[data-v="'+s+'"]'),svg=wurzel.querySelector('svg');
   if(opt.zurueck){q('zurueck').textContent=opt.zurueck.text;q('zurueck').addEventListener('click',()=>opt.zurueck.tu());}
   if(opt.hinweis)q('anlass').textContent=opt.hinweis;
+  const PL=planRahmen(wurzel,svg,q('zoom'),opt);   // Plan dominant, Zoom, Vollbild-Knopf (26.11.2026)
+  q('mehr').addEventListener('click',()=>{const t=q('text'),auf=!t.classList.contains('auf');t.classList.toggle('auf',auf);q('mehr').textContent=auf?'weniger ▴':'ganze Aufgabe ▾';PL.platz();});
   for(const [k,F] of Object.entries(FARBEN)){const b=document.createElement('button');b.type='button';b.dataset.farbe=k;
     b.innerHTML=`<i style="background:${F.streifen?`repeating-linear-gradient(90deg,${F.c} 0 6px,${F.streifen} 6px 12px)`:F.c}"></i>${F.n}`;
     // Falsche Farbe zuerst (Wunsch des Lehrers 24.11.2026): „Wenn Sie mit der falschen Farbe anfangen, dann soll eine Meldung kommen, bitte beginn
@@ -2186,10 +2466,15 @@ function uebungen(wurzel,opt){
   // 12 Reiter (Original und gespiegelt je als eigene Übung); kein Knopf „Andere Anordnung“ mehr (Wunsch des Lehrers 24.11.2026)
   function reiter(){const r=q('reiter');r.innerHTML='';
     UEBUNGEN.forEach((u,i)=>{const b=document.createElement('button');b.type='button';b.className=i===z.n?'an':'';b.title=u.titel;
-      b.innerHTML='Übung '+u.nr+(z.geloest.has(i)?'<span class="ok">✓</span>':'');
+      b.innerHTML='<span class="vd-uw">Übung </span>'+u.nr+(z.geloest.has(i)?'<span class="ok">✓</span>':'');   // eng: nur die Nummer
       b.addEventListener('click',()=>setze(i));r.appendChild(b);});}
-  function setze(n){n=Math.max(0,Math.min(UEBUNGEN.length-1,n|0));const u=UEBUNGEN[n];z.n=n;z.v=u.v;z.S=uebung(u.g,u.v);z.S.titel=u.titel;
-    z.dr=[];z.wahl=null;z.ecken=[];z.pruef=false;z.hinweis='';z.st={};
+  // Gelöste Übungen bleiben verdrahtet (Lehrer 26.11.2026 ~11:35: „… wenn die Übungen gemacht sind, dass dann die Übungen verschwinden. Da bleibt es mal der
+  // Haken, aber die Verdrahtungen sind nicht mehr zu sehen. Das sollte nicht so sein.“): Solange das Fenster offen ist, merkt es sich je Übung die eigenen
+  // Adern (drStand); eine gelöste Übung ohne eigene Adern (frühere Sitzung – gespeichert wird nur „gelöst“, der Spielstand in Moodle hat höchstens 4096
+  // Zeichen) zeigt die richtige Verdrahtung (Musterlösung).
+  function setze(n){n=Math.max(0,Math.min(UEBUNGEN.length-1,n|0));if(z.S)z.drStand[z.n]=z.dr.map(d=>Object.assign({},d));
+    const u=UEBUNGEN[n];z.n=n;z.v=u.v;z.S=uebung(u.g,u.v);z.S.titel=u.titel;PL.zuruecksetzen();
+    z.dr=z.drStand[n]?z.drStand[n].map(d=>Object.assign({},d)):z.geloest.has(n)?loesungVon(z.S):[];z.wahl=null;z.ecken=[];z.pruef=false;z.hinweis='';z.st={};
     for(const t of z.S.teile)if(t.typ==='schalter')z.st[t.id]=1;
     // Leitungen legen (NE8): Stand je Übung bleibt beim Wechsel der Reiter erhalten (nur solange das Fenster offen ist)
     z.lg=z.lgStand[n]||(z.lgStand[n]={typ:0,wahl:null,ltg:[],verlauf:[],pruef:false,meld:null});
@@ -2201,14 +2486,14 @@ function uebungen(wurzel,opt){
     wurzel.querySelector('.vd').classList.toggle('legen',lg);   // rechte Spalte beim Legen 286 px wie im Mockup
     q('text').textContent=lg?LEGEN[u.g].text:uebungsText(z.n,z.S.text);
     q('seiteLegen').hidden=!lg;q('seiteVerdrahten').hidden=lg;q('ltg').hidden=lg;sch.hidden=!u.legen;   // Leitungsübersicht nur beim Verdrahten
-    sch.innerHTML=u.legen?`<span class="${lg?'an':'fertig'}">Schritt 1: Leitung wählen und legen${lg?'':' ✓'}</span><span class="${lg?'':'an'}">Schritt 2: Verdrahten</span>`:'';}
+    sch.innerHTML=u.legen?`<span class="${lg?'an':'fertig'}">Schritt 1: Leitung wählen und legen${lg?'':' ✓'}</span><span class="${lg?'':'an'}">Schritt 2: Verdrahten</span>`:'';PL.platz();}
   // ---- Leitungen legen (NE8): Bedienung wie Schritt 1 des Mockups
   const lgName=l=>lgPaarName(z.S,l.a,l.b);
   const lgMerke=()=>z.lg.verlauf.push(JSON.stringify(z.lg.ltg));
   // Leitungen verändert: „Prüfen“ gilt nicht mehr; waren sie schon als gelegt gemeldet, wird das zurückgenommen (Weiter erst nach neuem Prüfen)
   function lgGeaendert(){z.lg.pruef=false;if(z.gelegt.delete(z.n)&&opt.onGelegt)opt.onGelegt(z.n,[...z.gelegt]);}
   function lgTyp(n){z.lg.typ=n===4?4:3;z.lg.meld=null;zeichne();}
-  function lgTippe(id){const L=z.lg;
+  function lgTippe(id){const L=z.lg;PL.inSicht();
     if(!L.typ){L.meld=['schlecht','Wähle zuerst rechts eine Leitung: 3-adrig oder 4-adrig.'];zeichne();return;}
     if(!L.wahl){L.wahl=id;L.meld=null;zeichne();return;}
     if(L.wahl===id){L.wahl=null;L.meld=null;zeichne();return;}
@@ -2259,7 +2544,7 @@ function uebungen(wurzel,opt){
     // Prüfliste: erst was noch nicht stimmt, dann das Richtige (iPad: die Spalte ist kürzer als die ganze Liste – so bleiben die Fehler sichtbar)
     q('lgListe').innerHTML=L.pruef?erg.liste.filter(x=>!x[0]).concat(erg.liste.filter(x=>x[0])).map(([ok,s])=>`<li class="${ok?'ja':'nein'}">${s}</li>`).join(''):'';
     q('lgWeiter').hidden=!(L.pruef&&erg.alles);
-    if(z.lehrer)q('lgLoesung').hidden=L.pruef&&erg.alles;}
+    if(z.lehrer)q('lgLoesung').hidden=L.pruef&&erg.alles;PL.platz();}
   function svgPunkt(ev){let x,y;
     try{const m=svg.getScreenCTM&&svg.getScreenCTM();if(m&&svg.createSVGPoint){const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const r=p.matrixTransform(m.inverse());x=r.x;y=r.y;}}catch(_){}
     if(x===undefined||!isFinite(x)){const r=svg.getBoundingClientRect(),s=Math.max(W/(r.width||W),H/(r.height||H));x=(ev.clientX-r.left-((r.width||W)-W/s)/2)*s;y=(ev.clientY-r.top-((r.height||H)-H/s)/2)*s;}
@@ -2267,7 +2552,7 @@ function uebungen(wurzel,opt){
   function rechtwinklig(p){const s=pkt(z.S,z.wahl),l=z.ecken.length?z.ecken[z.ecken.length-1]:s;return Math.abs(p.x-l.x)>=Math.abs(p.y-l.y)?{x:p.x,y:l.y}:{x:l.x,y:p.y};}
   function ecke(ev){if(!z.wahl)return;z.ecken.push(rechtwinklig(svgPunkt(ev)));zeichne();}
   function klick(id){
-    if(!z.wahl){z.wahl=id;z.ecken=[];z.hinweis='';zeichne();return;}
+    if(!z.wahl){PL.inSicht();z.wahl=id;z.ecken=[];z.hinweis='';zeichne();return;}
     if(z.wahl===id){z.wahl=null;z.ecken=[];zeichne();return;}
     if(teilVon(z.S,z.wahl)===teilVon(z.S,id)){z.wahl=id;z.ecken=[];zeichne();return;}  // im selben Teil: neuer Anfang
     // durch einen schwarzen Punkt gezogen = dort angeklemmt (aufteilen); die Teilstücke gehören zusammen (Rückgängig nimmt alle zurück)
@@ -2325,7 +2610,8 @@ function uebungen(wurzel,opt){
     // Prüfliste: solange grün-gelb und blau gesperrt sind, nur die spannungsführenden Adern (PE und N gelten als gelegt)
     const pl=z.sperre?aussenleiterPruefung(S,z.dr):bew;
     q('liste').innerHTML=z.pruef?pl.liste.map(([ok,s])=>`<li class="${ok?'ja':'nein'}">${s}</li>`).join('')+(bew.alles?'<li class="ja"><b>Alles richtig verdrahtet!</b></li>':''):'';
-    if(bew.alles&&!z.geloest.has(z.n)){z.geloest.add(z.n);reiter();if(opt.onGeloest)opt.onGeloest(z.n,[...z.geloest]);}}
+    if(bew.alles&&!z.geloest.has(z.n)){z.geloest.add(z.n);reiter();if(opt.onGeloest)opt.onGeloest(z.n,[...z.geloest]);}
+    PL.platz();}
   svg.addEventListener('click',ev=>{if(z.phase==='legen'){if(z.lg.wahl){z.lg.wahl=null;z.lg.meld=null;zeichne();}return;}if(z.wahl)ecke(ev);});   // Legen: freie Fläche bricht die Auswahl ab
   svg.addEventListener('pointermove',ev=>{if(z.phase==='legen'||!z.wahl||!vorschau)return;vorschau.setAttribute('d',pfad([...vorschau.__pts,rechtwinklig(svgPunkt(ev))]));});
   q('schalter').addEventListener('click',()=>schalte());
@@ -2341,7 +2627,8 @@ function uebungen(wurzel,opt){
     abbrechen(){if(z.phase==='legen'){if(!z.lg.wahl)return false;z.lg.wahl=null;zeichne();return true;}if(!z.wahl)return false;z.wahl=null;z.ecken=[];zeichne();return true;},
     loesung(){if(z.phase==='legen'){lgMuster();lgPruefe();lgWeiter();}z.dr=loesungVon(z.S);z.wahl=null;z.ecken=[];zeichne();return z.bew;},
     pruefe(){if(z.phase==='legen')return lgPruefe();z.pruef=true;zeichne();return z.bew;},
-    phase:()=>z.phase,lgTyp,lgTippe,lgEntferne,lgPruefe,lgWeiter,lgMuster};}
+    phase:()=>z.phase,lgTyp,lgTippe,lgEntferne,lgPruefe,lgWeiter,lgMuster,
+    vollAuffrischen:PL.vollAuffrischen,zoom:()=>PL.zoom,platz:PL.jetzt};}
 
 // ================================================================ Baustelle: Dosen im Gästebad anklemmen
 // Die Leitungen liegen schon (feste Adern): Zuleitung → Verteilerdose; Verteilerdose → Steckdose und Leuchte (3-adrig), → Schalter (4-adrig).
@@ -2431,19 +2718,21 @@ function dose(wurzel,opt){
   css();const id=opt.id,info=GB_DOSEN[id],zst=opt.stand||neuerStand();
   const z={wahl:null,pruef:false,hinweis:'',beschr:true};
   wurzel.innerHTML=`<div class="vd">
-  <div class="vd-kopf"><div><h2>${info.titel}</h2><p>${info.ort}</p></div>${opt.zurueck?'<button type="button" class="haupt" data-v="zurueck"></button>':''}</div>
+  <div class="vd-kopf"><div class="vd-kopf-text"><h2>${info.titel}</h2><p>${info.ort}</p></div><div class="vd-kopf-knoepfe">${opt.vollbild?'<button type="button" data-v="voll">Vollbild</button>':''}${opt.zurueck?'<button type="button" class="haupt" data-v="zurueck"></button>':''}</div></div>
   <div class="vd-haupt">
-    <div class="vd-bild"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-label="${info.titel}"></svg><div class="vd-status" data-v="status"></div></div>
+    <div class="vd-bild"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-label="${info.titel}"></svg><div class="vd-status" data-v="status"></div><div class="vd-zoom" data-v="zoom"></div></div>
     <div class="vd-seite">
       ${info.geraet?'<h3>Gerät einbauen</h3><div class="vd-leiste" data-v="geraete"></div>':''}
       <div class="vd-leiste"><button type="button" data-v="loesen">Adern dieser Dose lösen</button>${opt.lehrer?'<button type="button" data-v="loesung">Musterlösung</button>':''}</div>
       <div class="vd-leiste"><button type="button" class="haupt" data-v="pruefen">Prüfen</button></div>
       <ul class="vd-pruef" data-v="liste"></ul>
-      <h3>Kennfarben der Adern</h3>${KENNFARBEN}
-      <p class="vd-hilfe">So klemmst du an: ein Ader-Ende antippen, dann die Klemme oder den Anschluss am Gerät. Eine fertige Verbindung antippen löst sie. Nicht benötigte Adern bleiben frei.</p>
+      <details class="vd-klappe"><summary>Hilfe und Kennfarben</summary><div class="vd-klappe-inhalt">
+      <p class="vd-hilfe">So klemmst du an: ein Ader-Ende antippen, dann die Klemme oder den Anschluss am Gerät. Eine fertige Verbindung antippen löst sie. Nicht benötigte Adern bleiben frei. Zu klein? Mit zwei Fingern im Plan größer ziehen.</p>
+      <h3>Kennfarben der Adern</h3>${KENNFARBEN}</div></details>
     </div></div></div>`;
   const q=s=>wurzel.querySelector('[data-v="'+s+'"]'),svg=wurzel.querySelector('svg');
   if(opt.zurueck){q('zurueck').textContent=opt.zurueck.text;q('zurueck').addEventListener('click',()=>opt.zurueck.tu());}
+  const PL=planRahmen(wurzel,svg,q('zoom'),opt);   // Plan dominant, Zoom, Vollbild-Knopf (26.11.2026)
   const sichtbar=()=>GB.teile.filter(t=>id==='VD'?t.id==='VD':t.id===info.dose||(t.id===id&&zst.geraet[id]));
   const meine=pid=>sichtbar().some(t=>t.id===pid.split('.')[0]);
   const istAder=pid=>{const p=pkt(GB,pid);return p&&p.k.rolle==='ader';};
@@ -2451,7 +2740,7 @@ function dose(wurzel,opt){
   if(info.geraet)for(const [g,n] of Object.entries(GERAETE)){const b=document.createElement('button');b.type='button';b.dataset.geraet=g;b.textContent=n;
     b.addEventListener('click',()=>{if(g!==info.geraet){z.hinweis=info.falsch;zeichne();return;}zst.geraet[id]=g;z.hinweis='';geaendert();});q('geraete').appendChild(b);}
   function klick(pid){
-    if(!z.wahl){z.wahl=pid;zeichne();return;}
+    if(!z.wahl){PL.inSicht();z.wahl=pid;zeichne();return;}
     if(z.wahl===pid){z.wahl=null;zeichne();return;}
     const a=istAder(z.wahl),b=istAder(pid);
     if(a===b){z.wahl=pid;zeichne();return;}            // zwei Ader-Enden oder zwei Anschlüsse: neuer Anfang
@@ -2488,14 +2777,15 @@ function dose(wurzel,opt){
     else t='Tippe ein Ader-Ende an und dann die passende Klemme oder den Anschluss.';
     st.className='vd-status'+(k?' '+k:'');st.textContent=t;
     const liste=['VD','SD','E','S'].every(x=>dosen[x])?gb.liste:(info.geraet&&zst.geraet[id]?doseHinweise(id,zst):gb.liste.slice(0,1));
-    q('liste').innerHTML=z.pruef?liste.map(([ok,s])=>`<li class="${ok?'ja':'nein'}">${s}</li>`).join(''):'';}
+    q('liste').innerHTML=z.pruef?liste.map(([ok,s])=>`<li class="${ok?'ja':'nein'}">${s}</li>`).join(''):'';PL.platz();}
   q('loesen').addEventListener('click',()=>{zst.dr=zst.dr.filter(d=>!(meine(d.a)&&meine(d.b)));z.wahl=null;geaendert();});
   q('pruefen').addEventListener('click',()=>{z.pruef=true;zeichne();});
   if(opt.lehrer)q('loesung').addEventListener('click',()=>{const l=gbLoesung();if(info.geraet)zst.geraet[id]=info.geraet;
     zst.dr=zst.dr.filter(d=>!(meine(d.a)&&meine(d.b))).concat(l.dr.filter(d=>meine(d.a)&&meine(d.b)));geaendert();});
   svg.addEventListener('click',()=>{if(z.wahl){z.wahl=null;zeichne();}});
   zeichne();
-  return {zst,z,klick,zeichne,abbrechen(){if(!z.wahl&&!z.hinweis)return false;z.wahl=null;z.hinweis='';zeichne();return true;}};}
+  return {zst,z,klick,zeichne,abbrechen(){if(!z.wahl&&!z.hinweis)return false;z.wahl=null;z.hinweis='';zeichne();return true;},
+    vollAuffrischen:PL.vollAuffrischen,zoom:()=>PL.zoom,platz:PL.jetzt};}
 // Musterlösung der Baustelle (für Lehrkraft und Proben): Verteilerdose k1 = L, k2 = N, k3 = PE, k4 = geschalteter L
 function gbLoesung(){const v=(a,b)=>({a,b,farbe:pkt(GB,a).k.farbe,ecken:null}),dr=[
   v('VD.z.braun','VD.k1'),v('VD.s.braun','VD.k1'),v('VD.x.braun','VD.k1'),
@@ -2593,11 +2883,16 @@ const LP=(()=>{
   // In Moodle (Schnittstelle gefunden) NIE den Gerätespeicher nehmen – auch wenn der Start scheitert: dann nur für diese Sitzung im Speicher
   const imLMS=!!api;
   if(api){try{if(String(api.LMSInitialize(''))!=='true')api=null;}catch(_){api=null;}}
-  const daten={},start=Date.now();let best=0,zeitAus=null,beendet=false,review=false;
+  const daten={},start=Date.now();let best=0,zeitAus=null,beendet=false,review=false,schutz=false;
   const lese=k=>{try{return String(api.LMSGetValue(k)||'');}catch(_){return '';}},schreibe=(k,v)=>{try{return String(api.LMSSetValue(k,String(v)))==='true';}catch(_){return false;}};
-  if(api){try{const s=JSON.parse(lese('cmi.suspend_data')||'{}');if(s&&typeof s==='object'){if(s.d&&typeof s.d==='object')for(const k in s.d)if(typeof s.d[k]==='string')daten[k]=s.d[k];
+  // Ladeschutz (26.11.2026, Regel des Lehrers „keine Schülerabgaben verlieren“): Hat der Versuch schon Punkte, kommt der Spielstand aber leer oder
+  // unlesbar an, ging beim Laden etwas schief – dann schreibt das Spiel in dieser Sitzung KEINEN Spielstand (sonst überschriebe ein leerer den echten).
+  // Punkte werden weiter gemeldet (sie sinken nie). Das Spiel zeigt dazu einen Hinweis (LP.schutz()).
+  if(api){let roh='',gelesen=false;try{roh=lese('cmi.suspend_data');const s=JSON.parse(roh||'{}');if(s&&typeof s==='object'){gelesen=true;if(s.d&&typeof s.d==='object')for(const k in s.d)if(typeof s.d[k]==='string')daten[k]=s.d[k];
         best=Math.max(0,Math.min(100,+s.p||0));}}catch(_){}
-    best=Math.max(best,Math.min(100,+lese('cmi.core.score.raw')||0));review=lese('cmi.core.lesson_mode')==='review';
+    const punkteVorher=Math.min(100,+lese('cmi.core.score.raw')||0);
+    best=Math.max(best,punkteVorher);review=lese('cmi.core.lesson_mode')==='review';
+    schutz=punkteVorher>0&&(!roh||!gelesen);
     const st=lese('cmi.core.lesson_status');
     if(!review){schreibe('cmi.core.score.min',0);schreibe('cmi.core.score.max',100);if(st!=='completed'&&st!=='passed')schreibe('cmi.core.lesson_status','incomplete');}}
   // Spielstand packen; zu lang → erst „Meine Orte“ weglassen, dann die Ecken der Adern im Gästebad, zuletzt das Gästebad (Punkte bleiben)
@@ -2606,7 +2901,7 @@ const LP=(()=>{
       ()=>{try{const g=JSON.parse(d['rohbau-begehung-gaestebad-v1']);g.dr=g.dr.map(x=>({a:x.a,b:x.b,farbe:x.farbe,ecken:null}));d['rohbau-begehung-gaestebad-v1']=JSON.stringify(g);}catch(_){}},
       ()=>{delete d['rohbau-begehung-gaestebad-v1'];}];
     for(const f of schritte){if(s.length<=4096)break;f();s=roh(d);}return s.length<=4096?s:roh({});}
-  function sende(){if(!api||beendet||review)return;if(zeitAus){clearTimeout(zeitAus);zeitAus=null;}schreibe('cmi.suspend_data',packe());try{api.LMSCommit('');}catch(_){}}
+  function sende(){if(!api||beendet||review)return;if(zeitAus){clearTimeout(zeitAus);zeitAus=null;}if(!schutz)schreibe('cmi.suspend_data',packe());try{api.LMSCommit('');}catch(_){}}
   const plane=()=>{if(!zeitAus)zeitAus=setTimeout(()=>{zeitAus=null;sende();},800);};
   function lies(k){if(imLMS)return Object.prototype.hasOwnProperty.call(daten,k)?daten[k]:null;try{return localStorage.getItem(k);}catch(_){return null;}}
   function setze(k,v){if(imLMS){daten[k]=String(v);if(api)plane();return true;}try{localStorage.setItem(k,v);return true;}catch(_){return false;}}
@@ -2617,7 +2912,7 @@ const LP=(()=>{
     try{api.LMSFinish('');}catch(_){}beendet=true;}
   if(api){window.addEventListener('pagehide',ende);window.addEventListener('beforeunload',ende);
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')sende();});}
-  return {an:!!api,imLMS,lies,setze,punkte,sende,ende,packe,best:()=>best,review:()=>review};})();
+  return {an:!!api,imLMS,lies,setze,punkte,sende,ende,packe,best:()=>best,review:()=>review,schutz:()=>schutz};})();
 const GB_KEY='rohbau-begehung-gaestebad-v1',AUFTRAG_KEY='rohbau-begehung-auftrag-v1';
 let GBST=VERDRAHTEN.neuerStand(),GB_LICHT=false,VD_UI=null,GB_PL=null;
 // anreise (Auslieferung B): 0 im Betrieb (zur Chefin), 1 Auftrag erhalten (zum Firmenwagen), 2 Fahrt, 3 an der Baustelle angekommen.
@@ -2646,6 +2941,7 @@ try{const s=JSON.parse(LP.lies(AUFTRAG_KEY)||'null');if(s){AUF.schritt=Math.max(
   AUF.blatt=s.blatt===1?1:!('blatt' in s)&&(VERDRAHTEN.UEBUNGEN.every((_,n)=>AUF.geloest.includes(n))||AUF.schritt>=2||gbAngefangen())?1:0;}}catch(_){}   // ältere Stände: erledigt = Feierabend; mitten in der Rückfahrt neu geladen: wieder am Wagen   // mitten in der Fahrt neu geladen: wieder am Wagen
 let GB_OK=VERDRAHTEN.gbBewerte(GBST);
 punkteMelden();   // Lernpaket: Stand aus Moodle geladen – Punkte nachmelden, falls die letzte Meldung nicht ankam
+if(LP.schutz&&LP.schutz())setTimeout(()=>melde('Dein Spielstand ist nicht angekommen. Bitte die Begehung schließen und neu öffnen – gespeichert wird bis dahin nichts, damit nichts verloren geht.'),1500);   // Ladeschutz (26.11.2026)
 function sichereGB(){LP.setze(GB_KEY,JSON.stringify({geraet:GBST.geraet,dr:GBST.dr,licht:GB_LICHT}));punkteMelden();}
 function sichereAuftrag(){LP.setze(AUFTRAG_KEY,JSON.stringify({schritt:AUF.schritt,geloest:AUF.geloest,anreise:AUF.anreise,uebv:UEBV,rueck:AUF.rueck,fertig:AUF.fertig||0,gelegt:AUF.gelegt,blatt:AUF.blatt?1:0}));punkteMelden();}
 // Punkte fürs Lernpaket (nur in Moodle wirksam): 5 je gelöste Übung (12 Übungen = 60; bis 24.11.2026 6 × 10), 30 alle Dosen richtig, 10 Licht an (oder Auftrag erledigt)
@@ -2680,7 +2976,20 @@ function gbAuffrischen(){const d=GB_OK.dosen,an=GB_LICHT&&GB_OK.alles;
   if(an&&!GB_PL){GB_PL=new T.PointLight(lin(0xffe7c2),0,3.6,2);GB_PL.position.set(3.3,1.9,1.7);scene.add(GB_PL);} // erst beim ersten Einschalten (kein Licht ohne Not)
   if(GB_PL)GB_PL.intensity=an?(STAGE===2?.35:.7):0;
   renderer.shadowMap.needsUpdate=true;}
-function gbGeaendert(){GB_OK=VERDRAHTEN.gbBewerte(GBST);if(!GB_OK.alles)GB_LICHT=false;sichereGB();gbAuffrischen();}
+function gbGeaendert(){const warOk=GB_OK.alles;GB_OK=VERDRAHTEN.gbBewerte(GBST);if(!GB_OK.alles)GB_LICHT=false;sichereGB();gbAuffrischen();
+  if(!warOk&&GB_OK.alles&&AUF.an&&AUF.schritt<4&&!GB_LICHT)setTimeout(zeigeAngeklemmt,1500);}   // letzte Ader richtig → Hinweis „Licht an, dann zurück“ (26.11.2026)
+// Alles angeklemmt (Lehrer 26.11.2026 ~11:40: „Wenn anschließend dann das Arbeitsblatt hochgeladen ist, alle Übungen gemacht und das Gästebad im 3D angeklemmt
+// ist, dann soll dann der Monteur wieder zurückfahren zur Firma.“ – „… kommt keine Meldung nach dem Ende Wenn alle Aufgaben bearbeitet sind.“): Die Rückfahrt
+// gab es schon (nach „Licht an“: Anruf des Chefs, Auftragszeile Wagen → Navi → Büro → Feierabend), der Weg dorthin war aber nur in der Statuszeile des
+// Dosenfensters zu lesen. Jetzt: 1,5 s nach der letzten richtigen Ader schließt das Dosenfenster, ein Fenster sagt „Licht einschalten, dann zurück in den Betrieb“.
+function zeigeAngeklemmt(){if(GB_LICHT||AUF.schritt>=4||!GB_OK.alles)return;
+  if(infoOffen&&infoOffen.id==='verdrahten')schliesseStation();if(infoOffen)return;
+  infoOffen={id:'angeklemmt'};haltAn();elInfo.classList.remove('test');elInfo.classList.remove('vdraht');
+  elInfoBox.innerHTML='<p class="unter">Gästebad</p><h2>Alles richtig angeklemmt!</h2>'+
+    '<p>Verteilerdose, Steckdose, Leuchte und Schalter sind richtig angeschlossen.</p>'+
+    '<p><b>Jetzt das Licht einschalten:</b> Geh zum Schalter neben der Tür und schalte das Licht über dem Spiegel ein. Danach fährst du mit dem Firmenwagen zurück in den Betrieb.</p>'+
+    '<div class="knoepfe"><button type="button" class="haupt" data-a="zu">Verstanden</button></div>';
+  elInfo.style.display='flex';}
 gbAuffrischen();
 // Zielen (Fadenkreuz) und Antippen: nur im Gästebad; Dosen in der Rohinstallation, das Licht auch im fertigen Raum
 const _gv=new T.Vector3(),_gd=new T.Vector3();
@@ -2721,12 +3030,15 @@ function oeffneVerdrahten(art,id){if(infoOffen)return;infoOffen={id:'verdrahten'
   if(document.pointerLockElement){try{document.exitPointerLock();}catch(_){}}
   elInfo.classList.add('test');elInfo.classList.add('vdraht');elInfoBox.innerHTML='';const w=document.createElement('div');w.className='vd-wurzel';elInfoBox.appendChild(w);
   const zu={text:'Zurück zur Baustelle',tu:()=>schliesseStation()};
-  VD_UI=art==='uebung'?VERDRAHTEN.uebungen(w,{start:VERDRAHTEN.UEBUNGEN.map((_,i)=>i).find(n=>!AUF.geloest.includes(n))||0,geloest:AUF.geloest,gelegt:AUF.gelegt,lehrer:LEHRER,zurueck:zu,
+  // Vollbild-Knopf auch im Fenster (Lehrer 26.11.2026 10:08: „… noch kann ich auf Vollansicht klicken“ – der Knopf der Spielleiste liegt unter dem Fenster)
+  const vollbild={geht:VOLL.geht,istAn:()=>VOLL.istAn(),umschalten:()=>vollbildUmschalten()};
+  VD_UI=art==='uebung'?VERDRAHTEN.uebungen(w,{start:VERDRAHTEN.UEBUNGEN.map((_,i)=>i).find(n=>!AUF.geloest.includes(n))||0,geloest:AUF.geloest,gelegt:AUF.gelegt,lehrer:LEHRER,zurueck:zu,vollbild,
       hinweis:uebenNoetig()?UEBEN_ANLASS:'',
       onGelegt:(n,alle)=>{AUF.gelegt=alle.filter(x=>VERDRAHTEN.UEBUNGEN[x]&&VERDRAHTEN.UEBUNGEN[x].legen);sichereAuftrag();},   // NE8: keine Punkte (b)
       onGeloest:(n,alle)=>{AUF.geloest=alle.filter(x=>x>=0&&x<VERDRAHTEN.UEBUNGEN.length);sichereAuftrag();
-        if(AUF.geloest.length===VERDRAHTEN.UEBUNGEN.length)melde(AUF.blatt||GB_OK.alles||gbAngefangen()?'Alle zwölf Übungen gelöst – jetzt die Dosen im Gästebad anklemmen!':'Alle zwölf Übungen gelöst – jetzt dein Übungsblatt auf Papier, dann die Dosen im Gästebad!');}})
-    :VERDRAHTEN.dose(w,{id,stand:GBST,lehrer:LEHRER,zurueck:zu,onAenderung:()=>gbGeaendert()});
+        // die 12. Übung gelöst: Glückwunsch-Fenster (26.11.2026, statt der kurzen Meldung oben) – 1,5 s später, das Grün „Richtig verdrahtet“ bleibt kurz stehen
+        if(AUF.geloest.length===VERDRAHTEN.UEBUNGEN.length)setTimeout(zeigeGlueckwunsch,1500);}})
+    :VERDRAHTEN.dose(w,{id,stand:GBST,lehrer:LEHRER,zurueck:zu,vollbild,onAenderung:()=>gbGeaendert()});
   elInfo.style.display='flex';}
 // Übungsblatt (Entscheidung c des Lehrers 25.11.2026, Mockup Schritt 4/5): Papierblatt mit drei Aufgaben, Abgabe in der Moodle-Aufgabe „Übungsblatt Verdrahten“.
 // Das Spiel kann die Abgabe nicht sehen – es merkt sich nur den Knopf (AUF.blatt im Spielstand); die Kontrolle macht der Lehrer in Moodle.
@@ -2735,6 +3047,21 @@ function zeigeBlatt(zl){if(infoOffen)return;infoOffen={id:'blatt',dose:zl.id};ha
     '<p>Halt! Bevor du im Gästebad anklemmst: Hast du dein Übungsblatt ausgefüllt und in die Moodle-Aufgabe <b>„Übungsblatt Verdrahten“</b> hochgeladen? Dein Chef will erst den Plan sehen.</p>'+
     '<p class="leise">Das Blatt auf Papier hat drei Aufgaben: das Gästebad und zwei Schaltungen, die du schon geübt hast. Lade ein Foto oder einen Scan in die Moodle-Aufgabe hoch – dein Lehrer schaut es sich dort an.</p>'+
     '<div class="knoepfe"><button type="button" class="haupt" data-a="blatt">Ich habe mein Blatt hochgeladen</button><button type="button" data-a="zu">Noch nicht – zurück zur Baustelle</button></div>';
+  elInfo.style.display='flex';}
+// Glückwunsch nach der 12. Übung (Wunsch des Lehrers 26.11.2026 ~11:30): „Wenn alle zwölf Verdrahtungsübungen fertig sind, soll dann ein Fenster aufpuppen,
+// wo dann einfach erstmal gratuliert wird zu den Übungen, zu den Bestandenen. Und dann soll der Schüler aufgefordert werden, zum Lehrer zu gehen und sich dann
+// die Arbeitsblätter zu holen, die er dann auch wieder hochladen muss, bevor er dann mit der Verdrahtung im 3D loslegt.“ – Das Übungsfenster schließt, das
+// Glückwunsch-Fenster öffnet. Wer schon weiter ist (Blatt bestätigt, Gästebad angefangen oder fertig), liest nur „jetzt die Dosen anklemmen“. Die Abfrage
+// „Ich habe mein Blatt hochgeladen“ bleibt beim ersten Antippen einer Dose (zeigeBlatt). Hat der Schüler inzwischen ein anderes Fenster offen: kein Glückwunsch.
+function zeigeGlueckwunsch(){
+  if(infoOffen&&infoOffen.id==='verdrahten')schliesseStation();if(infoOffen)return;
+  const weiter=AUF.blatt||GB_OK.alles||gbAngefangen();infoOffen={id:'glueckwunsch'};haltAn();elInfo.classList.remove('test');elInfo.classList.remove('vdraht');
+  elInfoBox.innerHTML='<p class="unter">Verdrahten üben</p><h2>Glückwunsch – alle zwölf Übungen bestanden!</h2>'+
+    '<p>Super gemacht: Du hast alle zwölf Verdrahtungsübungen richtig gelöst – jede Leitung und jede Ader am richtigen Platz.</p>'+
+    (weiter?'<p>Jetzt geht es im Gästebad weiter: Klemme die Dosen an.</p>'
+      :'<p><b>Jetzt geh zu deinem Lehrer</b> und hol dir die Arbeitsblätter <b>„Übungsblatt Verdrahten“</b>. Fülle sie aus und lade sie in Moodle in die Aufgabe <b>„Übungsblatt Verdrahten“</b> hoch (Foto oder Scan).</p>'+
+       '<p>Erst danach klemmst du im Gästebad die Dosen an. Beim ersten Antippen einer Dose fragt dich das Spiel, ob dein Blatt hochgeladen ist.</p>')+
+    '<div class="knoepfe"><button type="button" class="haupt" data-a="zu">Verstanden – zurück zur Baustelle</button></div>';
   elInfo.style.display='flex';}
 function blattHochgeladen(){if(!infoOffen||infoOffen.id!=='blatt')return;AUF.blatt=1;sichereAuftrag();const zl=GB_ZIELE.find(z=>z.id===infoOffen.dose);
   elInfoBox.innerHTML='<p class="unter">Vor dem Anklemmen</p><h2>Danke!</h2>'+
@@ -2773,7 +3100,8 @@ function zeigeAbschluss(){if(infoOffen)return;infoOffen={id:'abschluss'};running
     '<p><b>'+CHEFIN_HANDY+':</b> „'+ABSCHLUSS_SATZ+' '+RUECK_SATZ+'“</p>'+
     '<p>Du hast zwölf Übungen (jede Schaltung im Original und gespiegelt) gelöst und die Verteilerdose, die Steckdose, die Leuchte und den Schalter richtig angeklemmt.</p>'+
     '<h3 class="ausw-titel">Deine Auswertung</h3>'+auswertungHtml()+
-    '<div class="knoepfe"><button type="button" class="haupt" data-a="zu">Weiter</button></div>';
+    '<p><b>Und jetzt:</b> Geh zum Firmenwagen vor dem Tor der Baustelle und fahr zurück in den Betrieb.</p>'+   // Rückfahrt deutlich (26.11.2026)
+    '<div class="knoepfe"><button type="button" class="haupt" data-a="zu">Weiter: zurück in den Betrieb</button></div>';
   elInfo.style.display='flex';tonZeile({wer:CHEFIN_HANDY,text:RUECK_SATZ},[tonSchluessel('chef',tonText({text:ABSCHLUSS_SATZ}))]);}
 // Ende der Rückfahrt: bei der Chefin gemeldet → Feierabend
 function zeigeFeierabend(){if(infoOffen)return;infoOffen={id:'feierabend'};haltAn();elInfo.classList.remove('test');elInfo.classList.remove('vdraht');
@@ -3034,7 +3362,13 @@ window.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&!TOUCH)set
 // Knöpfe an „click“ (nicht wie die übrigen an pointerdown). Die Wahl wird gemerkt: am iPad geht „Tippen, um … zu betreten“ wie bisher von selbst ins
 // Vollbild – aber nicht mehr, wenn man es hier ausgeschaltet hat.
 // ---------------------------------------------------------------- Baustein „Vollbild ein/aus“ für die Haus-Spiele von SHK City
-// Datei: bausteine/vollbild.js · Version 1 · gebaut 25.11.2026 im Klassenchat „SHK City 1. Lehrjahr 1BFSHK (1)“ (Haus Neumann, Punkt NE7).
+// Datei: bausteine/vollbild.js · Version 2 (26.11.2026) · Version 1 gebaut 25.11.2026 im Klassenchat „SHK City 1. Lehrjahr 1BFSHK (1)“ (Haus Neumann, NE7).
+// 🔴 Neu in Version 2 – „Vollbild bleibt“ (Wunsch des Lehrers 26.11.2026 ~10:45, am iPad): „… wenn man unten über den Bildrand wischt, wird die Vollansicht
+// beendet. Das ist etwas sehr unglücklich. Bitte nur, wenn man auf die Taste drückt, Vollansicht beenden, dass man dann heraus springt.“ – Die Wisch-Geste
+// gehört Safari und lässt sich nicht abschalten. Darum: Endet das echte Vollbild, OHNE dass .aus() es beendet hat (iPad: Wischen, PC: Esc), springt sofort das
+// Großbild ein (Rahmen über der ganzen Moodle-Seite, Weg 3) – das Spiel bleibt groß, nur die Safari-Leiste ist zu sehen. Zurück in die Moodle-Seite nur über
+// den Knopf (.umschalten() / .aus()). Allein geöffnet (öffentliche Seite, kein Rahmen) geht das nicht – dort endet das Vollbild wie bisher.
+// Außerdem nehmen iPad und iPhone im Rahmen gleich die Großansicht (Weg 3) – dort beendet Safari das echte Vollbild bei jedem Wischen nach unten.
 // Wunsch des Lehrers (25.11.2026, beim Spielen von Neumann): „Wenn man in der Aktivität drin ist und man sieht noch nicht den Vollbildschirm, dann gibt es
 // keine Taste mit der man bewusst umschalten kann auf Vollbildschirm und wieder Einbildung [Einbindung] in Moodle. … Das hat immer nur irgendwie nach Zufall
 // geklappt.“ – Regel „Vollbild-Taste in allen Haus-Spielen“ in _Claude-Gedächtnis\01-Regeln-des-Lehrers.md (Lehrer 19:45 „ja“).
@@ -3075,8 +3409,12 @@ window.Vollbild = function (einst) {
   // Rahmen der Seite darüber – nur lesbar bei gleicher Adresse (Moodle-Lernpaket: pluginfile.php auf demselben Server), sonst null
   const rahmen = (() => { try { const f = window.frameElement; return f && f.ownerDocument && f.ownerDocument.documentElement ? f : null; } catch (_) { return null; } })();
   const oben = rahmen ? rahmen.ownerDocument : null;
-  const weg = fordere(doc.documentElement) && erlaubt(doc) ? 'echt' : rahmen && fordere(rahmen) && erlaubt(oben) ? 'rahmen' : rahmen ? 'grossbild' : '';
-  const st = { wunsch: null, gross: false, alt: null, versuch: false };
+  // Version 2: iPad und iPhone im Rahmen (Moodle) gleich „grossbild“ – Lehrer 26.11.2026 ~11:35: „Man kommt auch aus dem Vollbildmodus heraus, wenn man in der
+  // rechten Bildhälfte einfach nur nach unten streicht …“ (rechts = Umsehen; Safari beendet sein Vollbild bei jedem Wischen nach unten). Die Großansicht kann
+  // keine Geste beenden, nur der Knopf; sichtbar bleibt nur die Safari-Leiste. Erkennung: iPad/iPhone im Kennzeichen oder Mac-Kennzeichen mit Touch (iPadOS).
+  const tablet = (() => { try { const n = navigator; return /iPad|iPhone|iPod/.test(n.userAgent || '') || (n.platform === 'MacIntel' && (n.maxTouchPoints || 0) > 1); } catch (_) { return false; } })();
+  const weg = tablet && rahmen ? 'grossbild' : fordere(doc.documentElement) && erlaubt(doc) ? 'echt' : rahmen && fordere(rahmen) && erlaubt(oben) ? 'rahmen' : rahmen ? 'grossbild' : '';
+  const st = { wunsch: null, gross: false, alt: null, versuch: false, echt: false, selbstAus: false };   // echt = war im echten Vollbild; selbstAus = .aus() beendet es
   try { const v = einst.schluessel && localStorage.getItem(einst.schluessel); if (v === 'an' || v === 'aus') st.wunsch = v === 'an'; } catch (_) {}
   const art = () => vollEl(doc) ? 'echt' : oben && vollEl(oben) === rahmen ? 'rahmen' : st.gross ? 'grossbild' : '';
   const istAn = () => !!art();
@@ -3112,6 +3450,7 @@ window.Vollbild = function (einst) {
     if (st.gross) { grossAus(); return; }
     const d = vollEl(doc) ? doc : oben && vollEl(oben) === rahmen ? oben : null;
     if (!d) return;
+    st.selbstAus = true;   // Version 2: dieses Ende ist gewollt – kein Großbild hinterher
     const ex = d.exitFullscreen || d.webkitExitFullscreen;
     try { const p = ex && ex.call(d); if (p && p.catch) p.catch(() => {}); } catch (_) {}
   }
@@ -3123,14 +3462,26 @@ window.Vollbild = function (einst) {
   }
   function vonSelbst(standard) { if (weg && (st.wunsch === null ? standard : st.wunsch)) an(); }
   const hoere = (d, namen, fn) => namen.forEach(n => { try { d.addEventListener(n, fn); } catch (_) {} });
-  hoere(doc, ['fullscreenchange', 'webkitfullscreenchange'], () => { st.versuch = false; melde(); });
+  // Version 2 „Vollbild bleibt“: endet das echte Vollbild ohne .aus() (Wischen am iPad, Esc am PC), springt das Großbild ein – nur der Knopf führt zurück
+  function wechsel() {
+    st.versuch = false;
+    const jetzt = !!(vollEl(doc) || (oben && vollEl(oben) === rahmen));
+    if (st.echt && !jetzt && !st.selbstAus && st.wunsch !== false && rahmen && !st.gross) { st.echt = false; grossAn(); return; }   // grossAn meldet selbst
+    st.echt = jetzt; if (!jetzt) st.selbstAus = false;
+    melde();
+  }
+  hoere(doc, ['fullscreenchange', 'webkitfullscreenchange'], wechsel);
   hoere(doc, ['fullscreenerror', 'webkitfullscreenerror'], abgelehnt);
-  if (oben) { hoere(oben, ['fullscreenchange', 'webkitfullscreenchange'], () => { st.versuch = false; melde(); }); hoere(oben, ['fullscreenerror', 'webkitfullscreenerror'], abgelehnt); }
+  if (oben) { hoere(oben, ['fullscreenchange', 'webkitfullscreenchange'], wechsel); hoere(oben, ['fullscreenerror', 'webkitfullscreenerror'], abgelehnt); }
   return { geht: !!weg, weg, istAn, art, an, aus, umschalten, vonSelbst, get wunsch() { return st.wunsch; } };
 };
 
 const VOLL=Vollbild({schluessel:'rohbauBegehung.vollbild',beiWechsel:()=>vollKnoepfe()});
-function vollKnoepfe(){const an=VOLL.istAn(),b=$('bVoll'),s=$('bVollStart');b.style.display=s.style.display=VOLL.geht?'':'none';b.classList.toggle('on',an);s.textContent=an?'Vollbild: an':'Vollbild: aus';}
+function vollKnoepfe(){const an=VOLL.istAn(),b=$('bVoll'),s=$('bVollStart');b.style.display=s.style.display=VOLL.geht?'':'none';b.classList.toggle('on',an);s.textContent=an?'Vollbild: an':'Vollbild: aus';
+  if(VD_UI&&VD_UI.vollAuffrischen)VD_UI.vollAuffrischen();}   // Knopf im Übungs-/Dosenfenster (26.11.2026)
+// Zoomen mit zwei Fingern in allen Textfenstern (Wunsch des Lehrers 26.11.2026: „… generell über das komplette SAK City … reinzoomen können am Handy oder am
+// iPad“) – bausteine/zoom.js: nur IM Fenster (Schrift größer, Text bricht um), nie die ganze Seite; im Verdrahtungsplan zoomt der Plan selbst.
+if(window.Zoom)for(const k of [$('start').querySelector('.box'),elInfoBox,$('dlg').querySelector('.box')])if(k)Zoom.text(k,{schluessel:'rohbauBegehung.textzoom'});
 function vollbildUmschalten(){VOLL.umschalten();}
 $('bVoll').addEventListener('pointerdown',e=>e.stopPropagation());
 $('bVoll').addEventListener('click',e=>{if(e&&e.stopPropagation)e.stopPropagation();vollbildUmschalten();});
