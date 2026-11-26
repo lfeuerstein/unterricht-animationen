@@ -3045,7 +3045,7 @@ function oeffneVerdrahten(art,id){if(infoOffen)return;infoOffen={id:'verdrahten'
 function zeigeBlatt(zl){if(infoOffen)return;infoOffen={id:'blatt',dose:zl.id};haltAn();elInfo.classList.remove('test');elInfo.classList.remove('vdraht');
   elInfoBox.innerHTML='<p class="unter">Vor dem Anklemmen</p><h2>Erst dein Übungsblatt</h2>'+
     '<p>Halt! Bevor du im Gästebad anklemmst: Hast du dein Übungsblatt ausgefüllt und in die Moodle-Aufgabe <b>„Übungsblatt Verdrahten“</b> hochgeladen? Dein Chef will erst den Plan sehen.</p>'+
-    '<p class="leise">Das Blatt auf Papier hat drei Aufgaben: das Gästebad und zwei Schaltungen, die du schon geübt hast. Lade ein Foto oder einen Scan in die Moodle-Aufgabe hoch – dein Lehrer schaut es sich dort an.</p>'+
+    '<p class="leise"><b>Noch kein Blatt?</b> Es liegt im Unterricht für dich bereit – hol es dir. Das Blatt auf Papier hat drei Aufgaben: das Gästebad und zwei Schaltungen, die du schon geübt hast. Lade ein Foto oder einen Scan in die Moodle-Aufgabe hoch – dein Lehrer schaut es sich dort an.</p>'+
     '<div class="knoepfe"><button type="button" class="haupt" data-a="blatt">Ich habe mein Blatt hochgeladen</button><button type="button" data-a="zu">Noch nicht – zurück zur Baustelle</button></div>';
   elInfo.style.display='flex';}
 // Glückwunsch nach der 12. Übung (Wunsch des Lehrers 26.11.2026 ~11:30): „Wenn alle zwölf Verdrahtungsübungen fertig sind, soll dann ein Fenster aufpuppen,
@@ -3059,7 +3059,9 @@ function zeigeGlueckwunsch(){
   elInfoBox.innerHTML='<p class="unter">Verdrahten üben</p><h2>Glückwunsch – alle zwölf Übungen bestanden!</h2>'+
     '<p>Super gemacht: Du hast alle zwölf Verdrahtungsübungen richtig gelöst – jede Leitung und jede Ader am richtigen Platz.</p>'+
     (weiter?'<p>Jetzt geht es im Gästebad weiter: Klemme die Dosen an.</p>'
-      :'<p><b>Jetzt geh zu deinem Lehrer</b> und hol dir die Arbeitsblätter <b>„Übungsblatt Verdrahten“</b>. Fülle sie aus und lade sie in Moodle in die Aufgabe <b>„Übungsblatt Verdrahten“</b> hoch (Foto oder Scan).</p>'+
+      // Wortlaut des Lehrers 26.11.2026 ~12:10 (Klassenchat „SHK City 1BFSHK (1)“): „das Übungsblatt liegt immer bereit und die Schüler holen es sich so wie sie es
+      // brauchen. und dazu sollen sie aufgefordert werden.“ – vorher: „Jetzt geh zu deinem Lehrer und hol dir die Arbeitsblätter …“
+      :'<p><b>Jetzt hol dir das Übungsblatt</b> <b>„Übungsblatt Verdrahten“</b> – es liegt im Unterricht für dich bereit. Fülle es aus und lade es in Moodle in die Aufgabe <b>„Übungsblatt Verdrahten“</b> hoch (Foto oder Scan).</p>'+
        '<p>Erst danach klemmst du im Gästebad die Dosen an. Beim ersten Antippen einer Dose fragt dich das Spiel, ob dein Blatt hochgeladen ist.</p>')+
     '<div class="knoepfe"><button type="button" class="haupt" data-a="zu">Verstanden – zurück zur Baustelle</button></div>';
   elInfo.style.display='flex';}
